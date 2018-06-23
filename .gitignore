@@ -24,3 +24,17 @@ public/data/csvs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# virtualenv
+.venv
+venv/
+ENV/
+
+# Editor configs
+.vscode
+.idea
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
