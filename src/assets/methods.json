@@ -1,0 +1,487 @@
+
+{
+    "SVM":{   
+        "name": "svm",
+        "class": "sklearn.svm.SVC",
+        "fullname":"support vector machine",
+        "hyperparameters": {
+            "C": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "gamma": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "kernel": {
+                "type": "string",
+                "values": ["rbf", "poly", "linear", "sigmoid"]
+            },
+            "degree": {
+                "type": "int",
+                "range": [2, 5]
+            },
+            "coef0": {
+                "type": "int",
+                "range": [-1e3, 1e3]
+            },
+            "probability": {
+                "type": "bool",
+                "values": [true]
+            },
+            "shrinking": {
+                "type": "bool",
+                "values": [true]
+            },
+            "cache_size": {
+                "type": "int",
+                "range": [15000]
+            },
+            "class_weight": {
+                "type": "string",
+                "values": ["balanced"]
+            },
+            "_scale": {
+                "type": "bool",
+                "values": [true]
+            },
+            "max_iter": {
+                "type": "int",
+                "range": [50000]
+            }
+        },
+        "root_hyperparameters": ["C", "kernel", "probability", "shrinking", "cache_size", "class_weight", "max_iter", "_scale"],
+        "conditional_hyperparameters": {
+            "kernel": {
+                "rbf": ["gamma"],
+                "sigmoid": ["gamma", "coef0"],
+                "poly": ["degree", "gamma", "coef0"]
+            }
+        }
+    },
+    "RF":{   
+        "name": "rf",
+        "class": "sklearn.ensemble.RandomForestClassifier",
+        "fullname": "random forest",
+        "hyperparameters": {
+            "criterion": {
+                "type": "string",
+                "values": ["entropy", "gini"]
+            },
+            "max_features": {
+                "type": "float",
+                "range": [0.1, 1.0]
+            },
+            "max_depth": {
+                "type": "int",
+                "range": [2, 10]
+            },
+            "min_samples_split": {
+                "type": "int",
+                "range": [2, 4]
+            },
+            "min_samples_leaf": {
+                "type": "int",
+                "range": [1, 3]
+            },
+            "n_estimators": {
+                "type": "int_cat",
+                "values": [100]
+            },
+            "n_jobs": {
+                "type": "int_cat",
+                "values": [-1]
+            }
+        },
+        "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_leaf", "min_samples_leaf", "n_estimators", "n_jobs"],
+        "conditional_hyperparameters": {}
+    },
+    "ET":{   
+        "name": "et",
+        "class": "sklearn.ensemble.ExtraTreesClassifier",
+        "fullname": "extreme trees",
+        "hyperparameters": {
+            "criterion": {
+                "type": "string",
+                "values": ["entropy", "gini"]
+            },
+            "max_features": {
+                "type": "float",
+                "range": [0.1, 1.0]
+            },
+            "max_depth": {
+                "type": "int",
+                "range": [2, 10]
+            },
+            "min_samples_split": {
+                "type": "int",
+                "range": [2, 3]
+            },
+            "min_samples_leaf": {
+                "type": "int",
+                "range": [1, 2]
+            },
+            "n_estimators": {
+                "type": "int_cat",
+                "values": [100]
+            },
+            "n_jobs": {
+                "type": "int",
+                "range": [-1]
+            }
+        },
+        "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_leaf", "min_samples_leaf", "n_estimators", "n_jobs"],
+        "conditional_hyperparameters": {}
+    },
+    "DT":{   
+        "name": "dt",
+        "class": "sklearn.tree.DecisionTreeClassifier",
+        "fullname": "decision tree",
+        "hyperparameters": {
+            "criterion": {
+                "type": "string",
+                "values": ["entropy", "gini"]
+            },
+            "max_features": {
+                "type": "float",
+                "range": [0.1, 1.0]
+            },
+            "max_depth": {
+                "type": "int",
+                "range": [2, 10]
+            },
+            "min_samples_split": {
+                "type": "int",
+                "range": [2, 4]
+            },
+            "min_samples_leaf": {
+                "type": "int",
+                "range": [1, 3]
+            }
+        },
+        "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_split", "min_samples_leaf"],
+        "conditional_hyperparameters": {}
+    },
+    "SGD":{   
+        "name": "sgd",
+        "class": "sklearn.linear_model.SGDClassifier",
+        "fullname":"stochastic gradient descent",
+        "hyperparameters": {
+            "loss": {
+                "type": "string",
+                "values": ["hinge", "log", "modified_huber", "squared_hinge"]
+            },
+            "penalty": {
+                "type": "string",
+                "values": ["l1", "l2", "elasticnet"]
+            },
+            "alpha": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "l1_ratio": {
+                "type": "float",
+                "range": [0.0, 1.0]
+            },
+            "fit_intercept": {
+                "type": "int",
+                "range": [0, 1]
+            },
+            "n_iter": {
+                "type": "int",
+                "range": [10, 200]
+            },
+            "shuffle": {
+                "type": "bool",
+                "values": [true]
+            },
+            "epsilon": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "learning_rate": {
+                "type": "string",
+                "values": ["constant", "optimal"]
+            },
+            "eta0": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "class_weight": {
+                "type": "string",
+                "values": [null]
+            },
+            "_scale_minmax": {
+                "type": "bool",
+                "values": [true]
+            },
+            "n_jobs": {
+                "type": "int_cat",
+                "values": [-1]
+            }
+        },
+        "root_hyperparameters": ["loss", "penalty", "alpha", "l1_ratio", "fit_intercept", "n_iter", "shuffle", "epsilon", "learning_rate", "eta0", "class_weight", "_scale_minmax", "n_jobs"],
+        "conditional_hyperparameters": {}
+    },
+    "PA": {   
+        "name": "pa",
+        "class": "sklearn.linear_model.PassiveAggressiveClassifier",
+        "fullname": "passive aggressive",
+        "hyperparameters": {
+            "C": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "fit_intercept": {
+                "type": "int_cat",
+                "values": [0, 1]
+            },
+            "n_iter": {
+                "type": "int",
+                "range": [10, 200]
+            },
+            "shuffle": {
+                "type": "bool",
+                "values": [true]
+            },
+            "loss": {
+                "type": "string",
+                "values": ["hinge", "squared_hinge"]
+            },
+            "_scale": {
+                "type": "bool",
+                "values": [true]
+            },
+            "n_jobs": {
+                "type": "int_cat",
+                "values": [-1]
+            }
+        },
+        "root_hyperparameters": ["C", "fit_intercept", "n_iter", "shuffle", "loss", "_scale", "n_jobs"],
+        "conditional_hyperparameters": {}
+    },
+    "KNN": {   
+        "name": "knn",
+        "class": "sklearn.neighbors.KNeighborsClassifier",
+        "fullname": "k nearest neighbors",
+        "hyperparameters": {
+            "n_neighbors": {
+                "type": "int",
+                "range": [1, 20]
+            },
+            "weights": {
+                "type": "string",
+                "values": ["uniform", "distance"]
+            },
+            "algorithm": {
+                "type": "string",
+                "values": ["ball_tree", "kd_tree", "brute"]
+            },
+            "leaf_size": {
+                "type": "int",
+                "range": [1, 50]
+            },
+            "metric": {
+                "type": "string",
+                "values": ["minkowski", "euclidean", "manhattan", "chebyshev"]
+            },
+            "p": {
+                "type": "int",
+                "range": [1, 3]
+            },
+            "_scale": {
+                "type": "bool",
+                "values": [true]
+            }
+        },
+        "root_hyperparameters": ["n_neighbors", "weights", "algorithm", "metric", "_scale"],
+        "conditional_hyperparameters": {
+            "metric": {
+                "minkowski": ["p"]
+            },
+            "algorithm": {
+                "ball_tree": ["leaf_size"],
+                "kd_tree": ["leaf_size"]
+            }
+        }
+    },
+    "LR":{   
+        "name": "logreg",
+        "class": "sklearn.linear_model.LogisticRegression",
+        "fullname": "logistic regression",
+        "hyperparameters": {
+            "C": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "tol": {
+                "type": "float_exp",
+                "range": [1e-5, 1e5]
+            },
+            "penalty": {
+                "type": "string",
+                "values": ["l1", "l2"]
+            },
+            "dual": {
+                "type": "bool",
+                "values": [true, false]
+            },
+            "fit_intercept": {
+                "type": "bool",
+                "values": [true, false]
+            },
+            "class_weight": {
+                "type": "string",
+                "values": ["balanced"]
+            },
+            "_scale": {
+                "type": "bool",
+                "values": [true]
+            }
+        },
+        "root_hyperparameters": ["C", "tol", "penalty", "fit_intercept", "class_weight", "_scale"],
+        "conditional_hyperparameters": {
+            "penalty": {
+                "l2": ["dual"]
+            }
+        }
+    },
+    "GNB": {   
+        "name": "gnb",
+        "class": "sklearn.naive_bayes.GaussianNB",
+        "fullname": "gaussian naive bayes",
+        "hyperparameters": {
+            "_scale_minmax": {
+                "type": "bool",
+                "values": [true]
+            }
+        },
+        "root_hyperparameters": ["_scale_minmax"],
+        "conditional_hyperparameters": {}
+    },
+    "BNB": {   
+        "name": "bnb",
+        "class": "sklearn.naive_bayes.BernoulliNB",
+        "fullname": "bernoulli naive bayes",
+        "hyperparameters": {
+            "alpha": {
+                "type": "float",
+                "range": [0.0, 1.0]
+            },
+            "binarize": {
+                "type": "float",
+                "range": [0.0, 1.0]
+            },
+            "fit_prior": {
+                "type": "int",
+                "range": [0, 1]
+            },
+            "class_prior": {
+                "type": "string",
+                "values": [null]
+            },
+            "_scale": {
+                "type": "bool",
+                "values": [true]
+            }
+        },
+        "root_hyperparameters": ["alpha", "binarize", "fit_prior", "class_prior", "_scale"],
+        "conditional_hyperparameters": {}
+    },
+    "GP":{   
+        "name": "gp",
+        "class": "sklearn.gaussian_process.GaussianProcessClassifier",
+        "fullname": "gaussian process",
+        "hyperparameters": {
+            "kernel": {
+                "type": "string",
+                "values": ["constant", "rbf", "matern", "rational_quadratic", "exp_sine_squared"]
+            },
+            "nu": {
+                "type": "float_cat",
+                "values": [0.5, 1.5, 2.5]
+            },
+            "length_scale": {
+                "type": "float_exp",
+                "range": [0.01, 100]
+            },
+            "alpha": {
+                "type": "float",
+                "range": [0.0, 1.0]
+            },
+            "periodicity": {
+                "type": "int_cat",
+                "values": [0, 1]
+            }
+        },
+        "root_hyperparameters": ["kernel"],
+        "conditional_hyperparameters": {
+            "kernel": {
+                "matern": ["nu"],
+                "rational_quadratic": ["length_scale", "alpha"],
+                "exp_sine_squared": ["length_scale", "periodicity"]
+            }
+        }
+    },
+    "MLP": {   
+        "name": "mlp",
+        "class": "sklearn.neural_network.MLPClassifier",
+        "fullname": "multiple layer process",
+        "hyperparameters": {
+            "batch_size": {
+                "type": "string",
+                "values": ["auto"]
+            },
+            "solver": {
+                "type": "string",
+                "values": ["lbfgs", "sgd", "adam"]
+            },
+            "alpha": {
+                "type": "float",
+                "range": [0.0001, 0.009]
+            },
+            "learning_rate_init": {
+                "type": "float",
+                "range": [0.001, 0.99]
+            },
+            "beta_1": {
+                "type": "float",
+                "range": [0.8, 0.9999]
+            },
+            "beta_2": {
+                "type": "float",
+                "range": [0.8, 0.9999]
+            },
+            "learning_rate": {
+                "type": "string",
+                "values": ["constant", "invscaling", "adaptive"]
+            },
+            "activation": {
+                "type": "string",
+                "values": ["relu", "logistic", "identity", "tanh"]
+            },
+            "hidden_layer_sizes": {
+                "type": "list",
+                "list_length": [1, 2, 3],
+                "element": {
+                    "type": "int",
+                    "range": [2, 300]
+                }
+            },
+            "_scale": {
+                "type": "string",
+                "values": [true]
+            }
+        },
+        "root_hyperparameters": ["batch_size", "solver", "alpha", "activation", "hidden_layer_sizes", "_scale"],
+        "conditional_hyperparameters": {
+            "solver": {
+                "sgd": ["learning_rate_init", "learning_rate"],
+                "adam": ["learning_rate_init", "beta_1", "beta_2"]
+            }
+        }
+    },
+    "DBN":{
+        "fullname": "deep belief network"
+    }
+}

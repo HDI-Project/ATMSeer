@@ -1,0 +1,15 @@
+.methods{
+    height: 100%;
+}
+
+.methodContainer{
+    padding: 3px 8px;
+}
+
+.method{
+    border: .4px solid rgba(0,0,0, 0.1);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06);
+    /* height: ${100/methods.length}% */
+    height: 100%;
+    padding: 2px 5px;
+}

@@ -1,0 +1,101 @@
+trail ID,method,parameters,metrics,performance
+0,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 13; weights = distance,f1 and cv,0.749 +- 0.464
+1,knn,_scale = True; algorithm = ball_tree; leaf_size = 38; metric = euclidean; n_neighbors = 10; weights = distance,f1 and cv,0.704 +- 0.265
+2,knn,_scale = True; algorithm = ball_tree; leaf_size = 32; metric = minkowski; n_neighbors = 8; p = 3; weights = uniform,f1 and cv,0.817 +- 0.306
+3,knn,_scale = True; algorithm = kd_tree; leaf_size = 4; metric = euclidean; n_neighbors = 5; weights = uniform,f1 and cv,0.791 +- 0.079
+4,logreg,C = 0.000187053924899; _scale = True; class_weight = balanced; dual = False; fit_intercept = False; penalty = l2; tol = 0.0034814857662,f1 and cv,0.664 +- 0.442
+5,logreg,C = 2335.37517726; _scale = True; class_weight = balanced; fit_intercept = True; penalty = l1; tol = 5208.03307363,f1 and cv,0.000 +- 0.000
+6,logreg,C = 160.105625083; _scale = True; class_weight = balanced; dual = True; fit_intercept = True; penalty = l2; tol = 0.0819182525731,f1 and cv,0.745 +- 0.107
+7,dt,criterion = entropy; max_depth = 5; max_features = 0.781478174182; min_samples_leaf = 1; min_samples_split = 2,f1 and cv,0.585 +- 0.451
+8,knn,_scale = True; algorithm = kd_tree; leaf_size = 49; metric = euclidean; n_neighbors = 18; weights = distance,f1 and cv,0.531 +- 0.717
+9,knn,_scale = True; algorithm = kd_tree; leaf_size = 17; metric = manhattan; n_neighbors = 12; weights = distance,f1 and cv,0.686 +- 0.187
+10,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 15; weights = uniform,f1 and cv,0.786 +- 0.297
+11,logreg,C = 3647.55069827; _scale = True; class_weight = balanced; dual = False; fit_intercept = True; penalty = l2; tol = 0.448237732321,f1 and cv,0.769 +- 0.217
+12,dt,criterion = entropy; max_depth = 10; max_features = 0.913382063114; min_samples_leaf = 2; min_samples_split = 4,f1 and cv,0.649 +- 0.182
+13,knn,_scale = True; algorithm = ball_tree; leaf_size = 37; metric = minkowski; n_neighbors = 3; p = 3; weights = distance,f1 and cv,0.740 +- 0.527
+14,dt,criterion = entropy; max_depth = 5; max_features = 0.325846823079; min_samples_leaf = 1; min_samples_split = 2,f1 and cv,0.736 +- 0.283
+15,knn,_scale = True; algorithm = kd_tree; leaf_size = 2; metric = chebyshev; n_neighbors = 3; weights = uniform,f1 and cv,0.691 +- 0.424
+16,knn,_scale = True; algorithm = kd_tree; leaf_size = 27; metric = manhattan; n_neighbors = 8; weights = uniform,f1 and cv,0.730 +- 0.496
+17,knn,_scale = True; algorithm = ball_tree; leaf_size = 35; metric = minkowski; n_neighbors = 12; p = 1; weights = uniform,f1 and cv,0.793 +- 0.184
+18,logreg,C = 2.25465797942e-05; _scale = True; class_weight = balanced; fit_intercept = True; penalty = l1; tol = 98.8424586631,f1 and cv,0.000 +- 0.000
+19,logreg,C = 2593.12551929; _scale = True; class_weight = balanced; fit_intercept = True; penalty = l1; tol = 10437.0432791,f1 and cv,0.000 +- 0.000
+20,knn,_scale = True; algorithm = kd_tree; leaf_size = 23; metric = chebyshev; n_neighbors = 10; weights = distance,f1 and cv,0.604 +- 0.403
+21,logreg,C = 1.35334969088e-05; _scale = True; class_weight = balanced; dual = True; fit_intercept = True; penalty = l2; tol = 0.000448639710882,f1 and cv,0.729 +- 0.201
+22,knn,_scale = True; algorithm = ball_tree; leaf_size = 19; metric = manhattan; n_neighbors = 20; weights = distance,f1 and cv,0.648 +- 0.224
+23,knn,_scale = True; algorithm = ball_tree; leaf_size = 1; metric = chebyshev; n_neighbors = 7; weights = distance,f1 and cv,0.671 +- 0.142
+24,dt,criterion = entropy; max_depth = 10; max_features = 0.497398625415; min_samples_leaf = 2; min_samples_split = 2,f1 and cv,0.639 +- 0.317
+25,logreg,C = 0.00183903257216; _scale = True; class_weight = balanced; dual = False; fit_intercept = True; penalty = l2; tol = 0.000134398031491,f1 and cv,0.647 +- 0.462
+26,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 19; weights = distance,f1 and cv,0.816 +- 0.104
+27,logreg,C = 0.017394914513; _scale = True; class_weight = balanced; dual = False; fit_intercept = False; penalty = l2; tol = 0.0703048129884,f1 and cv,0.698 +- 0.347
+28,knn,_scale = True; algorithm = kd_tree; leaf_size = 27; metric = manhattan; n_neighbors = 12; weights = uniform,f1 and cv,0.567 +- 0.670
+29,logreg,C = 720.35958696; _scale = True; class_weight = balanced; dual = False; fit_intercept = True; penalty = l2; tol = 860.875802944,f1 and cv,0.000 +- 0.000
+30,knn,_scale = True; algorithm = brute; metric = chebyshev; n_neighbors = 7; weights = distance,f1 and cv,0.631 +- 0.330
+31,knn,_scale = True; algorithm = ball_tree; leaf_size = 45; metric = chebyshev; n_neighbors = 3; weights = distance,f1 and cv,0.611 +- 0.420
+32,knn,_scale = True; algorithm = ball_tree; leaf_size = 39; metric = manhattan; n_neighbors = 16; weights = distance,f1 and cv,0.700 +- 0.374
+33,knn,_scale = True; algorithm = kd_tree; leaf_size = 27; metric = manhattan; n_neighbors = 5; weights = uniform,f1 and cv,0.770 +- 0.173
+34,logreg,C = 2.03125993463; _scale = True; class_weight = balanced; dual = True; fit_intercept = True; penalty = l2; tol = 0.00113450587983,f1 and cv,0.641 +- 0.271
+35,logreg,C = 3.04936416576; _scale = True; class_weight = balanced; fit_intercept = True; penalty = l1; tol = 11.3252664914,f1 and cv,0.000 +- 0.000
+36,knn,_scale = True; algorithm = brute; metric = minkowski; n_neighbors = 5; p = 3; weights = distance,f1 and cv,0.716 +- 0.235
+37,knn,_scale = True; algorithm = kd_tree; leaf_size = 22; metric = euclidean; n_neighbors = 6; weights = uniform,f1 and cv,0.779 +- 0.313
+38,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 20; weights = distance,f1 and cv,0.780 +- 0.134
+39,knn,_scale = True; algorithm = kd_tree; leaf_size = 4; metric = euclidean; n_neighbors = 5; weights = uniform,f1 and cv,0.655 +- 0.374
+40,dt,criterion = gini; max_depth = 3; max_features = 0.410278290867; min_samples_leaf = 3; min_samples_split = 2,f1 and cv,0.684 +- 0.190
+41,dt,criterion = entropy; max_depth = 10; max_features = 0.379779506067; min_samples_leaf = 1; min_samples_split = 3,f1 and cv,0.694 +- 0.253
+42,knn,_scale = True; algorithm = kd_tree; leaf_size = 9; metric = euclidean; n_neighbors = 7; weights = uniform,f1 and cv,0.709 +- 0.288
+43,knn,_scale = True; algorithm = ball_tree; leaf_size = 26; metric = euclidean; n_neighbors = 8; weights = uniform,f1 and cv,0.731 +- 0.163
+44,knn,_scale = True; algorithm = ball_tree; leaf_size = 7; metric = chebyshev; n_neighbors = 11; weights = distance,f1 and cv,0.768 +- 0.208
+45,knn,_scale = True; algorithm = ball_tree; leaf_size = 13; metric = manhattan; n_neighbors = 5; weights = uniform,f1 and cv,0.698 +- 0.266
+46,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 7; weights = distance,f1 and cv,0.727 +- 0.262
+47,knn,_scale = True; algorithm = kd_tree; leaf_size = 16; metric = minkowski; n_neighbors = 15; p = 3; weights = distance,f1 and cv,0.621 +- 0.265
+48,knn,_scale = True; algorithm = kd_tree; leaf_size = 46; metric = euclidean; n_neighbors = 7; weights = distance,f1 and cv,0.620 +- 0.742
+49,knn,_scale = True; algorithm = kd_tree; leaf_size = 47; metric = manhattan; n_neighbors = 6; weights = distance,f1 and cv,0.748 +- 0.365
+50,knn,_scale = True; algorithm = brute; metric = chebyshev; n_neighbors = 16; weights = distance,f1 and cv,0.646 +- 0.138
+51,knn,_scale = True; algorithm = kd_tree; leaf_size = 31; metric = chebyshev; n_neighbors = 20; weights = uniform,f1 and cv,0.746 +- 0.254
+52,knn,_scale = True; algorithm = ball_tree; leaf_size = 20; metric = chebyshev; n_neighbors = 3; weights = distance,f1 and cv,0.732 +- 0.280
+53,knn,_scale = True; algorithm = ball_tree; leaf_size = 5; metric = minkowski; n_neighbors = 16; p = 2; weights = distance,f1 and cv,0.749 +- 0.235
+54,knn,_scale = True; algorithm = brute; metric = euclidean; n_neighbors = 10; weights = uniform,f1 and cv,0.678 +- 0.174
+55,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 18; weights = distance,f1 and cv,0.815 +- 0.243
+56,knn,_scale = True; algorithm = brute; metric = chebyshev; n_neighbors = 16; weights = uniform,f1 and cv,0.586 +- 0.347
+57,knn,_scale = True; algorithm = ball_tree; leaf_size = 33; metric = manhattan; n_neighbors = 18; weights = distance,f1 and cv,0.636 +- 0.426
+58,knn,_scale = True; algorithm = brute; metric = euclidean; n_neighbors = 10; weights = uniform,f1 and cv,0.718 +- 0.317
+59,knn,_scale = True; algorithm = kd_tree; leaf_size = 26; metric = minkowski; n_neighbors = 10; p = 2; weights = distance,f1 and cv,0.614 +- 0.635
+60,knn,_scale = True; algorithm = ball_tree; leaf_size = 1; metric = minkowski; n_neighbors = 3; p = 1; weights = uniform,f1 and cv,0.756 +- 0.303
+61,logreg,C = 3.41536388184e-05; _scale = True; class_weight = balanced; dual = True; fit_intercept = True; penalty = l2; tol = 0.000706626237088,f1 and cv,0.760 +- 0.261
+62,knn,_scale = True; algorithm = brute; metric = minkowski; n_neighbors = 18; p = 3; weights = uniform,f1 and cv,0.748 +- 0.302
+63,knn,_scale = True; algorithm = ball_tree; leaf_size = 1; metric = manhattan; n_neighbors = 13; weights = distance,f1 and cv,0.758 +- 0.288
+64,knn,_scale = True; algorithm = ball_tree; leaf_size = 32; metric = chebyshev; n_neighbors = 9; weights = uniform,f1 and cv,0.527 +- 0.560
+65,logreg,C = 0.000881758281515; _scale = True; class_weight = balanced; dual = False; fit_intercept = False; penalty = l2; tol = 1.48094272547e-05,f1 and cv,0.513 +- 0.668
+66,dt,criterion = gini; max_depth = 5; max_features = 0.522434815905; min_samples_leaf = 1; min_samples_split = 2,f1 and cv,0.584 +- 0.452
+67,knn,_scale = True; algorithm = brute; metric = chebyshev; n_neighbors = 6; weights = uniform,f1 and cv,0.616 +- 0.444
+68,logreg,C = 143.056895445; _scale = True; class_weight = balanced; fit_intercept = False; penalty = l1; tol = 0.00424864328362,f1 and cv,0.805 +- 0.123
+69,knn,_scale = True; algorithm = ball_tree; leaf_size = 17; metric = minkowski; n_neighbors = 13; p = 1; weights = uniform,f1 and cv,0.749 +- 0.100
+70,logreg,C = 0.0206281857645; _scale = True; class_weight = balanced; dual = True; fit_intercept = False; penalty = l2; tol = 5.35095733943e-05,f1 and cv,0.757 +- 0.240
+71,knn,_scale = True; algorithm = ball_tree; leaf_size = 38; metric = euclidean; n_neighbors = 16; weights = uniform,f1 and cv,0.780 +- 0.321
+72,knn,_scale = True; algorithm = brute; metric = minkowski; n_neighbors = 8; p = 3; weights = distance,f1 and cv,0.668 +- 0.302
+73,knn,_scale = True; algorithm = kd_tree; leaf_size = 40; metric = minkowski; n_neighbors = 3; p = 1; weights = distance,f1 and cv,0.642 +- 0.251
+74,knn,_scale = True; algorithm = ball_tree; leaf_size = 31; metric = chebyshev; n_neighbors = 9; weights = uniform,f1 and cv,0.500 +- 0.587
+75,knn,_scale = True; algorithm = ball_tree; leaf_size = 43; metric = manhattan; n_neighbors = 1; weights = distance,f1 and cv,0.755 +- 0.121
+76,knn,_scale = True; algorithm = ball_tree; leaf_size = 31; metric = manhattan; n_neighbors = 18; weights = distance,f1 and cv,0.671 +- 0.704
+77,knn,_scale = True; algorithm = brute; metric = chebyshev; n_neighbors = 12; weights = uniform,f1 and cv,0.632 +- 0.225
+78,logreg,C = 0.000595902947969; _scale = True; class_weight = balanced; dual = True; fit_intercept = False; penalty = l2; tol = 1.04172722169e-05,f1 and cv,0.718 +- 0.336
+79,knn,_scale = True; algorithm = kd_tree; leaf_size = 39; metric = minkowski; n_neighbors = 9; p = 1; weights = distance,f1 and cv,0.717 +- 0.082
+80,knn,_scale = True; algorithm = ball_tree; leaf_size = 32; metric = euclidean; n_neighbors = 11; weights = distance,f1 and cv,0.760 +- 0.432
+81,knn,_scale = True; algorithm = kd_tree; leaf_size = 12; metric = manhattan; n_neighbors = 14; weights = distance,f1 and cv,0.620 +- 0.482
+82,logreg,C = 39737.1240377; _scale = True; class_weight = balanced; fit_intercept = True; penalty = l1; tol = 22796.4475141,f1 and cv,0.000 +- 0.000
+83,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 9; weights = distance,f1 and cv,0.680 +- 0.259
+84,knn,_scale = True; algorithm = kd_tree; leaf_size = 22; metric = manhattan; n_neighbors = 19; weights = distance,f1 and cv,0.791 +- 0.300
+85,knn,_scale = True; algorithm = kd_tree; leaf_size = 25; metric = chebyshev; n_neighbors = 19; weights = uniform,f1 and cv,0.691 +- 0.157
+86,knn,_scale = True; algorithm = brute; metric = minkowski; n_neighbors = 17; p = 1; weights = uniform,f1 and cv,0.757 +- 0.180
+87,knn,_scale = True; algorithm = ball_tree; leaf_size = 15; metric = chebyshev; n_neighbors = 13; weights = uniform,f1 and cv,0.711 +- 0.079
+88,knn,_scale = True; algorithm = brute; metric = euclidean; n_neighbors = 19; weights = distance,f1 and cv,0.732 +- 0.087
+89,knn,_scale = True; algorithm = brute; metric = euclidean; n_neighbors = 10; weights = distance,f1 and cv,0.701 +- 0.334
+90,logreg,C = 810.212983363; _scale = True; class_weight = balanced; dual = True; fit_intercept = False; penalty = l2; tol = 0.0254460704707,f1 and cv,0.731 +- 0.194
+91,knn,_scale = True; algorithm = kd_tree; leaf_size = 24; metric = minkowski; n_neighbors = 13; p = 3; weights = uniform,f1 and cv,0.541 +- 0.560
+92,logreg,C = 4.98491618564; _scale = True; class_weight = balanced; fit_intercept = False; penalty = l1; tol = 2120.19924658,f1 and cv,0.000 +- 0.000
+93,knn,_scale = True; algorithm = brute; metric = euclidean; n_neighbors = 15; weights = uniform,f1 and cv,0.783 +- 0.080
+94,knn,_scale = True; algorithm = brute; metric = manhattan; n_neighbors = 15; weights = uniform,f1 and cv,0.576 +- 0.635
+95,knn,_scale = True; algorithm = brute; metric = chebyshev; n_neighbors = 5; weights = distance,f1 and cv,0.713 +- 0.227
+96,knn,_scale = True; algorithm = kd_tree; leaf_size = 20; metric = euclidean; n_neighbors = 19; weights = uniform,f1 and cv,0.748 +- 0.121
+97,knn,_scale = True; algorithm = brute; metric = euclidean; n_neighbors = 2; weights = distance,f1 and cv,0.731 +- 0.271
+98,logreg,C = 0.0049368197232; _scale = True; class_weight = balanced; dual = True; fit_intercept = False; penalty = l2; tol = 0.413574153029,f1 and cv,0.784 +- 0.103
+99,logreg,C = 65.2333401319; _scale = True; class_weight = balanced; dual = True; fit_intercept = False; penalty = l2; tol = 80.4831976789,f1 and cv,0.680 +- 0.412

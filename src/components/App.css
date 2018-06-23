@@ -1,0 +1,32 @@
+@import '~antd/dist/antd.css';
+
+:root{
+  --header-height: 6vh;
+}
+.app{
+  width:100vw;
+  height:100vh;
+}
+.col{
+  padding: 10px;
+  height: 100%;
+  overflow-y: scroll;
+}
+.appHeader {
+  background-color: #555;
+  /* font-family: Roboto, sans-serif; */
+  font-family: "Arial Black", Gadget, sans-serif;
+  height: var(--header-height);
+  /* padding: 20px; */
+  color: white;
+  font-size: 3.5vh;
+  box-shadow: 0 4px 4px 0 rgba(0,0,0,0.16), 0 0 0 4px rgba(0,0,0,0.08);
+}
+.appContent{
+  background-color: white;
+  height: calc(100% - var(--header-height));
+}
+.appLogo{
+  height:3.5vh;
+  padding: 1px 5px;
+}
