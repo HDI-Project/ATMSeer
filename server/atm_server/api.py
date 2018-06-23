@@ -1,20 +1,24 @@
-# created by jobliz
 import os
+import sys
 import copy
 import uuid
 import decimal
 import datetime
 import argparse
+from io import StringIO
 try: 
     import simplejson as json
 except ImportError: 
     import json
 from sqlalchemy import inspect
 from subprocess import Popen, PIPE
+from multiprocessing import Process, Pipe
 import flask
 from flask import request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
 
+import atm
+from atm.worker import work
 from atm.database import Database
 from atm.enter_data import enter_data
 from atm.config import (add_arguments_aws_s3, add_arguments_sql,
@@ -26,7 +30,6 @@ from atm_server.db import get_db, get_session
 api = Blueprint('api', __name__)
 
 def nice_json_encoder(base_encoder):
-
 
     class JSONEncoder(base_encoder):
         """
@@ -139,17 +142,85 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
-def execute_in_virtualenv(virtualenv_name, script):
+# def execute_in_virtualenv(virtualenv_name, script):
+#     """
+#     Executes a Python script inside a virtualenv.
+#     See: https://gist.github.com/turicas/2897697
+#     General idea:
+#     /bin/bash -c "source venv/bin/activate && python /home/jose/code/python/ATM/worker.py"
+#     """
+#     path = ''.join([os.path.dirname(os.path.abspath(__file__)), script])
+#     command = ''.join(['/bin/bash -c "source venv/bin/activate && python ', path, '"'])
+#     process = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+#     return process
+
+
+def return_stdout_stderr(f):
+    def inner(*args, **kwargs):
+        stdout_p = StringIO()
+        stderr_p = StringIO()
+        sys.stdout = stdout_p
+        sys.stderr = stderr_p
+
+        try:
+            f(*args, **kwargs)
+        except:
+            pass
+
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        stdout = stdout_p.getvalue()
+        stderr = stderr_p.getvalue()
+        stdout_p.close()
+        stderr_p.close()
+        return stdout, stderr
+    return inner
+
+
+@return_stdout_stderr
+def start_worker(*args):
     """
-    Executes a Python script inside a virtualenv.
-    See: https://gist.github.com/turicas/2897697
-    General idea:
-    /bin/bash -c "source venv/bin/activate && python /home/jose/code/python/ATM/worker.py"
+    A copy of the code in atm/scripts/worker.py
     """
-    path = ''.join([os.path.dirname(os.path.abspath(__file__)), script])
-    command = ''.join(['/bin/bash -c "source venv/bin/activate && python ', path, '"'])
-    process = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
-    return process
+
+    parser = argparse.ArgumentParser(description='Add more classifiers to database')
+    add_arguments_sql(parser)
+    add_arguments_aws_s3(parser)
+    add_arguments_logging(parser)
+
+    # add worker-specific arguments
+    parser.add_argument('--cloud-mode', action='store_true', default=False,
+                        help='Whether to run this worker in cloud mode')
+    parser.add_argument('--dataruns', help='Only train on dataruns with these ids',
+                        nargs='+')
+    parser.add_argument('--time', help='Number of seconds to run worker', type=int)
+    parser.add_argument('--choose-randomly', action='store_true',
+                        help='Choose dataruns to work on randomly (default = sequential order)')
+    parser.add_argument('--no-save', dest='save_files', default=True,
+                        action='store_const', const=False,
+                        help="don't save models and metrics at all")
+
+    # parse arguments and load configuration
+    _args = parser.parse_args(*args)
+
+    # default logging config is different if initialized from the command line
+    if _args.log_config is None:
+        _args.log_config = os.path.join(atm.PROJECT_ROOT,
+                                       'config/templates/log-script.yaml')
+
+    sql_config, _, aws_config, log_config = load_config(**vars(_args))
+    initialize_logging(log_config)
+
+    # let's go
+    work(db=Database(**vars(sql_config)),
+         datarun_ids=_args.dataruns,
+         choose_randomly=_args.choose_randomly,
+         save_files=_args.save_files,
+         cloud_mode=_args.cloud_mode,
+         aws_config=aws_config,
+         log_config=log_config,
+         total_time=_args.time,
+         wait=False)
 
 
 @api.errorhandler(ApiError)
@@ -230,10 +301,19 @@ def dispatch_worker():
     Note: It currently only works if rest_api_server.py file is in the same
     directory as the worker.py script.
     """
-    process = execute_in_virtualenv('venv', '/worker.py')
-    stdout, stderr = process.communicate()
 
-    return jsonify({
-        'stdout': stdout,
-        'stderr': stderr
-    })
+    def _start_worker(pipe_end, *args):
+        stdout, stderr = start_worker(*args)
+        pipe_end.send({
+            'stdout': stdout,
+            'stderr': stderr
+        })
+
+    parent_end, child_end = Pipe()
+    p = Process(target=_start_worker, args=(child_end, ))
+    
+    p.start()
+    recieved = parent_end.recv()
+    p.join()
+
+    return jsonify(recieved)
