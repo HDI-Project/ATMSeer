@@ -21,15 +21,18 @@ class App extends React.Component {
         </Header>
         <Content className='appContent' >
           <Row style={{"height": "100%"}}>
-            <Col span={4} className="col">
+            <Col span={6} className="col">
               <DataView/>
             </Col >
-            <Col span={14}  className="col">
-              <DataRuns/>
+            <Col span={18}  className="col">
+            <div className="shadowBox" >
+              <DataRuns height={30}/>
+              <Methods height={70}/>
+              </div>
             </Col>
-            <Col span={6} className="col">
-              <Methods/>
-            </Col>
+            {/* <Col span={6} className="col">
+              
+            </Col> */}
           </Row>
         </Content>
       </Layout>

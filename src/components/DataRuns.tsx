@@ -8,9 +8,11 @@ import {getColor} from "../helper"
 export interface IState{
     dataruns: any[]
 }
-
-export default class DataRuns extends React.Component<{}, IState>{
-    constructor(props: {}) {
+export interface IProps{
+    height: number
+}
+export default class DataRuns extends React.Component<IProps, IState>{
+    constructor(props: IProps) {
         super(props)
         this.state = {
             dataruns:[]
@@ -30,7 +32,7 @@ export default class DataRuns extends React.Component<{}, IState>{
     public render(){
         const {dataruns} = this.state
         if (dataruns.length>0){
-            return <LineChart run={dataruns[0]}/>
+            return <LineChart run={dataruns[0]} height={this.props.height}/>
         }else{
             return <div />
         }
@@ -38,7 +40,7 @@ export default class DataRuns extends React.Component<{}, IState>{
     }
 }
 
-class LineChart extends React.Component<{run:any}, {}>{
+class LineChart extends React.Component<{run:any, height: number}, {}>{
     public getOption(){
         let points = this.props.run.split('\n')
         // remove the header and last row
@@ -57,7 +59,7 @@ class LineChart extends React.Component<{run:any}, {}>{
                 }
             }
         })
-        return {
+        const option = {
             xAxis: {
                 type: 'category',
                 // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -66,16 +68,23 @@ class LineChart extends React.Component<{run:any}, {}>{
             yAxis: {
                 type: 'value'
             },
+            grid:{
+                left: '5%',
+                right: '5%',
+                top: '5%',
+                bottom: '5%',
+            },
             series: [{
                 data: data,
                 type: 'bar'
             }]
         };
+        return option
     }
     public render(){
         return <ReactEcharts 
         option = { this.getOption() }
-        style={{height: '50%', width: '100%'}}
+        style={{height: `${this.props.height}%`, width: '100%'}}
         />
     }
 }

@@ -11,6 +11,7 @@
   padding: 10px;
   height: 100%;
   overflow-y: scroll;
+  
 }
 .appHeader {
   background-color: #555;
@@ -29,4 +30,11 @@
 .appLogo{
   height:3.5vh;
   padding: 1px 5px;
+}
+
+.shadowBox{
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  margin: 10px;
+  display: block;
+  position:absolute; top:0; left:0; right:0; bottom:0
 }

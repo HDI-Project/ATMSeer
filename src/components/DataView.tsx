@@ -16,10 +16,11 @@ export default class DataView extends React.Component<{}, IState>{
         }
     }
     public async getData() {
-        const res = await axios.get('../../data/csvs/datasets.csv')
-        const datum = res.data
-        const lines = datum.split('\n')
-        this.setState({datasets: lines})
+        // const res = await axios.get('../../data/csvs/datasets.csv')
+        // const datum = res.data
+        // const lines = datum.split('\n')
+        // this.setState({datasets: lines})
+        const res = await
 
     }
     public componentDidMount(){
@@ -27,7 +28,7 @@ export default class DataView extends React.Component<{}, IState>{
     }
     public render(){
         const {datasets} = this.state
-        return <div className="datasets">
+        return <div className="datasets shadowBox">
             {datasets.length>0?
             datasets.map((dataset)=>{
                 const values = dataset.split(',')
