@@ -32,7 +32,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
     public render(){
         const {dataruns} = this.state
         if (dataruns.length>0){
-            return <LineChart run={dataruns[0]} height={this.props.height}/>
+            return <BarChart run={dataruns[0]} height={this.props.height}/>
         }else{
             return <div />
         }
@@ -40,7 +40,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
 }
 
-class LineChart extends React.Component<{run:any, height: number}, {}>{
+class BarChart extends React.Component<{run:any, height: number}, {}>{
     public getOption(){
         let points = this.props.run.split('\n')
         // remove the header and last row
@@ -49,7 +49,6 @@ class LineChart extends React.Component<{run:any, height: number}, {}>{
         let data = points.map((point:any)=>{
             point = point.split(',')
             let performance = parseFloat( point[4].split("+-")[0] )
-            console.info(point[4], performance)
             let method = point[1]
             // let trialID = parseInt(point[0])
             return {
