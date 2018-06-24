@@ -1,0 +1,1 @@
+export const URL = 'atm.hkustvis.org' // the url of the api server
