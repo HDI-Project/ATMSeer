@@ -2,6 +2,7 @@ import axios from "axios";
 import ReactEcharts from "echarts-for-react";
 import * as React from "react";
 import {getColor} from "../helper"
+import Methods from './Methods';
 
 
 
@@ -9,7 +10,6 @@ export interface IState{
     dataruns: any[]
 }
 export interface IProps{
-    height: number
 }
 export default class DataRuns extends React.Component<IProps, IState>{
     constructor(props: IProps) {
@@ -32,7 +32,10 @@ export default class DataRuns extends React.Component<IProps, IState>{
     public render(){
         const {dataruns} = this.state
         if (dataruns.length>0){
-            return <BarChart run={dataruns[0]} height={this.props.height}/>
+            return <div style={{height: '100%'}}>
+            <BarChart run={dataruns[0]} height={30}/>
+            <Methods height={70} datarun={dataruns[0]}/>
+            </div>
         }else{
             return <div />
         }
