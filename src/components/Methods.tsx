@@ -36,14 +36,26 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
         const {method, datarun} = this.props
         let parallelAxis=method.root_hyperparameters.map((p:string, idx:number)=>{
             let parameter = method['hyperparameters'][p]
-            if (parameter['type'] =='string'){
-                return {dim:idx, name:p, type: 'category', data: parameter['values']} //category axis
-            }else if(parameter['type'] =='string'){
-                return {dim:idx, name:p, type: 'category', data: [true, false]}
+            if (parameter['values']){ //category axis
+                return {dim:idx, name:p, type: 'category', data: parameter['values']} 
+            }else if(parameter['range']){//value axis
+                if(parameter['range'].length>1){ //range in the form of [min, max]
+                    return {dim:idx, name:p, type: 'value', min: parameter['range'][0], max: parameter['range'][1]}
+                }else{ // range in the form of [max]
+                    return {dim:idx, name:p, type: 'value', min: 0, max: parameter['range'][0]}
+                }
+                
             }
-            return {dim:idx, name:p} //value axis
+            return {dim:idx, name:p}
         })
-        parallelAxis.push({dim:method.root_hyperparameters.length, name:'performance'})
+        //performance as a value axis
+        parallelAxis.push({
+            dim:method.root_hyperparameters.length, 
+            name:'performance', 
+            type:'value', 
+            min:0, 
+            max:1
+        })
         let data:any[] = []
         datarun[1].data.forEach(((_method:string, idx:number)=>{
             if(_method == method.name){
