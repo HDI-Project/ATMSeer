@@ -5,3 +5,7 @@ export interface IMethod{
     root_hyperparameters: string[],
     conditional_hyperparameters: any
 }
+
+export interface IDataRun{
+    [key:string]:any
+}

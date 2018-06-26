@@ -70,4 +70,27 @@ const getColor = (name: string, palatte: number = 0): string =>{
     }
 }
 
-export { getColor }
+
+
+
+const csv2json=(csv: string|any)=>{
+    let lines = csv.split('\n')
+    let keys = lines[0].split(',').map(
+            (key:string)=>{
+                let data:any[] = []
+                return {name: key, data}
+            })
+
+    lines.shift() //remove headers
+    lines.splice(-1, 1) // remove lats empty line
+    lines.forEach((row:string) => {
+        const cells = row.split(',')
+        cells.forEach((cell, idx)=>{
+            keys[idx].data.push(cell)
+        })
+    });
+
+    return keys
+}
+
+export { getColor, csv2json }

@@ -482,6 +482,10 @@
         }
     },
     "DBN":{
-        "fullname": "deep belief network"
+        "name": "dbn",
+        "fullname": "deep belief network",
+        "hyperparameters": {},
+        "root_hyperparameters": [],
+        "conditional_hyperparameters": {}
     }
 }
