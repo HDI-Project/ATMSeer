@@ -69,12 +69,15 @@ export default class DataView extends React.Component<{}, IState>{
           const uploadButton = (
             <div>
               <Icon type={'plus'} />
-              <div className="ant-upload-text">Upload</div>
+              <div className="ant-upload-text">
+                <div>Upload</div>
+                <div>Dataset</div>
+              </div>
             </div>
           );
           
 
-
+        //render
         const { dataset } = this.state
         const classes = dataset.pop()
         if(classes){           
@@ -87,10 +90,12 @@ export default class DataView extends React.Component<{}, IState>{
             })
             return <div className="instances shadowBox">
                     <Row className='datasetInfo' style={{height:'15%'}}>
-                    <Col span={16}>
-                    <h6>{features.length} features</h6>
-                        <h6>{dataset[0].data.length} instances</h6>
-                        <h6> {cate_classes.length} classes </h6>
+                    <Col span={16} className='datasetDetail'>
+                        <div>
+                            <h4>{features.length} features</h4> 
+                            <h4>{dataset[0].data.length} instances</h4> 
+                            <h4> {cate_classes.length} classes </h4> 
+                        </div>
                     </Col>
                     <Col span={8}>
                         <Upload {...props} 
