@@ -1,13 +1,14 @@
 import axios from "axios";
 import ReactEcharts from "echarts-for-react";
 import * as React from "react";
-import {getColor} from "../helper"
+import {getColor, csv2json} from "../helper"
 import Methods from './Methods';
+import {IDataRun} from '../types';
 
 
 
 export interface IState{
-    dataruns: any[]
+    dataruns: IDataRun[]
 }
 export interface IProps{
 }
@@ -34,7 +35,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         if (dataruns.length>0){
             return <div style={{height: '100%'}}>
             <BarChart run={dataruns[0]} height={30}/>
-            <Methods height={70} datarun={dataruns[0]}/>
+            <Methods height={70} datarun={csv2json(dataruns[0])}/>
             </div>
         }else{
             return <div />
@@ -76,9 +77,21 @@ class BarChart extends React.Component<{run:any, height: number}, {}>{
                 top: '5%',
                 bottom: '5%',
             },
+            tooltip:{},
             series: [{
                 data: data,
-                type: 'bar'
+                type: 'bar',
+                itemStyle: {
+                    normal: {
+                    },
+                    emphasis: {
+                        barBorderWidth: 1,
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowOffsetY: 0,
+                        shadowColor: 'rgba(0,0,0,0.5)'
+                    }
+                }
             }]
         };
         return option
