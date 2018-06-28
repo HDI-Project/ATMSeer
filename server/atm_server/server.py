@@ -1,26 +1,15 @@
 # created by jobliz
-import os
-import copy
-import uuid
-import decimal
-import datetime
 import argparse
 try: 
     import simplejson as json
 except ImportError: 
     import json
-from sqlalchemy import inspect
-from subprocess import Popen, PIPE
-from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
+from flask import Flask
 
-from atm.database import Database
-from atm.enter_data import enter_data
 from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         add_arguments_datarun, add_arguments_logging,
                         load_config, initialize_logging)
 
-from atm_server import SERVER_ROOT
 from atm_server.config import Config, ProductionConfig, DevelopmentConfig
 from atm_server.api import api
 
@@ -54,6 +43,7 @@ def create_app(config=None):
 
     return app
 
+
 def add_arguments_server(parser):
     parser.add_argument('--run-per-partition', default=False, action='store_true',
                         help='if set, generate a new datarun for each hyperpartition')
@@ -62,6 +52,7 @@ def add_arguments_server(parser):
     parser.add_argument('--host', default='0.0.0.0', help='Port in which to run the API')
     parser.add_argument('--port', default=7779, help='Port in which to run the API')
     parser.add_argument('--debug', default=True, help='If true, run Flask in debug mode')
+
 
 def start_server():
 
@@ -86,4 +77,3 @@ def start_server():
 
 if __name__ == '__main__':
     start_server()
-    

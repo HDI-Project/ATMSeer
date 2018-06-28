@@ -13,9 +13,15 @@ In production mode:
 
 # Development
 
-1. Set `$PYTHONPATH` to include the local `atm_server` package: 
-    ```
-    export PYTHONPATH=$PYTHONPATH:`pwd`/server/
-    ```
+## Server
 
-2. Start the atm server by: `python server/atm_server/cli.py run` or `python server/atm_server/server.py`
+To start the server, first set `$PYTHONPATH` to include the local `atm_server` package: 
+```bash
+export PYTHONPATH=$PYTHONPATH:`pwd`/server/
+```
+
+Then start the atm server by: `python server/atm_server/server.py`
+
+The routes (API) are defined in `server/atm_server/api.py`
+
+## Front

@@ -26,7 +26,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Editor configs
-.vscode
+.vscode/
+.idea/
 
 # Environments
 .env
@@ -36,3 +37,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+atm.db
+logs
+
+metrics/
+models/

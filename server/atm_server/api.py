@@ -1,20 +1,12 @@
 import os
 import sys
 import copy
-import uuid
-import decimal
-import datetime
+
 import argparse
 from io import StringIO
-try: 
-    import simplejson as json
-except ImportError: 
-    import json
-from sqlalchemy import inspect
-from subprocess import Popen, PIPE
+
 from multiprocessing import Process, Pipe
-import flask
-from flask import request, jsonify, Blueprint, current_app
+from flask import request, jsonify, Blueprint, current_app, Response
 from werkzeug.utils import secure_filename
 
 import atm
@@ -25,112 +17,11 @@ from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         add_arguments_datarun, add_arguments_logging,
                         load_config, initialize_logging)
 
-from atm_server.db import get_db, get_session
+from .db import fetch_entity, summarize_classifiers
+from .utils import flaskJSONEnCoder
+from .error import ApiError
 
 api = Blueprint('api', __name__)
-
-def nice_json_encoder(base_encoder):
-
-    class JSONEncoder(base_encoder):
-        """
-        JSONEncoder subclass that knows how to encode date/time, decimal types, and UUIDs.
-        See: https://stackoverflow.com/questions/11875770/how-to-overcome-datetime-datetime-not-json-serializable
-        """
-        def default(self, o):
-            # See "Date Time String Format" in the ECMA-262 specification.
-            if isinstance(o, datetime.datetime):
-                r = o.isoformat()
-                if o.microsecond:
-                    r = r[:23] + r[26:]
-                if r.endswith('+00:00'):
-                    r = r[:-6] + 'Z'
-                return r
-            elif isinstance(o, datetime.date):
-                return o.isoformat()
-            elif isinstance(o, datetime.time):
-                if o.utcoffset() is not None:
-                    raise ValueError("JSON can't represent timezone-aware times.")
-                r = o.isoformat()
-                if o.microsecond:
-                    r = r[:12]
-                return r
-            elif isinstance(o, (decimal.Decimal, uuid.UUID)):
-                return str(o)
-            elif isinstance(o, bytes):  
-                return str(o, encoding='utf-8')
-            else:
-                return super(JSONEncoder, self).default(o)
-
-    return JSONEncoder
-
-sysJSONEncoder = nice_json_encoder(json.JSONEncoder)
-flaskJSONEnCoder = nice_json_encoder(flask.json.JSONEncoder)
-
-class ApiError(Exception):
-    """
-    API error handler Exception
-    See: http://flask.pocoo.org/docs/0.12/patterns/apierrors/
-    """
-    status_code = 400
-
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-        self.message = message
-        if status_code is not None:
-            self.status_code = status_code
-        self.payload = payload
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['message'] = self.message
-        return rv
-
-
-def table_fetcher(table):
-    """
-    Creates a generic controller function to view the full contents of a table.
-    """
-
-    def inner():
-        result = get_db().engine.execute(''.join(['SELECT * FROM ', table]))
-        return json.dumps([dict(row) for row in result])
-
-    return inner
-
-
-def object_as_dict(obj):
-    return {c.key: getattr(obj, c.key) for c in inspect(obj).mapper.column_attrs}
-
-
-def entity_fetcher(entity_name, field, one=False):
-    """
-    Creates a generic controller function to filter the entity by the value of one field.
-    Uses simplejson (aliased to json) to parse Decimals and the custom JSONEncoder to parse
-    datetime fields.
-    """
-
-    def inner(**args):
-        value = args[field]
-        kwargs = {field: value}
-        
-        db = get_db()
-        session = db.get_session()
-
-        entity = getattr(db, entity_name, None)
-        if entity is None:
-            raise ApiError('No entity named %s' % entity_name, status_code=404, payload={})
-        try:
-            if one:
-                result = session.query(entity).filter_by(**kwargs).one()
-                return json.dumps((object_as_dict(result)), cls=sysJSONEncoder)
-            else:
-                result = session.query(entity).filter_by(**kwargs).all()
-                return json.dumps([object_as_dict(item) for item in result], cls=sysJSONEncoder)
-
-        except Exception:
-            raise ApiError('Not found', status_code=404, payload={})
-
-    return inner
 
 
 def allowed_file(filename):
@@ -139,23 +30,15 @@ def allowed_file(filename):
     See: http://flask.pocoo.org/docs/0.12/patterns/fileuploads/
     """
     return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
-
-
-# def execute_in_virtualenv(virtualenv_name, script):
-#     """
-#     Executes a Python script inside a virtualenv.
-#     See: https://gist.github.com/turicas/2897697
-#     General idea:
-#     /bin/bash -c "source venv/bin/activate && python /home/jose/code/python/ATM/worker.py"
-#     """
-#     path = ''.join([os.path.dirname(os.path.abspath(__file__)), script])
-#     command = ''.join(['/bin/bash -c "source venv/bin/activate && python ', path, '"'])
-#     process = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
-#     return process
+           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
 def return_stdout_stderr(f):
+    """
+    A decorator that stores the stdout and stderr during a function run.
+    :param f: a function
+    :return: a tuple of (stdout_str, stderr_str, return_of_f)
+    """
     def inner(*args, **kwargs):
         stdout_p = StringIO()
         stderr_p = StringIO()
@@ -163,9 +46,9 @@ def return_stdout_stderr(f):
         sys.stderr = stderr_p
 
         try:
-            f(*args, **kwargs)
+            ret = f(*args, **kwargs)
         except:
-            pass
+            ret = None
 
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
@@ -173,7 +56,8 @@ def return_stdout_stderr(f):
         stderr = stderr_p.getvalue()
         stdout_p.close()
         stderr_p.close()
-        return stdout, stderr
+        return stdout, stderr, ret
+
     return inner
 
 
@@ -181,6 +65,7 @@ def return_stdout_stderr(f):
 def start_worker(*args):
     """
     A copy of the code in atm/scripts/worker.py
+    A call to this function will start and run a simple worker
     """
 
     parser = argparse.ArgumentParser(description='Add more classifiers to database')
@@ -206,7 +91,7 @@ def start_worker(*args):
     # default logging config is different if initialized from the command line
     if _args.log_config is None:
         _args.log_config = os.path.join(atm.PROJECT_ROOT,
-                                       'config/templates/log-script.yaml')
+                                        'config/templates/log-script.yaml')
 
     sql_config, _, aws_config, log_config = load_config(**vars(_args))
     initialize_logging(log_config)
@@ -229,33 +114,102 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
+
+# inject a more powerful jsonEncoder
 api.json_encoder = flaskJSONEnCoder
 
-# routes to find all records
-api.add_url_rule('/datasets', 'all_datasets', table_fetcher('datasets'), methods=['GET'])
-api.add_url_rule('/dataruns', 'all_dataruns', table_fetcher('dataruns'), methods=['GET'])
-api.add_url_rule('/hyperpartitions', 'all_hyperpartitions', table_fetcher('hyperpartitions'), methods=['GET'])
-api.add_url_rule('/classifiers', 'all_classifiers', table_fetcher('classifiers'), methods=['GET'])
 
-# routes to find entity by it's own id
-api.add_url_rule('/dataruns/<int:id>', 'datarun_by_id',
-                    entity_fetcher('Datarun', 'id', one=True), methods=['GET'])
-api.add_url_rule('/datasets/<int:id>', 'dataset_by_id',
-                    entity_fetcher('Dataset', 'id', one=True), methods=['GET'])
-api.add_url_rule('/classifiers/<int:id>', 'classifier_by_id',
-                    entity_fetcher('Classifier', 'id', one=True), methods=['GET'])
-api.add_url_rule('/hyperpartitions/<int:id>', 'hyperpartition_by_id',
-                    entity_fetcher('Hyperpartition', 'id', one=True), methods=['GET'])
+# Wrap the return as a json response
+def fetch_entity_as_json(*args, **kwargs):
+    return jsonify(fetch_entity(*args, **kwargs))
 
-# routes to find entities associated with another entity
-api.add_url_rule('/dataruns/dataset/<int:dataset_id>', 'datarun_by_dataset_id',
-                    entity_fetcher('Datarun', 'dataset_id'), methods=['GET'])
-api.add_url_rule('/hyperpartitions/datarun/<int:datarun_id>', 'hyperpartition_by_datarun_id',
-                    entity_fetcher('Hyperpartition', 'datarun_id'), methods=['GET'])
-api.add_url_rule('/classifiers/datarun/<int:datarun_id>', 'classifier_by_datarun_id',
-                    entity_fetcher('Classifier', 'datarun_id'), methods=['GET'])
-api.add_url_rule('/classifiers/hyperpartition/<int:hyperpartition_id>', 'classifier_by_hyperpartition_id',
-                    entity_fetcher('Classifier', 'hyperpartition_id'), methods=['GET'])
+
+######################
+# API Starts here
+######################
+
+
+@api.route('/datasets', methods=['GET'])
+def fetch_datasets():
+    """Fetch the info of all datasets"""
+    return fetch_entity_as_json('Dataset')
+
+
+@api.route('/datasets/<int:dataset_id>', methods=['GET'])
+def fetch_dataset(dataset_id):
+    """Fetch the info of a dataset by id"""
+    return fetch_entity_as_json('Dataset', {'id': dataset_id}, True)
+
+
+@api.route('/dataruns', methods=['GET'])
+def fetch_dataruns():
+    """
+    Fetch the info of dataruns. A query parameter of dataset_id is supported.
+    E.g.: /api/dataruns?dataset_id=1
+    """
+    dataset_id = request.args.get('dataset_id', None, type=int)
+    return fetch_entity_as_json('Datarun', {'dataset_id': dataset_id})
+
+
+@api.route('/dataruns/<int:datarun_id>', methods=['GET'])
+def fetch_datarun(datarun_id):
+    """Fetch the info of a datarun by id"""
+    return fetch_entity_as_json('Datarun', {'id': datarun_id}, True)
+
+
+@api.route('/hyperpartitions', methods=['GET'])
+def fetch_hyperpartitions():
+    """
+    Fetch the info of hyperpartitions.
+    E.g.: /api/hyperpartitions?dataset_id=1&datarun_id=1
+    """
+    dataset_id = request.args.get('dataset_id', None, type=int)
+    datarun_id = request.args.get('datarun_id', None, type=int)
+    return fetch_entity_as_json('Hyperpartition', {'dataset_id': dataset_id, 'datarun_id': datarun_id})
+
+
+@api.route('/hyperpartitions/<int:hyperpartition_id>', methods=['GET'])
+def fetch_hyperpartition(hyperpartition_id):
+    """Fetch the info of a hyperpartition by id"""
+    return fetch_entity_as_json('hyperpartition', {'id': hyperpartition_id}, True)
+
+
+@api.route('/classifiers', methods=['GET'])
+def fetch_classifiers():
+    """
+    Fetch the info of classifiers.
+    E.g.: /api/classifiers?datarun_id=1&hyperpartition_id=1
+    """
+    datarun_id = request.args.get('datarun_id', None, type=int)
+    hyperpartition_id = request.args.get('hyperpartition_id', None, type=int)
+    return fetch_entity_as_json('Classifier', {'datarun_id': datarun_id,
+                                               'hyperpartition_id': hyperpartition_id})
+
+
+@api.route('/classifiers/<int:classifier_id>', methods=['GET'])
+def fetch_classifier(classifier_id):
+    """Fetch the info of a classifier by id"""
+    return fetch_entity_as_json('Classifier', {'id': classifier_id}, True)
+
+
+@api.route('/classifier_summary', methods=['GET'])
+def classifier_summary():
+    """
+    Summarize the classifiers as a csv.
+    For the fields in the csv, see `atm_server.db:summarize_classifiers` for details.
+    E.g.: /api/classifier_summary?datarun_id=1
+    """
+    dataset_id = request.args.get('datarset_id', None, type=int)
+    datarun_id = request.args.get('datarun_id', None, type=int)
+    hyperpartition_id = request.args.get('hyperpartition_id', None, type=int)
+    method = request.args.get('method', None, type=str)
+    csv_data = summarize_classifiers(dataset_id, datarun_id, hyperpartition_id=hyperpartition_id, method=method)
+
+    def generate():
+        for row in csv_data:
+            yield ','.join(row) + '\n'
+    return Response(generate(), mimetype='text/csv')
+
 
 # route to post a new CSV file and create a datarun with enter_data
 @api.route('/enter_data', methods=['POST'])
@@ -281,7 +235,7 @@ def post_enter_data():
         run_conf = current_app.config['RUN_CONF']
         sql_conf = current_app.config['SQL_CONF']
         aws_conf = current_app.config['AWS_CONF']
-        run_per_partition =current_app.config['RUN_PER_PARTITION']
+        run_per_partition = current_app.config['RUN_PER_PARTITION']
         # we need to set a customized train_path but without modifying the
         # global run_conf object, so we deepcopy the run_conf object
 
@@ -290,7 +244,8 @@ def post_enter_data():
 
         enter_data(sql_conf, upload_run_conf, aws_conf, run_per_partition)
 
-        return json.dumps({'success': True})
+        return jsonify({'success': True})
+
 
 # route to activate a single worker
 @api.route('/simple_worker', methods=['GET'])
@@ -303,17 +258,17 @@ def dispatch_worker():
     """
 
     def _start_worker(pipe_end, *args):
-        stdout, stderr = start_worker(*args)
+        stdout, stderr, _ = start_worker(*args)
         pipe_end.send({
             'stdout': stdout,
             'stderr': stderr
         })
 
     parent_end, child_end = Pipe()
-    p = Process(target=_start_worker, args=(child_end, ))
-    
+    p = Process(target=_start_worker, args=(child_end,))
+
     p.start()
-    recieved = parent_end.recv()
+    received = parent_end.recv()
     p.join()
 
-    return jsonify(recieved)
+    return jsonify(received)
