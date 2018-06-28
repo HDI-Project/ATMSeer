@@ -16,18 +16,22 @@ export default class Methods extends React.Component<IProps, IState>{
     
     public render(){
         // const methodLen = Object.keys(methods).length
-        const used_methods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methods should be obtained by requesting server the config file
+        const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methods should be obtained by requesting server the config file
+        const unusedMethods = Object.keys(methods).filter((name:string)=>usedMethods.indexOf(name)<0)
         return <div className="methods">
-        {used_methods.map((name: string, i:number)=>{
+        {usedMethods.map((name: string, i:number)=>{
             const method = methods[name]
-            return <div key={method.name+i} className="methodContainer"
-                    style={{height: `20%`, width: '25%', float: 'left'}}>
+            return <div key={method.name+'_used'} className="usedMethodContainer"
+                    style={{height: `20%`, width: '25%'}}>
                 <div className="method">
                     <Method method={method} datarun={this.props.datarun}/>
                 </div>
-            </div>
+            </div>           
         })}
-            </div>
+        
+        {unusedMethods.map((name:string)=>(<div key ={name+'_unused'} className='unusedMethod'>{methods[name]['fullname']}</div>))}
+        </div>
+            
     }
 }
 
