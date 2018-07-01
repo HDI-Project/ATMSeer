@@ -12,6 +12,7 @@
     width: 100%;
     display: table-cell;
     vertical-align: middle;
+    border-right: 1px solid rgba(0,0,0,0.16);
 }
 
 .features{
@@ -26,4 +27,13 @@
 
 .feature{
     border-bottom: 1px solid rgba(0,0,0,0.16);
+}
+
+.boxButton{
+    border-left: 1px solid rgba(0,0,0,0.16);
+    height: 100%;
+    width: 100%;
+    vertical-align: middle;
+    text-align: center;
+
 }

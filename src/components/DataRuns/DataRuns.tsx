@@ -3,6 +3,7 @@ import * as React from "react";
 import {csv2json} from "../../helper"
 import Methods from './Methods';
 import {IDataRun} from '../../types';
+// import {DEV_URL} from '../../Const'
 import BarChart from './BarChart';
 
 
@@ -21,6 +22,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public async getData() {
         const res = await axios.get('../../viz/datarun2_gp.csv')
+        // const res = await axios.get(`${DEV_URL}/api/classifier_summary?datarun_id=${1}`)
         const run = res.data
         // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
         // const banditData = res.data

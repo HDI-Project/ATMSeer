@@ -2,7 +2,14 @@ import axios from "axios";
 import * as React from "react";
 import FeatureChart from "./FeatureChart"
 import { Upload, message, Icon, Col, Row } from 'antd';
+import { DEV_URL } from '../Const';
 import './DataView.css';
+
+const axiosInstance = axios.create({
+    baseURL: DEV_URL+'/api',
+    // timeout: 1000,
+    // headers: {'X-Custom-Header': 'foobar'}
+  });
 
 export interface IState {
     dataset: IFeature[]
@@ -47,11 +54,21 @@ export default class DataView extends React.Component<{}, IState>{
     public componentDidMount() {
         this.getData()
     }
+    public startDataRun(){
+        axiosInstance.get('/simple_worker')
+        .then((response)=> {
+            console.log(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    }
     public render() {
         // upload button
         const props = {
             name: 'file',
-            action: '',
+            action: `${DEV_URL}/api/enter_data`,
             headers: {
               authorization: '',
             },
@@ -67,14 +84,27 @@ export default class DataView extends React.Component<{}, IState>{
             },
           };
           const uploadButton = (
-            <div>
-              <Icon type={'plus'} />
+            <div >
+              <Icon type={'plus'} onClick={this.startDataRun()}/>
               <div className="ant-upload-text">
                 <div>Upload</div>
+                <div>New</div>
                 <div>Dataset</div>
               </div>
             </div>
           );
+        
+        // start data runs
+          const runButton = (
+            <div className='boxButton'>
+            <Icon type="caret-right" />
+            <div className="startRun" >
+              <div>Run</div>
+              <div>for this</div>
+              <div>Dataset</div>
+            </div>
+          </div>
+          )
           
 
         //render
@@ -90,20 +120,21 @@ export default class DataView extends React.Component<{}, IState>{
             })
             return <div className="instances shadowBox">
                     <Row className='datasetInfo' style={{height:'15%'}}>
-                    <Col span={16} className='datasetDetail'>
+                    <Col span={8} className='datasetDetail' style={{height:'100%'}}>
                         <div>
                             <h4>{features.length} features</h4> 
                             <h4>{dataset[0].data.length} instances</h4> 
                             <h4> {cate_classes.length} classes </h4> 
                         </div>
                     </Col>
-                    <Col span={8}>
-                        <Upload {...props} 
-                            name="avatar"
-                            listType="picture-card"
-                            className="avatar-uploader">
+                    <Col span={8} style={{height:'100%'}}>
+                        <Upload {...props}               
+                            listType="text">
                             {uploadButton}
                         </Upload>
+                    </Col>
+                    <Col span={8} style={{height:'100%'}}>
+                       {runButton}
                     </Col>
                         
                     </Row>
