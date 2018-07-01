@@ -1,8 +1,8 @@
 import { } from 'antd';
 import * as React from 'react';
-import * as methods from "../assets/methods.json";
-import { IMethod, IDataRun } from "../types";
-import {getColor} from '../helper';
+import * as methods from "../../assets/methods.json";
+import { IMethod, IDataRun } from "../../types";
+import {getColor} from '../../helper';
 import "./Methods.css"
 import ReactEcharts from "echarts-for-react";
 
@@ -38,29 +38,34 @@ export default class Methods extends React.Component<IProps, IState>{
 class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
     getOption(){
         const {method, datarun} = this.props
-        let parallelAxis=method.root_hyperparameters.map((p:string, idx:number)=>{
+        let parallelAxis: any[] = []
+        let idx = 0
+        method.root_hyperparameters.forEach((p:string)=>{
             let parameter = method['hyperparameters'][p]
             if (parameter['values']){ //category axis
-                return {dim:idx, name:p, type: 'category', data: parameter['values']} 
+                parallelAxis.push({dim:idx, name:p, type: 'category', data: parameter['values']} )
             }else if(parameter['range']){//value axis
                 if(parameter['range'].length>1){ //range in the form of [min, max]
-                    return {dim:idx, name:p, type: 'value', min: parameter['range'][0], max: parameter['range'][1]}
+                    parallelAxis.push( {dim:idx, name:p, type: 'value', min: parameter['range'][0], max: parameter['range'][1]} )
                 }else{ // range in the form of [max]
-                    return {dim:idx, name:p, type: 'value', min: 0, max: parameter['range'][0]}
+                    parallelAxis.push( {dim:idx, name:p, type: 'value', min: 0, max: parameter['range'][0]} )
                 }
                 
-            }else if(parameter['type']=='list'){
-                return {
-                    dim:idx, name:p, type: 'value', 
-                    min: parameter['element']['range'][0], 
-                    max: parameter['element']['range'][1]
+            }else if(parameter['type']=='list'){ // the hidden layer sizes in MLP
+                for (let i =0; i<parameter['list_length'].length; i++) {
+                    idx = idx+i
+                    parallelAxis.push({
+                        dim: idx, name:`${p}[${i}]`, type: 'value', 
+                        min: parameter['element']['range'][0], 
+                        max: parameter['element']['range'][1]
+                    })
                 }
             }
-            return {dim:idx, name:p, type: 'value'}
+            idx = idx+1
         })
         //performance as a value axis
         parallelAxis.push({
-            dim:method.root_hyperparameters.length, 
+            dim: idx, 
             name:'performance', 
             type:'value', 
             min:0, 
@@ -84,6 +89,13 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                     let [k, v] = p.split(' = ')
                     return par_dict[k] = v
                 })
+                // for the hidden layer sizes in MLP
+                if(par_dict['len(hidden_layer_sizes)']){
+                    for (let i=par_dict['len(hidden_layer_sizes)']; i<3; i++){
+                        par_dict[`hidden_layer_sizes[${i}]`]=0
+                    }
+                }
+                
                 let attrs = method.root_hyperparameters.map((p)=>par_dict[p])
                 attrs.push(parseFloat(datarun[4].data[idx].split(' +- ') )) // add perforamce
                 data.push( attrs  )
@@ -101,6 +113,7 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                 bottom: '10%',
                 left: '5%',
                 top: '30%',
+                right: '8%',
                 // height: '31%',
                 // width: '55%',
                 parallelAxisDefault: {

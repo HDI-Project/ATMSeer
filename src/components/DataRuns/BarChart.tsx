@@ -1,50 +1,8 @@
-import axios from "axios";
 import ReactEcharts from "echarts-for-react";
+import {getColor} from "../../helper"
 import * as React from "react";
-import {getColor, csv2json} from "../helper"
-import Methods from './Methods';
-import {IDataRun} from '../types';
 
-
-
-export interface IState{
-    dataruns: IDataRun[]
-}
-export interface IProps{
-}
-export default class DataRuns extends React.Component<IProps, IState>{
-    constructor(props: IProps) {
-        super(props)
-        this.state = {
-            dataruns:[]
-        }
-    }
-    public async getData() {
-        const res = await axios.get('../../viz/datarun2_gp.csv')
-        const run = res.data
-        // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
-        // const banditData = res.data
-        this.setState({dataruns: [run]})
-
-    }
-    public componentDidMount(){
-        this.getData()
-    }
-    public render(){
-        const {dataruns} = this.state
-        if (dataruns.length>0){
-            return <div style={{height: '100%'}}>
-            <BarChart run={dataruns[0]} height={30}/>
-            <Methods height={70} datarun={csv2json(dataruns[0])}/>
-            </div>
-        }else{
-            return <div />
-        }
-        
-    }
-}
-
-class BarChart extends React.Component<{run:any, height: number}, {}>{
+export default class BarChart extends React.Component<{run:any, height: number}, {}>{
     public getOption(){
         let points = this.props.run.split('\n')
         // remove the header and last row
