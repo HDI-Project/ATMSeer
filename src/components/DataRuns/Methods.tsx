@@ -52,20 +52,28 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                 }
                 
             }else if(parameter['type']=='list'){ // the hidden layer sizes in MLP
-                for (let i =0; i<parameter['list_length'].length; i++) {
-                    idx = idx+i
+                for (let hidden_l =0; hidden_l<parameter['list_length'].length; hidden_l++) {
+                    
                     parallelAxis.push({
-                        dim: idx, name:`${p}[${i}]`, type: 'value', 
-                        min: parameter['element']['range'][0], 
+                        dim: idx+hidden_l, name:`${p}[${hidden_l}]`, type: 'value', 
+                        min: 0, 
                         max: parameter['element']['range'][1]
                     })
                 }
+                idx = idx+parameter['list_length'].length-1
+                // parallelAxis.push({
+                //     dim: idx, name:p, type:'value'
+                // })
+                
+            }else{
+                parallelAxis.push({
+                    dim: idx, name:p, type:'value'
+                })
             }
-            idx = idx+1
         })
         //performance as a value axis
         parallelAxis.push({
-            dim: idx, 
+            dim: parallelAxis.length, 
             name:'performance', 
             type:'value', 
             min:0, 
@@ -79,6 +87,10 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                 return axis.data.length>1
             }
         })
+        //re organize the dim index after filtering and inserting
+        parallelAxis.forEach((p, idx:number)=>{
+            p.dim = idx
+        })
         let data:any[] = []
         datarun[1].data.forEach(((_method:string, idx:number)=>{
             if(_method == method.name){
@@ -90,14 +102,24 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                     return par_dict[k] = v
                 })
                 // for the hidden layer sizes in MLP
+
                 if(par_dict['len(hidden_layer_sizes)']){
-                    for (let i=par_dict['len(hidden_layer_sizes)']; i<3; i++){
+                    for (let i=parseInt(par_dict['len(hidden_layer_sizes)']); i<3; i++){
                         par_dict[`hidden_layer_sizes[${i}]`]=0
                     }
                 }
-                
-                let attrs = method.root_hyperparameters.map((p)=>par_dict[p])
-                attrs.push(parseFloat(datarun[4].data[idx].split(' +- ') )) // add perforamce
+
+                // add perforamce
+                par_dict['performance'] = parseFloat(datarun[4].data[idx].split(' +- ') )
+                let attrs = parallelAxis.map(p=>{
+                    
+                    let value = par_dict[p.name]
+                    if(p.type=='value'){
+                        return parseFloat(value)
+                    }else{
+                        return value
+                    }
+                })
                 data.push( attrs  )
             }
         }))
