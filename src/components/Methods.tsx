@@ -49,8 +49,14 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                     return {dim:idx, name:p, type: 'value', min: 0, max: parameter['range'][0]}
                 }
                 
+            }else if(parameter['type']=='list'){
+                return {
+                    dim:idx, name:p, type: 'value', 
+                    min: parameter['element']['range'][0], 
+                    max: parameter['element']['range'][1]
+                }
             }
-            return {dim:idx, name:p}
+            return {dim:idx, name:p, type: 'value'}
         })
         //performance as a value axis
         parallelAxis.push({
@@ -59,6 +65,14 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
             type:'value', 
             min:0, 
             max:1
+        })
+        //remove axes that only have one value
+        parallelAxis = parallelAxis.filter(axis=>{
+            if(axis.type=='value'){
+                return true
+            }else{
+                return axis.data.length>1
+            }
         })
         let data:any[] = []
         datarun[1].data.forEach(((_method:string, idx:number)=>{
