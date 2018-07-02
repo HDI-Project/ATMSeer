@@ -490,6 +490,7 @@
     },
     "mnb":{   
         "name": "mnb",
+        "fullname": "multinomial naive bayes",
         "class": "sklearn.naive_bayes.MultinomialNB",
         "hyperparameters": {
             "alpha": {

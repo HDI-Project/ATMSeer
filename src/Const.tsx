@@ -1,2 +1,3 @@
-export const URL = 'http://atm.hkustvis.org' 
-// export const URL = '0.0.0.0:3333'
+export const URL = process.env.NODE_ENV === 'development'
+    ? 'http://atmapi.hkustvis.org'
+    : 'http://atm.hkustvis.org';
