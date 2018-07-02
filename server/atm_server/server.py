@@ -5,6 +5,7 @@ try:
 except ImportError: 
     import json
 from flask import Flask
+from flask_cors import CORS
 
 from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         add_arguments_datarun, add_arguments_logging,
@@ -17,6 +18,7 @@ from atm_server.api import api
 def create_app(config=None):
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__)
+    CORS(app)
 
     # Update configs
     if app.config['ENV'] == 'production':
@@ -50,7 +52,7 @@ def add_arguments_server(parser):
 
     # API flags
     parser.add_argument('--host', default='0.0.0.0', help='Port in which to run the API')
-    parser.add_argument('--port', default=7779, help='Port in which to run the API')
+    parser.add_argument('--port', default=3333, help='Port in which to run the API')
     parser.add_argument('--debug', default=True, help='If true, run Flask in debug mode')
 
 
