@@ -2,11 +2,11 @@ import axios from "axios";
 import * as React from "react";
 import FeatureChart from "./FeatureChart"
 import { Upload, message, Icon, Col, Row } from 'antd';
-import { DEV_URL } from '../Const';
+import { URL } from '../Const';
 import './DataView.css';
 
 const axiosInstance = axios.create({
-    baseURL: DEV_URL+'/api',
+    baseURL: URL+'/api',
     // timeout: 1000,
     // headers: {'X-Custom-Header': 'foobar'}
   });
@@ -58,6 +58,7 @@ export default class DataView extends React.Component<{}, IState>{
         axiosInstance.get('/simple_worker')
         .then((response)=> {
             console.log(response);
+            message.success(`start a data run successfully`);
         })
         .catch((error) => {
             console.log(error);
@@ -68,7 +69,7 @@ export default class DataView extends React.Component<{}, IState>{
         // upload button
         const props = {
             name: 'file',
-            action: `${DEV_URL}/api/enter_data`,
+            action: `${URL}/api/enter_data`,
             headers: {
               authorization: '',
             },
@@ -85,11 +86,11 @@ export default class DataView extends React.Component<{}, IState>{
           };
           const uploadButton = (
             <div >
-              <Icon type={'plus'} onClick={this.startDataRun()}/>
+              <Icon type={'plus'} onClick={this.startDataRun} className='iconButton'/>
               <div className="ant-upload-text">
                 <div>Upload</div>
-                <div>New</div>
-                <div>Dataset</div>
+                {/* <div>New</div>
+                <div>Dataset</div> */}
               </div>
             </div>
           );
@@ -97,11 +98,11 @@ export default class DataView extends React.Component<{}, IState>{
         // start data runs
           const runButton = (
             <div className='boxButton'>
-            <Icon type="caret-right" />
+            <Icon type="caret-right" className='iconButton'/>
             <div className="startRun" >
               <div>Run</div>
-              <div>for this</div>
-              <div>Dataset</div>
+              {/* <div>for this</div>
+              <div>Dataset</div> */}
             </div>
           </div>
           )
@@ -120,20 +121,21 @@ export default class DataView extends React.Component<{}, IState>{
             })
             return <div className="instances shadowBox">
                     <Row className='datasetInfo' style={{height:'15%'}}>
-                    <Col span={8} className='datasetDetail' style={{height:'100%'}}>
+                    <Col span={8} className='dataViewCol'>
                         <div>
-                            <h4>{features.length} features</h4> 
-                            <h4>{dataset[0].data.length} instances</h4> 
-                            <h4> {cate_classes.length} classes </h4> 
+                            <h3><b>Dataset Overview</b></h3>
+                            <div>{features.length} features</div> 
+                            <div>{dataset[0].data.length} instances</div> 
+                            <div> {cate_classes.length} classes </div> 
                         </div>
                     </Col>
-                    <Col span={8} style={{height:'100%'}}>
+                    <Col span={8} className='dataViewCol'>
                         <Upload {...props}               
                             listType="text">
                             {uploadButton}
                         </Upload>
                     </Col>
-                    <Col span={8} style={{height:'100%'}}>
+                    <Col span={8} className='dataViewCol'>
                        {runButton}
                     </Col>
                         

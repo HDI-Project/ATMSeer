@@ -67,9 +67,9 @@ export default class FeatureChart extends React.Component<{feature:IFeature, cla
         // series.concat(boxSeries)
 
         const option = {
-            tooltip: {
-                position: 'top'
-            },
+            // tooltip: {
+            //     position: 'top'
+            // },
             legend:{},
             grid:{
                 left: '20%',

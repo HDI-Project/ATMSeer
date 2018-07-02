@@ -3,8 +3,16 @@ import * as React from "react";
 import {csv2json} from "../../helper"
 import Methods from './Methods';
 import {IDataRun} from '../../types';
-// import {DEV_URL} from '../../Const'
+import {URL} from '../../Const'
 import BarChart from './BarChart';
+
+const axiosInstance = axios.create({
+    baseURL: URL+'/api',
+    // timeout: 1000,
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+}
+  });
 
 
 
@@ -14,6 +22,7 @@ export interface IState{
 export interface IProps{
 }
 export default class DataRuns extends React.Component<IProps, IState>{
+    private intervalID:number
     constructor(props: IProps) {
         super(props)
         this.state = {
@@ -21,8 +30,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
         }
     }
     public async getData() {
-        const res = await axios.get('../../viz/datarun2_gp.csv')
-        // const res = await axios.get(`${DEV_URL}/api/classifier_summary?datarun_id=${1}`)
+        // const res = await axios.get('../../viz/datarun2_gp.csv')
+        const res = await axiosInstance.get(`/classifier_summary`)
         const run = res.data
         // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
         // const banditData = res.data
@@ -31,6 +40,10 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public componentDidMount(){
         this.getData()
+        // this.intervalID = window.setInterval(this.getData, 2500)
+    }
+    public componentWillUnmount() {
+        window.clearInterval(this.intervalID)
     }
     public render(){
         const {dataruns} = this.state

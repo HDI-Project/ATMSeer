@@ -16,7 +16,14 @@ export default class Methods extends React.Component<IProps, IState>{
     
     public render(){
         // const methodLen = Object.keys(methods).length
-        const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methods should be obtained by requesting server the config file
+        let allmethods = this.props.datarun[1]['data']
+        let usedMethods:string[] = []
+        allmethods.forEach((m:string)=>{
+            if(usedMethods.indexOf(m)==-1){
+                usedMethods.push(m)
+            }
+        })
+        // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methods should be obtained by requesting server the config file
         const unusedMethods = Object.keys(methods).filter((name:string)=>usedMethods.indexOf(name)<0)
         return <div className="methods">
         {usedMethods.map((name: string, i:number)=>{
@@ -92,6 +99,7 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
             p.dim = idx
         })
         let data:any[] = []
+        console.info(datarun)
         datarun[1].data.forEach(((_method:string, idx:number)=>{
             if(_method == method.name){
                 let par_dict = {}
@@ -110,9 +118,9 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                 }
 
                 // add perforamce
-                par_dict['performance'] = parseFloat(datarun[4].data[idx].split(' +- ') )
+                par_dict['performance'] = parseFloat(datarun[5].data[idx].split(' +- ') )
                 let attrs = parallelAxis.map(p=>{
-                    
+
                     let value = par_dict[p.name]
                     if(p.type=='value'){
                         return parseFloat(value)

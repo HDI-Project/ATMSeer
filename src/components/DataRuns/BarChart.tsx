@@ -8,9 +8,10 @@ export default class BarChart extends React.Component<{run:any, height: number},
         // remove the header and last row
         points.shift()
         points.splice(-1, 1)
+        
         let data = points.map((point:any)=>{
             point = point.split(',')
-            let performance = parseFloat( point[4].split("+-")[0] )
+            let performance = parseFloat( point[5].split("+-")[0] )
             let method = point[1]
             // let trialID = parseInt(point[0])
             return {
