@@ -203,12 +203,17 @@ def classifier_summary():
     datarun_id = request.args.get('datarun_id', None, type=int)
     hyperpartition_id = request.args.get('hyperpartition_id', None, type=int)
     method = request.args.get('method', None, type=str)
-    csv_data = summarize_classifiers(dataset_id, datarun_id, hyperpartition_id=hyperpartition_id, method=method)
+    summary = summarize_classifiers(dataset_id, datarun_id, hyperpartition_id=hyperpartition_id, method=method)
+    
+    csv_data = []
+    for row in summary:
+        csv_data.append(','.join(row) + '\n')
+    return csv_data
 
-    def generate():
-        for row in csv_data:
-            yield ','.join(row) + '\n'
-    return Response(generate(), mimetype='text/csv')
+    # def generate():
+    #     for row in csv_data:
+    #         yield ','.join(row) + '\n'
+    # return Response(generate(), mimetype='text/csv')
 
 
 # route to post a new CSV file and create a datarun with enter_data
