@@ -1,7 +1,7 @@
 import os
 import sys
 import copy
-
+import logging
 import argparse
 from io import StringIO
 
@@ -22,6 +22,8 @@ from .utils import flaskJSONEnCoder
 from .error import ApiError
 
 api = Blueprint('api', __name__)
+
+logger = logging.getLogger('atm_vis')
 
 
 def allowed_file(filename):
@@ -230,7 +232,22 @@ def post_enter_data():
         filename = secure_filename(file.filename)
         rel_filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         abs_filepath = os.path.abspath(rel_filepath)
-        file.save(rel_filepath)
+
+        if not os.path.exists(current_app.config['UPLOAD_FOLDER']):
+            os.makedirs(current_app.config['UPLOAD_FOLDER'])
+        if os.path.exists(abs_filepath):
+            file_name, file_extension = os.path.splitext(abs_filepath)
+            path_temp = file_name + '_%d' + file_extension
+            count = 2
+            while os.path.exists(abs_filepath):
+                abs_filepath = path_temp % count
+                count += 1
+                # Ugly hack to prevent dead loop
+                if count > 100:
+                    raise ValueError('The saved data file renamed to over 100, please rename the file and upload.')
+            logger.warning('Filename %s already exists, renamed and saved to %s' % (rel_filepath, abs_filepath))
+
+        file.save(abs_filepath)
 
         run_conf = current_app.config['RUN_CONF']
         sql_conf = current_app.config['SQL_CONF']
@@ -244,7 +261,7 @@ def post_enter_data():
 
         enter_data(sql_conf, upload_run_conf, aws_conf, run_per_partition)
 
-        return jsonify({'success': True})
+        return jsonify({'success': True, 'filename': os.path.split(abs_filepath)[1]})
 
 
 # route to activate a single worker

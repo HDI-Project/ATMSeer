@@ -6,12 +6,13 @@ export default class BarChart extends React.Component<{run:any, height: number},
     public getOption(){
         let points = this.props.run.split('\n')
         // remove the header and last row
-        points.shift()
+        let headers = points.shift().split(',')
         points.splice(-1, 1)
         
         let data = points.map((point:any)=>{
             point = point.split(',')
-            let performance = parseFloat( point[5].split("+-")[0] )
+            let performanceIdx = headers.indexOf('performance')
+            let performance = parseFloat( point[performanceIdx].split("+-")[0] )
             let method = point[1]
             // let trialID = parseInt(point[0])
             return {

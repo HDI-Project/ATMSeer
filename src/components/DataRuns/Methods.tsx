@@ -99,7 +99,6 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
             p.dim = idx
         })
         let data:any[] = []
-        console.info(datarun)
         datarun[1].data.forEach(((_method:string, idx:number)=>{
             if(_method == method.name){
                 let par_dict = {}
@@ -118,7 +117,9 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                 }
 
                 // add perforamce
-                par_dict['performance'] = parseFloat(datarun[5].data[idx].split(' +- ') )
+                let headers = datarun.map((d:{'name':string, 'data':any[]})=>d.name)
+                let performanceIdx = headers.indexOf('performance')
+                par_dict['performance'] = parseFloat(datarun[performanceIdx].data[idx].split(' +- ') )
                 let attrs = parallelAxis.map(p=>{
 
                     let value = par_dict[p.name]

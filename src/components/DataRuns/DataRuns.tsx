@@ -31,7 +31,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public async getData() {
         // const res = await axios.get('../../viz/datarun2_gp.csv')
-        const res = await axiosInstance.get(`/classifier_summary`)
+        const res = await axiosInstance.get(`/classifier_summary?datarun_id=1`)
         const run = res.data
         // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
         // const banditData = res.data

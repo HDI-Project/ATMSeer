@@ -36,6 +36,7 @@ def create_app(config=None):
     # Load ATM confs
     sql_conf, run_conf, aws_conf, log_conf = load_config(**config)
     app.config.update({'SQL_CONF': sql_conf, 'RUN_CONF': run_conf, 'AWS_CONF': aws_conf, 'LOG_CONF': log_conf})
+    app.config.update({'RUN_PER_PARTITION': config['run_per_partition']})
 
     @app.route('/hello')
     def hello():
