@@ -186,13 +186,18 @@ class Method extends React.Component<{method:IMethod, datarun:IDataRun}, {}>{
                     tooltip:{},
                     lineStyle: {
                         normal: {
-                            width: 2,
+                            width: 1,
                             opacity: 0.8,
                             color: getColor(method.name)
                         }
                     },
                     data,
-                }
+                },
+                // {
+                //     name: 'bar',
+                //     type: 'bar',
+                //     data: [120, 200, 150, 80, 70, 110, 130]
+                // }
             ],
             
         }
