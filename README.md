@@ -3,7 +3,13 @@
 
 # Setup
 
-First, go to `lib/atm`, and install ATM as described in [here](https://github.com/HDI-Project/ATM)
+First, run the follow commands to clone ATM as a submodule
+
+```
+git submodule init 
+git submodule update
+```
+Then, go to `lib/atm` and install ATM as described in [here](https://github.com/HDI-Project/ATM)
 
 Then go to `server/` and run `pip install -r requirements.txt`
 
