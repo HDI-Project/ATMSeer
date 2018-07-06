@@ -1,3 +1,5 @@
+import {IClassifier, IDatarun} from '../types';
+
 let names: string[] = []
 const COLORS: string[] = [
     // ' #9e0142',
@@ -73,24 +75,55 @@ const getColor = (name: string, palatte: number = 0): string =>{
 
 
 
-const csv2json=(csv: string|any)=>{
-    let lines = csv.split('\n')
-    let keys = lines[0].split(',').map(
-            (key:string)=>{
-                let data:any[] = []
-                return {name: key, data}
-            })
+// const parseDatarun=(csv: string|any)=>{
+//     let lines = csv.split('\n')
+//     let keys = lines[0].split(',').map(
+//             (key:string)=>{
+//                 let data:any[] = []
+//                 return {name: key, data}
+//             })
 
+//     lines.shift() //remove headers
+//     lines.splice(-1, 1) // remove lats empty line
+//     lines.forEach((row:string) => {
+//         const cells = row.split(',')
+//         cells.forEach((cell, idx)=>{
+//             keys[idx].data.push(cell)
+//         })
+//     });
+
+//     return keys
+// }
+
+
+
+const parseDatarun=(csv: string|any)=>{
+    let lines = csv.split('\n')
+    
+    let keys = lines[0].split(',')
+    let datarun:IDatarun = {}
+    
     lines.shift() //remove headers
     lines.splice(-1, 1) // remove lats empty line
-    lines.forEach((row:string) => {
+    lines.forEach((row:string, idx:number) => {
         const cells = row.split(',')
+        let record:IClassifier = {'trail ID':idx, method:''}
         cells.forEach((cell, idx)=>{
-            keys[idx].data.push(cell)
+            record[keys[idx]] = cell
         })
+        let methodIndex = keys.indexOf('method')
+        let methodName = cells[methodIndex]
+        if(datarun[methodName]){
+            datarun[methodName].push(record)
+        }else{
+            datarun[methodName] = [record]
+        }
+        
     });
 
-    return keys
+    //classify datarun based on methods type
+
+    return datarun
 }
 
 function asc(arr:number[]) {
@@ -154,4 +187,4 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
     };
 };
 
-export { getColor, csv2json, prepareBoxplotData }
+export { getColor, parseDatarun, prepareBoxplotData }

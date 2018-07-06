@@ -2,7 +2,7 @@ import ReactEcharts from "echarts-for-react";
 import {getColor} from "../../helper"
 import * as React from "react";
 
-export default class BarChart extends React.Component<{datarun:string|any, height: number}, {}>{
+export default class Histogram extends React.Component<{datarun:any, height: number}, {}>{
     public getOption(){
         let points = this.props.datarun.split('\n')
         // remove the header and last row
