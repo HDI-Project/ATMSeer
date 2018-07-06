@@ -49,7 +49,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         const {dataruns} = this.state
         if (dataruns.length>0){
             return <div style={{height: '100%'}}>
-            <BarChart run={dataruns[0]} height={30}/>
+            <BarChart run={dataruns[0]} height={200}/>
             <Methods height={70} datarun={csv2json(dataruns[0])}/>
             </div>
         }else{
