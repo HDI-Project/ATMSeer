@@ -10,7 +10,7 @@ import {URL} from '../../Const'
 //components
 import Methods from './Methods';
 import BarChart from './BarChart';
-// import Histogram from "./Histogram";
+import Histogram from "./Histogram";
 
 const axiosInstance = axios.create({
     baseURL: URL+'/api',
@@ -57,7 +57,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         if (Object.keys(datarun).length>0){
             return <div style={{height: '100%'}}>
             <BarChart datarun={runCSV} height={20} />
-            {/* <Histogram datarun={datarun} height={20}/> */}
+            <Histogram datarun={datarun} height={20}/>
             <Methods height={80} datarun={datarun}/>
             </div>
         }else{

@@ -1,32 +1,61 @@
 import ReactEcharts from "echarts-for-react";
 import {getColor} from "../../helper"
 import * as React from "react";
+import { IDatarun } from "../../types";
 
-export default class Histogram extends React.Component<{datarun:any, height: number}, {}>{
+export interface IProps{
+    datarun:IDatarun, height: number
+}
+
+export interface IState{
+    step: number
+    yAxis: 'absolute'|'relative'
+}
+
+export default class Histogram extends React.Component<IProps, IState>{
+    constructor(props:IProps){
+        super(props)
+        this.state={
+            step :0.05, 
+            yAxis:'absolute' //'absolute' or 'relative
+        }
+    }
     public getOption(){
-        let points = this.props.datarun.split('\n')
-        // remove the header and last row
-        let headers = points.shift().split(',')
-        points.splice(-1, 1)
-        
-        let data = points.map((point:any)=>{
-            point = point.split(',')
-            let performanceIdx = headers.indexOf('performance')
-            let performance = parseFloat( point[performanceIdx].split("+-")[0] )
-            let method = point[1]
-            // let trialID = parseInt(point[0])
+        const {datarun} = this.props
+        let {step, yAxis} = this.state
+        let series = Object.keys(datarun).map((name:string)=>{
+            let data:number[] = []
+            for (let i =0; i<1/step; i++){
+                data.push(0)
+            }
+            datarun[name].forEach(classifier=>{
+                let performance = parseFloat(classifier['performance'].split(' +- ')[0])
+                let rangeIdx = Math.floor(performance/step)
+                data[rangeIdx] = data[rangeIdx]+1
+            })
+            if (yAxis=='relative'){
+                let max = Math.max(...data)
+                data = data.map(d=>d/max)
+            }
+            
             return {
-                value: performance,
-                itemStyle: {
-                     color: getColor(method)
-                }
+                type: 'line',
+                smooth: false,
+                data,
+                lineStyle:{
+                    color: getColor(name)
+                },
             }
         })
+
+        let xAxisData:string[] = []
+        for (let i =0; i<1/step; i++){
+            xAxisData.push(`${(i*step).toFixed(2)}-${((i+1)*step).toFixed(2)}`)
+        }
         const option = {
             xAxis: {
                 type: 'category',
-                // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                // type: 'value'
+                data: xAxisData,
             },
             yAxis: {
                 type: 'value'
@@ -35,24 +64,9 @@ export default class Histogram extends React.Component<{datarun:any, height: num
                 left: '5%',
                 right: '5%',
                 top: '5%',
-                bottom: '5%',
+                bottom: '12%',
             },
-            tooltip:{},
-            series: [{
-                data: data,
-                type: 'bar',
-                itemStyle: {
-                    normal: {
-                    },
-                    emphasis: {
-                        barBorderWidth: 1,
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowOffsetY: 0,
-                        shadowColor: 'rgba(0,0,0,0.5)'
-                    }
-                }
-            }]
+            series,
         };
         return option
     }
