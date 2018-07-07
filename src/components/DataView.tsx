@@ -16,7 +16,7 @@ export interface IState {
 }
 export interface IFeature{
     name: string,
-    data: number[]
+    data: any[] // Revised number[] to any[]
 }
 // export interface IDataset{
 //     name:string,
@@ -30,9 +30,8 @@ export default class DataView extends React.Component<{}, IState>{
         }
     }
     public async getData() {
-        const res = await axios.get('../../viz/pollution_1.csv') // this should be changed to the server response later
-        const datum = res.data
-        
+        const res = await axios.get('../../viz/pollution_1_test.csv') // this should be changed to the server response later
+        const datum = res.data.trim() //trim to remove the last blank line
         const lines = datum.split('\n')
         const features = lines[0].split(',').map(
             (feature:string)=>{
@@ -41,10 +40,16 @@ export default class DataView extends React.Component<{}, IState>{
         lines.splice(0, 1)
         const instances = lines
         // for each row
+        // Revised the data type to support the category feature
         instances.forEach((ins:string) => {
             const values = ins.split(',')
             values.forEach((v, idx)=>{
-                features[idx].data.push(parseFloat(v))
+                let _v = parseFloat(v)
+                if(isNaN(_v)){
+                    features[idx].data.push(v)
+                }else{
+                    features[idx].data.push(_v)
+                }
             })
         });
         this.setState({
@@ -110,6 +115,7 @@ export default class DataView extends React.Component<{}, IState>{
 
         //render
         const { dataset } = this.state
+        console.log('this.state',this.state);
         const classes = dataset.pop()
         if(classes){           
             const features = dataset
