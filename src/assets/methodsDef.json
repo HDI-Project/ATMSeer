@@ -426,7 +426,7 @@
     "mlp": {   
         "name": "mlp",
         "class": "sklearn.neural_network.MLPClassifier",
-        "fullname": "multiple layer process",
+        "fullname": "multiple layer perceptron",
         "hyperparameters": {
             "batch_size": {
                 "type": "string",
@@ -476,8 +476,15 @@
         "root_hyperparameters": ["batch_size", "solver", "alpha", "activation", "hidden_layer_sizes", "_scale"],
         "conditional_hyperparameters": {
             "solver": {
-                "sgd": ["learning_rate_init", "learning_rate"],
-                "adam": ["learning_rate_init", "beta_1", "beta_2"]
+                "sgd": [
+                    "learning_rate_init", 
+                    "learning_rate"
+                ],
+                "adam": [
+                    "learning_rate_init", 
+                    "beta_1", 
+                    "beta_2"
+                ]
             }
         }
     },
