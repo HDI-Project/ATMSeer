@@ -109,7 +109,7 @@ export default class DataView extends React.Component<{}, IState>{
         // upload button
         const props = {
             name: 'file',
-            action: `${URL}/api/`,
+            action: `${URL}/api/enter_data`,
             headers: {
                 authorization: '',
             },
