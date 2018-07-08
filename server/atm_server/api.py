@@ -213,6 +213,11 @@ def classifier_summary():
     return Response(generate(), mimetype='text/csv')
 
 
+@api.route('/classifier_scores/<int:datarun_id>', methods=['GET'])
+def classifier_scores(datarun_id):
+    pass
+
+
 # route to post a new CSV file and create a datarun with enter_data
 @api.route('/enter_data', methods=['POST'])
 def post_enter_data():
@@ -259,9 +264,9 @@ def post_enter_data():
         upload_run_conf = copy.deepcopy(run_conf)
         upload_run_conf.train_path = abs_filepath
 
-        enter_data(sql_conf, upload_run_conf, aws_conf, run_per_partition)
+        datarun_id = enter_data(sql_conf, upload_run_conf, aws_conf, run_per_partition)
 
-        return jsonify({'success': True, 'filename': os.path.split(abs_filepath)[1]})
+        return jsonify({'success': True, 'filename': os.path.split(abs_filepath)[1], 'id': datarun_id})
 
 
 # route to activate a single worker
