@@ -42,11 +42,11 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
         //     }
         // })
 
-        const series = cate_classes.map((d, f_idx) => {
+        const series = cate_classes.map((f_idx) => {
             let data: any[] = []
             feature.data.forEach((d, idx) => {
                 if (classes.data[idx] == f_idx) {
-                    data.push([d, f_idx])
+                    data.push([d, 'class_'+f_idx])
                 }
             })
             return {
