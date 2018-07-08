@@ -17,7 +17,7 @@ export interface IState {
 }
 export interface IFeature {
     name: string,
-    data: number[]
+    data: any[] // Revised number[] to any[]
 }
 // export interface IDataset{
 //     name:string,
@@ -47,10 +47,16 @@ export default class DataView extends React.Component<{}, IState>{
         lines.splice(0, 1)
         const instances = lines
         // for each row
-        instances.forEach((ins: string) => {
+        // Revised the data type to support the category feature
+        instances.forEach((ins:string) => {
             const values = ins.split(',')
-            values.forEach((v, idx) => {
-                features[idx].data.push(parseFloat(v))
+            values.forEach((v, idx)=>{
+                let _v = parseFloat(v)
+                if(isNaN(_v)){
+                    features[idx].data.push(v)
+                }else{
+                    features[idx].data.push(_v)
+                }
             })
         });
         this.setState({
@@ -137,6 +143,7 @@ export default class DataView extends React.Component<{}, IState>{
 
         //render
         const { dataset } = this.state
+        console.log('this.state',this.state);
         const classes = dataset.pop()
         if (classes) {
             const features = dataset

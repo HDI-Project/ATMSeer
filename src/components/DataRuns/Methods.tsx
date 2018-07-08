@@ -255,7 +255,7 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
                     tooltip: {},
                     lineStyle: {
                         normal: {
-                            width: 2,
+                            width: 1,
                             opacity: 0.8,
                             color: getColor(methodDef.name)
                         }
