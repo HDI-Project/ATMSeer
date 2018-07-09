@@ -2,6 +2,7 @@ from flask import current_app, g
 from sqlalchemy import inspect
 
 from atm.database import Database, db_session
+from atm.constants import ClassifierStatus
 
 from .error import ApiError
 
@@ -107,7 +108,8 @@ def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=No
             db.Datarun.metric,
             db.Datarun.score_target)\
             .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
-            .filter(db.Classifier.datarun_id == db.Datarun.id)
+            .filter(db.Classifier.datarun_id == db.Datarun.id)\
+            .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
         if dataset_id is not None:
             query = query.join(db.Datarun) \
                 .filter(db.Datarun.dataset_id == dataset_id)

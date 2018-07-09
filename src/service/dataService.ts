@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { URL } from '../Const';
-import { IClassifier } from '../types';
 
 const API = `${URL}/api`;
 
-interface IDatasetInfo {
+export interface IDatasetInfo {
     id: number;
     d_features: number;
     k_classes: number;
@@ -12,24 +11,27 @@ interface IDatasetInfo {
     name: string;
 }
 
-interface IDatarunInfo {
+export interface IDatarunInfo {
     id: number;
     dataset_id: number;
     metric: string;
     selector: string;
     tuner: string;
     status: 'complete' | 'running' | 'pending';
-    name: string;
 }
 
-interface IHyperpartitionInfo {
+export interface IHyperpartitionInfo {
     id: number;
     method: string;
     status: 'incomplete' | 'gridding_done' | 'errored';
 }
 
-async function getDatasets(id?: number): Promise<IDatasetInfo | IDatasetInfo[]> {
-    const url = id ? `${API}/datasets/${id}` : `${API}/datasets`;
+export interface IDatarunStepScore {
+   [method: string]: number[]
+}
+
+export async function getDatasets(): Promise<IDatasetInfo[]> {
+    const url = `${API}/datasets`;
     const res = await axios.get(url);
     if (res.status === 200) {
         return res.data;
@@ -37,8 +39,8 @@ async function getDatasets(id?: number): Promise<IDatasetInfo | IDatasetInfo[]> 
     throw res;
 }
 
-async function getDataruns(id?: number): Promise<IDatarunInfo | IDatarunInfo[]> {
-    const url = id ? `${API}/dataruns/${id}` : `${API}/dataruns`;
+export async function getDataset(id: number): Promise<IDatasetInfo> {
+    const url = `${API}/datasets/${id}`;
     const res = await axios.get(url);
     if (res.status === 200) {
         return res.data;
@@ -46,7 +48,25 @@ async function getDataruns(id?: number): Promise<IDatarunInfo | IDatarunInfo[]> 
     throw res;
 }
 
-async function getHyperpartitions(id?: number): Promise<IHyperpartitionInfo | IHyperpartitionInfo[]> {
+export async function getDataruns(params?: {dataset_id: number}): Promise<IDatarunInfo[]> {
+    const url = `${API}/dataruns`;
+    const res = await axios.get(url, {params});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function getDatarun(id: number): Promise<IDatarunInfo> {
+    const url = `${API}/dataruns/${id}`;
+    const res = await axios.get(url);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function getHyperpartitions(id?: number): Promise<IHyperpartitionInfo | IHyperpartitionInfo[]> {
     const url = id ? `${API}/hyperpartitions/${id}` : `${API}/hyperpartitions`;
     const res = await axios.get(url);
     if (res.status === 200) {
@@ -55,8 +75,7 @@ async function getHyperpartitions(id?: number): Promise<IHyperpartitionInfo | IH
     throw res;
 }
 
-
-async function getDatasetCSV(id: number): Promise<string> {
+export async function getDatasetCSV(id: number): Promise<string> {
     const url = `${API}/dataset_file/${id}`;
     const res = await axios.get(url);
     if (res.status === 200) {
@@ -65,13 +84,13 @@ async function getDatasetCSV(id: number): Promise<string> {
     throw res;
 }
 
-async function getDatarunStepsScores(
+export async function getDatarunStepsScores(
     id: number,
     classifier_start: number | null = null,
     classifier_end: number | null = null
-): Promise<string> {
+): Promise<IDatarunStepScore[]> {
     const url = `${API}/datarun_steps_scores/${id}`;
-    const params = {classifier_start, classifier_end};
+    const params = {classifier_start, classifier_end, nice: true};
     const res = await axios.get(url, {params});
     if (res.status === 200) {
         return res.data;
@@ -79,10 +98,12 @@ async function getDatarunStepsScores(
     throw res;
 }
 
-export default {
-    getDatasets,
-    getDataruns,
-    getHyperpartitions,
-    getDatasetCSV,
-    getDatarunStepsScores,
-};
+export async function getClassifierSummary(datarun_id: number): Promise<string> {
+    const url = `${API}/classifier_summary`;
+    const params = {datarun_id};
+    const res = await axios.get(url, {params});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
