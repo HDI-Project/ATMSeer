@@ -29,7 +29,9 @@ export default class BarChart extends React.Component<{datarun:string|any, heigh
                 // type: 'value'
             },
             yAxis: {
-                type: 'value'
+                type: 'value',
+                min: 0,
+                max: 1,
             },
             grid:{
                 left: '5%',

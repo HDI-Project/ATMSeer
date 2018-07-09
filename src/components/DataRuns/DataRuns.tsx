@@ -26,18 +26,21 @@ export interface IState{
     runCSV:string
 }
 export interface IProps{
+    datarunID: number
 }
 export default class DataRuns extends React.Component<IProps, IState>{
     private intervalID:number
     constructor(props: IProps) {
         super(props)
+        this.getData = this.getData.bind(this)
         this.state = {
             runCSV:''
         }
     }
     public async getData() {
         // const res = await axios.get('../../viz/datarun2_gp.csv')
-        const res = await axiosInstance.get(`/classifier_summary?datarun_id=1`)
+        const {datarunID} = this.props
+        const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
         const run = res.data
         // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
         // const banditData = res.data
@@ -46,7 +49,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public componentDidMount(){
         this.getData()
-        // this.intervalID = window.setInterval(this.getData, 2500)
+        // repeatedly get data
+        this.intervalID = window.setInterval(this.getData, 2500)
     }
     public componentWillUnmount() {
         window.clearInterval(this.intervalID)

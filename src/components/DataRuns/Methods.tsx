@@ -170,9 +170,11 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
         // construct echarts option
         const option = {
             title: {
-                text: methodDef.fullname,
+                text: `${methodDef.fullname}: ${classifiers.length}`,
+                left: '0.5%',
+                bottom: '0.5%',
                 textStyle: {
-                    fontSize: 12,
+                    fontSize: 15,
                 }
             },
             tooltip: {},

@@ -11,9 +11,14 @@ const axiosInstance = axios.create({
     // headers: {'X-Custom-Header': 'foobar'}
 });
 
+export interface IProps{
+    setDatarunID: (id:number)=>void
+}
+
 export interface IState {
     dataset: IFeature[],
-    fileList: any[]
+    fileList: any[],
+    running: boolean
 }
 export interface IFeature {
     name: string,
@@ -23,18 +28,21 @@ export interface IFeature {
 //     name:string,
 //     [key:string]:data
 // }
-export default class DataView extends React.Component<{}, IState>{
-    constructor(props: {}) {
+export default class DataView extends React.Component<IProps, IState>{
+    public datarunID:number
+    constructor(props: IProps) {
         super(props)
-        this.onChange = this.onChange.bind(this)
+        // this.onChange = this.onChange.bind(this)
         this.beforeUpload = this.beforeUpload.bind(this)
+        this.changeRunStatus = this.changeRunStatus.bind(this)
         this.state = {
             dataset: [],
-            fileList: []
+            fileList: [],
+            running: false
         }
     }
     public async getData() {
-        const res = await axios.get('../../viz/pollution_1.csv') // this should be changed to the server response later
+        const res = await axios.get('../../viz/dataset_31_credit-g.csv') // this should be changed to the server response later
         const datum = res.data
         this.parseData(datum)
     }
@@ -66,11 +74,17 @@ export default class DataView extends React.Component<{}, IState>{
     public componentDidMount() {
         this.getData()
     }
-    public startDataRun() {
+    public changeRunStatus() {
+        const {running} = this.state
+        const info = running?'stop run':'start run'
+        this.setState({running: !running})
+        message.info(info);
         axiosInstance.get('/simple_worker')
             .then((response) => {
                 console.log(response);
                 message.success(`start a data run successfully`);
+                this.props.setDatarunID(this.datarunID) // pass datarun id to datarun after clicking run button
+                this.setState({running: !this.state.running})
             })
             .catch((error) => {
                 console.log(error);
@@ -88,34 +102,41 @@ export default class DataView extends React.Component<{}, IState>{
                 this.parseData(content)
             }
         };
+
+        let formData = new FormData();
+        formData.append("file", file);
+        axiosInstance
+        .post("/enter_data", formData)
+        .then(response => {
+            
+            if (response.data.success === true) {
+                message.success(`${file.name} file uploaded successfully`);
+                this.datarunID = response.data.id
+            } else {
+                message.error(`${file.name} file upload failed.`);
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+
         return false
     }
     
-    public onChange(info: any) {
-console.info(info)
-        if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-            
-            message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-        }
-
         
-
-    }
     public render() {
+
+        const {running} = this.state
         // upload button
         const props = {
             name: 'file',
-            action: `${URL}/api/enter_data`,
+            // action: `${URL}/api/enter_data`,
             headers: {
                 authorization: '',
             },
-            onChange: this.onChange,
-            beforeUpload: this.beforeUpload
+            // onChange: this.onChange,
+            beforeUpload: this.beforeUpload // custom controll the upload event
 
         };
         const uploadButton = (
@@ -132,9 +153,9 @@ console.info(info)
         // start data runs
         const runButton = (
             <div className='boxButton'>
-                <Icon type="caret-right" onClick={this.startDataRun} className='iconButton' />
+                <Icon type={running?"pause":"caret-right"} onClick={this.changeRunStatus} className='iconButton' />
                 <div className="startRun" >
-                    <div>Run</div>
+                    <div>{running?"Stop":"Run"}</div>
                     {/* <div>for this</div>
               <div>Dataset</div> */}
                 </div>
@@ -144,10 +165,9 @@ console.info(info)
 
         //render
         const { dataset } = this.state
-        console.log('this.state',this.state);
-        const classes = dataset.pop()
+        const classes = dataset[dataset.length-1]
         if (classes) {
-            const features = dataset
+            const features = dataset.slice(0, dataset.length-1)
             let cate_classes: number[] = []
             classes.data.forEach(d => {
                 if (cate_classes.indexOf(d) == -1) {
@@ -188,8 +208,6 @@ console.info(info)
             </div>
         } else {
             return <Upload {...props}
-                name="avatar"
-                listType="picture-card"
                 className="avatar-uploader">
                 {uploadButton}
             </Upload>
