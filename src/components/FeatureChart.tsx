@@ -1,118 +1,162 @@
 import ReactEcharts from "echarts-for-react";
 import * as React from "react";
-import { prepareBoxplotData } from '../helper';
+// import { prepareBoxplotData } from '../helper';
 
 import { IFeature } from './DataView';
 
 export default class FeatureChart extends React.Component<{ feature: IFeature, classes: IFeature, cate_classes: number[] }>{
-    checkFeatureType() {
-        let feature_values = this.props.feature.data;
+    checkFeatureType(feature_values:IFeature['data']) {
+        
         for (let i = 0, ilen = feature_values.length; i < ilen; i++) {
             let d = feature_values[i];
-            if (typeof (d) != 'number') {
+            if (d && typeof (d) != 'number') {
                 return 'category';
             }
         }
         return 'numerical';
 
     };
-    getOption() {
+    getValOption() {
         let { feature, classes, cate_classes } = this.props
-        console.log('type', this.checkFeatureType())
-        // const title = cate_classes.map((d, idx)=>{
-        //     return {
-        //         text: `class_${d}`,
-        //         textBaseline: 'middle',
-        //         textStyle:{
-        //             fontSize: 12
-        //         },
-        //         top: (idx +  0.2 ) * 100 / (cate_classes.length) + '%',
-        //     } 
-        // })
+        const barNum = 15 //number of bars in the histogram
+        let minFeatureVal = Math.min(...feature.data)
+        let maxFeatureVal = Math.max(...feature.data)
+        let step = (maxFeatureVal-minFeatureVal)/barNum
+        let xAxesData:string[] = []
 
-        // const singleAxis = cate_classes.map((d, idx)=>{
-        //     return {
-        //         left: '20%',
-        //         boundaryGap: false,
-        //         height: '5%',
-        //         top: (idx + 0.2 ) * 100 / (cate_classes.length) + '%',
-        //         axisLabel: {
-        //             interval: 2
-        //         }
-        //     }
-        // })
+        for (let i = 0; i<barNum; i++){
+            xAxesData.push(`${(minFeatureVal + i*step).toPrecision(3)}~${(minFeatureVal + (i+1)*step).toPrecision(3)}`)
+        }
 
-        const series = cate_classes.map((d, f_idx) => {
-            let data: any[] = []
-            feature.data.forEach((d, idx) => {
-                if (classes.data[idx] == f_idx) {
-                    data.push([d, f_idx])
+        const series = cate_classes.map((classIdx) => {
+            let hisData:number[] = []
+            for(let i =0; i<barNum; i++){
+                hisData.push(0)
+            }
+            
+            feature.data.forEach((d, idx)=>{
+                if(classes.data[idx] == classIdx){
+                    let hisIdx = Math.floor((d-minFeatureVal)/step)
+                    hisData[hisIdx]+=1
                 }
             })
+            
+            
             return {
-                type: 'scatter',
-                symbolSize: 6,
-                itemStyle: {
-                    opacity: 0.3
-                },
-                data,
+                name: 'class_'+classIdx,
+                type:'bar',
+                data: hisData,
+                barGap: '20%',
+                barCategoryGap: '10%'
             }
         })
 
-        let boxData = prepareBoxplotData(
-            series.map(d => {
-                //from Array<[feature_value, classes_value]> to Array<feature_value>
-                return d.data.map(d => d[0])
-            }),
-            { layout: 'vertical' }
-        );
-        let boxSeries = {
-            type: 'boxplot',
-            itemStyle: {
-                borderWidth: 1,
-                borderColor: '#444',
-            },
-            data: boxData.boxData
-        }
-
-        // series.concat(boxSeries)
+        
 
         const option = {
-            // tooltip: {
-            //     position: 'top'
-            // },
-            legend: {},
+            tooltip:{},
             grid: {
-                left: '20%',
-                height: '60%',
-                top: '10%',
+                left: '10%',
+                height: '50%',
+                top: '20%',
             },
             title: { text: feature.name },
-            // singleAxis,
             xAxis: {
-                type: 'value',
-                min: 'dataMin',
-                max: 'dataMax',
-            },
-            yAxis: {
-                type: "category",
-                data: cate_classes.map(d => 'class_' + d),
-                axisLine: {
-                    show: false
+                type: 'category',    
+                data: xAxesData,
+                axisTick:{
+                    alighWithLabel: true,
+                    interval: 0,
                 },
                 axisLabel: {
-                    show: false
-                },
-                axisTick: {
-                    show: false
-                },
+                    rotate: -30,
+                    interval:1,
+                    fontSize: 10,
+                }
             },
-            series: [boxSeries, ...series],
-        };
+            yAxis: {
+                type: "value",
+                splitNumber: 2,
+            },
+            // itemStyle:{
+            //     opacity: 0.5
+            // },
+            series,
+        }
 
         return option
+       
+        // const series = cate_classes.map((classIdx) => {
+        //     let data: any[] = []
+        //     feature.data.forEach((d, idx) => {
+        //         if (classes.data[idx] == classIdx) {
+        //             data.push([d, 'class_'+classIdx])
+        //         }
+        //     })
+        //     return {
+        //         type: 'scatter',
+        //         symbolSize: 6,
+        //         itemStyle: {
+        //             opacity: 0.3
+        //         },
+        //         data,
+        //     }
+        // })
+
+        // let boxData = prepareBoxplotData(
+        //     series.map(d => {
+        //         //from Array<[feature_value, classes_value]> to Array<feature_value>
+        //         return d.data.map(d => d[0])
+        //     }),
+        //     { layout: 'vertical' }
+        // );
+        // let boxSeries = {
+        //     type: 'boxplot',
+        //     itemStyle: {
+        //         borderWidth: 1,
+        //         borderColor: '#444',
+        //     },
+        //     data: boxData.boxData
+        // }
+
+        // // series.concat(boxSeries)
+
+        // const option = {
+        //     // tooltip: {
+        //     //     position: 'top'
+        //     // },
+        //     legend: {},
+        //     grid: {
+        //         left: '20%',
+        //         height: '60%',
+        //         top: '10%',
+        //     },
+        //     title: { text: feature.name },
+        //     // singleAxis,
+        //     xAxis: {
+        //         type: 'value',
+        //         min: 'dataMin',
+        //         max: 'dataMax',
+        //     },
+        //     yAxis: {
+        //         type: "category",
+        //         data: cate_classes.map(d => 'class_' + d),
+        //         axisLine: {
+        //             show: false
+        //         },
+        //         axisLabel: {
+        //             show: false
+        //         },
+        //         axisTick: {
+        //             show: false
+        //         },
+        //     },
+        //     series: [boxSeries, ...series],
+        // };
+
+        // return option
     };
-    getBarChartOption() {
+    getCateOption() {
 
         let { feature, classes, cate_classes } = this.props
         const categorySet = {}
@@ -125,19 +169,21 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
         })
         const xAxisData = categories
 
-        const series = cate_classes.map((f_idx)=>{
+        const series = cate_classes.map((classIdx)=>{
             let data: any[] = []
             categories.forEach(()=>{
                 data.push(0)
             })
             feature.data.forEach((d, idx)=>{
-                if(classes.data[idx] == f_idx){
+                if(classes.data[idx] == classIdx){
                     data[categories.indexOf(d)] += 1
                 }              
             })
             return {
-                name: f_idx,
+                name: 'class_'+classIdx,
                 type: 'bar',
+                barGap:'5%',
+                barCategoryGap: '40%',
                 data
             }
         })
@@ -145,35 +191,26 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
 
         let option = {
             title: { text: feature.name },
-            legend: {
-                // data: ['bar', 'bar2'],
-                // align: 'left'
-            },
+            // legend: {
+            //     // data: ['bar', 'bar2'],
+            //     // align: 'left'
+            // },
             grid: {
-                left: '20%',
-                height: '60%',
-                top: '10%',
+                left: '10%',
+                height: '50%',
+                top: '20%',
             },
-            toolbox: {
-                // feature: {
-                //     magicType: {
-                //         type: ['stack', 'tiled']
-                //     },
-                //     dataView: {},
-                //     saveAsImage: {
-                //         pixelRatio: 2
-                //     }
-                // }
-            },
+            
             tooltip: {},
             xAxis: {
                 data: xAxisData,
-                axisLabel: false
-                
-                // silent: false,
-                // splitLine: {
-                //     show: false
-                // }
+                axisLabel: {
+                    interval:0,
+                    rotate: -30,
+                },
+                axisTick: {
+                    interval:0
+                }
             },
             yAxis: {
             },
@@ -185,24 +222,16 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
         return option
     }
     render() {
-        if (this.checkFeatureType() == 'category') {
-            console.log('props', this.props)
-            return <div className="featurex" style={{ height: '15%' }}>
+        let {feature} = this.props
+        let featureType = this.checkFeatureType(feature.data)
+        let option = featureType == 'numerical'?this.getValOption():this.getCateOption()
+        return <div className="featurex" style={{ height: '20%' }}>
                 {/* <div className='featureTitle'>{feature.name}</div> */}
                 <ReactEcharts
-                    option={this.getBarChartOption()}
+                    option={option}
                     style={{ height: `100%`, width: '100%' }}
                 />
             </div>
-        } else {
-            return <div className="featurex" style={{ height: '10%' }}>
-                {/* <div className='featureTitle'>{feature.name}</div> */}
-                <ReactEcharts
-                    option={this.getOption()}
-                    style={{ height: `100%`, width: '100%' }}
-                />
-            </div>
-        }
 
     }
 }

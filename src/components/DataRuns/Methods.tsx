@@ -170,9 +170,11 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
         // construct echarts option
         const option = {
             title: {
-                text: methodDef.fullname,
+                text: `${methodDef.fullname}: ${classifiers.length}`,
+                left: '0.5%',
+                top: '0.5%',
                 textStyle: {
-                    fontSize: 12,
+                    fontSize: 15,
                 }
             },
             tooltip: {},
@@ -182,17 +184,17 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
                     id:0,
                     left: '80%',
                     right: '2%',
-                    top: '30%',
-                    bottom: '10%',
+                    top: '35%',
+                    bottom: '5%',
                 }
             ],
             // axis for parallel coordinates
             parallelAxis,
             parallel: {
                 gridIndex: 0,
-                bottom: '10%',
+                bottom: '5%',
                 left: '5%',
-                top: '30%',
+                top: '35%',
                 right: '20%',
                 // height: '31%',
                 // width: '55%',
