@@ -3,18 +3,23 @@
     width: 100%;
     text-align: center;
 }
-
+.dataViewColContainer{
+    height: 100%;
+    overflow-x: scroll;
+}
 .dataViewCol{
     height: 100%;
+    width: 100%;
     display: table;
+    border-left: 1px solid rgba(0,0,0,0.16);
+    
 }
 .dataViewCol>div, .dataViewCol>span{
-    width: 100%;
+    max-width: 100%;
     height: 100%;
     display: table-cell;
     vertical-align: middle;
-    border-left: 1px solid rgba(0,0,0,0.16);
-    border-right: 1px solid rgba(0,0,0,0.16);
+    
 }
 
 .features{
@@ -34,4 +39,14 @@
 
 .iconButton{
     font-size: 45px;
+}
+
+.classLegend>span::before{
+    content: '■';
+    font-size: 15px;
+}
+
+.ant-upload-list-item-name{
+    max-width: 6vw;
+    text-overflow: ellipsis;
 }

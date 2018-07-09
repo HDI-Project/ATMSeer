@@ -6,6 +6,13 @@ export interface IMethod{
     conditional_hyperparameters: any
 }
 
-export interface IDataRun{
-    [key:string]:any
+export interface IDatarun{
+    [method:string]: IClassifier[]
+}
+
+export interface IClassifier{
+    "trail ID":number,
+    method:string,
+    [key:string]:number|string|any,
+    
 }

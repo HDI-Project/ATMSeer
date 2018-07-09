@@ -1,10 +1,16 @@
+// library
 import axios from "axios";
 import * as React from "react";
-import {csv2json} from "../../helper"
-import Methods from './Methods';
-import {IDataRun} from '../../types';
+
+//
+import {parseDatarun} from "../../helper"
+import {IDatarun} from '../../types';
 import {URL} from '../../Const'
+
+//components
+import Methods from './Methods';
 import BarChart from './BarChart';
+import Histogram from "./Histogram";
 
 const axiosInstance = axios.create({
     baseURL: URL+'/api',
@@ -17,40 +23,49 @@ const axiosInstance = axios.create({
 
 
 export interface IState{
-    dataruns: IDataRun[]
+    runCSV:string
 }
 export interface IProps{
+    datarunID: number
 }
 export default class DataRuns extends React.Component<IProps, IState>{
     private intervalID:number
     constructor(props: IProps) {
         super(props)
+        this.getData = this.getData.bind(this)
         this.state = {
-            dataruns:[]
+            runCSV:''
         }
     }
     public async getData() {
         // const res = await axios.get('../../viz/datarun2_gp.csv')
-        const res = await axiosInstance.get(`/classifier_summary?datarun_id=1`)
+        const {datarunID} = this.props
+        const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
         const run = res.data
+        console.info("get datarun by id", datarunID)
         // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
         // const banditData = res.data
-        this.setState({dataruns: [run]})
+        this.setState({runCSV: run})
 
     }
     public componentDidMount(){
-        this.getData()
-        // this.intervalID = window.setInterval(this.getData, 2500)
+        // this.getData()
+        // repeatedly get data
+        this.intervalID = window.setInterval(this.getData, 2500)
     }
     public componentWillUnmount() {
         window.clearInterval(this.intervalID)
     }
     public render(){
-        const {dataruns} = this.state
-        if (dataruns.length>0){
+        const {runCSV} = this.state
+        let datarun:IDatarun = parseDatarun(runCSV)
+        if (Object.keys(datarun).length>0){
             return <div style={{height: '100%'}}>
-            <BarChart run={dataruns[0]} height={30}/>
-            <Methods height={70} datarun={csv2json(dataruns[0])}/>
+            <div className="runTracker" style={{height: '20%', display: "flex"}}>
+                <BarChart datarun={runCSV} width={60} />
+                <Histogram datarun={datarun} width={40}/>
+            </div>
+            <Methods height={80} datarun={datarun}/>
             </div>
         }else{
             return <div />
