@@ -128,3 +128,15 @@ def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=No
                 score_target[:-len('_judgment_metric')],
                 metric_string(classifier, score_target)
             ] for classifier, method, metric, score_target in query.all()]
+
+
+def fetch_dataset_path(dataset_id, train=True):
+    db = get_db()
+    try:
+        with db_session(db):
+            dataset = db.get_dataset(dataset_id)
+            return dataset.train_path if train else dataset.test_path
+
+    except Exception:
+        raise ApiError('Not found', status_code=404)
+

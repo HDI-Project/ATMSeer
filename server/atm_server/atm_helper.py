@@ -40,7 +40,6 @@ def _selector_scores2rewards(selector, choice_scores):
     return choice_rewards
 
 
-
 def ucb_bandit_scores(choice_rewards):
     total_pulls = max(sum(len(r) for r in choice_rewards.values()), 1)
 
@@ -88,7 +87,7 @@ def get_datarun_steps_info(datarun_id, start_classifier_id=None, end_classifier_
     # that haven't been scored yet.
     hyperpartition_scores = {fs.id: [] for fs in hyperpartitions}
     classifiers = db.get_classifiers(datarun_id=datarun_id, status=ClassifierStatus.COMPLETE)
-    selected_classifiers = [c for c in classifiers if c.hyperpartition_id not in hyperpartition_scores]
+    selected_classifiers = [c for c in classifiers if c.hyperpartition_id in hyperpartition_scores]
     # Create a temporary worker
     worker = Worker(db, datarun, public_ip=get_public_ip())
     bandit_scores_of_steps = []

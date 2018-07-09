@@ -17,9 +17,10 @@ from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         add_arguments_datarun, add_arguments_logging,
                         load_config, initialize_logging)
 
-from .db import fetch_entity, summarize_classifiers
 from .utils import flaskJSONEnCoder
 from .error import ApiError
+from .db import fetch_entity, summarize_classifiers, fetch_dataset_path
+from .atm_helper import get_datarun_steps_info
 
 api = Blueprint('api', __name__)
 
@@ -126,25 +127,45 @@ def fetch_entity_as_json(*args, **kwargs):
     return jsonify(fetch_entity(*args, **kwargs))
 
 
+# def read_file_in_chunks(file_path, chunk_size):
+
+
 ######################
 # API Starts here
 ######################
 
 
 @api.route('/datasets', methods=['GET'])
-def fetch_datasets():
+def get_datasets():
     """Fetch the info of all datasets"""
     return fetch_entity_as_json('Dataset')
 
 
 @api.route('/datasets/<int:dataset_id>', methods=['GET'])
-def fetch_dataset(dataset_id):
+def get_dataset(dataset_id):
     """Fetch the info of a dataset by id"""
     return fetch_entity_as_json('Dataset', {'id': dataset_id}, True)
 
 
+@api.route('/dataset_data/<int:dataset_id>', methods=['GET'])
+def get_dataset_data(dataset_id):
+    """Fetch the dataset file by id"""
+    train = request.args.get('train', True, type=bool)
+    dataset_path = fetch_dataset_path(dataset_id, train)
+
+    def read_in_chunks(chunk_size=1024):
+        f = open(dataset_path, 'r')
+        while True:
+            data = f.read(chunk_size)
+            if not data:
+                break
+            yield data
+        f.close()
+    return Response(read_in_chunks(), mimetype='text/csv')
+
+
 @api.route('/dataruns', methods=['GET'])
-def fetch_dataruns():
+def get_dataruns():
     """
     Fetch the info of dataruns. A query parameter of dataset_id is supported.
     E.g.: /api/dataruns?dataset_id=1
@@ -154,13 +175,13 @@ def fetch_dataruns():
 
 
 @api.route('/dataruns/<int:datarun_id>', methods=['GET'])
-def fetch_datarun(datarun_id):
+def get_datarun(datarun_id):
     """Fetch the info of a datarun by id"""
     return fetch_entity_as_json('Datarun', {'id': datarun_id}, True)
 
 
 @api.route('/hyperpartitions', methods=['GET'])
-def fetch_hyperpartitions():
+def get_hyperpartitions():
     """
     Fetch the info of hyperpartitions.
     E.g.: /api/hyperpartitions?dataset_id=1&datarun_id=1
@@ -171,13 +192,13 @@ def fetch_hyperpartitions():
 
 
 @api.route('/hyperpartitions/<int:hyperpartition_id>', methods=['GET'])
-def fetch_hyperpartition(hyperpartition_id):
+def get_hyperpartition(hyperpartition_id):
     """Fetch the info of a hyperpartition by id"""
     return fetch_entity_as_json('hyperpartition', {'id': hyperpartition_id}, True)
 
 
 @api.route('/classifiers', methods=['GET'])
-def fetch_classifiers():
+def get_classifiers():
     """
     Fetch the info of classifiers.
     E.g.: /api/classifiers?datarun_id=1&hyperpartition_id=1
@@ -189,13 +210,13 @@ def fetch_classifiers():
 
 
 @api.route('/classifiers/<int:classifier_id>', methods=['GET'])
-def fetch_classifier(classifier_id):
+def get_classifier(classifier_id):
     """Fetch the info of a classifier by id"""
     return fetch_entity_as_json('Classifier', {'id': classifier_id}, True)
 
 
 @api.route('/classifier_summary', methods=['GET'])
-def classifier_summary():
+def get_classifier_summary():
     """
     Summarize the classifiers as a csv.
     For the fields in the csv, see `atm_server.db:summarize_classifiers` for details.
@@ -213,9 +234,12 @@ def classifier_summary():
     return Response(generate(), mimetype='text/csv')
 
 
-@api.route('/classifier_scores/<int:datarun_id>', methods=['GET'])
-def classifier_scores(datarun_id):
-    pass
+@api.route('/datarun_steps_scores/<int:datarun_id>', methods=['GET'])
+def get_datarun_steps_scores(datarun_id):
+    start_classifier_id = request.args.get('start_classifier_id', None, type=int)
+    end_classifier_id = request.args.get('end_classifier_id', None, type=int)
+    scores_of_steps = get_datarun_steps_info(datarun_id, start_classifier_id, end_classifier_id)
+    return jsonify(scores_of_steps)
 
 
 # route to post a new CSV file and create a datarun with enter_data
