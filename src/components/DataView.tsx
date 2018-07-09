@@ -35,7 +35,7 @@ export default class DataView extends React.Component<IProps, IState>{
         super(props)
         // this.onChange = this.onChange.bind(this)
         this.beforeUpload = this.beforeUpload.bind(this)
-        this.changeRunStatus = this.changeRunStatus.bind(this)
+        this.startDatarun = this.startDatarun.bind(this)
         this.state = {
             dataset: [],
             fileList: [],
@@ -75,17 +75,20 @@ export default class DataView extends React.Component<IProps, IState>{
     public componentDidMount() {
         this.getData()
     }
-    public changeRunStatus() {
+    public startDatarun() {
+        
         const {running} = this.state
         const info = running?'stop run':'start run'
-        this.setState({running: !running})
+        this.props.setDatarunID(this.datarunID) // pass datarun id to datarun after clicking run button
+        this.setState({running: true})
         message.info(info);
+
+
         axiosInstance.get('/simple_worker')
             .then((response) => {
-                console.log(response);
                 message.success(`start a data run successfully`);
-                this.props.setDatarunID(this.datarunID) // pass datarun id to datarun after clicking run button
-                this.setState({running: !this.state.running})
+                
+                this.setState({running: false})
             })
             .catch((error) => {
                 console.log(error);
@@ -99,7 +102,6 @@ export default class DataView extends React.Component<IProps, IState>{
         reader.onload = (evt: FileReaderProgressEvent) => {
             if (evt.target) {
                 let content = reader.result;
-                console.info(content)
                 this.parseData(content)
             }
         };
@@ -113,6 +115,7 @@ export default class DataView extends React.Component<IProps, IState>{
             if (response.data.success === true) {
                 message.success(`${file.name} file uploaded successfully`);
                 this.datarunID = response.data.id
+                console.info("create a data run id", this.datarunID)
             } else {
                 message.error(`${file.name} file upload failed.`);
             }
@@ -154,7 +157,7 @@ export default class DataView extends React.Component<IProps, IState>{
         // start data run button
         const runButton = (
             <div className='boxButton'>
-                <Icon type={running?"pause":"caret-right"} onClick={this.changeRunStatus} className='iconButton' />
+                <Icon type={running?"pause":"caret-right"} onClick={this.startDatarun} className='iconButton' />
                 <div className="startRun" >
                     <div>{running?"Stop":"Run"}</div>
                     {/* <div>for this</div>

@@ -42,13 +42,14 @@ export default class DataRuns extends React.Component<IProps, IState>{
         const {datarunID} = this.props
         const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
         const run = res.data
+        console.info("get datarun by id", datarunID)
         // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
         // const banditData = res.data
         this.setState({runCSV: run})
 
     }
     public componentDidMount(){
-        this.getData()
+        // this.getData()
         // repeatedly get data
         this.intervalID = window.setInterval(this.getData, 2500)
     }

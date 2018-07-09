@@ -24,6 +24,7 @@ class App extends React.Component<{}, IState> {
     }
 }
   public setDatarunID(id:number){
+    console.info("set datarun id", id)
     this.setState({datarunID: id})
   }
   public render() {

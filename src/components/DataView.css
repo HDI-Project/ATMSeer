@@ -45,3 +45,8 @@
     content: '■';
     font-size: 15px;
 }
+
+.ant-upload-list-item-name{
+    max-width: 6vw;
+    text-overflow: ellipsis;
+}
