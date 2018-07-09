@@ -6,6 +6,7 @@ from atm.worker import Worker
 from atm.constants import ClassifierStatus
 from atm.utilities import get_public_ip
 from btb.selection import UCB1, Uniform, RecentKReward, BestKReward, PureBestKVelocity, HierarchicalByAlgorithm
+from collections import defaultdict
 from flask import current_app, g
 import numpy as np
 
@@ -71,11 +72,35 @@ def selector_bandit_scores(selector, choice_scores):
         raise NotImplementedError("No implementation for class %s" % str(type(selector)))
 
 
-def get_datarun_steps_info(datarun_id, start_classifier_id=None, end_classifier_id=None):
-    if start_classifier_id is None:
-        start_classifier_id = -np.inf
-    if end_classifier_id is None:
-        end_classifier_id = np.inf
+def get_datarun_steps_info(datarun_id, classifier_start=None, classifier_end=None, nice=False):
+    """
+    Get the scores of the hyperpartitions/method in each step.
+    :param datarun_id: the id of the datarun
+    :param classifier_start: only return the scores of and after the `classifier_start` th classifier
+    :param classifier_end: only return the scores before the `classifier_end` th classifier,
+        Note that :classifier_start and :classifier_end are not ids, they starts from 1.
+        (This is because the caller may not know the classifier ids of the datarun)
+    :param nice: A flag for return nice format result
+    :return:
+        if nice is False,
+        [
+            {"1": 0.2, "2": 0.3, ...},
+            ...
+        ]
+        if nice is True,
+        [
+            {
+                "knn": [0.2, 0.3],
+                "logreg": [0.1],
+                ...
+            },
+            ...
+        ]
+    """
+    if classifier_start is None:
+        classifier_start = -np.inf
+    if classifier_end is None:
+        classifier_end = np.inf
     db = get_db()
 
     datarun = db.get_datarun(datarun_id=datarun_id)
@@ -91,18 +116,26 @@ def get_datarun_steps_info(datarun_id, start_classifier_id=None, end_classifier_
     # Create a temporary worker
     worker = Worker(db, datarun, public_ip=get_public_ip())
     bandit_scores_of_steps = []
-    for c in selected_classifiers:
-        if c.id >= end_classifier_id:
+    for i, c in enumerate(selected_classifiers):
+        if i >= classifier_end:
             break
         # the cast to float is necessary because the score is a Decimal;
         # doing Decimal-float arithmetic throws errors later on.
         score = float(getattr(c, datarun.score_target) or 0)
         hyperpartition_scores[c.hyperpartition_id].append(score)
         bandit_scores = selector_bandit_scores(worker.selector, hyperpartition_scores)
-        if c.id < start_classifier_id:
+        if i < classifier_start:
             continue
         bandit_scores_of_steps.append(bandit_scores)
+    # For a nicer formatted output
+    if nice:
+        results = []
+        hp_id2method = {fs.id: fs.method for fs in hyperpartitions}
+        for bandit_scores in bandit_scores_of_steps:
+            res = defaultdict(list)
+            for hp_id, score in bandit_scores.items():
+                res[hp_id2method[hp_id]].append(score)
+            results.append(res)
+        return results
 
     return bandit_scores_of_steps
-
-

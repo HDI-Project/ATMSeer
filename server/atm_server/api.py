@@ -1,4 +1,5 @@
 import os
+import time
 import sys
 import copy
 import logging
@@ -19,7 +20,7 @@ from atm.config import (add_arguments_aws_s3, add_arguments_sql,
 
 from .utils import flaskJSONEnCoder
 from .error import ApiError
-from .db import fetch_entity, summarize_classifiers, fetch_dataset_path
+from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db
 from .atm_helper import get_datarun_steps_info
 
 api = Blueprint('api', __name__)
@@ -70,7 +71,6 @@ def start_worker(*args):
     A copy of the code in atm/scripts/worker.py
     A call to this function will start and run a simple worker
     """
-
     parser = argparse.ArgumentParser(description='Add more classifiers to database')
     add_arguments_sql(parser)
     add_arguments_aws_s3(parser)
@@ -89,7 +89,7 @@ def start_worker(*args):
                         help="don't save models and metrics at all")
 
     # parse arguments and load configuration
-    _args = parser.parse_args(*args)
+    _args = parser.parse_args(args)
 
     # default logging config is different if initialized from the command line
     if _args.log_config is None:
@@ -147,8 +147,8 @@ def get_dataset(dataset_id):
     return fetch_entity_as_json('Dataset', {'id': dataset_id}, True)
 
 
-@api.route('/dataset_data/<int:dataset_id>', methods=['GET'])
-def get_dataset_data(dataset_id):
+@api.route('/dataset_file/<int:dataset_id>', methods=['GET'])
+def get_dataset_file(dataset_id):
     """Fetch the dataset file by id"""
     train = request.args.get('train', True, type=bool)
     dataset_path = fetch_dataset_path(dataset_id, train)
@@ -194,7 +194,7 @@ def get_hyperpartitions():
 @api.route('/hyperpartitions/<int:hyperpartition_id>', methods=['GET'])
 def get_hyperpartition(hyperpartition_id):
     """Fetch the info of a hyperpartition by id"""
-    return fetch_entity_as_json('hyperpartition', {'id': hyperpartition_id}, True)
+    return fetch_entity_as_json('Hyperpartition', {'id': hyperpartition_id}, True)
 
 
 @api.route('/classifiers', methods=['GET'])
@@ -236,9 +236,35 @@ def get_classifier_summary():
 
 @api.route('/datarun_steps_scores/<int:datarun_id>', methods=['GET'])
 def get_datarun_steps_scores(datarun_id):
-    start_classifier_id = request.args.get('start_classifier_id', None, type=int)
-    end_classifier_id = request.args.get('end_classifier_id', None, type=int)
-    scores_of_steps = get_datarun_steps_info(datarun_id, start_classifier_id, end_classifier_id)
+    """
+        Get the scores of the hyperpartitions/method in each step.
+        Query arameters:
+            classifier_start: only return the scores of and after the `classifier_start` th classifier
+            classifier_end: only return the scores before the `classifier_end` th classifier,
+                Note that :classifier_start and :classifier_end are not ids, they starts from 1.
+                (This is because the caller may not know the classifier ids of the datarun)
+            nice: A flag for return nice format result
+    :param datarun_id: the id of the datarun
+    :return:
+        if nice is False,
+        [
+            {"1": 0.2, "2": 0.3, ...},
+            ...
+        ]
+        if nice is True,
+        [
+            {
+                "knn": [0.2, 0.3],
+                "logreg": [0.1],
+                ...
+            },
+            ...
+        ]
+    """
+    classifier_start = request.args.get('classifier_start', None, type=int)
+    classifier_end = request.args.get('classifier_end', None, type=int)
+    nice = request.args.get('nice', True, type=bool)
+    scores_of_steps = get_datarun_steps_info(datarun_id, classifier_start, classifier_end, nice)
     return jsonify(scores_of_steps)
 
 
@@ -293,9 +319,8 @@ def post_enter_data():
         return jsonify({'success': True, 'filename': os.path.split(abs_filepath)[1], 'id': datarun_id})
 
 
-# route to activate a single worker
-@api.route('/simple_worker', methods=['GET'])
-def dispatch_worker():
+@api.route('/simple_worker', methods=['GET', 'POST'])
+def dispatch_simple_worker():
     """
     Executes the worker.py script inside a virtualenv and returns stdout and stderr
     as response.
@@ -303,18 +328,42 @@ def dispatch_worker():
     directory as the worker.py script.
     """
 
-    def _start_worker(pipe_end, *args):
-        stdout, stderr, _ = start_worker(*args)
-        pipe_end.send({
-            'stdout': stdout,
-            'stderr': stderr
-        })
-
-    parent_end, child_end = Pipe()
-    p = Process(target=_start_worker, args=(child_end,))
+    # parent_end, child_end = Pipe()
+    p = Process(target=start_worker)
 
     p.start()
-    received = parent_end.recv()
-    p.join()
+    return jsonify({'submitted': True})
+    # if block:
+    #     received = parent_end.recv()
+    #     p.join()
+    #
+    #     return jsonify(received)
 
-    return jsonify(received)
+
+# route to activate a single worker
+@api.route('/worker/<int:datarun_id>', methods=['GET', 'POST'])
+def dispatch_single_worker(datarun_id):
+    """
+    Executes the worker.py script inside a virtualenv and returns stdout and stderr
+    as response.
+    Note: It currently only works if rest_api_server.py file is in the same
+    directory as the worker.py script.
+    """
+    db = get_db()
+    datarun = db.get_datarun(datarun_id)
+    if datarun is None:
+        raise ApiError("No datarun found with the given id: %d" % datarun_id, 404)
+    if datarun.status == atm.constants.RunStatus.PENDING:
+        args = ['--dataruns', str(datarun_id)]
+        p = Process(target=start_worker, args=args)
+        p.start()
+        # sleep for a while in case the return status is still running
+        # time.sleep(0.001)
+
+    datarun = db.get_datarun(datarun_id)
+    return jsonify({'status': datarun.status})
+    # if block:
+    #     received = parent_end.recv()
+    #     p.join()
+    #
+    #     return jsonify(received)
