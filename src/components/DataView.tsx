@@ -4,6 +4,7 @@ import FeatureChart from "./FeatureChart"
 import { Upload, message, Icon, Col, Row } from 'antd';
 import { URL } from '../Const';
 import './DataView.css';
+import {EChartsColor} from "../helper";
 
 const axiosInstance = axios.create({
     baseURL: URL + '/api',
@@ -150,7 +151,7 @@ export default class DataView extends React.Component<IProps, IState>{
             </div>
         );
 
-        // start data runs
+        // start data run button
         const runButton = (
             <div className='boxButton'>
                 <Icon type={running?"pause":"caret-right"} onClick={this.changeRunStatus} className='iconButton' />
@@ -162,6 +163,7 @@ export default class DataView extends React.Component<IProps, IState>{
             </div>
         )
 
+        
 
         //render
         const { dataset } = this.state
@@ -174,15 +176,25 @@ export default class DataView extends React.Component<IProps, IState>{
                     cate_classes.push(d)
                 }
             })
+
+            // legend of classes
+            const legend = cate_classes.map((className,i)=>{
+                return <span key={className} className='classLegend'>
+                    <span style={{color: EChartsColor[i],  margin:'2px'}}/>
+                    {className}
+                </span>
+            })
+
             return <div className="instances shadowBox">
                 <Row className='datasetInfo' style={{ height: '15%', overflowY: "auto" }}>
                     <Col span={8} className='dataViewColContainer'>
                         <div className='dataViewCol'>
                             <div>
                                 <h3><b>Overview</b></h3>
+                                <div> {cate_classes.length} classes </div>
+                                <div>{legend}</div>
                                 <div>{features.length} features</div>
                                 <div>{dataset[0].data.length} instances</div>
-                                <div> {cate_classes.length} classes </div>
                             </div>
                         </div>
                     </Col>

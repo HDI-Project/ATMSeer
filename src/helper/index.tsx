@@ -95,7 +95,14 @@ const getColor = (name: string, palatte: number = 0): string =>{
 //     return keys
 // }
 
-
+const EChartsColor = [
+    "#c23531",
+    "#2f4554",
+    "#61a0a8",
+    "#d48265",
+    "#91c7ae",
+    "#749f83"
+]
 
 const parseDatarun=(csv: string|any)=>{
     let lines = csv.split('\n')
@@ -187,4 +194,4 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
     };
 };
 
-export { getColor, parseDatarun, prepareBoxplotData }
+export { getColor, EChartsColor, parseDatarun, prepareBoxplotData }

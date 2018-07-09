@@ -58,9 +58,13 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             grid: {
                 left: '10%',
                 height: '50%',
-                top: '20%',
+                top: '25%',
             },
-            title: { text: feature.name },
+            title: { 
+                text: feature.name,
+                fontSize: '10px',
+                top:'1%', 
+            },
             xAxis: {
                 type: 'category',    
                 data: xAxesData,
@@ -190,7 +194,11 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
 
 
         let option = {
-            title: { text: feature.name },
+            title: { 
+                text: feature.name ,
+                top:'1%',
+                fontSize: '10px',
+            },
             // legend: {
             //     // data: ['bar', 'bar2'],
             //     // align: 'left'
@@ -198,7 +206,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             grid: {
                 left: '10%',
                 height: '50%',
-                top: '20%',
+                top: '25%',
             },
             
             tooltip: {},

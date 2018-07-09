@@ -4,7 +4,7 @@ import * as React from "react";
 import { IDatarun } from "../../types";
 
 export interface IProps{
-    datarun:IDatarun, height: number
+    datarun:IDatarun, width: number
 }
 
 export interface IState{
@@ -39,11 +39,14 @@ export default class Histogram extends React.Component<IProps, IState>{
             }
             
             return {
-                type: 'line',
-                smooth: false,
+                type: 'bar',
+                // smooth: false,
+                barGap:'5%',
+                barCategoryGap: "5%",
                 data,
-                lineStyle:{
-                    color: getColor(name)
+                itemStyle:{
+                    color: getColor(name),
+                    opacity: 1
                 },
             }
         })
@@ -53,9 +56,22 @@ export default class Histogram extends React.Component<IProps, IState>{
             xAxisData.push(`${(i*step).toFixed(2)}-${((i+1)*step).toFixed(2)}`)
         }
         const option = {
+            title:{
+                text:"performance histogram",
+                left: '0.5%',
+                top: '0.5%',
+            },
             xAxis: {
                 type: 'category',
                 data: xAxisData,
+                axisTick:{
+                    interval:0,
+                },
+                axisLabel:{
+                    rotate:-30,
+                    interval:1,
+                    fontSize: 8,
+                }
             },
             yAxis: {
                 type: 'value'
@@ -63,8 +79,8 @@ export default class Histogram extends React.Component<IProps, IState>{
             grid:{
                 left: '5%',
                 right: '5%',
-                top: '5%',
-                bottom: '12%',
+                top: '25%',
+                bottom: '30%',
             },
             series,
         };
@@ -73,7 +89,7 @@ export default class Histogram extends React.Component<IProps, IState>{
     public render(){
         return <ReactEcharts 
         option = { this.getOption() }
-        style={{height: `${this.props.height}%`, width: '100%'}}
+        style={{height: `100%`, width: `${this.props.width}%`}}
         />
     }
 }
