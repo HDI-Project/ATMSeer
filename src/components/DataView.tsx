@@ -176,22 +176,28 @@ export default class DataView extends React.Component<IProps, IState>{
             })
             return <div className="instances shadowBox">
                 <Row className='datasetInfo' style={{ height: '15%', overflowY: "auto" }}>
-                    <Col span={8} className='dataViewCol'>
-                        <div>
-                            <h3><b>Overview</b></h3>
-                            <div>{features.length} features</div>
-                            <div>{dataset[0].data.length} instances</div>
-                            <div> {cate_classes.length} classes </div>
+                    <Col span={8} className='dataViewColContainer'>
+                        <div className='dataViewCol'>
+                            <div>
+                                <h3><b>Overview</b></h3>
+                                <div>{features.length} features</div>
+                                <div>{dataset[0].data.length} instances</div>
+                                <div> {cate_classes.length} classes </div>
+                            </div>
                         </div>
                     </Col>
-                    <Col span={8} className='dataViewCol'>
-                        <Upload {...props}
-                            listType="text">
-                            {uploadButton}
-                        </Upload>
+                    <Col span={8} className='dataViewColContainer'>
+                        <div className='dataViewCol'>
+                            <Upload {...props}
+                                listType="text">
+                                {uploadButton}
+                            </Upload>
+                        </div>
                     </Col>
-                    <Col span={8} className='dataViewCol'>
-                        {runButton}
+                    <Col span={8} className='dataViewColContainer'>
+                        <div className='dataViewCol'>
+                            {runButton}
+                        </div>
                     </Col>
 
                 </Row>

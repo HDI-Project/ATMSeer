@@ -3,10 +3,14 @@
     width: 100%;
     text-align: center;
 }
-
+.dataViewColContainer{
+    height: 100%;
+}
 .dataViewCol{
     height: 100%;
+    width: 100%;
     display: table;
+    border-left: 1px solid rgba(0,0,0,0.16);
     
 }
 .dataViewCol>div, .dataViewCol>span{
@@ -15,8 +19,10 @@
     overflow-x: auto;
     display: table-cell;
     vertical-align: middle;
-    border-left: 1px solid rgba(0,0,0,0.16);
-    border-right: 1px solid rgba(0,0,0,0.16);
+    
+}
+.ant-upload-list-text{
+    height: 100%;
 }
 
 .features{

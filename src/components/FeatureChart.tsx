@@ -46,6 +46,8 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
                 name: 'class_'+classIdx,
                 type:'bar',
                 data: hisData,
+                barGap: '20%',
+                barCategoryGap: '10%'
             }
         })
 
@@ -180,6 +182,8 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             return {
                 name: 'class_'+classIdx,
                 type: 'bar',
+                barGap:'5%',
+                barCategoryGap: '40%',
                 data
             }
         })
@@ -196,17 +200,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
                 height: '50%',
                 top: '20%',
             },
-            toolbox: {
-                // feature: {
-                //     magicType: {
-                //         type: ['stack', 'tiled']
-                //     },
-                //     dataView: {},
-                //     saveAsImage: {
-                //         pixelRatio: 2
-                //     }
-                // }
-            },
+            
             tooltip: {},
             xAxis: {
                 data: xAxisData,
