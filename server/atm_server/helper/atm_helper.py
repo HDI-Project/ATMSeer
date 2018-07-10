@@ -7,10 +7,9 @@ from atm.constants import ClassifierStatus
 from atm.utilities import get_public_ip
 from btb.selection import UCB1, Uniform, RecentKReward, BestKReward, PureBestKVelocity, HierarchicalByAlgorithm
 from collections import defaultdict
-from flask import current_app, g
 import numpy as np
 
-from .db import get_db
+from atm_server.db import get_db
 
 K_MIN = 2
 

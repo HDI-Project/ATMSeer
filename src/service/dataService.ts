@@ -1,7 +1,19 @@
 import axios from 'axios';
 import { URL } from '../Const';
 
-const API = `${URL}/api`;
+// const API = `${URL}/api`;
+
+const axiosInstance = axios.create({
+    baseURL: `${URL}/api/`,
+    // timeout: 1000,
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+    }
+});
+
+export interface IDatarunStatus {
+    status: 'complete' | 'running' | 'pending';
+}
 
 export interface IDatasetInfo {
     id: number;
@@ -11,13 +23,12 @@ export interface IDatasetInfo {
     name: string;
 }
 
-export interface IDatarunInfo {
+export interface IDatarunInfo extends IDatarunStatus {
     id: number;
     dataset_id: number;
     metric: string;
     selector: string;
     tuner: string;
-    status: 'complete' | 'running' | 'pending';
 }
 
 export interface IHyperpartitionInfo {
@@ -30,9 +41,15 @@ export interface IDatarunStepScore {
    [method: string]: number[]
 }
 
+export interface IFileUploadResponse {
+    success: boolean;
+    filename: string;
+    id: number;
+}
+
 export async function getDatasets(): Promise<IDatasetInfo[]> {
-    const url = `${API}/datasets`;
-    const res = await axios.get(url);
+    const url = `/datasets`;
+    const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
     }
@@ -40,8 +57,8 @@ export async function getDatasets(): Promise<IDatasetInfo[]> {
 }
 
 export async function getDataset(id: number): Promise<IDatasetInfo> {
-    const url = `${API}/datasets/${id}`;
-    const res = await axios.get(url);
+    const url = `/datasets/${id}`;
+    const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
     }
@@ -49,8 +66,8 @@ export async function getDataset(id: number): Promise<IDatasetInfo> {
 }
 
 export async function getDataruns(params?: {dataset_id: number}): Promise<IDatarunInfo[]> {
-    const url = `${API}/dataruns`;
-    const res = await axios.get(url, {params});
+    const url = `/dataruns`;
+    const res = await axiosInstance.get(url, {params});
     if (res.status === 200) {
         return res.data;
     }
@@ -58,8 +75,8 @@ export async function getDataruns(params?: {dataset_id: number}): Promise<IDatar
 }
 
 export async function getDatarun(id: number): Promise<IDatarunInfo> {
-    const url = `${API}/dataruns/${id}`;
-    const res = await axios.get(url);
+    const url = `/dataruns/${id}`;
+    const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
     }
@@ -67,8 +84,8 @@ export async function getDatarun(id: number): Promise<IDatarunInfo> {
 }
 
 export async function getHyperpartitions(id?: number): Promise<IHyperpartitionInfo | IHyperpartitionInfo[]> {
-    const url = id ? `${API}/hyperpartitions/${id}` : `${API}/hyperpartitions`;
-    const res = await axios.get(url);
+    const url = id ? `/hyperpartitions/${id}` : `/hyperpartitions`;
+    const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
     }
@@ -76,7 +93,7 @@ export async function getHyperpartitions(id?: number): Promise<IHyperpartitionIn
 }
 
 export async function getDatasetCSV(id: number): Promise<string> {
-    const url = `${API}/dataset_file/${id}`;
+    const url = `/dataset_file/${id}`;
     const res = await axios.get(url);
     if (res.status === 200) {
         return res.data;
@@ -89,9 +106,19 @@ export async function getDatarunStepsScores(
     classifier_start: number | null = null,
     classifier_end: number | null = null
 ): Promise<IDatarunStepScore[]> {
-    const url = `${API}/datarun_steps_scores/${id}`;
+    const url = `/datarun_steps_scores/${id}`;
     const params = {classifier_start, classifier_end, nice: true};
-    const res = await axios.get(url, {params});
+    const res = await axiosInstance.get(url, {params});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function postEnterData(file: any): Promise<IFileUploadResponse> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await axiosInstance.post(`/enter_data`, formData);
     if (res.status === 200) {
         return res.data;
     }
@@ -99,9 +126,27 @@ export async function getDatarunStepsScores(
 }
 
 export async function getClassifierSummary(datarun_id: number): Promise<string> {
-    const url = `${API}/classifier_summary`;
+    const url = `/classifier_summary`;
     const params = {datarun_id};
-    const res = await axios.get(url, {params});
+    const res = await axiosInstance.get(url, {params});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function startDatarun(datarun_id: number): Promise<IDatarunStatus> {
+    const url = `/start_datarun/${datarun_id}`;
+    const res = await axiosInstance.get(url);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function stopDatarun(datarun_id: number): Promise<IDatarunStatus> {
+    const url = `/stop_datarun/${datarun_id}`;
+    const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
     }
