@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { URL } from '../Const';
+import { IDatarunStatusTypes } from '../types/index';
 
 // const API = `${URL}/api`;
 
@@ -12,7 +13,7 @@ const axiosInstance = axios.create({
 });
 
 export interface IDatarunStatus {
-    status: 'complete' | 'running' | 'pending';
+    status: IDatarunStatusTypes;
 }
 
 export interface IDatasetInfo {
@@ -136,7 +137,7 @@ export async function getClassifierSummary(datarun_id: number): Promise<string> 
 }
 
 export async function startDatarun(datarun_id: number): Promise<IDatarunStatus> {
-    const url = `/start_datarun/${datarun_id}`;
+    const url = `/start_worker/${datarun_id}`;
     const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
@@ -145,7 +146,7 @@ export async function startDatarun(datarun_id: number): Promise<IDatarunStatus> 
 }
 
 export async function stopDatarun(datarun_id: number): Promise<IDatarunStatus> {
-    const url = `/stop_datarun/${datarun_id}`;
+    const url = `/stop_worker/${datarun_id}`;
     const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;

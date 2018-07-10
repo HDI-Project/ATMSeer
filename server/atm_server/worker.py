@@ -7,7 +7,7 @@ from multiprocessing import Process
 from flask import g
 
 import atm
-from atm.worker import work
+from atm.worker import work as atm_work
 from atm.database import Database
 from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         add_arguments_logging,
@@ -80,15 +80,15 @@ def work(*args):
     initialize_logging(log_config)
 
     # let's go
-    work(db=Database(**vars(sql_config)),
-         datarun_ids=_args.dataruns,
-         choose_randomly=_args.choose_randomly,
-         save_files=_args.save_files,
-         cloud_mode=_args.cloud_mode,
-         aws_config=aws_config,
-         log_config=log_config,
-         total_time=_args.time,
-         wait=False)
+    atm_work(db=Database(**vars(sql_config)),
+             datarun_ids=_args.dataruns,
+             choose_randomly=_args.choose_randomly,
+             save_files=_args.save_files,
+             cloud_mode=_args.cloud_mode,
+             aws_config=aws_config,
+             log_config=log_config,
+             total_time=_args.time,
+             wait=False)
 
 
 def dispatch_worker(datarun_id):
