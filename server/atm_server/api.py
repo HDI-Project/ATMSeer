@@ -15,7 +15,7 @@ from atm.enter_data import enter_data
 from .utils import flaskJSONEnCoder
 from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db
-from .worker import dispatch_worker, stop_worker, work
+from .worker import start_worker, stop_worker, work
 from atm_server.helper.atm_helper import get_datarun_steps_info
 
 api = Blueprint('api', __name__)
@@ -30,8 +30,6 @@ def allowed_file(filename):
     """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
-
-
 
 
 @api.errorhandler(ApiError)
@@ -270,8 +268,8 @@ def dispatch_single_worker(datarun_id):
     Dispatch a worker for a datarun (if the datarun is not complete or already running)
     Return the current status of the datarun
     """
+    start_worker(datarun_id)
     db = get_db()
-    dispatch_worker(datarun_id)
     datarun = db.get_datarun(datarun_id)
     return jsonify({'status': datarun.status})
 
@@ -284,6 +282,6 @@ def stop_single_worker(datarun_id):
     Return the status of the datarun
     """
     db = get_db()
-    stop_worker(datarun_id)
+    stop = stop_worker(datarun_id)
     datarun = db.get_datarun(datarun_id)
-    return jsonify({'status': datarun.status})
+    return jsonify({'status': datarun.status, 'success': stop})

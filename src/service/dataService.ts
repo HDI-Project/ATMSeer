@@ -95,7 +95,7 @@ export async function getHyperpartitions(id?: number): Promise<IHyperpartitionIn
 
 export async function getDatasetCSV(id: number): Promise<string> {
     const url = `/dataset_file/${id}`;
-    const res = await axios.get(url);
+    const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
     }
