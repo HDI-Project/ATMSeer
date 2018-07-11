@@ -28,6 +28,7 @@ class App extends React.Component<{}, IState> {
     };
 }
   public setDatarunID(id: number): void{
+    console.info("set datarun id", id)
     this.setState({datarunID: id})
   }
   public setDatasetID(datasetID: number): void{

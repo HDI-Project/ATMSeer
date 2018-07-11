@@ -94,8 +94,8 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
         //re organize the dim index after filtering and inserting
         parallelAxis.forEach((p, idx: number) => {
             p['dim'] = idx,
-            p['nameRotate'] = 45
-            p['axisLabel'] = {rotate: 45}
+                p['nameRotate'] = 45
+            p['axisLabel'] = { rotate: 45 }
             p['gridIndex'] = 0
         })
         let data: any[] = []
@@ -129,25 +129,25 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
             data.push(attrs)
         }
         ))
-       
+
         // prepare data for performance histogram
         const step = 0.05
-        let histogramData:number[] = []
-        for (let i =0; i<1/step; i++){
+        let histogramData: number[] = []
+        for (let i = 0; i < 1 / step; i++) {
             histogramData.push(0)
         }
-        classifiers.forEach(classifier=>{
+        classifiers.forEach(classifier => {
             let performance = parseFloat(classifier['performance'].split(' +- ')[0])
-            let rangeIdx = Math.floor(performance/step)
-            histogramData[rangeIdx] = histogramData[rangeIdx]+1
+            let rangeIdx = Math.floor(performance / step)
+            histogramData[rangeIdx] = histogramData[rangeIdx] + 1
         })
         // normalize to 0-1
         let max = Math.max(...histogramData)
-        histogramData = histogramData.map(d=>d/max)
-            
-        let yAxisData:string[] = []
-        for (let i =0; i<1/step; i++){
-            yAxisData.push(`${(i*step).toFixed(2)}-${((i+1)*step).toFixed(2)}`)
+        histogramData = histogramData.map(d => d / max)
+
+        let yAxisData: string[] = []
+        for (let i = 0; i < 1 / step; i++) {
+            yAxisData.push(`${(i * step).toFixed(2)}-${((i + 1) * step).toFixed(2)}`)
         }
         let barSeries = {
             name: methodDef.name,
@@ -156,32 +156,41 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
             xAxisIndex: 0,
             yAxisIndex: 0,
             data: histogramData,
-            itemStyle:{
+            itemStyle: {
                 color: getColor(methodDef.name),
                 opacity: 0.6,
             },
-            tooltip:{
-                formatter: (params: Object|any[], ticket: string)=>{
-                    return `${params['seriesName']} between ${params['name']}: ${params['data']*max}`
+            tooltip: {
+                formatter: (params: Object | any[], ticket: string) => {
+                    return `${params['seriesName']} between ${params['name']}: ${params['data'] * max}`
                 }
-            }           
+            }
         }
 
         // construct echarts option
         const option = {
             title: {
-                text: `${methodDef.fullname}: ${classifiers.length}`,
+                text: `${methodDef.fullname}: {term|${classifiers.length}}`,
                 left: '0.5%',
                 top: '0.5%',
                 textStyle: {
                     fontSize: 15,
+                    rich: {
+                        term: {
+                            borderColor: "black",
+                            borderWidth: 1,
+                            borderRadius: 15,
+                            padding: 5
+                        }
+                    }
                 }
+
             },
             tooltip: {},
-            grid:[             
+            grid: [
                 // this grid for the performance histogram
                 {
-                    id:0,
+                    id: 0,
                     left: '80%',
                     right: '2%',
                     top: '35%',
@@ -228,23 +237,23 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
                 }
             },
             // axes for performance histogram
-            xAxis:{
-                type:'value',
-                gridIndex:0,
-                id:0,
+            xAxis: {
+                type: 'value',
+                gridIndex: 0,
+                id: 0,
                 show: false,
-                axisLabel:{
-                    show:false
+                axisLabel: {
+                    show: false
                 }
             },
-            yAxis:{
-                type:'category',
-                id:0,
-                gridIndex:0,
+            yAxis: {
+                type: 'category',
+                id: 0,
+                gridIndex: 0,
                 data: yAxisData,
                 show: false,
-                axisLabel:{
-                    show:false
+                axisLabel: {
+                    show: false
                 }
             },
             series: [
@@ -252,13 +261,13 @@ class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassif
                     name: 'parallel',
                     type: 'parallel',
                     smooth: true,
-                    inactiveOpacity: 0.2,
-                    activeOpacity: 0.9,
+                    inactiveOpacity: 0,
+                    activeOpacity: 1,
                     tooltip: {},
                     lineStyle: {
                         normal: {
                             width: 1,
-                            opacity: 0.8,
+                            opacity: 1,
                             color: getColor(methodDef.name)
                         }
                     },

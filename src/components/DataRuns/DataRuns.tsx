@@ -52,7 +52,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
 
     }
     public componentDidMount(){
-        this.getData()
+        // this.getData()
         // repeatedly get data
         this.intervalID = window.setInterval(this.getData, 2500)
     }
@@ -64,8 +64,10 @@ export default class DataRuns extends React.Component<IProps, IState>{
         let datarun:IDatarun = parseDatarun(runCSV)
         if (Object.keys(datarun).length>0){
             return <div style={{height: '100%'}}>
-            <BarChart datarun={runCSV} height={20} />
-            <Histogram datarun={datarun} height={20}/>
+            <div className="runTracker" style={{height: '20%', display: "flex"}}>
+                <BarChart datarun={runCSV} width={60} />
+                <Histogram datarun={datarun} width={40}/>
+            </div>
             <Methods height={80} datarun={datarun}/>
             </div>
         }else{

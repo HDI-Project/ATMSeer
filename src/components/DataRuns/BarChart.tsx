@@ -2,7 +2,7 @@ import ReactEcharts from "echarts-for-react";
 import {getColor} from "../../helper"
 import * as React from "react";
 
-export default class BarChart extends React.Component<{datarun:string|any, height: number}, {}>{
+export default class BarChart extends React.Component<{datarun:string|any, width: number}, {}>{
     public getOption(){
         let points = this.props.datarun.split('\n')
         // remove the header and last row
@@ -23,21 +23,29 @@ export default class BarChart extends React.Component<{datarun:string|any, heigh
             }
         })
         const option = {
+            title:{
+                text:"data run tracker",
+                left: '0.5%',
+                top: '0.5%',
+            },
             xAxis: {
                 type: 'category',
+                name: "trial ID",
+                nameLocation: "middle",
+                nameGap: 5,
                 // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
                 // type: 'value'
             },
             yAxis: {
                 type: 'value',
-                min: 0,
+                min: 'dataMin',
                 max: 1,
             },
             grid:{
                 left: '5%',
                 right: '5%',
-                top: '5%',
-                bottom: '5%',
+                top: '25%',
+                bottom: '30%',
             },
             tooltip:{},
             series: [{
@@ -61,7 +69,7 @@ export default class BarChart extends React.Component<{datarun:string|any, heigh
     public render(){
         return <ReactEcharts 
         option = { this.getOption() }
-        style={{height: `${this.props.height}%`, width: '100%'}}
+        style={{height: `100%`, width: `${this.props.width}%`}}
         />
     }
 }
