@@ -22,6 +22,7 @@
   color: white;
   font-size: 3.5vh;
   box-shadow: 0 4px 4px 0 rgba(0,0,0,0.16), 0 0 0 4px rgba(0,0,0,0.08);
+  line-height: var(--header-height);
 }
 .appContent{
   background-color: white;
