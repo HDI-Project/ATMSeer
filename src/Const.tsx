@@ -1,3 +1,3 @@
 export const URL = process.env.NODE_ENV === 'development'
-    ? 'http://atmapi.hkustvis.org'
+    ? 'http://0.0.0.0:3333'
     : 'location.origin'

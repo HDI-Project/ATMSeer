@@ -7,19 +7,19 @@
     height: 100%;
     overflow-x: scroll;
 }
-.dataViewCol{
+/* .dataViewCol{
     height: 100%;
     width: 100%;
-    display: table;
     border-left: 1px solid rgba(0,0,0,0.16);
-    
-}
+
+} */
 .dataViewCol>div, .dataViewCol>span{
     max-width: 100%;
     height: 100%;
+
     display: table-cell;
     vertical-align: middle;
-    
+
 }
 
 .features{

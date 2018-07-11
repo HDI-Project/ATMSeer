@@ -1,0 +1,8 @@
+[*]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[{.travis.yml,*.json}]
+indent_style = space
+indent_size = 2

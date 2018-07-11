@@ -14,5 +14,11 @@ export interface IClassifier{
     "trail ID":number,
     method:string,
     [key:string]:number|string|any,
-    
+
+}
+
+export enum IDatarunStatusTypes {
+    COMPLETE = 'complete',
+    RUNNING = 'running',
+    PENDING = 'pending'
 }
