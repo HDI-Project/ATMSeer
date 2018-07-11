@@ -1,18 +1,20 @@
-import axios from "axios";
+// import axios from "axios";
 import * as React from "react";
 import FeatureChart from "./FeatureChart"
 import { Upload, message, Icon, Col, Row } from 'antd';
-import { URL } from '../Const';
+// import { URL } from '../Const';
+import { getDatasetCSV, postEnterData, startDatarun } from '../service/dataService';
 import './DataView.css';
 
-const axiosInstance = axios.create({
-    baseURL: URL + '/api',
-    // timeout: 1000,
-    // headers: {'X-Custom-Header': 'foobar'}
-});
+// const axiosInstance = axios.create({
+//     baseURL: URL + '/api',
+//     // timeout: 1000,
+//     // headers: {'X-Custom-Header': 'foobar'}
+// });
 
 export interface IProps{
-    setDatarunID: (id:number)=>void
+    // setDatarunID: (id:number)=>void
+    datarunID: number | null,
 }
 
 export interface IState {
@@ -29,7 +31,7 @@ export interface IFeature {
 //     [key:string]:data
 // }
 export default class DataView extends React.Component<IProps, IState>{
-    public datarunID:number
+    // public datarunID:number
     constructor(props: IProps) {
         super(props)
         // this.onChange = this.onChange.bind(this)
@@ -42,13 +44,16 @@ export default class DataView extends React.Component<IProps, IState>{
         }
     }
     public async getData() {
-        const res = await axios.get('../../viz/dataset_31_credit-g.csv') // this should be changed to the server response later
-        const datum = res.data
-        this.parseData(datum)
+        if (this.props.datarunID) {
+            const datum = await getDatasetCSV(this.props.datarunID)
+            // const res = await axios.get('../../viz/dataset_31_credit-g.csv') // this should be changed to the server response later
+            // const datum = res.data
+            this.parseData(datum)
+        }
     }
     public parseData(csv:string){
         const lines:string[] = csv.split('\n')
-        const features:IFeature[] = lines[0].split(',').map(
+        const features: IFeature[] = lines[0].split(',').map(
             (feature: string) => {
                 return { name: feature, data: [] }
             })
@@ -71,24 +76,30 @@ export default class DataView extends React.Component<IProps, IState>{
             dataset: features
         })
     }
-    public componentDidMount() {
-        this.getData()
+    public componentDidUpdate(prevProps: IProps, provState: IState) {
+        if (this.props.datarunID != prevProps.datarunID) {
+            this.getData();
+        }
     }
+    // public componentDidMount() {
+    //     this.getData()
+    // }
     public changeRunStatus() {
         const {running} = this.state
         const info = running?'stop run':'start run'
         this.setState({running: !running})
         message.info(info);
-        axiosInstance.get('/simple_worker')
-            .then((response) => {
-                console.log(response);
-                message.success(`start a data run successfully`);
-                this.props.setDatarunID(this.datarunID) // pass datarun id to datarun after clicking run button
-                this.setState({running: !this.state.running})
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        if (this.props.datarunID)
+            startDatarun(this.props.datarunID)
+                .then((response) => {
+                    console.log(response);
+                    message.success(`start a data run successfully`);
+                    // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
+                    this.setState({running: !this.state.running})
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
 
     }
 
@@ -103,28 +114,25 @@ export default class DataView extends React.Component<IProps, IState>{
             }
         };
 
-        let formData = new FormData();
-        formData.append("file", file);
-        axiosInstance
-        .post("/enter_data", formData)
-        .then(response => {
-            
-            if (response.data.success === true) {
-                message.success(`${file.name} file uploaded successfully`);
-                this.datarunID = response.data.id
-            } else {
-                message.error(`${file.name} file upload failed.`);
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+        postEnterData(file)
+            .then(data => {
+
+                if (data.success === true) {
+                    message.success(`${file.name} file uploaded successfully`);
+                    // this.datarunID = response.data.id
+                } else {
+                    message.error(`${file.name} file upload failed.`);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
 
 
         return false
     }
-    
-        
+
+
     public render() {
 
         const {running} = this.state

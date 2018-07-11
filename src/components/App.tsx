@@ -3,28 +3,35 @@ import * as React from 'react';
 import * as logo from '../assets/ATM-Logo.png';
 import './App.css';
 import DataRuns  from './DataRuns/';
-import DataView from "./DataView";
+// import DataView from "./DataView";
+import SidePanel from './SidePanel/SidePanel';
 
 
 
 const { Content, Header } = Layout;
 
 export interface IState {
-  datarunID: number
+  datarunID: number | null;
+  datasetID: number | null;
 }
 
 
 class App extends React.Component<{}, IState> {
   constructor(props: {}) {
-    super(props)
+    super(props);
     // this.onChange = this.onChange.bind(this)
-    this.setDatarunID = this.setDatarunID.bind(this)
+    this.setDatarunID = this.setDatarunID.bind(this);
+    this.setDatasetID = this.setDatasetID.bind(this);
     this.state = {
-        datarunID:1
-    }
+        datarunID: null,
+        datasetID: null
+    };
 }
-  public setDatarunID(id:number){
+  public setDatarunID(id: number): void{
     this.setState({datarunID: id})
+  }
+  public setDatasetID(datasetID: number): void{
+    this.setState({datasetID});
   }
   public render() {
     return (
@@ -37,7 +44,7 @@ class App extends React.Component<{}, IState> {
         <Content className='appContent' >
           <Row style={{"height": "100%"}}>
             <Col span={6} className="col">
-              <DataView setDatarunID={this.setDatarunID}/>
+              <SidePanel {...this.state} setDatarunID={this.setDatarunID} setDatasetID={this.setDatasetID}/>
             </Col >
 
             <Col span={18}  className="col">
@@ -46,7 +53,7 @@ class App extends React.Component<{}, IState> {
               </div>
             </Col>
             {/* <Col span={6} className="col">
-              
+
             </Col> */}
           </Row>
         </Content>

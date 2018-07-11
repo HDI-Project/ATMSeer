@@ -1,24 +1,25 @@
 // library
-import axios from "axios";
+// import axios from "axios";
 import * as React from "react";
 
 //
-import {parseDatarun} from "../../helper"
+import {parseDatarun} from "../../helper";
 import {IDatarun} from '../../types';
-import {URL} from '../../Const'
+// import {URL} from '../../Const';
+import {getClassifierSummary} from '../../service/dataService';
 
 //components
 import Methods from './Methods';
 import BarChart from './BarChart';
 import Histogram from "./Histogram";
 
-const axiosInstance = axios.create({
-    baseURL: URL+'/api',
-    // timeout: 1000,
-    headers: {
-        'Access-Control-Allow-Origin': '*',
-}
-  });
+// const axiosInstance = axios.create({
+//     baseURL: URL+'/api',
+//     // timeout: 1000,
+//     headers: {
+//         'Access-Control-Allow-Origin': '*',
+// }
+//   });
 
 
 
@@ -26,7 +27,7 @@ export interface IState{
     runCSV:string
 }
 export interface IProps{
-    datarunID: number
+    datarunID: number | null
 }
 export default class DataRuns extends React.Component<IProps, IState>{
     private intervalID:number
@@ -39,12 +40,15 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public async getData() {
         // const res = await axios.get('../../viz/datarun2_gp.csv')
-        const {datarunID} = this.props
-        const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
-        const run = res.data
-        // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
-        // const banditData = res.data
-        this.setState({runCSV: run})
+        // const {datarunID} = this.props
+        // const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
+        // const run = res.data
+        if (this.props.datarunID !== null) {
+            const run = await getClassifierSummary(this.props.datarunID);
+            // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
+            // const banditData = res.data
+            this.setState({runCSV: run})
+        }
 
     }
     public componentDidMount(){
@@ -67,7 +71,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         }else{
             return <div />
         }
-        
+
     }
 }
 

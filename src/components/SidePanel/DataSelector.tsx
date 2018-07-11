@@ -4,6 +4,8 @@ import { IDatasetInfo, IDatarunInfo, IDatarunStatus } from '../../service/dataSe
 import { getDatasets, getDataruns, getDatarun, postEnterData, startDatarun, stopDatarun } from '../../service/dataService';
 import { IDatarunStatusTypes } from '../../types/index';
 
+import "./DataSelector.css";
+
 const Option = Select.Option;
 
 export interface DataSelectorProps {
@@ -141,9 +143,9 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
             beforeUpload: this.beforeUpload // custom control the upload event
         };
         return (
-            <div>
+            <div className="data-selector">
                 <div>
-                    <h4>Datasets</h4>
+                    <span>Datasets</span>
                     <Row>
                         <Col span={16} className="dataViewColContainer">
                             <Select
