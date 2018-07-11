@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { getDatasetCSV } from '../../service/dataService';
 import FeatureChart from '../FeatureChart';
+import {EChartsColor} from "../../helper";
 
 import "./DataView.css";
 
@@ -80,20 +81,31 @@ export default class DataView extends React.Component<IProps, IState>{
         //render
         const { dataset } = this.state;
         const labels = dataset[dataset.length-1];
+
+
         if (labels) {
             const features = dataset.slice(0, dataset.length-1);
             const classSet = new Set(labels.data);
             const classes: number[] = Array.from(classSet);
+
+            //legend of classes
+            const legend = classes.map((className,i)=>{
+                return <span key={className} className='classLegend'>
+                    <span style={{color: EChartsColor[i],  margin:'2px'}}/>
+                    {className}
+                </span>
+            })
+
             return (<div className="data-view">
                 <div>
                     <h4>Overview</h4>
                     <hr/>
-                    <div>{features.length} features / {dataset[0].data.length} instances / {classes.length} classes</div>
+                    <div>{features.length} features / {dataset[0].data.length} instances / {classes.length} classes {legend}</div>
                 </div>
                 <div>
                     <h4>Feature Distribution</h4>
                     <hr/>
-                    <div className='features' style={{ height: '85%' }}>
+                    <div className='features' style={{ height:'calc(94vh - 300px)' }}>
                         {features.map((f: IFeature) =>
                             <FeatureChart
                                 feature={f} classes={labels}
