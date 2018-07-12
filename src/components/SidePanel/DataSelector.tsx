@@ -11,14 +11,16 @@ const Option = Select.Option;
 export interface DataSelectorProps {
     datasetID: number | null;
     datarunID: number | null;
+    datarunStatus: IDatarunStatusTypes;
     setDatasetID: (id: number) => void;
     setDatarunID: (id: number) => void;
+    setDatarunStatus: (status: IDatarunStatusTypes) => void;
 }
 
 export interface DataSelectorState {
     datasets: IDatasetInfo[];
     dataruns: IDatarunInfo[];
-    datarunStatus: IDatarunStatusTypes;
+    // datarunStatus: IDatarunStatusTypes;
 }
 
 export default class DataSelector extends React.Component<DataSelectorProps, DataSelectorState> {
@@ -31,19 +33,17 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         this.state = {
             datasets: [],
             dataruns: [],
-            datarunStatus: IDatarunStatusTypes.PENDING
+            // datarunStatus: IDatarunStatusTypes.PENDING
         };
     }
 
     public async getDatasets() {
         const datasets = await getDatasets();
-        console.log(datasets);
         this.setState({ datasets });
     }
 
     public async getDataruns(datasetID: number) {
         const dataruns = await getDataruns({ dataset_id: datasetID });
-        console.log(dataruns);
         this.setState({ dataruns });
         // Select the first run as default
         if (dataruns.length > 0) this.onSelectDatarun(dataruns[0].id);
@@ -79,7 +79,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
     }
 
     public onClickDataRun() {
-        const { datarunStatus } = this.state;
+        const { datarunStatus } = this.props;
         if (!this.props.datarunID) return;
         let promise: Promise<IDatarunStatus>;
         switch (datarunStatus) {
@@ -99,17 +99,17 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
             .then(datarun => {
                 switch (datarun.status) {
                     case IDatarunStatusTypes.RUNNING:
-                        message.info('start a data run successfully');
+                        message.info('datarun is now running');
                         break;
                     case IDatarunStatusTypes.PENDING:
-                        message.info('stop a data run successfully');
+                        message.info('datarun is pending');
                         break;
                     default:
-                        message.info('data run already complete');
+                        message.info('datarun already complete');
                     break;
                 }
                 // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
-                this.setState({ datarunStatus: datarun.status });
+                this.props.setDatarunStatus(datarun.status);
             })
             .catch(error => {
                 console.log(error);
@@ -124,13 +124,13 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         if (datarunID !== prevProps.datarunID && datarunID) {
             getDatarun(datarunID)
                 .then((datarun) => {
-                    this.setState({datarunStatus: datarun.status});
+                    this.props.setDatarunStatus(datarun.status);
                 })
         }
     }
 
     public render() {
-        const { datarunStatus } = this.state;
+        const { datarunStatus } = this.props;
         const running = datarunStatus === IDatarunStatusTypes.RUNNING;
         // upload button
         const uploadProps = {
@@ -146,7 +146,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
             <div className="data-selector">
                 <div>
                     <span>Datasets</span>
-                    <Row>
+                    <Row style={{marginBottom: '6px'}}>
                         <Col span={16} className="dataViewColContainer">
                             <Select
                                 placeholder="Select a dataset"

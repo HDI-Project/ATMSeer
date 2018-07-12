@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { URL } from '../Const';
-import { IDatarunStatusTypes } from '../types/index';
+import { IDatarunStatusTypes, IClassifierStatusTypes } from '../types/index';
 
 // const API = `${URL}/api`;
 
@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
     baseURL: `${URL}/api/`,
     // timeout: 1000,
     headers: {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': '*'
     }
 });
 
@@ -39,13 +39,24 @@ export interface IHyperpartitionInfo {
 }
 
 export interface IDatarunStepScore {
-   [method: string]: number[]
+    [method: string]: number[];
 }
 
 export interface IFileUploadResponse {
     success: boolean;
     filename: string;
     id: number;
+}
+
+export interface IClassifierInfo {
+    id: number;
+    datarun_id: number;
+    hyperpartition_id: number;
+    cv_metric: number;
+    cv_metric_std: number;
+    test_metric_std: number;
+    method: string;
+    hyperparameters: {[param: string]: boolean | number | string}
 }
 
 export async function getDatasets(): Promise<IDatasetInfo[]> {
@@ -66,9 +77,9 @@ export async function getDataset(id: number): Promise<IDatasetInfo> {
     throw res;
 }
 
-export async function getDataruns(params?: {dataset_id: number}): Promise<IDatarunInfo[]> {
+export async function getDataruns(params?: { dataset_id: number }): Promise<IDatarunInfo[]> {
     const url = `/dataruns`;
-    const res = await axiosInstance.get(url, {params});
+    const res = await axiosInstance.get(url, { params });
     if (res.status === 200) {
         return res.data;
     }
@@ -78,6 +89,19 @@ export async function getDataruns(params?: {dataset_id: number}): Promise<IDatar
 export async function getDatarun(id: number): Promise<IDatarunInfo> {
     const url = `/dataruns/${id}`;
     const res = await axiosInstance.get(url);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function getClassifiers(
+    datarun_id: number,
+    status: IClassifierStatusTypes = IClassifierStatusTypes.COMPLETE
+): Promise<IClassifierInfo[]> {
+    const url = `/classifiers`;
+    const params = { datarun_id, status };
+    const res = await axiosInstance.get(url, { params });
     if (res.status === 200) {
         return res.data;
     }
@@ -108,8 +132,22 @@ export async function getDatarunStepsScores(
     classifier_end: number | null = null
 ): Promise<IDatarunStepScore[]> {
     const url = `/datarun_steps_scores/${id}`;
-    const params = {classifier_start, classifier_end, nice: true};
-    const res = await axiosInstance.get(url, {params});
+    const params = { classifier_start, classifier_end, nice: true };
+    const res = await axiosInstance.get(url, { params });
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function getDatarunSummary(
+    id: number,
+    classifier_start: number | null = null,
+    classifier_end: number | null = null
+): Promise<IDatarunStepScore[]> {
+    const url = `/datarun_summary/${id}`;
+    const params = { classifier_start, classifier_end };
+    const res = await axiosInstance.get(url, { params });
     if (res.status === 200) {
         return res.data;
     }
@@ -118,7 +156,7 @@ export async function getDatarunStepsScores(
 
 export async function postEnterData(file: any): Promise<IFileUploadResponse> {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     const res = await axiosInstance.post(`/enter_data`, formData);
     if (res.status === 200) {
         return res.data;
@@ -128,8 +166,8 @@ export async function postEnterData(file: any): Promise<IFileUploadResponse> {
 
 export async function getClassifierSummary(datarun_id: number): Promise<string> {
     const url = `/classifier_summary`;
-    const params = {datarun_id};
-    const res = await axiosInstance.get(url, {params});
+    const params = { datarun_id };
+    const res = await axiosInstance.get(url, { params });
     if (res.status === 200) {
         return res.data;
     }

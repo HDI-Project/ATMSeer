@@ -22,3 +22,9 @@ export enum IDatarunStatusTypes {
     RUNNING = 'running',
     PENDING = 'pending'
 }
+
+export enum IClassifierStatusTypes {
+    RUNNING = 'running',
+    ERRORED = 'errored',
+    COMPLETE = 'complete',
+}

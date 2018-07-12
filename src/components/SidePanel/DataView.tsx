@@ -105,7 +105,9 @@ export default class DataView extends React.Component<IProps, IState>{
 
             </div>);
         } else {
-            return (<div/>);
+            return (<div>
+                Please select a dataset.
+                </div>);
         }
     }
 }
