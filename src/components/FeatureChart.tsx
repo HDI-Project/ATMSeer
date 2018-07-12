@@ -62,7 +62,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             },
             title: { 
                 text: feature.name,
-                fontSize: '8px',
+                fontSize: '0.8vh',
                 top: 0, 
             },
             xAxis: {
@@ -197,7 +197,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             title: { 
                 text: feature.name ,
                 top: 0,
-                fontSize: '8px',
+                fontSize: '0.8vh',
             },
             // legend: {
             //     // data: ['bar', 'bar2'],
@@ -233,7 +233,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
         let {feature} = this.props
         let featureType = this.checkFeatureType(feature.data)
         let option = featureType == 'numerical'?this.getValOption():this.getCateOption()
-        return <div className="featurex" style={{ height: '25%' }}>
+        return <div className="featurex" style={{ height: '200px;' }}>
                 {/* <div className='featureTitle'>{feature.name}</div> */}
                 <ReactEcharts
                     option={option}
