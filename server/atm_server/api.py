@@ -7,14 +7,13 @@ from multiprocessing import Process
 from flask import request, jsonify, Blueprint, current_app, Response
 from werkzeug.utils import secure_filename
 
-import atm
-
 from atm.enter_data import enter_data
-
+from atm.constants import ClassifierStatus
 
 from .utils import flaskJSONEnCoder
 from .error import ApiError
-from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db
+from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
+    fetch_classifiers, fetch_hyperpartitions
 from .worker import start_worker, stop_worker, work
 from atm_server.helper.atm_helper import get_datarun_steps_info
 
@@ -97,8 +96,16 @@ def get_dataruns():
 
 @api.route('/dataruns/<int:datarun_id>', methods=['GET'])
 def get_datarun(datarun_id):
-    """Fetch the info of a datarun by id"""
+    """Fetch the summary of a datarun by id"""
     return fetch_entity_as_json('Datarun', {'id': datarun_id}, True)
+
+
+@api.route('/datarun_summary/<int:datarun_id>', methods=['GET'])
+def get_datarun_summary(datarun_id):
+    """Fetch the summary of a datarun by id"""
+    classifier_start = request.args.get('classifier_start', None, type=int)
+    classifier_end = request.args.get('classifier_end', None, type=int)
+    return jsonify(summarize_datarun(datarun_id, classifier_start, classifier_end))
 
 
 @api.route('/hyperpartitions', methods=['GET'])
@@ -109,13 +116,15 @@ def get_hyperpartitions():
     """
     dataset_id = request.args.get('dataset_id', None, type=int)
     datarun_id = request.args.get('datarun_id', None, type=int)
-    return fetch_entity_as_json('Hyperpartition', {'dataset_id': dataset_id, 'datarun_id': datarun_id})
+    nice = request.args.get('nice', True, type=bool)
+    return jsonify(fetch_hyperpartitions(dataset_id=dataset_id, datarun_id=datarun_id, nice=nice))
 
 
 @api.route('/hyperpartitions/<int:hyperpartition_id>', methods=['GET'])
 def get_hyperpartition(hyperpartition_id):
     """Fetch the info of a hyperpartition by id"""
-    return fetch_entity_as_json('Hyperpartition', {'id': hyperpartition_id}, True)
+    nice = request.args.get('nice', True, type=bool)
+    return jsonify(fetch_hyperpartitions(hyperpartition_id, nice=nice)[0])
 
 
 @api.route('/classifiers', methods=['GET'])
@@ -126,14 +135,22 @@ def get_classifiers():
     """
     datarun_id = request.args.get('datarun_id', None, type=int)
     hyperpartition_id = request.args.get('hyperpartition_id', None, type=int)
-    return fetch_entity_as_json('Classifier', {'datarun_id': datarun_id,
-                                               'hyperpartition_id': hyperpartition_id})
+    status = request.args.get('status', ClassifierStatus.COMPLETE, type=str)
+    # sort_by_score = request.args.get('sort_by_score', False, type=bool)
+    nice = request.args.get('nice', True, type=bool)
+    return jsonify(fetch_classifiers(datarun_id=datarun_id, hyperpartition_id=hyperpartition_id,
+                                     status=status, nice=nice))
+
+    # return fetch_entity_as_json('Classifier', {'datarun_id': datarun_id,
+    #                                            'hyperpartition_id': hyperpartition_id})
 
 
 @api.route('/classifiers/<int:classifier_id>', methods=['GET'])
 def get_classifier(classifier_id):
     """Fetch the info of a classifier by id"""
-    return fetch_entity_as_json('Classifier', {'id': classifier_id}, True)
+    nice = request.args.get('nice', True, type=bool)
+    return jsonify(fetch_classifiers(classifier_id, nice=nice)[0])
+    # return fetch_entity_as_json('Classifier', {'id': classifier_id}, True)
 
 
 @api.route('/classifier_summary', methods=['GET'])

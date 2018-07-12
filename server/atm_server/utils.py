@@ -2,12 +2,13 @@ import uuid
 import decimal
 import datetime
 
-try: 
+try:
     import simplejson as json
-except ImportError: 
+except ImportError:
     import json
 
 import flask
+from btb.hyper_parameter import HyperParameter
 
 
 def nice_json_encoder(base_encoder):
@@ -37,10 +38,11 @@ def nice_json_encoder(base_encoder):
                 return r
             elif isinstance(o, (decimal.Decimal, uuid.UUID)):
                 return str(o)
-            elif isinstance(o, bytes):  
+            elif isinstance(o, bytes):
                 return str(o, encoding='utf-8')
-            else:
-                return super(JSONEncoder, self).default(o)
+            elif isinstance(o, HyperParameter):
+                return {'type': o.type, 'range': o.range}
+            return super(JSONEncoder, self).default(o)
 
     return JSONEncoder
 
