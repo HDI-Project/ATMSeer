@@ -109,12 +109,21 @@ def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=No
             db.Hyperpartition.method,
             db.Datarun.metric,
             db.Datarun.score_target)\
-            .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
-            .filter(db.Classifier.datarun_id == db.Datarun.id)\
+            .select_from(db.Classifier)\
+            .join(db.Classifier.hyperpartition)\
+            .join(db.Classifier.datarun)\
             .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
+
+        # query = db.session.query(
+        #     db.Classifier,
+        #     db.Hyperpartition.method,
+        #     db.Datarun.metric,
+        #     db.Datarun.score_target)\
+        #     .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
+        #     .filter(db.Classifier.datarun_id == db.Datarun.id)\
+        #     .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
         if dataset_id is not None:
-            query = query.join(db.Datarun) \
-                .filter(db.Datarun.dataset_id == dataset_id)
+            query = query.filter(db.Datarun.dataset_id == dataset_id)
         if datarun_id is not None:
             query = query.filter(db.Classifier.datarun_id == datarun_id)
         if method is not None:
