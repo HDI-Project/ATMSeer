@@ -1,0 +1,9 @@
+.side-panel h4 {
+    margin-top: 6px;
+    margin-bottom: 2px;
+    border-color: #888;
+}
+
+.side-panel hr {
+    margin-top: 0;
+}

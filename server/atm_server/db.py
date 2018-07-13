@@ -1,3 +1,5 @@
+from collections import defaultdict
+import numpy as np
 from flask import current_app, g
 from sqlalchemy import inspect
 
@@ -142,3 +144,100 @@ def fetch_dataset_path(dataset_id, train=True):
     except Exception:
         raise ApiError('Not found', status_code=404)
 
+
+def summarize_datarun(datarun_id, classifier_start=None, classifier_end=None):
+    db = get_db()
+    datarun = db.get_datarun(datarun_id)
+
+    with db_session(db):
+        query = db.session.query(
+            db.Classifier,
+            db.Hyperpartition.method)\
+            .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
+            .filter(db.Classifier.status == ClassifierStatus.COMPLETE)\
+            .filter(db.Classifier.datarun_id == datarun_id)
+        classifiers, methods = zip(*query.all())
+        classifiers = classifiers[classifier_start:classifier_end]
+        methods = methods[classifier_start:classifier_end]
+        if 'cv' in datarun.score_target or 'mu_sigma' in datarun.score_target:
+            scores = [c.cv_judgment_metric for c in classifiers]
+        else:
+            scores = [c.test_judgment_metric for c in classifiers]
+
+        best_idx = int(np.argmax(scores))
+        best_classifier = classifiers[best_idx]
+        best_score = scores[best_idx]
+        method_tries = defaultdict(int)
+        for method in methods:
+            method_tries[method] += 1
+
+        return {
+            'n_classifiers': len(scores),
+            'best_score': best_score,
+            'best_method': methods[best_idx],
+            'best_classifier_id': best_classifier.id,
+            'method_tries': method_tries
+            # 'best_classifier': best_classifier.
+            # 'best_idx':
+        }
+
+
+def fetch_classifiers(classifier_id=None, dataset_id=None, datarun_id=None, hyperpartition_id=None,
+                      method=None, status=None, nice=True):
+    db = get_db()
+    if classifier_id is not None:
+        classifiers = [db.get_classifier(classifier_id)]
+    else:
+        classifiers = db.get_classifiers(dataset_id, datarun_id, method, hyperpartition_id, status)
+    if nice is False:
+        return [object_as_dict(item) for item in classifiers]
+    hyperpartitions = db.get_hyperpartitions(dataset_id, datarun_id, method,
+                                             ignore_gridding_done=False,
+                                             ignore_errored=False)
+    hp_id2method = {hp.id: hp.method for hp in hyperpartitions}
+
+    return [
+        {
+            'id': c.id,
+            'datarun_id': c.datarun_id,
+            'hyperpartition_id': c.hyperpartition_id,
+            'method': hp_id2method[c.hyperpartition_id],
+            'cv_metric': float(c.cv_judgment_metric),
+            'cv_metric_std': float(c.cv_judgment_metric_stdev),
+            'test_metric': float(c.test_judgment_metric),
+            'hyperparameters': c.hyperparameter_values,
+            'status': c.status,
+            'start_time': c.start_time,
+            'end_time': c.end_time
+        }
+        for c in classifiers
+    ]
+
+
+def fetch_hyperpartitions(hyperpartition_id=None, dataset_id=None, datarun_id=None,
+                          method=None, nice=True):
+    db = get_db()
+    if hyperpartition_id is not None:
+        hyperpartitions = [db.get_hyperpartition(hyperpartition_id)]
+    else:
+        hyperpartitions = db.get_hyperpartitions(dataset_id, datarun_id, method,
+                                                 ignore_gridding_done=False,
+                                                 ignore_errored=False)
+    if nice is False:
+        return [object_as_dict(item) for item in hyperpartitions]
+
+    print(hyperpartitions[0].categoricals)
+    print(hyperpartitions[0].tunables)
+    print(hyperpartitions[0].constants)
+    return [
+        {
+            'id': hp.id,
+            'datarun_id': hp.datarun_id,
+            'method': hp.method,
+            'categoricals': hp.categoricals,
+            'tunables': hp.tunables,
+            'constant': hp.constants,
+            'status': hp.status,
+        }
+        for hp in hyperpartitions
+    ]

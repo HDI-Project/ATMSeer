@@ -4,7 +4,8 @@ import * as logo from '../assets/ATM-Logo.png';
 import './App.css';
 import DataRuns  from './DataRuns/';
 // import DataView from "./DataView";
-import SidePanel from './SidePanel/SidePanel';
+import SidePanel from './SidePanel';
+import { IDatarunStatusTypes } from '../types/index';
 
 
 
@@ -13,6 +14,7 @@ const { Content, Header } = Layout;
 export interface IState {
   datarunID: number | null;
   datasetID: number | null;
+  datarunStatus: IDatarunStatusTypes;
 }
 
 
@@ -22,7 +24,9 @@ class App extends React.Component<{}, IState> {
     // this.onChange = this.onChange.bind(this)
     this.setDatarunID = this.setDatarunID.bind(this);
     this.setDatasetID = this.setDatasetID.bind(this);
+    this.setDatarunStatus = this.setDatarunStatus.bind(this);
     this.state = {
+        datarunStatus: IDatarunStatusTypes.PENDING,
         datarunID: null,
         datasetID: null
     };
@@ -33,6 +37,9 @@ class App extends React.Component<{}, IState> {
   }
   public setDatasetID(datasetID: number): void{
     this.setState({datasetID});
+  }
+  public setDatarunStatus(datarunStatus: IDatarunStatusTypes): void{
+    this.setState({datarunStatus});
   }
   public render() {
     return (
@@ -45,7 +52,12 @@ class App extends React.Component<{}, IState> {
         <Content className='appContent' >
           <Row style={{"height": "100%"}}>
             <Col span={6} className="col">
-              <SidePanel {...this.state} setDatarunID={this.setDatarunID} setDatasetID={this.setDatasetID}/>
+              <SidePanel
+                {...this.state}
+                setDatarunID={this.setDatarunID}
+                setDatasetID={this.setDatasetID}
+                setDatarunStatus={this.setDatarunStatus}
+              />
             </Col >
 
             <Col span={18}  className="col">
