@@ -36,3 +36,8 @@
 .data-view hr {
     margin-top: 0;
 }
+
+.classLegend>span::before{
+    content: '■';
+    font-size: 15px;
+}
