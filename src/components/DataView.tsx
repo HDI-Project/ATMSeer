@@ -3,9 +3,9 @@ import * as React from "react";
 import FeatureChart from "./FeatureChart"
 import { Upload, message, Icon, Col, Row } from 'antd';
 // import { URL } from '../Const';
-import { getDatasetCSV, postEnterData, startDatarun } from '../service/dataService';
+import { getDatasetCSV, postEnterData, startDatarun } from 'service/dataService';
 import './DataView.css';
-import {EChartsColor} from "../helper";
+import {EChartsColor} from "helper";
 
 // const axiosInstance = axios.create({
 //     baseURL: URL + '/api',

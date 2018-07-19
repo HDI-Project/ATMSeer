@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Collapse, Tag } from 'antd';
-import { IDatarunStatusTypes } from '../../types/index';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun } from '../../service/dataService';
-import { UPDATE_INTERVAL_MS } from '../../Const';
+import { IDatarunStatusTypes } from 'types/index';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun } from 'service/dataService';
+import { UPDATE_INTERVAL_MS } from 'Const';
 
 const Panel = Collapse.Panel;
 

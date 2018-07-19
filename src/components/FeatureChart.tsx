@@ -4,9 +4,9 @@ import * as React from "react";
 
 import { IFeature } from './DataView';
 
-export default class FeatureChart extends React.Component<{ feature: IFeature, classes: IFeature, cate_classes: number[] }>{
+export default class FeatureChart extends React.Component<{ feature: IFeature, classes: IFeature, cate_classes: (number|string)[] }>{
     checkFeatureType(feature_values:IFeature['data']) {
-        
+
         for (let i = 0, ilen = feature_values.length; i < ilen; i++) {
             let d = feature_values[i];
             if (d && typeof (d) != 'number') {
@@ -33,15 +33,15 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             for(let i =0; i<barNum; i++){
                 hisData.push(0)
             }
-            
+
             feature.data.forEach((d, idx)=>{
                 if(classes.data[idx] == classIdx){
                     let hisIdx = Math.floor((d-minFeatureVal)/step)
                     hisData[hisIdx]+=1
                 }
             })
-            
-            
+
+
             return {
                 name: 'class_'+classIdx,
                 type:'bar',
@@ -51,7 +51,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             }
         })
 
-        
+
 
         const option = {
             tooltip:{},
@@ -60,13 +60,13 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
                 height: '50%',
                 top: '25%',
             },
-            title: { 
+            title: {
                 text: feature.name,
                 fontSize: '0.8vh',
-                top: 0, 
+                top: 0,
             },
             xAxis: {
-                type: 'category',    
+                type: 'category',
                 data: xAxesData,
                 axisTick:{
                     alighWithLabel: true,
@@ -89,7 +89,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
         }
 
         return option
-       
+
         // const series = cate_classes.map((classIdx) => {
         //     let data: any[] = []
         //     feature.data.forEach((d, idx) => {
@@ -181,7 +181,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             feature.data.forEach((d, idx)=>{
                 if(classes.data[idx] == classIdx){
                     data[categories.indexOf(d)] += 1
-                }              
+                }
             })
             return {
                 name: 'class_'+classIdx,
@@ -194,7 +194,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
 
 
         let option = {
-            title: { 
+            title: {
                 text: feature.name ,
                 top: 0,
                 fontSize: '0.8vh',
@@ -208,7 +208,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
                 height: '50%',
                 top: '25%',
             },
-            
+
             tooltip: {},
             xAxis: {
                 data: xAxisData,
@@ -224,7 +224,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
             },
             series: [...series],
             animationEasing: 'elasticOut',
-            
+
 
         };
         return option
@@ -233,7 +233,7 @@ export default class FeatureChart extends React.Component<{ feature: IFeature, c
         let {feature} = this.props
         let featureType = this.checkFeatureType(feature.data)
         let option = featureType == 'numerical'?this.getValOption():this.getCateOption()
-        return <div className="featurex" style={{ height: '200px;' }}>
+        return <div className="featurex" style={{ height: '200px' }}>
                 {/* <div className='featureTitle'>{feature.name}</div> */}
                 <ReactEcharts
                     option={option}
