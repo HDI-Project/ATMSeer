@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { getDatasetCSV } from '../../service/dataService';
+import { getDatasetCSV } from 'service/dataService';
 import FeatureChart from '../FeatureChart';
-import {EChartsColor} from "../../helper";
+import {EChartsColor} from "helper";
 
 import "./DataView.css";
 
@@ -86,7 +86,8 @@ export default class DataView extends React.Component<IProps, IState>{
         if (labels) {
             const features = dataset.slice(0, dataset.length-1);
             const classSet = new Set(labels.data);
-            const classes: number[] = Array.from(classSet);
+            console.info(classSet, labels.data)
+            const classes: (number|string)[] = Array.from(classSet);
 
             //legend of classes
             const legend = classes.map((className,i)=>{

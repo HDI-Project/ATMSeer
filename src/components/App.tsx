@@ -5,7 +5,7 @@ import './App.css';
 import DataRuns  from './DataRuns/';
 // import DataView from "./DataView";
 import SidePanel from './SidePanel';
-import { IDatarunStatusTypes } from '../types/index';
+import { IDatarunStatusTypes } from 'types/index';
 
 
 

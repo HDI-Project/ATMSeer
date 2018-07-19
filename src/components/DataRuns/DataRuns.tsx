@@ -66,7 +66,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             return <div style={{height: '100%'}}>
 
             <div className="runTracker" style={{height: '20%', display: "flex"}}>
-                <BarChart datarun={runCSV} width={60} />
+                <BarChart run={runCSV} width={60} />
                 <Histogram datarun={datarun} width={40}/>
             </div>
             <Methods height={80} datarun={datarun}/>
