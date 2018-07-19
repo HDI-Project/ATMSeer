@@ -95,6 +95,15 @@ def metric_string(model, target):
 def params_string(params):
     return '; '.join(['%s = %s' % (k, params[k]) for k in sorted(params.keys())])
 
+def hyperpartition_string(hp):
+    cats = [hp.method]
+    for cat_key, cat_value in hp.categoricals:
+        if type(cat_value) is str:
+            cats.append(cat_value)
+        elif cat_value:
+            cats.append(cat_key)
+    return '-'.join(cats)
+
 
 def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=None, method=None):
     """
@@ -243,9 +252,10 @@ def fetch_hyperpartitions(hyperpartition_id=None, dataset_id=None, datarun_id=No
             'id': hp.id,
             'datarun_id': hp.datarun_id,
             'method': hp.method,
-            'categoricals': hp.categoricals,
-            'tunables': hp.tunables,
-            'constant': hp.constants,
+            'hyperpartition_string': hyperpartition_string(hp),
+            'categoricals': {cat_key: cat_value for cat_key, cat_value in hp.categoricals},
+            'tunables': {key: value for key, value in hp.tunables},
+            'constant': {key: value for key, value in hp.constants},
             'status': hp.status,
         }
         for hp in hyperpartitions

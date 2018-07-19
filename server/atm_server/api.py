@@ -201,7 +201,7 @@ def get_datarun_steps_scores(datarun_id):
     """
     classifier_start = request.args.get('classifier_start', None, type=int)
     classifier_end = request.args.get('classifier_end', None, type=int)
-    nice = request.args.get('nice', True, type=bool)
+    nice = request.args.get('nice', 0, type=int)
     scores_of_steps = get_datarun_steps_info(datarun_id, classifier_start, classifier_end, nice)
     return jsonify(scores_of_steps)
 

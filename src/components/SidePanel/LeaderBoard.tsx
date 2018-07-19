@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Collapse, Tag } from 'antd';
 import { IDatarunStatusTypes } from '../../types/index';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun } from '../../service/dataService';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions } from '../../service/dataService';
 import { UPDATE_INTERVAL_MS } from '../../Const';
 import './LeaderBoard.css';
 
@@ -74,6 +74,7 @@ export interface LeaderBoardProps {
 
 export interface LeaderBoardState {
     datarunInfo: IDatarunInfo | null;
+    hyperpartitions: IHyperpartitionInfo[];
     summary: IDatarunSummary | null;
 }
 
@@ -84,7 +85,8 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         this.updateLeaderBoard = this.updateLeaderBoard.bind(this);
         this.state = {
             summary: null,
-            datarunInfo: null
+            datarunInfo: null,
+            hyperpartitions: []
         };
     }
     public updateLeaderBoard(updateDatarunInfo: boolean = false) {
@@ -96,6 +98,12 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         });
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => this.setState({ datarunInfo }));
+            getHyperpartitions().then(hyperpartitions => {
+                if (Array.isArray(hyperpartitions))
+                    this.setState({ hyperpartitions });
+                else
+                    console.error('The fetched hyperpartitions should be an array!');
+            });
         }
     }
     public startOrStopUpdateCycle() {
