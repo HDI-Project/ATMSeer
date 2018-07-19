@@ -6,6 +6,7 @@ import logging
 from multiprocessing import Process
 from flask import request, jsonify, Blueprint, current_app, Response
 from werkzeug.utils import secure_filename
+from sqlalchemy.exc import InvalidRequestError
 
 from atm.enter_data import enter_data
 from atm.constants import ClassifierStatus
@@ -33,6 +34,12 @@ def allowed_file(filename):
 
 @api.errorhandler(ApiError)
 def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+@api.errorhandler(InvalidRequestError)
+def handle_db_request_error(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response

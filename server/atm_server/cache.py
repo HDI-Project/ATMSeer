@@ -36,7 +36,7 @@ class Cache:
 
 # __cache = Cache()
 # This might be slow, but the cache system is safe
-__cache = FileSystemCache(default_timeout=0, cache_dir=os.path.join(SERVER_ROOT, '.atm_server_cache'))
+__cache = FileSystemCache(default_timeout=0, cache_dir=os.path.join(SERVER_ROOT, '../.atm_server_cache'))
 
 
 def get_cache():

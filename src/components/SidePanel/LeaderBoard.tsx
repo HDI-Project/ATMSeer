@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Collapse, Tag } from 'antd';
 import { IDatarunStatusTypes } from 'types/index';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions } from 'service/dataService';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions, getDatarunStepsScores } from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
+import LineChart from './LineChart';
 
 const Panel = Collapse.Panel;
 
@@ -76,17 +77,19 @@ export interface LeaderBoardState {
     datarunInfo: IDatarunInfo | null;
     hyperpartitions: IHyperpartitionInfo[];
     summary: IDatarunSummary | null;
+    scores: {[id: string]: number}[];
 }
 
 export default class LeaderBoard extends React.Component<LeaderBoardProps, LeaderBoardState> {
-    private intervalID: NodeJS.Timer;
+    private intervalID: number;
     constructor(props: LeaderBoardProps) {
         super(props);
         this.updateLeaderBoard = this.updateLeaderBoard.bind(this);
         this.state = {
             summary: null,
             datarunInfo: null,
-            hyperpartitions: []
+            hyperpartitions: [],
+            scores: [],
         };
     }
     public updateLeaderBoard(updateDatarunInfo: boolean = false) {
@@ -96,6 +99,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             // console.log(classifiers);
             this.setState({ summary: computeDatarunSummary(classifiers) });
         });
+        getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => this.setState({ datarunInfo }));
             getHyperpartitions().then(hyperpartitions => {
@@ -108,13 +112,14 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
     }
     public startOrStopUpdateCycle() {
         if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
-            this.intervalID = setInterval(this.updateLeaderBoard, UPDATE_INTERVAL_MS);
+            this.intervalID = window.setInterval(this.updateLeaderBoard, UPDATE_INTERVAL_MS);
         } else {
             clearInterval(this.intervalID);
         }
     }
     componentDidMount() {
         this.updateLeaderBoard(true);
+        this.startOrStopUpdateCycle();
     }
     componentDidUpdate(prevProps: LeaderBoardProps) {
         if (prevProps.datarunID !== this.props.datarunID) {
@@ -123,6 +128,9 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         if (prevProps.datarunStatus !== this.props.datarunStatus) {
             this.startOrStopUpdateCycle();
         }
+    }
+    public componentWillUnmount() {
+        window.clearInterval(this.intervalID)
     }
     public render() {
         const { summary, datarunInfo } = this.state;
@@ -135,6 +143,9 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                     <div>
                         Metric: {datarunInfo && datarunInfo.metric} / Total classifier tried: {summary.nTried} / Best
                         classifier: {best && `${best.method}-${best.id}`}
+                    </div>
+                    <div>
+                        <LineChart scores={this.state.scores}/>
                     </div>
                 </div>
                 <div>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import ReactEcharts from 'echarts-for-react';
 
 export interface LineChartProps {
-    scores: {[id: string]: number}[]
+    scores: {[id: string]: number}[];
 }
 
 export interface LineChartState {}
@@ -13,20 +13,23 @@ export default class LineChart extends React.Component<LineChartProps, LineChart
     }
 
     public computeOption() {
-        const scores = this.props;
+        const { scores } = this.props;
+        let series: {data: number[][], type: string}[] = [];
+        if (scores.length > 0)
+            series = Object.keys(scores[0]).map(id => {
+                return {
+                    data: scores.map((ss, i) => [i, ss[id]]),
+                    type: 'line'
+                };
+            });
         const option = {
             xAxis: {
                 type: 'value',
-                min: 0,
-                max: scores.length
             },
             yAxis: {
                 type: 'value'
             },
-            series: [{
-                data: [820, 932, 901, 934, 1290, 1330, 1320],
-                type: 'line'
-            }]
+            series
         };
         return option;
     }

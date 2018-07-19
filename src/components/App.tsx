@@ -62,7 +62,7 @@ class App extends React.Component<{}, IState> {
 
             <Col span={18}  className="col">
             <div className="shadowBox" >
-              <DataRuns datarunID={this.state.datarunID}/>
+              <DataRuns datarunID={this.state.datarunID} datarunStatus={this.state.datarunStatus}/>
               </div>
             </Col>
             {/* <Col span={6} className="col">

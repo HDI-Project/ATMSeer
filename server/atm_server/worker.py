@@ -21,6 +21,7 @@ from .cache import get_cache
 
 
 logger = logging.getLogger('atm_server')
+logger.setLevel(logging.INFO)
 
 
 def return_stdout_stderr(f):
@@ -57,6 +58,10 @@ def work(*args):
     A copy of the code in atm/scripts/worker.py
     A call to this function will start and run a simple worker
     """
+    _logger = logging.getLogger('atm_server.worker:work')
+    _logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler('logs/works.log')
+    _logger.addHandler(fh)
     parser = argparse.ArgumentParser(description='Add more classifiers to database')
     add_arguments_sql(parser)
     add_arguments_aws_s3(parser)
@@ -86,6 +91,7 @@ def work(*args):
     initialize_logging(log_config)
 
     # let's go
+    _logger.warn('Worker started!')
     atm_work(db=Database(**vars(sql_config)),
              datarun_ids=_args.dataruns,
              choose_randomly=_args.choose_randomly,
@@ -95,6 +101,7 @@ def work(*args):
              log_config=log_config,
              total_time=_args.time,
              wait=False)
+    _logger.warn('Worker exited.')
 
 
 def dispatch_worker(datarun_id):
@@ -110,6 +117,47 @@ def dispatch_worker(datarun_id):
     # Do nothing if the db is already running or complete
 
 
+def monitor_dispatch_worker(datarun_id):
+    # The function is a wrapper of the dispatch worker, which tries to terminate the worker process if needed
+    # It create another process that checks the cache and determine if we should terminate the worker process
+    p_inner = dispatch_worker(datarun_id)
+    logger.warning("Worker process (PID: %d) started" % p_inner.pid)
+    if p_inner is None:
+        logger.error("Cannot create worker process!")
+        return
+    register_worker_process(p_inner, datarun_id)
+    key = datarun_id2key(datarun_id)
+    cache = get_cache()
+    while True:
+        # Check start
+        if not p_inner.is_alive():
+            # Clean the cache
+            logger.warning("Process (PID: %d) exited." % p_inner.pid)
+            cache.delete(key)
+            return
+        if cache.get(key) is None:
+            while True:
+                p_inner.terminate()
+                # terminate() only sends the signal, wait a while to check
+                time.sleep(0.01)
+                if p_inner.is_alive():
+                    logger.warning("Failed to terminate process (PID: %d) after 0.01s" % p_inner.pid)
+                    logger.warning("Retrying after 1s...")
+                    time.sleep(1)
+                else:
+                    break
+            # Since we have break the run, we need to update the datarun status
+            # Note that the run may or may not be complete, due to the delay in terminating
+            db = get_db()
+            datarun = db.get_datarun(datarun_id)
+            if datarun.status == RunStatus.RUNNING:
+                # The datarun is still running
+                db.mark_datarun_pending(datarun_id)
+            logger.warning("Process (PID: %d) terminated (exitcode: %d)" % (p_inner.pid, p_inner.exitcode))
+            return
+        # Sleep for a while
+        time.sleep(0.001)
+
 def start_worker(datarun_id):
     """
     A function similar to dispatch worker, but provides more comprehensive controls of the worker
@@ -120,42 +168,15 @@ def start_worker(datarun_id):
     datarun = db.get_datarun(datarun_id)
     if datarun is None:
         raise ApiError("No datarun found with the given id: %d" % datarun_id, 404)
-    if datarun.status != atm.constants.RunStatus.PENDING:
+    if datarun.status != RunStatus.PENDING:
         # Do nothing if the datarun is already running or complete
         return None
 
-    def monitor_dispatch_worker(_id):
-        # The function is a wrapper of the dispatch worker, which tries to terminate the worker process if needed
-        # It create another process that checks the cache and determine if we should terminate the worker process
-        p_inner = dispatch_worker(_id)
-        if p_inner is None:
-            logger.error("Cannot create worker process!")
-            return
-        register_worker_process(p_inner, datarun_id)
-        key = datarun_id2key(_id)
-        cache = get_cache()
-        while True:
-            # Check start
-            if not p_inner.is_alive():
-                # Clean the cache
-                cache.delete(key)
-                return
-            if cache.get(key) is None:
-                p_inner.terminate()
-                # terminate() only sends the signal, wait a while to check
-                time.sleep(0.01)
-                if p_inner.is_alive():
-                    logger.error("Failed to terminate process (PID: %d) after 0.01s" % p_inner.pid)
-                else:
-                    logger.warning("Process (PID: %d) terminated (exitcode: %d)" % (p_inner.pid, p_inner.exitcode))
-                return
-            # Sleep for a while
-            time.sleep(0.001)
     # Create and start the process
     p = Process(target=monitor_dispatch_worker, args=(datarun_id,))
     p.start()
-    # manually mark the datarun as running, in case the return status is still pending
-    get_db().mark_datarun_running(datarun_id)
+    # Sleep a while
+    time.sleep(0.01)
     return
 
 
@@ -163,11 +184,11 @@ def stop_worker(datarun_id):
     key = datarun_id2key(datarun_id)
     cache = get_cache()
     pid = cache.get(key)
+    db = get_db()
     if pid is not None:
         logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
-        # Then we need to mark the datarun as pending
+        # Then we delete the datarun process_id cache (as a signal of terminating)
         cache.delete(key)
-        mark_datarun_pending(get_db(), datarun_id)
         return True
     logger.warning("Cannot find corresponding process for datarun %d" % datarun_id)
     return False
