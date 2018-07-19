@@ -114,25 +114,25 @@ export const filterByDescending=(csv: string|any)=>{
     return result
 }
 
-// const parseDatarun=(csv: string|any)=>{
-//     let lines = csv.split('\n')
-//     let keys = lines[0].split(',').map(
-//             (key:string)=>{
-//                 let data:any[] = []
-//                 return {name: key, data}
-//             })
+const csv2json=(csv: string|any)=>{
+    let lines = csv.split('\n')
+    let keys = lines[0].split(',').map(
+            (key:string)=>{
+                let data:any[] = []
+                return {name: key, data}
+            })
 
-//     lines.shift() //remove headers
-//     lines.splice(-1, 1) // remove lats empty line
-//     lines.forEach((row:string) => {
-//         const cells = row.split(',')
-//         cells.forEach((cell, idx)=>{
-//             keys[idx].data.push(cell)
-//         })
-//     });
+    lines.shift() //remove headers
+    lines.splice(-1, 1) // remove lats empty line
+    lines.forEach((row:string) => {
+        const cells = row.split(',')
+        cells.forEach((cell, idx)=>{
+            keys[idx].data.push(cell)
+        })
+    });
 
-//     return keys
-// }
+    return keys
+}
 
 const EChartsColor = [
     "#c23531",
@@ -145,10 +145,10 @@ const EChartsColor = [
 
 const parseDatarun=(csv: string|any)=>{
     let lines = csv.split('\n')
-    
+
     let keys = lines[0].split(',')
     let datarun:IDatarun = {}
-    
+
     lines.shift() //remove headers
     lines.splice(-1, 1) // remove lats empty line
     lines.forEach((row:string, idx:number) => {
@@ -164,7 +164,7 @@ const parseDatarun=(csv: string|any)=>{
         }else{
             datarun[methodName] = [record]
         }
-        
+
     });
 
     //classify datarun based on methods type
