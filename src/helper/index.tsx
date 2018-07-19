@@ -72,8 +72,47 @@ const getColor = (name: string, palatte: number = 0): string =>{
     }
 }
 
+export const filterByMethod=(csv: string|any)=>{
+    let lines = csv.split('\n')
+    let result:any[] = [lines[0]]
+    //make a unique array of the methods that were used
+    let methodsUsed = csv2json(csv)[1]['data'].filter(
+        (key:string, index:number, self:any) => {
+            return self.indexOf(key) === index;
+        })
+    //create a new array ordered by the methods
+    methodsUsed.forEach((method:string) =>{
+        lines.forEach((row:string) => {
+            let elements = row.split(',')
+            if (elements[1] == method) {
+                result.push(row)
+            }
+        })
+    });
+    return result
+}
 
+export const filterByDescending=(csv: string|any)=>{
+    let lines = csv.split('\n')
+    let result:any = [lines[0]]
+    let performances:any = []
+    //create an array of only the performances
+    let rawPerformances = csv2json(csv)[5]['data']
+    rawPerformances.forEach((value:any) => {
+        performances.push(value)
+    })
+    performances.sort().reverse() //sort in descending order
 
+    //create a new array according to the new descending order
+    performances.forEach((rankedPerf:any) => {
+        lines.forEach((row:any) => {
+            if (rankedPerf == row.split(',')[5] && rankedPerf != '0.000 +- 0.000') {
+                result.push(row)
+            }
+        })
+    })
+    return result
+}
 
 // const parseDatarun=(csv: string|any)=>{
 //     let lines = csv.split('\n')
@@ -194,4 +233,4 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
     };
 };
 
-export { getColor, EChartsColor, parseDatarun, prepareBoxplotData }
+export { getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }
