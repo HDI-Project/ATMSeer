@@ -133,7 +133,8 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         window.clearInterval(this.intervalID)
     }
     public render() {
-        const { summary, datarunInfo } = this.state;
+        const { summary, datarunInfo, scores, hyperpartitions } = this.state;
+
         const best = summary ? summary.topClassifiers[0] : undefined;
         return summary ? (
             <div>
@@ -145,7 +146,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         classifier: {best && `${best.method}-${best.id}`}
                     </div>
                     <div>
-                        <LineChart scores={this.state.scores}/>
+                        <LineChart scores={scores} hyperpartitions={hyperpartitions} topK={TOP_K}/>
                     </div>
                 </div>
                 <div>

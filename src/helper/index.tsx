@@ -1,6 +1,6 @@
 import {IClassifier, IDatarun} from '../types';
 
-let names: string[] = []
+const names: string[] = []
 const COLORS: string[] = [
     // ' #9e0142',
     ' #fdae61',
