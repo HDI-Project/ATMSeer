@@ -5,6 +5,7 @@ import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartit
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
 import LineChart from './LineChart';
+import { getColor } from 'helper';
 
 const Panel = Collapse.Panel;
 
@@ -60,7 +61,7 @@ export function MethodHeader(params: IClassifierInfo) {
     const width = `${(params.cv_metric * 70).toFixed(1)}%`;
     return (
         <div>
-            <Tag>{params.method}</Tag>
+            <Tag color={getColor(params.method)}>{params.method}</Tag>
             <div className="lb-classifier" style={{ width }}>
                 <span className="lb-classifier-metric">{classifierMetricString(params)}</span>
             </div>
