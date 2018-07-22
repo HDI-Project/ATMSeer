@@ -1,6 +1,6 @@
 // import axios from "axios";
 import * as React from "react";
-import FeatureChart from "./FeatureChart"
+import FeatureChart from "./SidePanel/FeatureChart"
 import { Upload, message, Icon, Col, Row } from 'antd';
 // import { URL } from '../Const';
 import { getDatasetCSV, postEnterData, startDatarun } from 'service/dataService';
