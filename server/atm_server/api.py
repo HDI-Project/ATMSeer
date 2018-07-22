@@ -6,6 +6,7 @@ import logging
 from multiprocessing import Process
 from flask import request, jsonify, Blueprint, current_app, Response
 from werkzeug.utils import secure_filename
+from sqlalchemy.exc import InvalidRequestError
 
 from atm.enter_data import enter_data
 from atm.constants import ClassifierStatus
@@ -33,6 +34,12 @@ def allowed_file(filename):
 
 @api.errorhandler(ApiError)
 def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+@api.errorhandler(InvalidRequestError)
+def handle_db_request_error(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
@@ -201,7 +208,7 @@ def get_datarun_steps_scores(datarun_id):
     """
     classifier_start = request.args.get('classifier_start', None, type=int)
     classifier_end = request.args.get('classifier_end', None, type=int)
-    nice = request.args.get('nice', True, type=bool)
+    nice = request.args.get('nice', 0, type=int)
     scores_of_steps = get_datarun_steps_info(datarun_id, classifier_start, classifier_end, nice)
     return jsonify(scores_of_steps)
 

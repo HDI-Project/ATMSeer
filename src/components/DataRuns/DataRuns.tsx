@@ -12,6 +12,8 @@ import {getClassifierSummary} from '../../service/dataService';
 import Methods from './Methods';
 import BarChart from './BarChart';
 import Histogram from "./Histogram";
+import { IDatarunStatusTypes } from 'types/index';
+import { UPDATE_INTERVAL_MS } from "Const";
 
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
@@ -27,10 +29,11 @@ export interface IState{
     runCSV:string
 }
 export interface IProps{
-    datarunID: number | null
+    datarunID: number | null;
+    datarunStatus: IDatarunStatusTypes;
 }
 export default class DataRuns extends React.Component<IProps, IState>{
-    private intervalID:number
+    private intervalID: number
     constructor(props: IProps) {
         super(props)
         this.getData = this.getData.bind(this)
@@ -51,10 +54,26 @@ export default class DataRuns extends React.Component<IProps, IState>{
         }
 
     }
+    public startOrStopUpdateCycle() {
+        if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
+            this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
+        } else {
+            clearInterval(this.intervalID);
+        }
+    }
     public componentDidMount(){
         // this.getData()
         // repeatedly get data
-        this.intervalID = window.setInterval(this.getData, 2500)
+        this.getData();
+        this.startOrStopUpdateCycle();
+    }
+    componentDidUpdate(prevProps: IProps) {
+        if (prevProps.datarunID !== this.props.datarunID) {
+            this.getData();
+        }
+        if (prevProps.datarunStatus !== this.props.datarunStatus) {
+            this.startOrStopUpdateCycle();
+        }
     }
     public componentWillUnmount() {
         window.clearInterval(this.intervalID)

@@ -80,34 +80,21 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
 
     public onClickDataRun() {
         const { datarunStatus } = this.props;
-        if (!this.props.datarunID) return;
         let promise: Promise<IDatarunStatus>;
+        if (!this.props.datarunID) return;
         switch (datarunStatus) {
             case IDatarunStatusTypes.RUNNING:
                 promise = stopDatarun(this.props.datarunID);
-                message.info('stop');
                 break;
             case IDatarunStatusTypes.PENDING:
                 promise = startDatarun(this.props.datarunID);
-                message.info('start');
                 break;
             default:
-                message.info('data run already complete');
+                console.error("This branch should not occur!")
                 return;
         }
         promise
             .then(datarun => {
-                switch (datarun.status) {
-                    case IDatarunStatusTypes.RUNNING:
-                        message.info('datarun is now running');
-                        break;
-                    case IDatarunStatusTypes.PENDING:
-                        message.info('datarun is pending');
-                        break;
-                    default:
-                        message.info('datarun already complete');
-                    break;
-                }
                 // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
                 this.props.setDatarunStatus(datarun.status);
             })
@@ -117,7 +104,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
     }
 
     public componentDidUpdate(prevProps: DataSelectorProps, prevState: DataSelectorState) {
-        const { datasetID, datarunID } = this.props;
+        const { datasetID, datarunID, datarunStatus } = this.props;
         if (datasetID !== prevProps.datasetID && datasetID) {
             this.getDataruns(datasetID);
         }
@@ -125,7 +112,22 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
             getDatarun(datarunID)
                 .then((datarun) => {
                     this.props.setDatarunStatus(datarun.status);
-                })
+                });
+        }
+        if (datarunStatus !== prevProps.datarunStatus && datarunID === prevProps.datarunID) {
+            switch (datarunStatus) {
+                case IDatarunStatusTypes.RUNNING:
+                    message.info("Datarun is now started");
+                    break;
+                case IDatarunStatusTypes.COMPLETE:
+                    message.info("Datarun has completed.");
+                    break;
+                case IDatarunStatusTypes.PENDING:
+                    message.info("Datarun stopped / is pending");
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -146,7 +148,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
             <div className="data-selector">
                 <div>
                     <span>Datasets</span>
-                    <Row style={{marginBottom: '6px'}}>
+                    <Row style={{marginBottom: '6px'}} gutter={8}>
                         <Col span={16} className="dataViewColContainer">
                             <Select
                                 placeholder="Select a dataset"
@@ -164,7 +166,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                         <Col span={8} className="dataViewColContainer">
                             <Upload {...uploadProps} listType="text">
                                 <Button>
-                                    <Icon type="upload" /> upload
+                                    <Icon type="upload" /> Upload
                                 </Button>
                             </Upload>
                         </Col>
@@ -172,7 +174,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 </div>
                 <div>
                     <span>Dataruns</span>
-                    <Row>
+                    <Row gutter={8}>
                         <Col span={16} className="dataViewColContainer">
                             <Select
                                 placeholder="Select a datarun"
@@ -191,7 +193,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                         <Col span={8} className="dataViewColContainer">
                             <Button
                                 onClick={this.onClickDataRun}
-                                disabled={datarunStatus === IDatarunStatusTypes.COMPLETE}
+                                disabled={datarunStatus === IDatarunStatusTypes.COMPLETE || this.props.datasetID === null}
                             >
                                 <Icon type={running ? 'pause' : 'caret-right'} />
                                 {running ? 'Stop' : (datarunStatus === IDatarunStatusTypes.PENDING ? 'Run' : 'Complete')}

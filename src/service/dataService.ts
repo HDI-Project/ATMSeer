@@ -35,11 +35,15 @@ export interface IDatarunInfo extends IDatarunStatus {
 export interface IHyperpartitionInfo {
     id: number;
     method: string;
+    hyperpartition_string: string;
     status: 'incomplete' | 'gridding_done' | 'errored';
+    categoricals: {[param: string]: string | boolean};
+    constants: {[param: string]: string | boolean};
+    tunables: {[param: string]: {type: string, range: number[]}}
 }
 
-export interface IDatarunStepScore {
-    [method: string]: number[];
+export interface IHyperPartitionScores {
+    [id: string]: number;
 }
 
 export interface IFileUploadResponse {
@@ -130,7 +134,7 @@ export async function getDatarunStepsScores(
     id: number,
     classifier_start: number | null = null,
     classifier_end: number | null = null
-): Promise<IDatarunStepScore[]> {
+): Promise<IHyperPartitionScores[]> {
     const url = `/datarun_steps_scores/${id}`;
     const params = { classifier_start, classifier_end, nice: true };
     const res = await axiosInstance.get(url, { params });
@@ -144,7 +148,7 @@ export async function getDatarunSummary(
     id: number,
     classifier_start: number | null = null,
     classifier_end: number | null = null
-): Promise<IDatarunStepScore[]> {
+): Promise<IHyperPartitionScores[]> {
     const url = `/datarun_summary/${id}`;
     const params = { classifier_start, classifier_end };
     const res = await axiosInstance.get(url, { params });

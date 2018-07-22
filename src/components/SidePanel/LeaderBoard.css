@@ -1,0 +1,11 @@
+.lb-classifier {
+    background-color: #dddddd;
+    position: absolute;
+    left: 100px;
+    top: 12px;
+}
+
+.lb-classifier-metric {
+    float: right;
+    margin-right: 5px;
+}

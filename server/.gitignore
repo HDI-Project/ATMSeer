@@ -2,6 +2,7 @@
 models/
 metrics/
 logs/
+.atm_server_cache/
 
 # ignore virtualenv and other binary files
 *.pem

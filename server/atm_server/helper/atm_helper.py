@@ -123,6 +123,7 @@ def get_datarun_steps_info(datarun_id, classifier_start=None, classifier_end=Non
         score = float(getattr(c, datarun.score_target) or 0)
         hyperpartition_scores[c.hyperpartition_id].append(score)
         bandit_scores = selector_bandit_scores(worker.selector, hyperpartition_scores)
+        bandit_scores = {key: float("%.5f" % val) for key, val in bandit_scores.items()}
         if i < classifier_start:
             continue
         bandit_scores_of_steps.append(bandit_scores)
