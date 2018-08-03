@@ -34,6 +34,7 @@ export interface IDatarunInfo extends IDatarunStatus {
 
 export interface IHyperpartitionInfo {
     id: number;
+    datarun_id: number;
     method: string;
     hyperpartition_string: string;
     status: 'incomplete' | 'gridding_done' | 'errored';
@@ -112,7 +113,7 @@ export async function getClassifiers(
     throw res;
 }
 
-export async function getHyperpartitions(id?: number): Promise<IHyperpartitionInfo | IHyperpartitionInfo[]> {
+export async function getHyperpartitions(id?: number): Promise<IHyperpartitionInfo[]> {
     const url = id ? `/hyperpartitions/${id}` : `/hyperpartitions`;
     const res = await axiosInstance.get(url);
     if (res.status === 200) {

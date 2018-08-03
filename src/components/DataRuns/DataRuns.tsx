@@ -6,12 +6,13 @@ import * as React from "react";
 import {parseDatarun} from "../../helper";
 import {IDatarun} from '../../types';
 // import {URL} from '../../Const';
-import {getClassifierSummary} from '../../service/dataService';
+import {getClassifierSummary, getClassifiers, IClassifierInfo} from '../../service/dataService';
 
 //components
 import Methods from './Methods';
 import BarChart from './BarChart';
 import Histogram from "./Histogram";
+import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
 
@@ -26,7 +27,8 @@ import { UPDATE_INTERVAL_MS } from "Const";
 
 
 export interface IState{
-    runCSV:string
+    runCSV:string,
+    classifiers: IClassifierInfo[]
 }
 export interface IProps{
     datarunID: number | null;
@@ -38,7 +40,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
         super(props)
         this.getData = this.getData.bind(this)
         this.state = {
-            runCSV:''
+            runCSV:'',
+            classifiers:[]
         }
     }
     public async getData() {
@@ -46,11 +49,13 @@ export default class DataRuns extends React.Component<IProps, IState>{
         // const {datarunID} = this.props
         // const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
         // const run = res.data
-        if (this.props.datarunID !== null) {
-            const run = await getClassifierSummary(this.props.datarunID);
+        const {datarunID} = this.props
+        if (datarunID !== null) {
+            const runCSV = await getClassifierSummary(datarunID);
             // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
             // const banditData = res.data
-            this.setState({runCSV: run})
+            const classifiers = await getClassifiers(datarunID)
+            this.setState({runCSV, classifiers})
         }
 
     }
@@ -79,18 +84,23 @@ export default class DataRuns extends React.Component<IProps, IState>{
         window.clearInterval(this.intervalID)
     }
     public render(){
-        const {runCSV} = this.state
+        const {runCSV, classifiers} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
         if (Object.keys(datarun).length>0){
-            return <div style={{height: '100%'}}>
+            return (
+        <div style={{height: '100%'}}>
 
             <div className="runTracker" style={{height: '20%', display: "flex"}}>
                 <BarChart run={runCSV} width={60} />
                 <Histogram datarun={datarun} width={40}/>
             </div>
+            <div style={{height: "80%", overflowY: "scroll"}}>
+                <HyperPartitions classifiers={classifiers} />
+            </div>
+
             <Methods height={80} datarun={datarun}/>
 
-            </div>
+        </div>)
         }else{
             return <div />
         }
