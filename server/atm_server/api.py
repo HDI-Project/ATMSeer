@@ -40,8 +40,9 @@ def handle_invalid_usage(error):
 
 @api.errorhandler(InvalidRequestError)
 def handle_db_request_error(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
+    logging.exception(error)
+    response = jsonify({"error":str(error)})
+    response.status_code = 500
     return response
 
 
