@@ -45,7 +45,7 @@ class App extends React.Component<{}, IState> {
     return (
       <Layout className="app" >
         <Header className='appHeader'>
-            VIS + ATM
+            ATMSeer
             <img src={logo}
             className='appLogo'/>
         </Header>
