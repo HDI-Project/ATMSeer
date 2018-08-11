@@ -138,7 +138,7 @@ export default class BarChart extends React.Component<IProps, IState>{
                     notMerge={true}
                 />
                 <div className="sortSwitch" style={sortSwitchStyle}>
-                    sorted by
+                    {"sorted by "}
                     <Switch checkedChildren="score" unCheckedChildren="time"
                         defaultChecked={false} onChange={this.changeSort} />
                 </div>

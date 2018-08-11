@@ -12,7 +12,7 @@ import {getClassifierSummary, getClassifiers, IClassifierInfo} from '../../servi
 import Methods from './Methods';
 import BarChart from './BarChart';
 import Histogram from "./Histogram";
-import HyperPartitions from "./HyperPartitions";
+// import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
 
@@ -84,7 +84,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
         window.clearInterval(this.intervalID)
     }
     public render(){
-        const {runCSV, classifiers} = this.state
+        const {runCSV} = this.state
+        // const {classifiers} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
         if (Object.keys(datarun).length>0){
             return (
@@ -94,9 +95,9 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <Histogram datarun={datarun} width={40}/>
                 <BarChart run={runCSV} width={60} />
             </div>
-            <div style={{height: "80%", overflowY: "scroll"}}>
+            {/* <div style={{height: "80%", overflowY: "scroll"}}>
                 <HyperPartitions classifiers={classifiers} />
-            </div>
+            </div> */}
 
             <Methods height={80} datarun={datarun}/>
 
