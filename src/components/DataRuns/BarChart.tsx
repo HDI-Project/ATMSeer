@@ -59,14 +59,26 @@ export default class BarChart extends React.Component<IProps, IState>{
                 return b.value - a.value;
             })
         } else {
-            let bestSoFar: number[] = []
+            let bestSoFar: EChartOption['series'] = []
             let max = 0
             for (let i = 0; i < data.length; i++) {
                 let currentPerformance = data[i].value
+                let dotSize = 2 //if the performance get improved, draw a big circle
                 if (max < currentPerformance) {
                     max = currentPerformance
+                    dotSize = 5
+                    bestSoFar.push({
+                        value:max,
+                        symbolSize: dotSize,
+                        symbol: "emptyCircle"
+                    })
+                }else{
+                    bestSoFar.push({
+                        value:max,
+                        symbolSize: dotSize
+                    })
                 }
-                bestSoFar.push(max)
+
             }
 
             series.push({
