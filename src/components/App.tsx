@@ -71,6 +71,7 @@ class App extends React.Component<{}, IState> {
           </Row>
         </Content>
       </Layout>
+      
     );
   }
 }
