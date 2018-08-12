@@ -519,5 +519,22 @@
         },
         "root_hyperparameters": ["alpha", "fit_prior", "class_prior", "_scale_minmax"],
         "conditional_hyperparameters": {}
+    },
+    "ada":{   
+        "name": "ada",
+        "fullname": "adaboost",
+        "class": "sklearn.ensemble.AdaBoostClassifier",
+        "hyperparameters": {
+            "n_estimators": {
+                "type": "int",
+                "range": [25, 500]
+            },
+            "learning_rate": {
+                "type": "float",
+                "range": [0.5, 10]
+            }
+        },
+        "root_hyperparameters": ["n_estimators", "learning_rate"],
+        "conditional_hyperparameters": {}
     }
 }
