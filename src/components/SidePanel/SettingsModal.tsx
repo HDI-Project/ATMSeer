@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, Button, Icon } from 'antd';
+import { Modal, Button, Icon, Checkbox,InputNumber } from 'antd';
 
 export interface SettingsModalProps {
 
@@ -36,9 +36,26 @@ export default class SettingsModal extends React.Component<SettingsModalProps, S
   handleCancel = () => {
     this.setState({ visible: false });
   }
-
+  public onChange(checkedValues : any) {
+    console.log('checked = ', checkedValues);
+  }
   render() {
     const { visible, loading } = this.state;
+    const CheckboxGroup = Checkbox.Group;
+
+    const plainOptions = ['Apple', 'Pear', 'Orange'];
+    const options = [
+      { label: 'Apple', value: 'Apple' },
+      { label: 'Pear', value: 'Pear' },
+      { label: 'Orange', value: 'Orange' },
+    ];
+    const optionsWithDisabled = [
+      { label: 'Apple', value: 'Apple' },
+      { label: 'Pear', value: 'Pear' },
+      { label: 'Orange', value: 'Orange', disabled: false },
+    ];
+
+    
     return (
       <div>
         <Button
@@ -48,7 +65,7 @@ export default class SettingsModal extends React.Component<SettingsModalProps, S
         </Button>
         <Modal
           visible={visible}
-          title="Title"
+          title="Settings"
           onOk={this.handleOk}
           onCancel={this.handleCancel}
           footer={[
@@ -58,11 +75,20 @@ export default class SettingsModal extends React.Component<SettingsModalProps, S
             </Button>,
           ]}
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          <h4>Methods</h4>
+          <br />
+          <div>
+            <CheckboxGroup options={plainOptions} defaultValue={['Apple']} onChange={this.onChange} />
+            <br /><br />
+            <CheckboxGroup options={options} defaultValue={['Pear']} onChange={this.onChange} />
+            <br /><br />
+            <CheckboxGroup options={optionsWithDisabled} disabled defaultValue={['Apple']} onChange={this.onChange} />
+          </div>
+          <br />
+          <h4>Classifier Budget</h4>
+          <br />
+          <InputNumber min={1} max={10} defaultValue={3} onChange={this.onChange} />
+          <br />
         </Modal>
       </div>
     );
