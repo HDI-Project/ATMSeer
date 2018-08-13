@@ -63,7 +63,21 @@ export interface IClassifierInfo {
     method: string;
     hyperparameters: {[param: string]: boolean | number | string}
 }
-
+export interface IConfigsInfo {
+    methods : string[];
+    budget: number;
+    r_minimum : number;
+    k_window : number;
+    gridding : number;
+    metric :string;
+    selector : string;
+    budget_type: string;
+    tuner: string;
+    priority :number;
+}
+export interface IConfigsUploadResponse {
+    success: boolean;
+}
 export async function getDatasets(): Promise<IDatasetInfo[]> {
     const url = `/datasets`;
     const res = await axiosInstance.get(url);
@@ -191,6 +205,25 @@ export async function startDatarun(datarun_id: number): Promise<IDatarunStatus> 
 export async function stopDatarun(datarun_id: number): Promise<IDatarunStatus> {
     const url = `/stop_worker/${datarun_id}`;
     const res = await axiosInstance.get(url);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function getConfigs(): Promise<IConfigsInfo> {
+    const url = `/configs`;
+    const res = await axiosInstance.get(url);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+export async function postConfigs(configs : any): Promise<IConfigsUploadResponse> {
+    const formData = new FormData();
+    formData.append('configs', JSON.stringify(configs));
+    
+    const res = await axiosInstance.post(`/configs`, formData);
     if (res.status === 200) {
         return res.data;
     }

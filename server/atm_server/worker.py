@@ -134,6 +134,11 @@ def monitor_dispatch_worker(datarun_id):
             # Clean the cache
             logger.warning("Process (PID: %d) exited." % p_inner.pid)
             cache.delete(key)
+            db = get_db()
+            datarun = db.get_datarun(datarun_id)
+            if datarun.status == RunStatus.RUNNING:
+                # The datarun is still running
+                mark_datarun_pending(db.datarun_id)
             return
         if cache.get(key) is None:
             while True:
@@ -152,7 +157,7 @@ def monitor_dispatch_worker(datarun_id):
             datarun = db.get_datarun(datarun_id)
             if datarun.status == RunStatus.RUNNING:
                 # The datarun is still running
-                db.mark_datarun_pending(datarun_id)
+                mark_datarun_pending(db,datarun_id)
             logger.warning("Process (PID: %d) terminated (exitcode: %d)" % (p_inner.pid, p_inner.exitcode))
             return
         # Sleep for a while
@@ -184,13 +189,21 @@ def stop_worker(datarun_id):
     key = datarun_id2key(datarun_id)
     cache = get_cache()
     pid = cache.get(key)
-    db = get_db()
+    
     if pid is not None:
         logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
         # Then we delete the datarun process_id cache (as a signal of terminating)
         cache.delete(key)
         return True
     logger.warning("Cannot find corresponding process for datarun %d" % datarun_id)
+    db = get_db()
+    datarun = db.get_datarun(datarun_id)
+    if datarun is None:
+        # WARNING: Raise ERROR
+        raise ApiError("No datarun found with the given id: %d" % datarun_id, 404)
+    if datarun.status == RunStatus.RUNNING:
+        # The datarun maybe terminated.
+        mark_datarun_pending(db,datarun_id)
     return False
 
 

@@ -3,8 +3,8 @@ import { Select, Row, Col, Upload, Icon, Button, message } from 'antd';
 import { IDatasetInfo, IDatarunInfo, IDatarunStatus } from 'service/dataService';
 import { getDatasets, getDataruns, getDatarun, postEnterData, startDatarun, stopDatarun } from 'service/dataService';
 import { IDatarunStatusTypes } from 'types/index';
-
 import "./DataSelector.css";
+import SettingsModal from './SettingsModal';
 
 const Option = Select.Option;
 
@@ -101,6 +101,9 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
             .catch(error => {
                 console.log(error);
             });
+    }
+    public onClickSettings() {
+        
     }
 
     public componentDidUpdate(prevProps: DataSelectorProps, prevState: DataSelectorState) {
@@ -200,6 +203,16 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                             </Button>
                         </Col>
                     </Row>
+                </div>
+                <div>
+                    <span>Settings</span>
+                    <Row gutter={8}>
+                        
+                        <Col span={24} className="dataViewColContainer">
+                            <SettingsModal />
+                        </Col>
+                    </Row>
+                    
                 </div>
             </div>
         );
