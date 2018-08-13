@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { Modal, Button, Icon, Checkbox,InputNumber } from 'antd';
+import { Modal, Button, Icon, Checkbox,InputNumber,message } from 'antd';
+import * as methodsDef from "../../assets/methodsDef.json";
+import { IConfigsInfo, IConfigsUploadResponse } from 'service/dataService';
+import { getConfigs,postConfigs } from 'service/dataService';
 
 export interface SettingsModalProps {
 
@@ -18,42 +21,79 @@ export default class SettingsModal extends React.Component<SettingsModalProps, S
  state = {
   loading: false,
   visible: false,
+  configs : {methods : [], budget : 100},
+  defaultMethodValue: [],
+  defaultBudgetValue: 100,
+ 
 };
-
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
+showModal =() => {
+  this.initModal();
+}
+ public initModal() {
+   // get configs from server ;
+   // initialize the default value in Modal
+   // Show Modal.
+  let promise: Promise<IConfigsInfo>;
+  promise = getConfigs();
+  promise
+      .then(configs => {
+        console.log(configs);
+        this.setState({
+          visible: true,
+          configs : {methods:configs.methods,budget:configs.budget},
+        });
+      })
+      .catch(error => {
+          console.log(error);
+      });
   }
+
 
   handleOk = () => {
+    // Submit
     this.setState({ loading: true });
-    setTimeout(() => {
+    console.log(this.state.configs);
+    let promise:Promise<IConfigsUploadResponse> = postConfigs(this.state.configs);
+    promise.then(status => {
+      if(status.success == true){
+        message.success("Submit Configs Successfully.");
+      }
       this.setState({ loading: false, visible: false });
-    }, 3000);
-  }
+    }).catch(error=>{
+      console.log(error);
+      message.error("Submit Configs Failed.");
+      this.setState({ loading: false, visible: false });
 
+    });
+    
+  }
   handleCancel = () => {
     this.setState({ visible: false });
   }
-  public onChange(checkedValues : any) {
-    console.log('checked = ', checkedValues);
+  onMethodsChange = (methods : any) => {
+    //console.log("checked",methods);
+    if(methods.length<1){
+      message.error("You must select at least one method");
+    }else{
+      let configs = this.state.configs;
+      configs.methods = methods;
+      this.setState({configs:configs});
+    }
+  }
+  onBudgetChange = (budget : any) =>{
+    let configs = this.state.configs;
+    configs.budget = budget;
+    this.setState({configs:configs});
   }
   render() {
-    const { visible, loading } = this.state;
+    const { visible, loading, configs } = this.state;
     const CheckboxGroup = Checkbox.Group;
+    const method_key = Object.keys(methodsDef);
+    const options =  method_key.map((key : string, index : number)=>{
+      return {label:methodsDef[key].fullname,value:key};
+    });
 
-    const plainOptions = ['Apple', 'Pear', 'Orange'];
-    const options = [
-      { label: 'Apple', value: 'Apple' },
-      { label: 'Pear', value: 'Pear' },
-      { label: 'Orange', value: 'Orange' },
-    ];
-    const optionsWithDisabled = [
-      { label: 'Apple', value: 'Apple' },
-      { label: 'Pear', value: 'Pear' },
-      { label: 'Orange', value: 'Orange', disabled: false },
-    ];
+    
 
     
     return (
@@ -78,16 +118,12 @@ export default class SettingsModal extends React.Component<SettingsModalProps, S
           <h4>Methods</h4>
           <br />
           <div>
-            <CheckboxGroup options={plainOptions} defaultValue={['Apple']} onChange={this.onChange} />
-            <br /><br />
-            <CheckboxGroup options={options} defaultValue={['Pear']} onChange={this.onChange} />
-            <br /><br />
-            <CheckboxGroup options={optionsWithDisabled} disabled defaultValue={['Apple']} onChange={this.onChange} />
+            <CheckboxGroup options={options} value={configs.methods} onChange={this.onMethodsChange} />
           </div>
           <br />
           <h4>Classifier Budget</h4>
           <br />
-          <InputNumber min={1} max={10} defaultValue={3} onChange={this.onChange} />
+          <InputNumber min={1} value={configs.budget} onChange={this.onBudgetChange} />
           <br />
         </Modal>
       </div>
