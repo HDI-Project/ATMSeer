@@ -65,6 +65,14 @@ export interface IClassifierInfo {
 export interface IConfigsInfo {
     methods : string[];
     budget: number;
+    r_minimum : number;
+    k_window : number;
+    gridding : number;
+    metric :string;
+    selector : string;
+    budget_type: string;
+    tuner: string;
+    priority :number;
 }
 export interface IConfigsUploadResponse {
     success: boolean;
