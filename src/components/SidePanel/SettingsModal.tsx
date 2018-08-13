@@ -82,7 +82,7 @@ export default class SettingsModal extends React.Component<SettingsModalProps, S
             <br /><br />
             <CheckboxGroup options={options} defaultValue={['Pear']} onChange={this.onChange} />
             <br /><br />
-            <CheckboxGroup options={optionsWithDisabled} disabled defaultValue={['Apple']} onChange={this.onChange} />
+            <CheckboxGroup options={optionsWithDisabled} disabled={true} defaultValue={['Apple']} onChange={this.onChange} />
           </div>
           <br />
           <h4>Classifier Budget</h4>

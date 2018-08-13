@@ -310,3 +310,4 @@ def stop_single_worker(datarun_id):
     stop = stop_worker(datarun_id)
     datarun = db.get_datarun(datarun_id)
     return jsonify({'status': datarun.status, 'success': stop})
+
