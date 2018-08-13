@@ -17,6 +17,10 @@ from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db,
     fetch_classifiers, fetch_hyperpartitions
 from .worker import start_worker, stop_worker, work
 from atm_server.helper.atm_helper import get_datarun_steps_info
+from atm_server import SERVER_ROOT
+from atm.config import load_config
+import yaml
+import json
 
 api = Blueprint('api', __name__)
 
@@ -311,3 +315,32 @@ def stop_single_worker(datarun_id):
     datarun = db.get_datarun(datarun_id)
     return jsonify({'status': datarun.status, 'success': stop})
 
+
+@api.route('/configs', methods=['GET','POST'])
+def configs_info():
+    """Fetch or set the info of run configs"""
+    result = {}
+    result['success']=False
+    run_path = current_app.config['run_config']
+    if request.method == 'GET':
+        with open(run_path) as f:
+            run_args = yaml.load(f)
+            result.update(run_args)
+            result.update({'success':True})
+    elif request.method == 'POST':
+        # Get local set configs
+        run_args = {}
+        with open(run_path) as f:
+            run_args = yaml.load(f)
+        # Update Local set configs And Save in the default file.
+        configs = json.loads(request.form['configs'])
+        run_args.update(configs)
+        with open(run_path,'w') as f:
+            yaml.dump(run_args,f)
+        # Load Config Again. And Update Current APP Configs.
+        config = {'run_config':run_path}
+        # Load ATM confs
+        _, run_conf, _, _ = load_config(**config)
+        current_app.config.update({'RUN_CONF': run_conf})
+        result['success']=True
+    return jsonify(result)

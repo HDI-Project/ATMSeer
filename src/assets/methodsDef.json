@@ -488,13 +488,6 @@
             }
         }
     },
-    "dbn":{
-        "name": "dbn",
-        "fullname": "deep belief network",
-        "hyperparameters": {},
-        "root_hyperparameters": [],
-        "conditional_hyperparameters": {}
-    },
     "mnb":{   
         "name": "mnb",
         "fullname": "multinomial naive bayes",
