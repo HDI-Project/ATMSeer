@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { URL } from '../Const';
-import { IDatarunStatusTypes, IClassifierStatusTypes } from '../types/index';
+import { URL } from 'Const';
+import { IDatarunStatusTypes, IClassifierStatusTypes } from 'types';
 
 // const API = `${URL}/api`;
 

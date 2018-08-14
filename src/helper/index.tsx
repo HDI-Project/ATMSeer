@@ -1,4 +1,4 @@
-import {IClassifier, IDatarun} from '../types';
+import {IClassifier, IDatarun} from 'types';
 
 const names: string[] = []
 const COLORS: string[] = [
@@ -40,6 +40,7 @@ const PINK: string[] = [
     "#BC0F46"
 
 ]
+const RED: string = "#DC143C";
 
 const getColor = (name: string, palatte: number = 0): string =>{
     let colors: string[]
@@ -91,6 +92,71 @@ export const filterByMethod=(csv: string|any)=>{
     });
     return result
 }
+export const getGradientColor = (startColor : string,endColor :string,step : number) => {
+    let colorRgb = (sColor : string)=>{
+        var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+        var sColor = sColor.toLowerCase();
+        if(sColor && reg.test(sColor)){
+            if(sColor.length === 4){
+                var sColorNew = "#";
+                for(var i=1; i<4; i+=1){
+                    sColorNew += sColor.slice(i,i+1).concat(sColor.slice(i,i+1));
+                }
+                sColor = sColorNew;
+            }
+            var sColorChange = [];
+            for(var i=1; i<7; i+=2){
+                sColorChange.push(parseInt("0x"+sColor.slice(i,i+2)));
+            }
+            return sColorChange;
+        }else{
+            return sColor;
+        }
+    };
+    startColor = startColor.replace(/\s+/g,"");
+    endColor = endColor.replace(/\s+/g,"");
+    let startRGB : any = colorRgb(startColor);//转换为rgb数组模式
+    //console.log(startRGB);
+    let startR = startRGB[0];
+    let startG = startRGB[1];
+    let startB = startRGB[2];
+
+    let endRGB : any = colorRgb(endColor);
+    //console.log(endRGB);
+
+    let endR = endRGB[0];
+    let endG = endRGB[1];
+    let endB = endRGB[2];
+
+    let sR = (endR-startR)/step;//总差值
+    let sG = (endG-startG)/step;
+    let sB = (endB-startB)/step;
+
+    var colorArr = [];
+    for(var i=0;i<step;i++){
+        var R = parseInt((sR*i+startR));
+        var G = parseInt((sG*i+startG));
+        var B = parseInt((sB*i+startB));
+        var strHex = "#";
+        var aColor = new Array();
+        aColor[0] = R;
+        aColor[1] = G;
+        aColor[2] = B;
+        for(let j=0; j<3; j++){
+            let hex : string = Number(aColor[j]).toString(16);
+            let shex : string = Number(aColor[j])<10 ? '0'+hex :hex;
+            if(shex === "0"){
+                shex += shex;
+            }
+            strHex += shex;
+        }
+      colorArr.push(strHex);
+    }
+    return colorArr;
+}
+
+
+
 
 export const filterByDescending=(csv: string|any)=>{
     let lines = csv.split('\n')
@@ -233,4 +299,4 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
     };
 };
 
-export { getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }
+export { RED, getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }

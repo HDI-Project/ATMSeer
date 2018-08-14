@@ -3,16 +3,16 @@
 import * as React from "react";
 
 //
-import {parseDatarun} from "../../helper";
-import {IDatarun} from '../../types';
+import {parseDatarun} from "helper";
+import {IDatarun} from 'types';
 // import {URL} from '../../Const';
-import {getClassifierSummary} from '../../service/dataService';
+import {getClassifierSummary} from 'service/dataService';
 
 //components
-import Methods from './Methods';
+import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
 import Histogram from "./Histogram";
-import { IDatarunStatusTypes } from 'types/index';
+import { IDatarunStatusTypes } from 'types';
 import { UPDATE_INTERVAL_MS } from "Const";
 
 // const axiosInstance = axios.create({
@@ -89,7 +89,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <BarChart run={runCSV} width={60} />
                 <Histogram datarun={datarun} width={40}/>
             </div>
-            <Methods height={80} datarun={datarun}/>
+            <MethodsSearchSpace height={80} datarun={datarun}/>
 
             </div>
         }else{

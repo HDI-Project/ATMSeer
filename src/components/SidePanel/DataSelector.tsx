@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Select, Row, Col, Upload, Icon, Button, message } from 'antd';
 import { IDatasetInfo, IDatarunInfo, IDatarunStatus } from 'service/dataService';
 import { getDatasets, getDataruns, getDatarun, postEnterData, startDatarun, stopDatarun } from 'service/dataService';
-import { IDatarunStatusTypes } from 'types/index';
+import { IDatarunStatusTypes } from 'types';
 import "./DataSelector.css";
 import SettingsModal from './SettingsModal';
 

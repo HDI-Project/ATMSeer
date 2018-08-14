@@ -9,6 +9,9 @@
     "axios": "^0.18.0",
     "echarts": "^4.1.0",
     "echarts-for-react": "^2.0.12-beta.0",
+    "gradient-color": "^2.0.1",
+    "ml-dataset-iris": "^1.0.0",
+    "ml-pca": "^2.1.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-scripts-ts": "2.16.0"

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Collapse, Tag } from 'antd';
-import { IDatarunStatusTypes } from 'types/index';
+import { IDatarunStatusTypes } from 'types';
 import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions, getDatarunStepsScores } from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
