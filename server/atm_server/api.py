@@ -315,6 +315,7 @@ def stop_single_worker(datarun_id):
     datarun = db.get_datarun(datarun_id)
     return jsonify({'status': datarun.status, 'success': stop})
 
+
 @api.route('/configs', methods=['GET','POST'])
 def configs_info():
     """Fetch or set the info of run configs"""

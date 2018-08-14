@@ -184,6 +184,7 @@ showModal =() => {
         >
           <h4>Methods</h4>
           <div>
+
             <CheckboxGroup options={method_options} value={configs.methods} onChange={this.onMethodsChange} />
           </div>
           <br /><br />
