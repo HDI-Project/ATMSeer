@@ -104,6 +104,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => this.setState({ datarunInfo }));
             getHyperpartitions().then(hyperpartitions => {
+                console.log(hyperpartitions);
                 if (Array.isArray(hyperpartitions))
                     this.setState({ hyperpartitions });
                 else

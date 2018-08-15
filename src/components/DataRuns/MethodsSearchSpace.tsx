@@ -2,7 +2,7 @@ import { } from 'antd';
 import * as React from 'react';
 import * as methodsDef from "../../assets/methodsDef.json";
 import { IMethod, IDatarun, IClassifier } from "types";
-import { getColor ,RED, getGradientColor} from 'helper';
+import { getColor ,RED,YELLOW, getGradientColor} from 'helper';
 import "./MethodsSearchSpace.css"
 import ReactEcharts from "echarts-for-react";
 export interface IState {
@@ -16,17 +16,21 @@ export default class MethodsSearchSpace extends React.Component<IProps, IState>{
     public render() {
         // const methodLen = Object.keys(methodsDef).length
         let { datarun, height } = this.props
-        console.log(datarun);
-        let usedMethods: string[] = Object.keys(datarun)
+        let usedMethods: string[] = Object.keys(datarun);
+        let sumTrail : number = 0;
+        usedMethods.forEach((name:string)=>{
+            sumTrail+=datarun[name].length;
+        });
         // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methodsDef should be obtained by requesting server the config file
         const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
         return <div className="methods" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
             {usedMethods.map((name: string, i: number) => {
                 const methodDef = methodsDef[name]
                 return <div key={name + '_used'} className="usedMethodContainer"
-                    style={{ height: `35%`, width: '33%' }}>
+                style={{ height: `100%`, width: '100%' }}
+                    >
                     <div className="method">
-                        <MethodSearchSpace methodDef={methodDef} classifiers={datarun[name]} />
+                        <MethodSearchSpace methodDef={methodDef} classifiers={datarun[name]} sumTrail={sumTrail} />
                     </div>
                 </div>
             })}
@@ -37,17 +41,80 @@ export default class MethodsSearchSpace extends React.Component<IProps, IState>{
 
     }
 }
+class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifiers: IClassifier[] ,sumTrail:number}, {}>{
 
-class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifiers: IClassifier[] }, {}>{
+    public render() {
+        const { methodDef, classifiers , sumTrail } = this.props;
+        // pepare data for hyperpartition search space visualization
+        // TODO: Now I split the classifier data two times. In order to improve efficiency, maybe it is necessary
+        // to split the classifier data once.
+        let parameterList: any[] = [];
+        let idx = 0;
+        methodDef.root_hyperparameters.forEach((p: string) => {
+            let parameter = methodDef['hyperparameters'][p]
+            if (parameter['values']) { //category axis
+                parameterList.push({ dim: idx, name: p, type: 'category', data: parameter['values'] })
+            }
+        })
+        let hyperpartitionData : IDatarun= {};
+        classifiers.forEach(((classifier: IClassifier, idx: number) => {
+            let par_dict = {}
+            let parameters = classifier['parameters'].split('; ')
+            parameters = parameters.map((p: string) => {
+                let [k, v] = p.split(' = ')
+                return par_dict[k] = v
+            })
+            // for the hidden layer sizes in MLP
+
+            if (par_dict['len(hidden_layer_sizes)']) {
+                for (let i = parseInt(par_dict['len(hidden_layer_sizes)']); i < 3; i++) {
+                    par_dict[`hidden_layer_sizes[${i}]`] = 0
+                }
+            }
+
+            // add perforamce
+            par_dict['performance'] = parseFloat(classifier['performance'].split(' +- '))
+            let ScatterPlotCategory : any[] = [methodDef.fullname];
+            parameterList.forEach(p => {
+                let value = par_dict[p.name]
+                if (p.type == 'category') {
+                    ScatterPlotCategory.push(p.name+":"+value);
+                }
+            });
+            let HyperpartitionName = ScatterPlotCategory.join("\n");
+
+            if(!hyperpartitionData[HyperpartitionName]){
+                hyperpartitionData[HyperpartitionName] = [];
+            }
+            hyperpartitionData[HyperpartitionName].push(classifier);
+        }
+        )); 
+        let usedHyperpartitions: string[] = Object.keys(hyperpartitionData)
+        return <div className="methods" style={{height: '100%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
+            {usedHyperpartitions.map((name: string, i: number) => {
+                return <div key={name + '_used'} className="usedMethodContainer"
+                    style={{ height: `100%`, width: '100%' }}>
+                    <div className="method">
+                        <HyperpatitionSearchSpace hyperpartitionName={name} methodDef={methodDef} classifiers={hyperpartitionData[name]} sumTrail={sumTrail} />
+                    </div>
+                </div>
+            })}
+            
+        </div>
+        
+
+    }
+
+}
+class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, classifiers: IClassifier[], hyperpartitionName : string, sumTrail:number }, {}>{
     PCA = require('ml-pca');
-    gradient = require('gradient-color');
 
     getOption() {
         // Get Datasets
-        const { methodDef, classifiers } = this.props
+        const { methodDef, classifiers,sumTrail } = this.props
 
         // pepare data for parallel coordinates
-        let searchSpaceScatterPlot: any[] = []
+        let searchSpaceScatterPlot: any[] = [];
         let idx = 0
         methodDef.root_hyperparameters.forEach((p: string) => {
             let parameter = methodDef['hyperparameters'][p]
@@ -78,7 +145,7 @@ class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifier
         })
         let data: any[] = []
         let classifiersData : any[] = [];
-        let totallen = classifiers.length;
+        //let totallen = classifiers.length;
         classifiers.forEach(((classifier: IClassifier, idx: number) => {
 
             let par_dict = {}
@@ -97,24 +164,28 @@ class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifier
 
             // add perforamce
             par_dict['performance'] = parseFloat(classifier['performance'].split(' +- '))
-            let attrs = searchSpaceScatterPlot.map(p => {
+            let attrs  =  searchSpaceScatterPlot.map(p => {
                 let value = par_dict[p.name]
                 if (p.type == 'value') {
-                    return parseFloat(value)
+                    return parseFloat(value);
                 } else {
-                    return value
+                    return value;
                 }
             })
-            data.push(attrs)
+            data.push(attrs);
             let performance = parseFloat(classifier['performance'].split(' +- ')[0])
-            classifiersData.push({attrs:attrs,performance:performance,label:"idx:"+idx+" performance:"+performance,idx:idx});
+            let trailID : number = classifier['trail ID'];
+            classifiersData.push({attrs:attrs,performance:performance,label:"trail ID:"+trailID+" performance:"+performance,idx:trailID});
         }
         ));
         // Get Color Gradient
 
-        const N = totallen<2?2:totallen;
-        const colors = getGradientColor(getColor(methodDef.name),RED,N);
+        //const N = totallen<2?2:totallen;
+        //const colors = getGradientColor(getColor(methodDef.name),RED,N);
         //console.log(colors);
+  
+        const N = sumTrail<2?2:sumTrail;
+        const colors = getGradientColor(YELLOW,RED,N-1);      
         
         // PCA 
         let scatterPlotData : any[] = [];
@@ -149,7 +220,7 @@ class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifier
         
         const option = {
             title: {
-                text: `${methodDef.fullname}: {term|${classifiers.length}}`,
+                text: `${this.props.hyperpartitionName}: {term|${classifiers.length}}`,
                 left: '0.5%',
                 top: '0.5%',
                 textStyle: {
@@ -174,11 +245,30 @@ class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifier
                 show:false,
                 scale: true
             },
+            
+            visualMap: [
+                {
+                    left:'right',
+                    dimension: 4,
+                    min: 0,
+                    max: N-1,
+                    itemHeight: 120,
+                    calculable: true,
+                    precision: 0,
+                    text: ['latest time'],                   
+                    inRange: {
+                        color: [YELLOW, RED]
+                    }
+                    
+                }
+
+            ],
+
             series: [{
                 data: scatterPlotData,
                 type: 'scatter',
                 symbolSize: function (data : any) {
-                    return data[2]*50+1;
+                    return data[2]*25+1;
                 },
                 label: {
                     emphasis: {
@@ -198,9 +288,40 @@ class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifier
                         
                     }
                 }
-            }]
+            },{
+                data: scatterPlotData,
+                type: 'line',
+                smooth: true,
+                symbolSize: 0,
+            }
+            ]
         };
-        
+        /**
+         *visualMap: [
+                {
+                    left:'right',
+                    dimension: 4,
+                    min: 0,
+                    max: N-1,
+                    itemHeight: 120,
+                    calculable: true,
+                    precision: 0,
+                    text: ['latest time'],                   
+                    inRange: {
+                        color: [getColor(methodDef.name), colors[N-1]]
+                    }
+                    
+                }
+
+            ],
+         */
+        /**
+         * {
+                data: scatterPlotData,
+                type: 'line',
+                smooth: true
+            }
+         */
         return option
     }
     render() {

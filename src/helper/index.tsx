@@ -41,7 +41,7 @@ const PINK: string[] = [
 
 ]
 const RED: string = "#DC143C";
-
+const YELLOW : string = '#fee08b';
 const getColor = (name: string, palatte: number = 0): string =>{
     let colors: string[]
     switch (palatte) {
@@ -217,12 +217,16 @@ const parseDatarun=(csv: string|any)=>{
 
     lines.shift() //remove headers
     lines.splice(-1, 1) // remove lats empty line
+    let trailID = 0;
     lines.forEach((row:string, idx:number) => {
         const cells = row.split(',')
         let record:IClassifier = {'trail ID':idx, method:''}
+        
         cells.forEach((cell, idx)=>{
             record[keys[idx]] = cell
         })
+        record['trail ID'] = trailID;
+        trailID++;
         let methodIndex = keys.indexOf('method')
         let methodName = cells[methodIndex]
         if(datarun[methodName]){
@@ -299,4 +303,4 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
     };
 };
 
-export { RED, getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }
+export { RED,YELLOW, getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }
