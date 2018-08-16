@@ -91,7 +91,17 @@ export default class MethodsSearchSpace extends React.Component<IProps, IState>{
         });
 
         let usedHyperpartitions: string[] = Object.keys(hyperpartitionData)
-
+        if(mode==1){
+            const methodDef = methodsDef[hyperpartition2Method[selectedHyperpartitionName]];
+            if(!methodDef){
+                mode=0;
+                selectedHyperpartitionName="";
+                this.setState({
+                    mode : 0,
+                    selectedHyperpartitionName : ""
+                });
+            }
+        }
 
         /**
          * <div key={name + '_used'} className="usedMethodContainer"
@@ -322,7 +332,7 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
 
 
 
-
+        
         let series= [];
         series.push({
             data: scatterPlotData,
@@ -349,6 +359,22 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
                 }
             }
         });
+        series.push({
+            
+            data: scatterPlotData,
+            type: 'line',
+            symbolSize: 0,
+            smooth:true,
+            itemStyle: {
+                normal: {
+                    color: '#F2E3E0',
+                    width:1
+                }
+            }
+            
+
+        });
+        /*
          let datalength = scatterPlotData.length;
         for(let i = 0;i<datalength-1;i++){
             let bundle = [];
@@ -370,6 +396,7 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
 
             series.push(series2);
         }
+        */
         const option = {
             title: {
                 text: `${this.props.hyperpartitionName}: {term|${classifiers.length}}`,
@@ -450,6 +477,7 @@ class HyperpatitionBarChart extends React.Component<{ methodDef: IMethod, classi
         for (let i =0; i<1/step; i++){
             xAxisData.push(`${(i*step).toFixed(2)}-${((i+1)*step).toFixed(2)}`)
         }
+        
         const option = {
             title:{
                 text:"performance histogram",
@@ -469,7 +497,7 @@ class HyperpatitionBarChart extends React.Component<{ methodDef: IMethod, classi
                 }
             },
             yAxis: {
-                type: 'value'
+                type: 'value',
             },
             
             series:[
@@ -515,6 +543,7 @@ class HyperpatitionOverViewBarChart extends React.Component<{ methodDef: IMethod
         for (let i =0; i<1/step; i++){
             xAxisData.push(`${(i*step).toFixed(2)}-${((i+1)*step).toFixed(2)}`)
         }
+        /*
         const option = {
             title: {
                 text: `${this.props.hyperpartitionName}: {term|${classifiers.length}}`,
@@ -564,6 +593,48 @@ class HyperpatitionOverViewBarChart extends React.Component<{ methodDef: IMethod
                 }
             ]
         };
+        */
+       const option = {
+        title: {
+            text: `${this.props.hyperpartitionName}: {term|${classifiers.length}}`,
+            left: '0.5%',
+            top: '0.5%',
+            textStyle: {
+                fontSize: 15,
+                rich: {
+                    term: {
+                        borderColor: "black",
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        padding: 5
+                    }
+                },
+                color:getColor(methodDef.name),
+                opacity: 1
+            }
+
+        },
+        xAxis: {
+            type: 'category',
+            show:false
+        },
+        yAxis: {
+            type: 'value',
+            show:false
+        },
+        
+        series:[
+            {
+                type: 'bar',
+                // smooth: false,
+                data:data,
+                itemStyle:{
+                    color: "#E0D6D4",
+                    opacity: 0.5
+                },
+            }
+        ]
+    };      
         return option
     }
     onChartClick=()=>{
@@ -578,7 +649,7 @@ class HyperpatitionOverViewBarChart extends React.Component<{ methodDef: IMethod
         return <div onClick={this.onChartClick} style={{ height: `100%`, width: '100%' }}>
         <ReactEcharts
             option={this.getBarOption()}
-            style={{ height: `100%`, width: '100%' }}
+            style={{ height: `140%`, width: '100%' }}
         />
         </div>
     }
