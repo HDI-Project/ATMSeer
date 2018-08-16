@@ -82,8 +82,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
     public render(){
         const {runCSV} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
-        console.log(runCSV);
-        console.log(datarun);
+        //console.log(runCSV);
+        //console.log(datarun);
         if (Object.keys(datarun).length>0){
             return <div style={{height: '100%'}}>
 
