@@ -9,7 +9,8 @@ import {IDatarun} from 'types';
 import {getClassifierSummary} from 'service/dataService';
 
 //components
-import MethodsSearchSpace from './MethodsSearchSpace';
+import Methods from './Methods';
+//import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
 import Histogram from "./Histogram";
 import { IDatarunStatusTypes } from 'types';
@@ -91,7 +92,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <BarChart run={runCSV} width={60} />
                 <Histogram datarun={datarun} width={40}/>
             </div>
-            <MethodsSearchSpace height={80} datarun={datarun}/>
+            <Methods height={80} datarun={datarun}/>
 
             </div>
         }else{
