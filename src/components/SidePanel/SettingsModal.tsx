@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, Button, Icon, Checkbox,InputNumber,message,Select  } from 'antd';
+import { Modal, Button, Icon, Checkbox,InputNumber,message,Select,Collapse   } from 'antd';
 import * as methodsDef from "../../assets/methodsDef.json";
 import { IConfigsInfo, IConfigsUploadResponse } from 'service/dataService';
 import { getConfigs,postConfigs } from 'service/dataService';
@@ -149,6 +149,9 @@ showModal =() => {
   render() {
     const { visible, loading, configs } = this.state;
     const CheckboxGroup = Checkbox.Group;
+    const Panel = Collapse.Panel;
+
+
     const method_key = Object.keys(methodsDef);
     const method_options =  method_key.map((key : string, index : number)=>{
       return {label:methodsDef[key].fullname,value:key};
@@ -159,7 +162,6 @@ showModal =() => {
     const SELECTORS = ['uniform', 'ucb1', 'bestk', 'bestkvel', 'purebestkvel', 'recentk',
                  'recentkvel', 'hieralg'];
     const METRICS = ['f1', 'roc_auc'];
-
     
 
     
@@ -200,6 +202,9 @@ showModal =() => {
           <h4>Budget</h4>
           <InputNumber min={1} value={configs.budget} style={{ width: '100%' }} onChange={this.onBudgetChange} />
           <br /> <br />
+
+          <Collapse defaultActiveKey={[]}>
+          <Panel header="Advanced Settings" key="1">
           <h4>Priority</h4>
           <InputNumber min={1} value={configs.priority} style={{ width: '100%' }} onChange={this.onPriorityChange} />
           <br /> <br />
@@ -233,7 +238,10 @@ showModal =() => {
           <h4>gridding</h4>
           
           <InputNumber min={0} value={configs.gridding} onChange={this.onGriddingChange} style={{ width: '100%' }} />
-          <br />    <br />      
+          <br />    <br /> 
+          </Panel>
+          
+        </Collapse>     
         </Modal>
       </div>
     );
