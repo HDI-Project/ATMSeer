@@ -41,7 +41,9 @@ env.bak/
 venv.bak/
 
 atm.db
+/atm/
 logs
+*.log
 
 metrics/
 models/

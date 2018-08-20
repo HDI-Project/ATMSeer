@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getDatasetCSV } from 'service/dataService';
-import FeatureChart from '../FeatureChart';
+import FeatureChart from './FeatureChart';
 import {EChartsColor} from "helper";
 
 import "./DataView.css";
