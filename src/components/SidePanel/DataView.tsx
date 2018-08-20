@@ -94,6 +94,7 @@ export default class DataView extends React.Component<IProps, IState>{
                 return <span key={className} className='classLegend'>
                     <span style={{color: EChartsColor[i],  margin:'2px'}}/>
                     {className}
+                    ({labels.data.filter(d=>d==className).length})
                 </span>
             })
 
