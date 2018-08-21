@@ -1,41 +1,44 @@
 import * as React from 'react';
-import { Modal, Button, Icon, Checkbox,InputNumber,message,Select  } from 'antd';
+import { Modal, Button, Checkbox,InputNumber,message,Select  } from 'antd';
 import * as methodsDef from "../../assets/methodsDef.json";
-import { IConfigsInfo, IConfigsUploadResponse } from 'service/dataService';
-import { getConfigs,postConfigs } from 'service/dataService';
+import { IConfigsInfo } from 'service/dataService';
+import { getConfigs } from 'service/dataService';
 
 export interface SettingsModalProps {
-
+    onSubmit: (configs: IConfigsInfo) => Promise<any>;
+    button?: React.ReactNode;
 }
 
 export interface SettingsModalState {
-
+    configs: IConfigsInfo;
+    loading: boolean;
+    visible: boolean;
 }
 
 export default class SettingsModal extends React.Component<SettingsModalProps, SettingsModalState> {
-  constructor(props: SettingsModalProps) {
-    super(props);
-    
-    
- }
- state = {
-  loading: false,
-  visible: false,
-  configs : {
-    methods : [],
-    budget : 100,
-    r_minimum : 2,
-    k_window :0,
-    priority : 1,
-    gridding :0,
-    metric : "f1",
-    selector :"bestk",
-    budget_type : "classifier",
-    tuner : "gp"
+    constructor(props: SettingsModalProps) {
+        super(props);
 
-  },
- 
-};
+        this.state = {
+            loading: false,
+            visible: false,
+            configs : {
+            methods : [],
+            budget : 100,
+            r_minimum : 2,
+            k_window :0,
+            priority : 1,
+            gridding :0,
+            metric : "f1",
+            selector :"bestk",
+            budget_type : "classifier",
+            tuner : "gp"
+
+            },
+
+        };
+    }
+
 showModal =() => {
   this.initModal();
 }
@@ -74,7 +77,8 @@ showModal =() => {
     // Submit
     this.setState({ loading: true });
     console.log(this.state.configs);
-    let promise:Promise<IConfigsUploadResponse> = postConfigs(this.state.configs);
+    // let promise:Promise<IConfigsUploadResponse> = postConfigs(this.state.configs);
+    const promise = this.props.onSubmit(this.state.configs);
     promise.then(status => {
       if(status.success == true){
         message.success("Submit Configs Successfully.");
@@ -86,7 +90,7 @@ showModal =() => {
       this.setState({ loading: false, visible: false });
 
     });
-    
+
   }
   handleCancel = () => {
     this.setState({ visible: false });
@@ -160,16 +164,14 @@ showModal =() => {
                  'recentkvel', 'hieralg'];
     const METRICS = ['f1', 'roc_auc'];
 
-    
 
-    
+
     return (
       <div>
         <Button
             onClick={this.showModal}
-        >
-            <Icon type='setting' />Settings
-        </Button>
+            children={this.props.button}
+        />
         <Modal
           visible={visible}
           title="Settings"
@@ -231,9 +233,9 @@ showModal =() => {
           <InputNumber min={0} value={configs.k_window} onChange={this.onK_WinChange} style={{ width: '100%' }} />
           <br /><br />
           <h4>gridding</h4>
-          
+
           <InputNumber min={0} value={configs.gridding} onChange={this.onGriddingChange} style={{ width: '100%' }} />
-          <br />    <br />      
+          <br />    <br />
         </Modal>
       </div>
     );

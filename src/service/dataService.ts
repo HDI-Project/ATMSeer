@@ -78,6 +78,10 @@ export interface IConfigsInfo {
 export interface IConfigsUploadResponse {
     success: boolean;
 }
+export interface INewDatarunResponse {
+    success: boolean;
+    id: number;
+}
 export async function getDatasets(): Promise<IDatasetInfo[]> {
     const url = `/datasets`;
     const res = await axiosInstance.get(url);
@@ -183,6 +187,26 @@ export async function postEnterData(file: any): Promise<IFileUploadResponse> {
     throw res;
 }
 
+export async function postNewDataset(file: any): Promise<IFileUploadResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await axiosInstance.post(`/new_dataset`, formData);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function postNewDatarun(datasetId: number, configs: any): Promise<INewDatarunResponse> {
+    const formData = new FormData();
+    formData.append('configs', JSON.stringify(configs));
+    const res = await axiosInstance.post(`/new_datarun/${datasetId}`, formData);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
 export async function getClassifierSummary(datarun_id: number): Promise<string> {
     const url = `/classifier_summary`;
     const params = { datarun_id };
@@ -222,7 +246,7 @@ export async function getConfigs(): Promise<IConfigsInfo> {
 export async function postConfigs(configs : any): Promise<IConfigsUploadResponse> {
     const formData = new FormData();
     formData.append('configs', JSON.stringify(configs));
-    
+
     const res = await axiosInstance.post(`/configs`, formData);
     if (res.status === 200) {
         return res.data;

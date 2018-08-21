@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { Select, Row, Col, Upload, Icon, Button, message } from 'antd';
-import { IDatasetInfo, IDatarunInfo, IDatarunStatus } from 'service/dataService';
-import { getDatasets, getDataruns, getDatarun, postEnterData, startDatarun, stopDatarun } from 'service/dataService';
+import { IDatasetInfo, IDatarunInfo, IDatarunStatus, postConfigs, IConfigsInfo, postNewDatarun, INewDatarunResponse } from 'service/dataService';
+import { getDatasets, getDataruns, getDatarun, postNewDataset, startDatarun, stopDatarun } from 'service/dataService';
 import { IDatarunStatusTypes } from 'types/index';
 import "./DataSelector.css";
 import SettingsModal from './SettingsModal';
 
 const Option = Select.Option;
 
+
 export interface DataSelectorProps {
     datasetID: number | null;
     datarunID: number | null;
     datarunStatus: IDatarunStatusTypes;
     setDatasetID: (id: number) => void;
-    setDatarunID: (id: number) => void;
+    setDatarunID: (id: number | null) => void;
     setDatarunStatus: (status: IDatarunStatusTypes) => void;
 }
 
 export interface DataSelectorState {
     datasets: IDatasetInfo[];
     dataruns: IDatarunInfo[];
+    isProcessing: boolean;
     // datarunStatus: IDatarunStatusTypes;
 }
 
@@ -28,11 +30,13 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         super(props);
         this.onSelectDatarun = this.onSelectDatarun.bind(this);
         this.onSelectDataset = this.onSelectDataset.bind(this);
-        this.beforeUpload = this.beforeUpload.bind(this);
-        this.onClickDataRun = this.onClickDataRun.bind(this);
+        this.beforeUploadDataset = this.beforeUploadDataset.bind(this);
+        this.onClickDatarun = this.onClickDatarun.bind(this);
+        this.newDatarun = this.newDatarun.bind(this);
         this.state = {
             datasets: [],
             dataruns: [],
+            isProcessing: false,
             // datarunStatus: IDatarunStatusTypes.PENDING
         };
     }
@@ -47,6 +51,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         this.setState({ dataruns });
         // Select the first run as default
         if (dataruns.length > 0) this.onSelectDatarun(dataruns[0].id);
+        else this.props.setDatarunID(null);
     }
 
     public componentDidMount() {
@@ -61,8 +66,8 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         this.props.setDatarunID(datarunID);
     }
 
-    public beforeUpload(file: any) {
-        postEnterData(file)
+    public beforeUploadDataset(file: any) {
+        postNewDataset(file)
             .then(data => {
                 if (data.success === true) {
                     message.success(`${file.name} file uploaded successfully`);
@@ -78,7 +83,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         return false;
     }
 
-    public onClickDataRun() {
+    public onClickDatarun() {
         const { datarunStatus } = this.props;
         let promise: Promise<IDatarunStatus>;
         if (!this.props.datarunID) return;
@@ -93,17 +98,28 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 console.error("This branch should not occur!")
                 return;
         }
+        this.setState({isProcessing: true});
         promise
             .then(datarun => {
                 // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
                 this.props.setDatarunStatus(datarun.status);
+                this.setState({isProcessing: false});
             })
             .catch(error => {
                 console.log(error);
+                this.setState({isProcessing: false});
             });
     }
-    public onClickSettings() {
-        
+    public async newDatarun(configs: IConfigsInfo): Promise<undefined | INewDatarunResponse> {
+        const {datasetID} = this.props;
+        if (datasetID === null) return;
+        const p = postNewDatarun(datasetID, configs);
+        p.then((status) => {
+            if (status.success) {
+                this.getDataruns(datasetID);
+            }
+        })
+        return p;
     }
 
     public componentDidUpdate(prevProps: DataSelectorProps, prevState: DataSelectorState) {
@@ -136,6 +152,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
 
     public render() {
         const { datarunStatus } = this.props;
+        const { isProcessing } = this.state;
         const running = datarunStatus === IDatarunStatusTypes.RUNNING;
         // upload button
         const uploadProps = {
@@ -145,8 +162,10 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 authorization: ''
             },
             // onChange: this.onChange,
-            beforeUpload: this.beforeUpload // custom control the upload event
+            beforeUpload: this.beforeUploadDataset // custom control the upload event
         };
+
+        const settingButton = <React.Fragment><Icon type='setting' /><span>Settings</span></React.Fragment>;
         return (
             <div className="data-selector">
                 <div>
@@ -178,7 +197,10 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 <div>
                     <span>Dataruns</span>
                     <Row gutter={8}>
-                        <Col span={16} className="dataViewColContainer">
+                        <Col span={3} className="dataViewColContainer">
+                            <SettingsModal onSubmit={this.newDatarun} button={<Icon type="plus"/>}/>
+                        </Col>
+                        <Col span={13} className="dataViewColContainer">
                             <Select
                                 placeholder="Select a datarun"
                                 value={this.props.datarunID || undefined}
@@ -195,10 +217,10 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                         </Col>
                         <Col span={8} className="dataViewColContainer">
                             <Button
-                                onClick={this.onClickDataRun}
-                                disabled={datarunStatus === IDatarunStatusTypes.COMPLETE || this.props.datasetID === null}
+                                onClick={this.onClickDatarun}
+                                disabled={datarunStatus === IDatarunStatusTypes.COMPLETE || this.props.datasetID === null || isProcessing}
                             >
-                                <Icon type={running ? 'pause' : 'caret-right'} />
+                                <Icon type={isProcessing ? 'loading' : (running ? 'pause' : 'caret-right')} />
                                 {running ? 'Stop' : (datarunStatus === IDatarunStatusTypes.PENDING ? 'Run' : 'Complete')}
                             </Button>
                         </Col>
@@ -207,12 +229,13 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 <div>
                     <span>Settings</span>
                     <Row gutter={8}>
-                        
+
                         <Col span={24} className="dataViewColContainer">
-                            <SettingsModal />
+
+                            <SettingsModal onSubmit={postConfigs} button={settingButton}/>
                         </Col>
                     </Row>
-                    
+
                 </div>
             </div>
         );
