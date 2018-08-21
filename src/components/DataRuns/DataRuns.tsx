@@ -60,12 +60,12 @@ export default class DataRuns extends React.Component<IProps, IState>{
 
     }
     public startOrStopUpdateCycle() {
-        this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
-        // if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
-        //     this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
-        // } else {
-        //     clearInterval(this.intervalID);
-        // }
+        // this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
+        if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
+            this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
+        } else {
+            clearInterval(this.intervalID);
+        }
     }
     public componentDidMount(){
         // this.getData()
