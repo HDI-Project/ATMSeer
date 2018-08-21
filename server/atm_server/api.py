@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.exc import InvalidRequestError
 
 from atm.enter_data import enter_data
-from atm.constants import ClassifierStatus
+from atm.constants import ClassifierStatus, RunStatus
 
 from .utils import flaskJSONEnCoder
 from .error import ApiError
@@ -298,9 +298,9 @@ def dispatch_single_worker(datarun_id):
     Return the current status of the datarun
     """
     start_worker(datarun_id)
-    db = get_db()
-    datarun = db.get_datarun(datarun_id)
-    return jsonify({'status': datarun.status})
+    # db = get_db()
+    # datarun = db.get_datarun(datarun_id)
+    return jsonify({'status': RunStatus.RUNNING})
 
 
 # route to activate a single worker
