@@ -2,10 +2,10 @@ import { Col, Layout, Row } from 'antd';
 import * as React from 'react';
 import * as logo from '../assets/ATM-Logo.png';
 import './App.css';
-import DataRuns  from './DataRuns/';
+import DataRuns  from './DataRuns';
 // import DataView from "./DataView";
 import SidePanel from './SidePanel';
-import { IDatarunStatusTypes } from 'types/index';
+import { IDatarunStatusTypes } from 'types';
 
 
 
@@ -45,7 +45,7 @@ class App extends React.Component<{}, IState> {
     return (
       <Layout className="app" >
         <Header className='appHeader'>
-            VIS + ATM
+            ATMSeer
             <img src={logo}
             className='appLogo'/>
         </Header>
