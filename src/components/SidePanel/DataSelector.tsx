@@ -157,9 +157,18 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         return (
             <div className="data-selector">
                 <div>
+                    <span>Settings</span>
+                    <Row gutter={6}>
+
+                        <Col span={24} className="dataViewColContainer">
+                            <SettingsModal />
+                        </Col>
+                    </Row>
+                </div>
+                <div>
                     <span>Datasets</span>
-                    <Row style={{marginBottom: '6px'}} gutter={8}>
-                        <Col span={16} className="dataViewColContainer">
+                    <Row style={{marginBottom: '6px'}} gutter={6}>
+                        <Col span={14} className="dataViewColContainer">
                             <Select
                                 placeholder="Select a dataset"
                                 value={this.props.datasetID || undefined}
@@ -173,7 +182,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                                 ))}
                             </Select>
                         </Col>
-                        <Col span={8} className="dataViewColContainer">
+                        <Col span={10} className="dataViewColContainer">
                             <Upload {...uploadProps} listType="text">
                                 <Button>
                                     <Icon type="upload" /> Upload
@@ -184,8 +193,8 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 </div>
                 <div>
                     <span>Dataruns</span>
-                    <Row gutter={8}>
-                        <Col span={16} className="dataViewColContainer">
+                    <Row gutter={6}>
+                        <Col span={14} className="dataViewColContainer">
                             <Select
                                 placeholder="Select a datarun"
                                 value={this.props.datarunID || undefined}
@@ -200,7 +209,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                                 ))}
                             </Select>
                         </Col>
-                        <Col span={8} className="dataViewColContainer">
+                        <Col span={10} className="dataViewColContainer">
                             <Button
                                 onClick={this.onClickDataRun}
                                 disabled={datarunStatus === IDatarunStatusTypes.COMPLETE || this.props.datasetID === null || isProcessing}
@@ -211,16 +220,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                         </Col>
                     </Row>
                 </div>
-                <div>
-                    <span>Settings</span>
-                    <Row gutter={8}>
 
-                        <Col span={24} className="dataViewColContainer">
-                            <SettingsModal />
-                        </Col>
-                    </Row>
-
-                </div>
             </div>
         );
     }
