@@ -14,16 +14,16 @@ def get_db():
     is unique for each request and will be reused if this is called
     again.
     """
-    #if 'db' not in g:
-    sql_conf = current_app.config['SQL_CONF']
-    g.db = Database(sql_conf.dialect, sql_conf.database, sql_conf.username,
-                    sql_conf.password, sql_conf.host, sql_conf.port,
-                    sql_conf.query)
+    if 'db' not in g:
+        sql_conf = current_app.config['SQL_CONF']
+        g.db = Database(sql_conf.dialect, sql_conf.database, sql_conf.username,
+                        sql_conf.password, sql_conf.host, sql_conf.port,
+                        sql_conf.query)
 
     return g.db
 
 
-def teardown_db():
+def teardown_db(e=None):
     db = g.pop('db', None)
     # Close db connection
     if db is not None:
