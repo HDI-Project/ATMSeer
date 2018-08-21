@@ -1,11 +1,11 @@
-budget: 100
+budget: 1000
 budget_type: classifier
 class_column: class
 data_description: Example dataset description
 dataset_id: null
 gridding: 0
 k_window: 5
-methods: [rf, knn]
+methods: [mlp]
 metric: f1
 priority: 1
 r_minimum: 2
