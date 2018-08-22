@@ -65,9 +65,10 @@ export function MethodHeader(params: IClassifierInfo) {
     return (
         <div>
             <Tag color={getColor(params.method)}>{params.method}</Tag>
-            <div className="lb-classifier" style={{ width }}>
-                <span className="lb-classifier-metric">{classifierMetricString(params)}</span>
-            </div>
+            {/* <div> */}
+            <div className="lb-classifier" style={{ width }}>none</div>
+            <span className="lb-classifier-metric">{classifierMetricString(params)}</span>
+            {/* </div> */}
         </div>
     );
 }
@@ -160,26 +161,37 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                     <div>
                         <b>Metric</b>: {datarunInfo && datarunInfo.metric}
                         <br/>
-                        <b>Best classifier</b>: {best && `${best.method}-${best.id}`}
+                        <b>Best classifier</b>:
+                        <span
+                            style={{
+                                backgroundColor: getColor(best?best.method:''),
+                                borderRadius:'4px',
+                                padding:'2px',
+                                marginLeft: "2px",
+                                color: 'white'
+                            }}
+                            >
+                            {best && `${best.method}-${best.id}`}
+                        </span>
                         <br/>
                         <b>Total classifiers</b>: {summary.nTried}
                         <br/>
                         <b>Algorithm Coverage</b>:{' '}
                         <Progress
                         type="circle"
-                        percent={methods.length/14}
+                        percent={100*methods.length/14}
                         format={progressAlgorithm}
                         width={40}
-                        strokeWidth={20}
+                        strokeWidth={10}
                         />
                         <br/>
                         <b>Hyperpartitions Coverage</b>:{' '}
                         <Progress
                         type="circle"
-                        percent={hyperpartitions.length/172}
+                        percent={100*hyperpartitions.length/172}
                         format={progressHyperpartiton}
                         width={40}
-                        strokeWidth={20}
+                        strokeWidth={10}
                         />
 
 
