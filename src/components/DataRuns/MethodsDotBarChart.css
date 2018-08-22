@@ -23,3 +23,23 @@
     margin: 5px;
     float: left;
 }
+.box {
+    font: 10px sans-serif;
+  }
+  
+.box line,
+.box rect,
+.box circle {
+fill: #fff;
+stroke: #000;
+stroke-width: 1.5px;
+}
+
+.box .center {
+stroke-dasharray: 3,3;
+}
+
+.box .outlier {
+fill: none;
+stroke: #ccc;
+}

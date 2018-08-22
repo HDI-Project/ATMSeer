@@ -10,7 +10,7 @@ import {IDatarun} from 'types';
 import {getClassifierSummary, getClassifiers, IClassifierInfo} from '../../service/dataService';
 
 //components
-import Methods from './Methods';
+import MethodsDotBarChart from './MethodsDotBarChart';
 //import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
 import Histogram from "./Histogram";
@@ -105,7 +105,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <HyperPartitions classifiers={classifiers} />
             </div> */}
 
-            <Methods height={80} datarun={datarun}/>
+            <MethodsDotBarChart height={80} datarun={datarun}/>
 
         </div>)
         }else{
