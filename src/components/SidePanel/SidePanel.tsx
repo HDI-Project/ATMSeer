@@ -27,7 +27,7 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
 
     public render() {
         return (
-            <div className="side-panel">
+            <div className="side-panel" style={{overflowY:"hidden"}}>
                 <DataSelector {...this.props} />
                 <Tabs
                     defaultActiveKey="1"

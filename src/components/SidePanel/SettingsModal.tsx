@@ -1,41 +1,54 @@
 import * as React from 'react';
-import { Modal, Button, Icon, Checkbox,InputNumber,message,Select,Collapse   } from 'antd';
+import { Collapse,Modal, Button, Checkbox,InputNumber,message,Select    } from 'antd';
 import * as methodsDef from "../../assets/methodsDef.json";
-import { IConfigsInfo, IConfigsUploadResponse } from 'service/dataService';
-import { getConfigs,postConfigs } from 'service/dataService';
+import { IConfigsInfo } from 'service/dataService';
+import { getConfigs } from 'service/dataService';
 
 export interface SettingsModalProps {
-
+    onSubmit: (configs: IConfigsInfo) => Promise<any>;
+    button?: React.ReactNode;
 }
 
 export interface SettingsModalState {
-
+    loading: boolean
+    visible: boolean,
+    indeterminate: boolean,
+    checkAll: boolean,
+    configs: IConfigsInfo
 }
+
+const method_options =  Object.keys(methodsDef).map(
+            (key : string)=>{
+                return {label: methodsDef[key].fullname, value: key}
+            }
+        );
 
 export default class SettingsModal extends React.Component<SettingsModalProps, SettingsModalState> {
   constructor(props: SettingsModalProps) {
     super(props);
-    
-    
- }
- state = {
-  loading: false,
-  visible: false,
-  configs : {
-    methods : [],
-    budget : 100,
-    r_minimum : 2,
-    k_window :0,
-    priority : 1,
-    gridding :0,
-    metric : "f1",
-    selector :"bestk",
-    budget_type : "classifier",
-    tuner : "gp"
+    this.onCheckAllChange = this.onCheckAllChange.bind(this)
+     this.state = {
+        loading: false,
+        visible: false,
+        indeterminate: true,
+        checkAll: false,
+        configs : {
+            methods : [''],
+            budget : 100,
+            r_minimum : 2,
+            k_window :0,
+            priority : 1,
+            gridding :0,
+            metric : "f1",
+            selector :"bestk",
+            budget_type : "classifier",
+            tuner : "gp"
 
-  },
- 
-};
+            },
+
+        };
+    }
+
 showModal =() => {
   this.initModal();
 }
@@ -47,9 +60,9 @@ showModal =() => {
   promise = getConfigs();
   promise
       .then(configs => {
-        console.log(configs);
         this.setState({
           visible: true,
+          checkAll: configs.methods.length===method_options.length,
           configs : {
             methods:configs.methods,
             budget:configs.budget,
@@ -74,7 +87,8 @@ showModal =() => {
     // Submit
     this.setState({ loading: true });
     console.log(this.state.configs);
-    let promise:Promise<IConfigsUploadResponse> = postConfigs(this.state.configs);
+    // let promise:Promise<IConfigsUploadResponse> = postConfigs(this.state.configs);
+    const promise = this.props.onSubmit(this.state.configs);
     promise.then(status => {
       if(status.success == true){
         message.success("Submit Configs Successfully.");
@@ -86,21 +100,12 @@ showModal =() => {
       this.setState({ loading: false, visible: false });
 
     });
-    
+
   }
   handleCancel = () => {
     this.setState({ visible: false });
   }
-  onMethodsChange = (methods : any) => {
-    //console.log("checked",methods);
-    if(methods.length<1){
-      message.error("You must select at least one method");
-    }else{
-      let configs = this.state.configs;
-      configs.methods = methods;
-      this.setState({configs:configs});
-    }
-  }
+
   onBudgetChange = (budget : any) =>{
     let configs = this.state.configs;
     configs.budget = budget;
@@ -146,32 +151,51 @@ showModal =() => {
     configs.selector = selector;
     this.setState({configs:configs});
   }
+
+  onMethodsChange = (methods : string[]) => {
+    //console.log("checked",methods);
+    if(methods.length<1){
+      message.error("You must select at least one method");
+    }else{
+      let {configs} = this.state;
+      configs.methods = methods;
+      this.setState({
+            configs:configs,
+            indeterminate: !!methods.length && (configs.methods.length < Object.keys(methodsDef).length),
+            checkAll: configs.methods.length === Object.keys(methodsDef).length,
+        });
+    }
+  }
+
+  onCheckAllChange(e:any){
+    let {configs} = this.state
+    configs.methods = e.target.checked ? Object.keys(methodsDef) : []
+    this.setState({
+        configs,
+        indeterminate: false,
+        checkAll: e.target.checked,
+      });
+  }
   render() {
     const { visible, loading, configs } = this.state;
     const CheckboxGroup = Checkbox.Group;
     const Panel = Collapse.Panel;
 
 
-    const method_key = Object.keys(methodsDef);
-    const method_options =  method_key.map((key : string, index : number)=>{
-      return {label:methodsDef[key].fullname,value:key};
-    });
     const Option = Select.Option;
     const BUDGET_TYPES = ['none', 'classifier', 'walltime'];
     const TUNERS = ['uniform', 'gp', 'gp_ei', 'gp_eivel'];
     const SELECTORS = ['uniform', 'ucb1', 'bestk', 'bestkvel', 'purebestkvel', 'recentk',
                  'recentkvel', 'hieralg'];
     const METRICS = ['f1', 'roc_auc'];
-    
 
-    
+
     return (
       <div>
         <Button
             onClick={this.showModal}
-        >
-            <Icon type='setting' />Settings
-        </Button>
+            children={this.props.button}
+        />
         <Modal
           visible={visible}
           title="Settings"
@@ -184,8 +208,16 @@ showModal =() => {
             </Button>,
           ]}
         >
-          <h4>Methods</h4>
+            <h4 style={{display: "inline"}}> Methods </h4>
+                <Checkbox
+                    indeterminate={this.state.indeterminate}
+                    onChange={this.onCheckAllChange}
+                    checked={this.state.checkAll}
+                >
+                    Check all
+                </Checkbox>
           <div>
+
 
             <CheckboxGroup options={method_options} value={configs.methods} onChange={this.onMethodsChange} />
           </div>
@@ -236,12 +268,12 @@ showModal =() => {
           <InputNumber min={0} value={configs.k_window} onChange={this.onK_WinChange} style={{ width: '100%' }} />
           <br /><br />
           <h4>gridding</h4>
-          
+
           <InputNumber min={0} value={configs.gridding} onChange={this.onGriddingChange} style={{ width: '100%' }} />
-          <br />    <br /> 
+          <br />    <br />
           </Panel>
-          
-        </Collapse>     
+
+        </Collapse>
         </Modal>
       </div>
     );

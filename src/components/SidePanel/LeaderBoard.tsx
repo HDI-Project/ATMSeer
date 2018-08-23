@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Collapse, Tag } from 'antd';
+import { Collapse, Tag, Progress  } from 'antd';
 import { IDatarunStatusTypes } from 'types';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions, getDatarunStepsScores } from 'service/dataService';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions } from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
-import LineChart from './LineChart';
+// import LineChart from './LineChart';
 import { getColor } from 'helper';
 
 const Panel = Collapse.Panel;
@@ -48,10 +48,12 @@ export function HyperParams(params: { [method: string]: any }) {
         <React.Fragment>
             {keys.map(k => (
                 <span key={k}>
-                    [{k}: {typeof params[k] === 'number'
+                    <b>{k}</b>: {typeof params[k] === 'number'
                     ? (isFloat(params[k]) ? params[k].toPrecision(4) : params[k] )
-                    : String(params[k])}]{' '}
+                    : String(params[k])}
+                <br/>
                 </span>
+
             ))}
         </React.Fragment>
     );
@@ -62,9 +64,10 @@ export function MethodHeader(params: IClassifierInfo) {
     return (
         <div>
             <Tag color={getColor(params.method)}>{params.method}</Tag>
-            <div className="lb-classifier" style={{ width }}>
-                <span className="lb-classifier-metric">{classifierMetricString(params)}</span>
-            </div>
+            {/* <div> */}
+            <div className="lb-classifier" style={{ width }}>none</div>
+            <span className="lb-classifier-metric">{classifierMetricString(params)}</span>
+            {/* </div> */}
         </div>
     );
 }
@@ -78,7 +81,7 @@ export interface LeaderBoardState {
     datarunInfo: IDatarunInfo | null;
     hyperpartitions: IHyperpartitionInfo[];
     summary: IDatarunSummary | null;
-    scores: {[id: string]: number}[];
+    // scores: {[id: string]: number}[];
 }
 
 export default class LeaderBoard extends React.Component<LeaderBoardProps, LeaderBoardState> {
@@ -90,7 +93,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             summary: null,
             datarunInfo: null,
             hyperpartitions: [],
-            scores: [],
+            // scores: [],
         };
     }
     public updateLeaderBoard(updateDatarunInfo: boolean = false) {
@@ -100,13 +103,16 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             // console.log(classifiers);
             this.setState({ summary: computeDatarunSummary(classifiers) });
         });
-        getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
+        // getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => this.setState({ datarunInfo }));
             getHyperpartitions().then(hyperpartitions => {
-                console.log(hyperpartitions);
+                // console.log(hyperpartitions);
                 if (Array.isArray(hyperpartitions))
-                    this.setState({ hyperpartitions });
+                   {
+                       hyperpartitions=hyperpartitions.filter(d=>d.datarun_id==datarunID)
+                       this.setState({ hyperpartitions });
+                   }
                 else
                     console.error('The fetched hyperpartitions should be an array!');
             });
@@ -135,25 +141,69 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         window.clearInterval(this.intervalID)
     }
     public render() {
-        const { summary, datarunInfo, scores, hyperpartitions } = this.state;
 
+        const { summary, datarunInfo, hyperpartitions} = this.state
+        // const {scores, hyperpartitions } = this.state;
+        const methods = Array.from(new Set(hyperpartitions.map(d=>d.method)))
         const best = summary ? summary.topClassifiers[0] : undefined;
+        const progressAlgorithm = (percent:number)=>{
+            return `${methods.length}/14`
+        }
+        const progressHyperpartiton = (percent:number)=>{
+            return `${hyperpartitions.length}/172`
+        }
         return summary ? (
-            <div>
+            <div >
                 <div>
-                    <h4>Overview</h4>
-                    <hr />
+                    {/* <h4>Overview</h4> */}
+                    {/* <hr /> */}
                     <div>
-                        Metric: {datarunInfo && datarunInfo.metric} / Total classifier tried: {summary.nTried} / Best
-                        classifier: {best && `${best.method}-${best.id}`}
+                        <b>Metric</b>: {datarunInfo && datarunInfo.metric}
+                        <br/>
+                        <b>Best classifier</b>:
+                        <span
+                            style={{
+                                backgroundColor: getColor(best?best.method:''),
+                                borderRadius:'4px',
+                                padding:'2px',
+                                marginLeft: "2px",
+                                color: 'white'
+                            }}
+                            >
+                            {best && `${best.method}-${best.id}`}
+                        </span>
+                        <br/>
+                        <b>Total classifiers</b>: {summary.nTried}
+                        <br/>
+                        <b>Algorithm Coverage</b>:{' '}
+                        <Progress
+                        type="circle"
+                        percent={100*methods.length/14}
+                        format={progressAlgorithm}
+                        width={40}
+                        strokeWidth={10}
+                        />
+                        <br/>
+                        <b>Hyperpartitions Coverage</b>:{' '}
+                        <Progress
+                        type="circle"
+                        percent={100*hyperpartitions.length/172}
+                        format={progressHyperpartiton}
+                        width={40}
+                        strokeWidth={10}
+                        />
+
+
                     </div>
-                    <div>
+                    {/* <div>
                         <LineChart scores={scores} hyperpartitions={hyperpartitions} topK={TOP_K}/>
-                    </div>
+                    </div> */}
                 </div>
                 <div>
-                    <h4>Scores</h4>
+                    {/* <h4>Scores</h4> */}
+                    <h4>Top {TOP_K} Classifiers</h4>
                     <hr />
+                    <div style={{height:"calc(94vh - 410px)", overflowY:"scroll"}}>
                     <Collapse bordered={false}>
                         {summary.topClassifiers.map(c => (
                             <Panel key={String(c.id)} header={<MethodHeader {...c} />}>
@@ -161,6 +211,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             </Panel>
                         ))}
                     </Collapse>
+                    </div>
                 </div>
             </div>
         ) : (

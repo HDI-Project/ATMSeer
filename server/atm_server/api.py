@@ -1,26 +1,24 @@
 import os
 import copy
 import logging
-
+import yaml
+import json
 
 from multiprocessing import Process
 from flask import request, jsonify, Blueprint, current_app, Response
 from werkzeug.utils import secure_filename
 from sqlalchemy.exc import InvalidRequestError
 
-from atm.enter_data import enter_data
-from atm.constants import ClassifierStatus
+from atm.enter_data import enter_data, create_dataset
+from atm.constants import ClassifierStatus, RunStatus
+from atm.config import load_config
 
 from .utils import flaskJSONEnCoder
 from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
     fetch_classifiers, fetch_hyperpartitions
-from .worker import start_worker, stop_worker, work
-from atm_server.helper.atm_helper import get_datarun_steps_info
-from atm_server import SERVER_ROOT
-from atm.config import load_config
-import yaml
-import json
+from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun
+
 
 api = Blueprint('api', __name__)
 
@@ -222,6 +220,7 @@ def get_datarun_steps_scores(datarun_id):
 @api.route('/enter_data', methods=['POST'])
 def post_enter_data():
     """
+    Deprecated. Use post_new_dataset and post_new_datarun
     Receives and saves a CSV file, after which it executes the enter_data function.
     See: http://flask.pocoo.org/docs/0.12/patterns/fileuploads/
     """
@@ -269,6 +268,82 @@ def post_enter_data():
         return jsonify({'success': True, 'filename': os.path.split(abs_filepath)[1], 'id': datarun_id})
 
 
+# route to post a new CSV file and create a datarun with enter_data
+@api.route('/new_dataset', methods=['POST'])
+def post_new_dataset():
+    """
+    Receives and saves a CSV file, and create a dataset entry in the db
+    """
+    if 'file' not in request.files:
+        raise ApiError('No file part', status_code=400)
+
+    file = request.files['file']
+
+    # if user does not select file, browser also submits an empty part without filename
+    if file.filename == '':
+        raise ApiError('Empty file part', status_code=400)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        rel_filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        abs_filepath = os.path.abspath(rel_filepath)
+
+        if not os.path.exists(current_app.config['UPLOAD_FOLDER']):
+            os.makedirs(current_app.config['UPLOAD_FOLDER'])
+        if os.path.exists(abs_filepath):
+            file_name, file_extension = os.path.splitext(abs_filepath)
+            path_temp = file_name + '_%d' + file_extension
+            count = 2
+            while os.path.exists(abs_filepath):
+                abs_filepath = path_temp % count
+                count += 1
+                # Ugly hack to prevent dead loop
+                if count > 100:
+                    raise ValueError('The saved data file renamed to over 100, please rename the file and upload.')
+            logger.warning('Filename %s already exists, renamed and saved to %s' % (rel_filepath, abs_filepath))
+
+        file.save(abs_filepath)
+
+        run_conf = current_app.config['RUN_CONF']
+        aws_conf = current_app.config['AWS_CONF']
+        # we need to set a customized train_path but without modifying the
+        # global run_conf object, so we deepcopy the run_conf object
+
+        upload_run_conf = copy.deepcopy(run_conf)
+        upload_run_conf.train_path = abs_filepath
+
+        dataset = create_dataset(get_db(), upload_run_conf, aws_conf)
+
+        return jsonify({'success': True, 'filename': os.path.split(abs_filepath)[1], 'id': dataset.id})
+
+
+# route to post a new CSV file and create a datarun with enter_data
+@api.route('/new_datarun/<int:dataset_id>', methods=['POST'])
+def post_new_datarun(dataset_id):
+    """
+    For a dataset (specified by the dataset_id), create a datarun with the given configuration.
+    """
+    if 'configs' not in request.form:
+        raise ApiError('No configs in the post form!', status_code=400)
+
+    configs = request.form['configs']
+    print(configs)
+    configs = json.loads(configs)
+
+    run_conf = current_app.config['RUN_CONF']
+    run_per_partition = current_app.config['RUN_PER_PARTITION']
+    # we need to set a customized train_path but without modifying the
+    # global run_conf object, so we deepcopy the run_conf object
+
+    upload_run_conf = copy.deepcopy(run_conf)
+    for key, val in configs.items():
+        setattr(upload_run_conf, key, val)
+    upload_run_conf.dataset_id = dataset_id
+    db = get_db()
+    datarun_id = new_datarun(db, upload_run_conf, run_per_partition)
+
+    return jsonify({'success': True, 'id': datarun_id})
+
+
 @api.route('/simple_worker', methods=['GET', 'POST'])
 def dispatch_simple_worker():
     """
@@ -298,9 +373,9 @@ def dispatch_single_worker(datarun_id):
     Return the current status of the datarun
     """
     start_worker(datarun_id)
-    db = get_db()
-    datarun = db.get_datarun(datarun_id)
-    return jsonify({'status': datarun.status})
+    # db = get_db()
+    # datarun = db.get_datarun(datarun_id)
+    return jsonify({'status': RunStatus.RUNNING})
 
 
 # route to activate a single worker
