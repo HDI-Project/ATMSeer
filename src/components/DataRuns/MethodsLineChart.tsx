@@ -135,7 +135,20 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         })
         return maxvalue;
     }
-    
+    componentDidMount(){
+        /*
+        const d3 = require("d3");
+        let zoom = d3.zoom()
+        .scaleExtent([1, 10])
+        .on("zoom", function(){
+            let container = d3.select("#top_container");
+            //container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+            container.attr("transform", d3.event.transform);
+        });
+        let margin = {left:0,right:0,top:0,bottom:0};
+        d3.select("#top_container").attr("transform", "translate(" + margin.left + "," + margin.right + ")").call(zoom);
+        */
+    }
     public render() {
         // const methodLen = Object.keys(methodsDef).length
         let { datarun, height } = this.props;
@@ -472,6 +485,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     style={{ height: "100%", width: "100%" }}>
                     
                         <svg style={{ height: '100%', width: '100%' }} id="chart">
+                            <g id="top_container">
                             {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                                
                                 this.index++;
@@ -511,7 +525,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             }
                             {generateHp()}
                             {generateHpdetail()}
-
+                            </g>
                          </svg>  
                     </div>
                 </div>)
