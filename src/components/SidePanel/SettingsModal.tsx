@@ -1,9 +1,5 @@
 import * as React from 'react';
-<<<<<<< HEAD
-import { Modal, Button, Icon, Checkbox,InputNumber,message,Select,Collapse   } from 'antd';
-=======
-import { Modal, Button, Checkbox,InputNumber,message,Select  } from 'antd';
->>>>>>> origin/dev-yao
+import { Collapse,Modal, Button, Checkbox,InputNumber,message,Select    } from 'antd';
 import * as methodsDef from "../../assets/methodsDef.json";
 import { IConfigsInfo } from 'service/dataService';
 import { getConfigs } from 'service/dataService';
@@ -14,17 +10,11 @@ export interface SettingsModalProps {
 }
 
 export interface SettingsModalState {
-<<<<<<< HEAD
     loading: boolean
     visible: boolean,
     indeterminate: boolean,
     checkAll: boolean,
     configs: IConfigsInfo
-=======
-    configs: IConfigsInfo;
-    loading: boolean;
-    visible: boolean;
->>>>>>> origin/dev-yao
 }
 
 const method_options =  Object.keys(methodsDef).map(
