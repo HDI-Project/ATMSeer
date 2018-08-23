@@ -86,6 +86,31 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         }
         
     }
+    public getmaxnum(classifiers:IClassifier[]){
+        let step = 0.1;
+        let data:number[] = [];
+        
+        for (let i =0; i<=1/step; i++){
+            data.push(0)
+        }
+        let bestperformance = 0;
+        classifiers.forEach((classifier:IClassifier)=>{
+            let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
+            if(performance>bestperformance){
+                bestperformance=performance;
+            }
+            let rangeIdx = Math.floor(performance/step)
+            data[rangeIdx] = data[rangeIdx]+1
+        });
+        let maxvalue = 0;
+        data.forEach((p:any)=>{
+            if(p>maxvalue){
+                maxvalue = p;
+            }
+        })
+        return maxvalue;
+    }
+    
     public render() {
         // const methodLen = Object.keys(methodsDef).length
         let { datarun, height } = this.props;
@@ -197,6 +222,31 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
 
         // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methodsDef should be obtained by requesting server the config file
         //const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
+        
+        let hpname :string[]= [];
+        usedMethods.forEach((name: string, i: number) =>{
+            hpname = hpname.concat(Method2hyperpartition[name]);
+        });
+        let performance = usedMethods.map((name: string, i: number) =>{
+           return {value:this.getbestperformance(datarun[name]),name:name};
+        });
+        performance.sort(function(a:any,b:any){
+            return b.value-a.value;
+        });
+        let sortedusedMethods = performance.map((d:any)=>{
+            return d.name;
+        });
+        let maxnum = 1;
+        // calculate the max num
+        sortedusedMethods.forEach((name: string, i: number)=>{
+            let num = this.getmaxnum(datarun[name]);
+            if(num>maxnum){
+                maxnum=num;
+            }
+
+        });
+        
+        
         let generateHp = ()=>{
             if(mode==1||mode==2){
                 let gap = 20;
@@ -207,8 +257,6 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let rectwidth = 5;
                 let rectheight = 5;
                 let verticalnum = Math.floor((hpheight-hpmargin)/(rectheight+1));
-                console.log("verticalnum");
-                console.log(verticalnum);
 
                 // horizontalnum should be set to be Math.ceil(num/verticalnum) 
                 //let horizontalnum = Math.floor(width/(rectwidth+1));
@@ -225,7 +273,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
              let sortedhpname = performance.map((d:any)=>{
                  return d.name;
              });
-
+             
+             let pathgenerator:any[] = [];
              let array = sortedhpname.map((name: string, i: number) => {
                  nowx+=lastwidth;lastwidth=0;
                  const selectedMethod = hyperpartition2Method[name];
@@ -234,10 +283,26 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let horizontalnum = Math.ceil(hplen/verticalnum);
                 let hpwidth = hpmargin + horizontalnum * (rectwidth+1);
                 lastwidth = hpwidth+gap;
+                let  index0 = sortedusedMethods.indexOf(selectedMethod);
+                if(index0>-1)
+                {
+                    let x1 = (2+index0*85)+35;
+                    let y1 = 100;
+                    let x2 = nowx+hpwidth/2;
+                    let y2 = 30+85+100;
+                    pathgenerator.push({
+                        x1:x1,
+                        x2:x2,
+                        y1:y1,
+                        y2:y2,
+                        color:getColor(methodDef.name)
+                    })
+                }
+                
                 return (<HyperpartitionHeatmap 
                     key={name+"_used_"+(++this.index)} 
                     x={nowx} 
-                    y={2+85} 
+                    y={30+85+100} 
                     width={hpwidth} 
                     height={hpheight} 
                     methodDef={methodDef} 
@@ -245,30 +310,33 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     name={"hp"+this.index} 
                     totallen={totallen} 
                     onClick={this.onHyperpartitionsOverViewClick}/>);
-             })
-             return array;
+             });
+                let array2 = pathgenerator.map((node: any, i: number) => {
+                        let mean_y = (node.y1 + node.y2) / 2;
+                        let pathlang = "M"+node.x1+","+node.y1+"C"+node.x1+","+mean_y+" "+node.x2+","+mean_y+" "+node.x2+","+node.y2;
+                        return (<path key={"_path_"+(++this.index)}  
+                        d={pathlang} 
+                        stroke={node.color}
+                        fill="none"
+                        stroke-width={1.5} />);
+                });
+                return array.concat(array2);
             }else{
                 return <g />
             }
         }; 
-        let hpname :string[]= [];
-        usedMethods.forEach((name: string, i: number) =>{
-            hpname = hpname.concat(Method2hyperpartition[name]);
-        });
-        let performance = usedMethods.map((name: string, i: number) =>{
-           return {value:this.getbestperformance(datarun[name]),name:name};
-        });
-        performance.sort(function(a:any,b:any){
-            return b.value-a.value;
-        });
-        let sortedusedMethods = performance.map((d:any)=>{
-            return d.name;
-        });
+        
+        totallen;
         return <div className="methods" id="methodstop" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
             <div className="usedMethodContainer"
                     style={{ height: "100%", width: "100%" }}>
                     
                         <svg style={{ height: '100%', width: '100%' }} id="chart">
+                            {sortedusedMethods.map((name: string, i: number) => {
+                               
+                                this.index++;
+                                return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} text-anchor="middle" font-family="sans-serif" font-size="20px" fill="black">{name}</text>)
+                                })}
                             {sortedusedMethods.map((name: string, i: number) => {
                                 const methodDef = methodsDef[name];
                                 let  testin = selectedMethodName.indexOf(name);
@@ -279,18 +347,19 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                 //const classifier_num = datarun[name].length;
                                 //const top_width = classifier_num*6+60;
                                 this.index++;
-                                return <LineChart key={name+"_used_"+this.index} 
+                                return (
+                                <LineChart key={name+"_used_"+this.index} 
                                         x={2+i*85} 
-                                        y={2} 
+                                        y={30} 
                                         width={70} 
                                         height={70} 
                                         methodDef={methodDef} 
                                         classifiers={datarun[name]} 
                                         name={name} 
-                                        totallen={totallen} 
+                                        totallen={maxnum} 
                                         onClick={this.onMethodsOverViewClick}
                                         selected={selected}
-                                        />
+                                        />)
                                     
                             })}
                             {generateHp()}
@@ -400,8 +469,9 @@ class LineChart extends React.Component<ChartProps, {}>{
         .attr("width", width + margin.left + margin.right)
         .attr("height",height + margin.top + margin.bottom)
         .attr("fill","white")
+        .attr("stroke-width",2)
         .attr("stroke",selected?"#A4A0A0":"#E0D6D4")
-        .attr("stroke-width",2);
+        ;
         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 

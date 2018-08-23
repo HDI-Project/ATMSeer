@@ -37,3 +37,9 @@ div.tooltip {
     border-radius: 5px;
     pointer-events: none;
   }
+  .link {
+    fill: none;
+    stroke: rgba(0,0,0, 0.3);
+    stroke-width: 1.5px;
+  }
+  
