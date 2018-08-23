@@ -23,3 +23,17 @@
     margin: 5px;
     float: left;
 }
+
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    color: aliceblue;
+    width: 180px;
+    height: 60px;
+    padding: 10px;
+    font: 12px sans-serif;
+    background: rgba(0, 0, 0, 0.671);
+    border: 10px;
+    border-radius: 5px;
+    pointer-events: none;
+  }
