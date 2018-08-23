@@ -187,7 +187,6 @@ showModal =() => {
     const METRICS = ['f1', 'roc_auc'];
 
 
-
     return (
       <div>
         <Button

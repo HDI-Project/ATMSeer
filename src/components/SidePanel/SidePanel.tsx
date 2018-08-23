@@ -3,7 +3,7 @@ import {Tabs} from 'antd';
 import DataSelector from './DataSelector';
 import DataView from './DataView';
 import LeaderBoard from './LeaderBoard';
-import { IDatarunStatusTypes } from '../../types';
+import { IDatarunStatusTypes } from 'types';
 
 const TabPane = Tabs.TabPane
 

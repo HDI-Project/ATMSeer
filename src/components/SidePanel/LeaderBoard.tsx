@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Collapse, Tag, Progress } from 'antd';
-import { IDatarunStatusTypes } from 'types/index';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions } from 'service/dataService';
-// import {getDatarunStepsScores } from 'service/dataService';
+import { Collapse, Tag, Progress  } from 'antd';
+import { IDatarunStatusTypes } from 'types';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions, getDatarunStepsScores } from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
 // import LineChart from './LineChart';
@@ -108,6 +107,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => this.setState({ datarunInfo }));
             getHyperpartitions().then(hyperpartitions => {
+                console.log(hyperpartitions);
                 if (Array.isArray(hyperpartitions))
                    {
                        hyperpartitions=hyperpartitions.filter(d=>d.datarun_id==datarunID)

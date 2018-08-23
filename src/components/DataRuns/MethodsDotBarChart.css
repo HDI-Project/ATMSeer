@@ -1,0 +1,45 @@
+.methods{
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+.usedMethodContainer{
+    padding: 3px 8px;
+    float: left;
+}
+
+.method{
+    border: .4px solid rgba(0,0,0, 0.2);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06);
+    /* height: ${100/methods.length}% */
+    height: 100%;
+    padding: 2px 5px;
+}
+
+.unusedMethod{
+    border: 2px dashed rgba(0,0,0, 0.3);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06);
+    padding: 2px 5px;
+    margin: 5px;
+    float: left;
+}
+.box {
+    font: 10px sans-serif;
+  }
+  
+.box line,
+.box rect,
+.box circle {
+fill: #fff;
+stroke: #000;
+stroke-width: 1.5px;
+}
+
+.box .center {
+stroke-dasharray: 3,3;
+}
+
+.box .outlier {
+fill: none;
+stroke: #ccc;
+}
