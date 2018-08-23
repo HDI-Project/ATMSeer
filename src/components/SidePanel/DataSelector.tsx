@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select, Row, Col, Upload, Icon, Button, message } from 'antd';
-import { IDatasetInfo, IDatarunInfo, IDatarunStatus, postConfigs, IConfigsInfo, postNewDatarun, INewDatarunResponse } from 'service/dataService';
+import { IDatasetInfo, IDatarunInfo, IDatarunStatus, IConfigsInfo, postNewDatarun, INewDatarunResponse } from 'service/dataService';
 import { getDatasets, getDataruns, getDatarun, postNewDataset, startDatarun, stopDatarun } from 'service/dataService';
 import { IDatarunStatusTypes } from 'types/index';
 import "./DataSelector.css";
@@ -165,19 +165,10 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
             beforeUpload: this.beforeUploadDataset // custom control the upload event
         };
 
-        const settingButton = <React.Fragment><Icon type='setting' /><span>Settings</span></React.Fragment>;
+        // const settingButton = <React.Fragment><Icon type='setting' /><span>Settings</span></React.Fragment>;
         return (
             <div className="data-selector">
                 {/* <div>
-                    <span>Settings</span>
-                    <Row gutter={6}>
-
-                        <Col span={24} className="dataViewColContainer">
-                            <SettingsModal />
-                        </Col>
-                    </Row>
-                </div> */}
-                <div>
                     <span>Settings</span>
                     <Row gutter={6}>
 
@@ -187,7 +178,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                         </Col>
                     </Row>
 
-                </div>
+                </div> */}
                 <div>
                     <span>Datasets</span>
                     <Row style={{marginBottom: '6px'}} gutter={6}>
@@ -235,7 +226,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                                 ))}
                             </Select>
                         </Col>
-                        <Col span={10} className="dataViewColContainer">
+                        <Col span={8} className="dataViewColContainer">
                             <Button
                                 onClick={this.onClickDatarun}
                                 disabled={datarunStatus === IDatarunStatusTypes.COMPLETE || this.props.datasetID === null || isProcessing}
