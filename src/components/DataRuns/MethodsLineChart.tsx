@@ -22,18 +22,45 @@ export interface ChartProps {
     methodDef: IMethod,
     classifiers : IClassifier[],
     name:string,
-    totallen:number,
+    totallen?:number,
     methodName?:string,
     onClick:(a:string)=>void,
-    selected?:boolean
+    selected?:boolean,
+    
 
+}
+export interface DetailChartProps{
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    methodDef: IMethod,
+    classifiers : IClassifier[],
+    name:string,
+    min:number,
+    max:number,
+    hyname:string
+}
+export interface HyperpartitionHeatmapProps{
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    methodDef: IMethod,
+    classifiers : IClassifier[],
+    name:string,
+    totallen?:number,
+    methodName?:string,
+    onClick:(a:string)=>void,
+    selected?:boolean,    
+    hpname:string
 }
 export default class MethodsLineChart extends React.Component<IProps, IState>{
     index = 0;
     state={
         mode : 0,
         selectedMethodName :[],
-        selectedHyperpartitionName : []
+        selectedHyperpartitionName : ""
     };
     onMethodsOverViewClick = (Methods:string)=>{
         // Show Methods
@@ -64,11 +91,9 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
     };
     onHyperpartitionsOverViewClick = (HyperpatitionName:string)=>{
         //alert("onclick "+HyperpatitionName);
-        let selectedHyperpartitionName:string[] = this.state.selectedHyperpartitionName;
-        selectedHyperpartitionName.push(HyperpatitionName);
         this.setState({
             mode : 2,
-            selectedHyperpartitionName : selectedHyperpartitionName
+            selectedHyperpartitionName : HyperpatitionName
         });
     };
     public getbestperformance(list:IClassifier[]){
@@ -194,34 +219,36 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             }
             if(flag){
                 mode=0;
-                selectedHyperpartitionName=[];
+                selectedHyperpartitionName="";
                 selectedMethodName=[];
                 console.log("roll back");
                 this.setState({
                     mode : 0,
                     selectedMethodName:[],
-                    selectedHyperpartitionName : []
+                    selectedHyperpartitionName : ""
                 });
             }
         }
         
-            /*
+            
             if(mode==2){
-            const methodDef = methodsDef[hyperpartition2Method[selectedHyperpartitionName]];
-            if(!methodDef){
-                mode=0;
-                selectedHyperpartitionName="";
-                selectedMethodName="";
-                this.setState({
-                    mode : 0,
-                    selectedMethodName:"",
-                    selectedHyperpartitionName : ""
-                });
-            }*/
+                const methodDef = methodsDef[hyperpartition2Method[selectedHyperpartitionName]];
+                if(!methodDef||!hyperpartitionData[selectedHyperpartitionName]){
+                    mode=0;
+                    selectedHyperpartitionName="";
+                    selectedMethodName=[];
+                    console.log("roll back also");
+                    this.setState({
+                        mode : 0,
+                        selectedMethodName:[],
+                        selectedHyperpartitionName : ""
+                    });
+                }
+            }
         
 
         // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methodsDef should be obtained by requesting server the config file
-        //const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
+        const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
         
         let hpname :string[]= [];
         usedMethods.forEach((name: string, i: number) =>{
@@ -252,53 +279,54 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let gap = 20;
                 let nowx = 2;
                 let lastwidth = 0;
-                let hpheight = 70;
+                let hpheight = 73;
                 let hpmargin = 12;
                 let rectwidth = 5;
                 let rectheight = 5;
                 let verticalnum = Math.floor((hpheight-hpmargin)/(rectheight+1));
 
-                // horizontalnum should be set to be Math.ceil(num/verticalnum) 
-                //let horizontalnum = Math.floor(width/(rectwidth+1));
-             let hpname :string[]= [];
-             selectedMethodName.forEach((name: string, i: number) =>{
-                 hpname = hpname.concat(Method2hyperpartition[name]);
-             });
-             let performance = hpname.map((name: string, i: number) =>{
-                return {value:this.getbestperformance(hyperpartitionData[name]),name:name};
-             });
-             performance.sort(function(a:any,b:any){
-                 return b.value-a.value;
-             });
-             let sortedhpname = performance.map((d:any)=>{
-                 return d.name;
-             });
-             
-             let pathgenerator:any[] = [];
-             let array = sortedhpname.map((name: string, i: number) => {
-                 nowx+=lastwidth;lastwidth=0;
-                 const selectedMethod = hyperpartition2Method[name];
-                const methodDef = methodsDef[selectedMethod];
-                const hplen:number = hyperpartitionData[name].length;
-                let horizontalnum = Math.ceil(hplen/verticalnum);
-                let hpwidth = hpmargin + horizontalnum * (rectwidth+1);
-                lastwidth = hpwidth+gap;
-                let  index0 = sortedusedMethods.indexOf(selectedMethod);
-                if(index0>-1)
-                {
-                    let x1 = (2+index0*85)+35;
-                    let y1 = 100;
-                    let x2 = nowx+hpwidth/2;
-                    let y2 = 30+85+100;
-                    pathgenerator.push({
-                        x1:x1,
-                        x2:x2,
-                        y1:y1,
-                        y2:y2,
-                        color:getColor(methodDef.name)
-                    })
-                }
+                    // horizontalnum should be set to be Math.ceil(num/verticalnum) 
+                    //let horizontalnum = Math.floor(width/(rectwidth+1));
+                let hpname :string[]= [];
+                selectedMethodName.forEach((name: string, i: number) =>{
+                    hpname = hpname.concat(Method2hyperpartition[name]);
+                });
+                let performance = hpname.map((name: string, i: number) =>{
+                    return {value:this.getbestperformance(hyperpartitionData[name]),name:name};
+                });
+                performance.sort(function(a:any,b:any){
+                    return b.value-a.value;
+                });
+                let sortedhpname = performance.map((d:any)=>{
+                    return d.name;
+                });
                 
+                let pathgenerator:any[] = [];
+                let array = sortedhpname.map((name: string, i: number) => {
+                    let selected = selectedHyperpartitionName===name;
+                    nowx+=lastwidth;lastwidth=0;
+                    const selectedMethod = hyperpartition2Method[name];
+                    const methodDef = methodsDef[selectedMethod];
+                    const hplen:number = hyperpartitionData[name].length;
+                    let horizontalnum = Math.ceil(hplen/verticalnum);
+                    let hpwidth = hpmargin + horizontalnum * (rectwidth+1);
+                    lastwidth = hpwidth+gap;
+                    let  index0 = sortedusedMethods.indexOf(selectedMethod);
+                    if(index0>-1)
+                    {
+                        let x1 = (2+index0*85)+35;
+                        let y1 = 100;
+                        let x2 = nowx+hpwidth/2;
+                        let y2 = 30+85+100;
+                        pathgenerator.push({
+                            x1:x1,
+                            x2:x2,
+                            y1:y1,
+                            y2:y2,
+                            color:getColor(methodDef.name)
+                        })
+                    }
+                    
                 return (<HyperpartitionHeatmap 
                     key={name+"_used_"+(++this.index)} 
                     x={nowx} 
@@ -308,7 +336,9 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     methodDef={methodDef} 
                     classifiers={hyperpartitionData[name]} 
                     name={"hp"+this.index} 
+                    hpname={name}
                     totallen={totallen} 
+                    selected={selected}
                     onClick={this.onHyperpartitionsOverViewClick}/>);
              });
                 let array2 = pathgenerator.map((node: any, i: number) => {
@@ -318,25 +348,136 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         d={pathlang} 
                         stroke={node.color}
                         fill="none"
-                        stroke-width={1.5} />);
+                        strokeWidth={1.5} />);
                 });
                 return array.concat(array2);
             }else{
                 return <g />
             }
-        }; 
+        };
+        // end of generate Hp 
         
-        totallen;
-        return <div className="methods" id="methodstop" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
+        let generateHpdetail = ()=>{
+            if(mode==2){
+                console.log("show detail");
+                const selectedMethod : string = hyperpartition2Method[selectedHyperpartitionName];
+                const methodDef = methodsDef[selectedMethod];
+
+                let HyperparameterList: any[] = [];
+                let idx = 0
+                let rangeMap : any ={};
+                methodDef.root_hyperparameters.forEach((p: string) => {
+                    let parameter = methodDef['hyperparameters'][p]
+                    if (parameter['values']) { //category axis
+                    } else if (parameter['range']) {//value axis
+                        if (parameter['range'].length > 1) { //range in the form of [min, max]
+                            HyperparameterList.push({ dim: idx, name: p, type: 'value', min: parameter['range'][0], max: parameter['range'][1] })
+                        } else { // range in the form of [max]
+                            HyperparameterList.push({ dim: idx, name: p, type: 'value', min: 0, max: parameter['range'][0] })
+                        }
+        
+                    } else if (parameter['type'] == 'list') { // the hidden layer sizes in MLP
+                        for (let hidden_l = 0; hidden_l < parameter['list_length'].length; hidden_l++) {
+        
+                            HyperparameterList.push({
+                                dim: idx + hidden_l, name: `${p}[${hidden_l}]`, type: 'value',
+                                min: 0,
+                                max: parameter['element']['range'][1]
+                            })
+                        }
+                        idx = idx + parameter['list_length'].length - 1
+        
+                    } else {
+                        HyperparameterList.push({
+                            dim: idx, name: p, type: 'value'
+                        })
+                    }
+                })
+                HyperparameterList.map((data:any,index:number)=>{
+                    rangeMap[data.name]={min:data.min,max:data.max};
+                });
+                let hyperparameterData : any = {};
+                console.log(HyperparameterList);
+                //let totallen = classifiers.length;
+                hyperpartitionData[selectedHyperpartitionName].forEach(((classifier: IClassifier, idx: number) => {
+        
+                    let par_dict = {}
+                    let parameters = classifier['parameters'].split('; ')
+                    parameters = parameters.map((p: string) => {
+                        let [k, v] = p.split(' = ')
+                        return par_dict[k] = v
+                    })
+                    // for the hidden layer sizes in MLP
+        
+                    if (par_dict['len(hidden_layer_sizes)']) {
+                        for (let i = parseInt(par_dict['len(hidden_layer_sizes)']); i < 3; i++) {
+                            par_dict[`hidden_layer_sizes[${i}]`] = 0
+                        }
+                    }
+        
+                    // add perforamce
+                    par_dict['performance'] = parseFloat(classifier['performance'].split(' +- '));
+                    let performance = parseFloat(classifier['performance'].split(' +- ')[0])
+                    //let trailID : number = classifier['trail ID'];
+                    HyperparameterList.forEach(p => {
+                        let value = par_dict[p.name]
+                        if (p.type == 'value') {
+                            if(!hyperparameterData[p.name]){
+                                hyperparameterData[p.name]=[];
+                            }
+                            let thisvalue = parseFloat(value);
+                            hyperparameterData[p.name].push({value:thisvalue,performance:performance});
+                            
+                        } else {
+                            //return value;
+                        }
+                    })
+                    
+                }
+                )); 
+                let keys = Object.keys(hyperparameterData);
+                console.log("keys");
+                console.log(keys);
+               
+                let array = (keys.map((name:string,index:number)=>{
+                    console.log("hyper:"+name);
+                    console.log(hyperparameterData[name].length);
+                    return (<DotBarChart x={2+5+20+160*index} 
+                        y={30+5+85+100+73+30+3} 
+                        width={150} 
+                        height={205} 
+                        min={rangeMap[name].min}
+                        max={rangeMap[name].max}
+                        methodDef={methodDef} 
+                        classifiers={hyperparameterData[name]} 
+                        hyname={name}
+                        name={"hpd"+(++this.index)} 
+                        key={"hpdetail"+(++this.index)}/>)
+                }));
+                let finalwidth = 5+20+160*(keys.length);
+                    
+                let array2=  (<rect key={'_rect_'+(++this.index)} x={2} y={30+85+100+73+30-2} width={finalwidth} height={220} fill="none" strokeWidth={2} stroke="#E0D6D4" />)
+                    
+                
+                return array.concat(array2);
+                
+            }else{
+                return <g />
+            }
+        };
+
+
+        return (<div className="methods" id="methodstop" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
             <div className="usedMethodContainer"
                     style={{ height: "100%", width: "100%" }}>
                     
                         <svg style={{ height: '100%', width: '100%' }} id="chart">
-                            {sortedusedMethods.map((name: string, i: number) => {
+                            {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                                
                                 this.index++;
-                                return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} text-anchor="middle" font-family="sans-serif" font-size="20px" fill="black">{name}</text>)
+                                return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
                                 })}
+                            
                             {sortedusedMethods.map((name: string, i: number) => {
                                 const methodDef = methodsDef[name];
                                 let  testin = selectedMethodName.indexOf(name);
@@ -362,14 +503,19 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                         />)
                                     
                             })}
+                            {
+                                unusedMethods.map((name: string,i:number) => {
+                                    let index = i+sortedusedMethods.length;
+                                return (<rect key={name + '_unused'} strokeDasharray="5,5" x={2+index*85} y={30} width={70} height={70} fill="white" strokeWidth={2} stroke="#E0D6D4" />)})
+                                
+                            }
                             {generateHp()}
+                            {generateHpdetail()}
 
                          </svg>  
                     </div>
-            {//unusedMethods.map((name: string) => (<div key={name + '_unused'} className='unusedMethod'>{methodsDef[name]['fullname']}</div>))
-            }
-        </div>
-        
+                </div>)
+    
       
     }
 }
@@ -522,7 +668,7 @@ class LineChart extends React.Component<ChartProps, {}>{
 }
 
 
-class HyperpartitionHeatmap extends React.Component<ChartProps, {}>{
+class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, {}>{
     TAG = "HyperpartitionHeatmap_";
     componentDidMount() {
         this.renderD3();
@@ -530,7 +676,7 @@ class HyperpartitionHeatmap extends React.Component<ChartProps, {}>{
     renderD3() {
         const d3 = require("d3");
         // Get Datasets
-        const { methodDef, classifiers,onClick } = this.props;
+        const { methodDef, classifiers,onClick ,selected} = this.props;
         let bestperformance = 0;
         let classifierPerformance:number[]=classifiers.map((classifier:IClassifier)=>{
             let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
@@ -554,13 +700,13 @@ class HyperpartitionHeatmap extends React.Component<ChartProps, {}>{
         //Create SVG element
 
         //Create SVG element
-        let tooltip_hp = d3.select("#tooltip_hp");
+        let tooltip_hp = d3.select("#tooltip");
         //let top_methods = d3.select("#methodstop");
 
         if(tooltip_hp.empty()){
             tooltip_hp = d3.select("body").append("div")
             .attr("class", "tooltip")
-            .attr("id","tooltip_hp")
+            .attr("id","tooltip")
             .style("opacity", 0)
             .style("left",  "0px")
             .style("top",  "0px");;
@@ -568,7 +714,7 @@ class HyperpartitionHeatmap extends React.Component<ChartProps, {}>{
 
         let top_svg = d3.select("#"+this.TAG+this.props.name).attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
-        .on("click",()=>{onClick(this.props.name)})
+        .on("click",()=>{onClick(this.props.hpname)})
         .on("mousemove", function(d:any) {
             
             tooltip_hp.transition()
@@ -589,7 +735,7 @@ class HyperpartitionHeatmap extends React.Component<ChartProps, {}>{
         .attr("width", width + margin.left + margin.right)
         .attr("height",height + margin.top + margin.bottom)
         .attr("fill","white")
-        .attr("stroke","#E0D6D4")
+        .attr("stroke",selected?"#A4A0A0":"#E0D6D4")
         .attr("stroke-width",2);
         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         
@@ -605,7 +751,7 @@ class HyperpartitionHeatmap extends React.Component<ChartProps, {}>{
         
         let rectArray = groups.selectAll("g.rectArray")
         .data(classifierPerformance);
-        console.log(classifierPerformance.length);
+        //console.log(classifierPerformance.length);
         rectArray.enter()
         .append("rect")
         .style("fill",getColor(methodDef.name))
@@ -620,6 +766,141 @@ class HyperpartitionHeatmap extends React.Component<ChartProps, {}>{
         
     }
 
+    render() {
+        const {name}=this.props;
+        return <g id={this.TAG+name}/>
+    }
+}
+
+
+class DotBarChart extends React.Component<DetailChartProps, {}>{
+    TAG = "DotBarChart_";
+    componentDidMount() {
+        this.renderD3();
+    }
+    renderD3() {
+        const d3 = require("d3");
+        // Get Datasets
+
+        const { methodDef, classifiers ,min,max} = this.props;
+
+        let	margin = {top: 0, right: 0, bottom: 20, left: 25},
+            width = this.props.width - margin.left - margin.right,
+            height = this.props.height - margin.top - margin.bottom,
+            top_margin = {top:this.props.y,left:this.props.x};
+
+        let totaltick = height/6;
+        let step = (max-min)/totaltick;
+        let histogram:number[] = [];
+        
+        for (let i =0; i<totaltick; i++){
+            histogram.push(0)
+        }
+        let displaydata:any[]=[];
+        let datacluster:any={};
+        console.log("length");
+        console.log(classifiers.length);
+        classifiers.forEach((classifier:any)=>{
+            // let performance = classifier.performance;
+            //let rangeIdx = Math.floor(performance/step)
+            let value = classifier.value;
+            let rangeIdx = Math.floor((value-min)/step)
+            if(rangeIdx>=totaltick){
+                rangeIdx=totaltick-1;
+            }
+            if(!datacluster[rangeIdx]){
+                datacluster[rangeIdx]=[];
+            }
+            datacluster[rangeIdx].push(classifier.performance);
+            //let data = {idx:rangeIdx,performance:classifier.performance};
+
+            //let data = {y:(rangeIdx+0.5)*1/totaltick,x:histogram[rangeIdx],performance:classifier.performance};
+            //displaydata.push(data);
+            //histogram[rangeIdx] = histogram[rangeIdx]+1;
+            
+        });
+        let dkeys = Object.keys(datacluster);
+        dkeys.map((value:string)=>{
+            let rangeIdx = parseInt(value);
+            datacluster[value].sort(
+                function(a:number,b:number){
+                    return a-b;
+                }
+            )
+            datacluster[value].map((performance:number,i:number)=>{
+                console.log("performance"+performance);
+
+                let data = {y:(rangeIdx+0.5)*1/totaltick,x:i,performance:performance};
+                displaydata.push(data);
+            });
+            
+        })
+        // Set the ranges
+        let	yScale = d3.scaleLinear().range([height, 0]);
+        yScale.domain([0, 1]);
+        let yScale2 = d3.scaleLinear().range([height, 0]);
+        yScale2.domain([min, max]);
+        //let axisticks = 10;
+        let yAxis = d3.axisLeft()
+                    .scale(yScale2);
+                    //.tickFormat(function (d:any) {
+                    //    console.log("d"+d);
+                    //    return (min+(max-min)*d).toFixed(2);
+                    //})
+                    //.ticks(axisticks);
+
+        
+        //Create SVG element
+        let top_svg = d3.select("#"+this.TAG+this.props.name).attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")");;
+        // text label for the x axis
+        top_svg.append("text")             
+        .attr("transform",
+                "translate(" + (0) + " ," + 
+                            (height + margin.top + 20) + ")")
+        .style("text-anchor", "start")
+        .text(this.props.hyname);
+        let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        //Create Y axis
+        svg.append("g")
+            .attr("transform", "translate(0,0)")
+            .attr("class", "y axis")
+            .call(yAxis);
+        
+        let groups = svg
+            .append('g')
+            .attr("class", "group");
+       /* function generate_array(d:number,index:number){ 
+            // index*step -> performance range
+            // d -> number
+            if(d>0){
+                var arr = new Array(d);
+                for(var i=0;i<d;i++){
+                    arr[i] = {y:(index+0.5)*0.1,x:i};
+                }
+                console.log(d);
+                return arr;
+            }else{
+                return [];
+            }
+        }*/
+        let rectArray = groups.selectAll("g.rectArray")
+        .data(displaydata);
+
+        rectArray.enter()
+        .append('g')
+        .attr("class", "rectArray")
+        .append("rect")
+        .style("fill",getColor(methodDef.name))
+        .style("opacity",function(d:any,i:any){return d.performance;})
+        .attr("width", 5)
+        .attr("height",5)
+        .attr("x", function(d:any,i:any) {return d.x*6; })
+        .attr("y", function(d:any,i:any) { return yScale(d.y)-2.5; });
+        
+
+      }
     render() {
         const {name}=this.props;
         return <g id={this.TAG+name}/>
