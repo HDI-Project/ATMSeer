@@ -63,13 +63,13 @@ export default class MethodsSearchSpace extends React.Component<IProps, IState>{
                     return par_dict[k] = v
                 })
                 // for the hidden layer sizes in MLP
-    
+
                 if (par_dict['len(hidden_layer_sizes)']) {
                     for (let i = parseInt(par_dict['len(hidden_layer_sizes)']); i < 3; i++) {
                         par_dict[`hidden_layer_sizes[${i}]`] = 0
                     }
                 }
-    
+
                 // add perforamce
                 par_dict['performance'] = parseFloat(classifier['performance'].split(' +- '))
                 let ScatterPlotCategory : any[] = [methodDef.fullname];
@@ -80,14 +80,14 @@ export default class MethodsSearchSpace extends React.Component<IProps, IState>{
                     }
                 });
                 let HyperpartitionName = ScatterPlotCategory.join("\n");
-    
+
                 if(!hyperpartitionData[HyperpartitionName]){
                     hyperpartitionData[HyperpartitionName] = [];
                 }
                 hyperpartitionData[HyperpartitionName].push(classifier);
                 hyperpartition2Method[HyperpartitionName] = name;
             }
-            )); 
+            ));
         });
 
         let usedHyperpartitions: string[] = Object.keys(hyperpartitionData)
@@ -106,7 +106,7 @@ export default class MethodsSearchSpace extends React.Component<IProps, IState>{
         /**
          * <div key={name + '_used'} className="usedMethodContainer"
                     style={{ height: `100%`, width: '100%' }}>
-                    
+
                     <div className="method">
                         <HyperpatitionSearchSpace hyperpartitionName={name} methodDef={methodDef} classifiers={hyperpartitionData[name]} sumTrail={sumTrail} />
                         <HyperpatitionBarChart hyperpartitionName={name} methodDef={methodDef} classifiers={hyperpartitionData[name]} sumTrail={sumTrail} />
@@ -119,30 +119,30 @@ export default class MethodsSearchSpace extends React.Component<IProps, IState>{
                     const methodDef = methodsDef[hyperpartition2Method[name]];
                     return <div key={name + '_used'} className="usedMethodContainer"
                         style={{ height: `33%`, width: '33%' }}>
-                        
+
                         <div className="method">
                             <HyperpatitionOverViewBarChart hyperpartitionName={name} methodDef={methodDef} classifiers={hyperpartitionData[name]} sumTrail={sumTrail} onClick={this.onOverViewClick}/>
                         </div>
                     </div>
                 })}
-                
+
                 {unusedMethods.map((name: string) => (<div key={name + '_unused'} className='unusedMethod'>{methodsDef[name]['fullname']}</div>))
                 }
             </div>
         }else if(mode==1){
             const methodDef = methodsDef[hyperpartition2Method[selectedHyperpartitionName]];
-            return <div className="methods" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>                    
+            return <div className="methods" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
                     <div key={name + '_used'} className="usedMethodContainer"
                     style={{ height: `100%`, width: '100%' }}>
-                    
+
                     <div className="method">
                         <HyperpatitionSearchSpace hyperpartitionName={selectedHyperpartitionName} methodDef={methodDef} classifiers={hyperpartitionData[selectedHyperpartitionName]} sumTrail={sumTrail} />
                         <HyperpatitionBarChart hyperpartitionName={selectedHyperpartitionName} methodDef={methodDef} classifiers={hyperpartitionData[selectedHyperpartitionName]} sumTrail={sumTrail} />
                         <Button  onClick={this.onBackBtn}>Back</Button>
-                        
+
                     </div>
                     </div>
-                    </div> 
+                    </div>
         }else{
             return <div />
         }
@@ -197,22 +197,22 @@ class MethodSearchSpace extends React.Component<{ methodDef: IMethod, classifier
             }
             hyperpartitionData[HyperpartitionName].push(classifier);
         }
-        )); 
+        ));
         let usedHyperpartitions: string[] = Object.keys(hyperpartitionData)
         return <div className="methods" style={{height: '100%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
             {usedHyperpartitions.map((name: string, i: number) => {
                 return <div key={name + '_used'} className="usedMethodContainer"
                     style={{ height: `100%`, width: '100%' }}>
-                    
+
                     <div className="method">
                         <HyperpatitionSearchSpace hyperpartitionName={name} methodDef={methodDef} classifiers={hyperpartitionData[name]} sumTrail={sumTrail} />
                         <HyperpatitionBarChart hyperpartitionName={name} methodDef={methodDef} classifiers={hyperpartitionData[name]} sumTrail={sumTrail} />
                     </div>
                 </div>
             })}
-            
+
         </div>
-        
+
 
     }
 
@@ -296,10 +296,10 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
         //const N = totallen<2?2:totallen;
         //const colors = getGradientColor(getColor(methodDef.name),RED,N);
         //console.log(colors);
-  
+
         const N = sumTrail<2?2:sumTrail;
-        const colors = getGradientColor(YELLOW,RED,N-1);      
-        // PCA 
+        const colors = getGradientColor(YELLOW,RED,N-1);
+        // PCA
         let scatterPlotData : any[] = [];
         // scatterPlotData Format: x, y , performance, label, idx.
         //console.log(data);
@@ -324,15 +324,15 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
                 }
             });
         }else{
-            console.log(data);
+            // console.log(data);
         }
 
         // Visualization for pca result.
-        
 
 
 
-        
+
+
         let series= [];
         series.push({
             data: scatterPlotData,
@@ -355,12 +355,12 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
                     color: function(param:any){
                         return colors[param.data[4]];
                     },
-                    
+
                 }
             }
         });
         series.push({
-            
+
             data: scatterPlotData,
             type: 'line',
             symbolSize: 0,
@@ -371,7 +371,7 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
                     width:1
                 }
             }
-            
+
 
         });
         /*
@@ -389,7 +389,7 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
                 itemStyle: {
                     normal: {
                         color: colors[scatterPlotData[i][4]]
-                        
+
                     }
                 }
             };
@@ -424,7 +424,7 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
                 show:false,
                 scale: true
             },
-            
+
             visualMap: [
                 {
                     left:'right',
@@ -434,12 +434,12 @@ class HyperpatitionSearchSpace extends React.Component<{ methodDef: IMethod, cla
                     itemHeight: 120,
                     calculable: true,
                     precision: 0,
-                    text: ['latest time'],                   
+                    text: ['latest time'],
                     inRange: {
                         color: [YELLOW, RED]
                     }
-                   
-                    
+
+
                 }
 
             ],
@@ -477,7 +477,7 @@ class HyperpatitionBarChart extends React.Component<{ methodDef: IMethod, classi
         for (let i =0; i<1/step; i++){
             xAxisData.push(`${(i*step).toFixed(2)}-${((i+1)*step).toFixed(2)}`)
         }
-        
+
         const option = {
             title:{
                 text:"performance histogram",
@@ -499,7 +499,7 @@ class HyperpatitionBarChart extends React.Component<{ methodDef: IMethod, classi
             yAxis: {
                 type: 'value',
             },
-            
+
             series:[
                 {
                     type: 'bar',
@@ -578,7 +578,7 @@ class HyperpatitionOverViewBarChart extends React.Component<{ methodDef: IMethod
             yAxis: {
                 type: 'value'
             },
-            
+
             series:[
                 {
                     type: 'bar',
@@ -622,7 +622,7 @@ class HyperpatitionOverViewBarChart extends React.Component<{ methodDef: IMethod
             type: 'value',
             show:false
         },
-        
+
         series:[
             {
                 type: 'bar',
@@ -634,7 +634,7 @@ class HyperpatitionOverViewBarChart extends React.Component<{ methodDef: IMethod
                 },
             }
         ]
-    };      
+    };
         return option
     }
     onChartClick=()=>{
@@ -642,10 +642,10 @@ class HyperpatitionOverViewBarChart extends React.Component<{ methodDef: IMethod
         const name = this.props.hyperpartitionName;
         this.props.onClick(name);
     };
-    
-      
+
+
     render() {
-        
+
         return <div onClick={this.onChartClick} style={{ height: `100%`, width: '100%' }}>
         <ReactEcharts
             option={this.getBarOption()}

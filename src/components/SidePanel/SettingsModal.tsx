@@ -58,7 +58,6 @@ showModal =() => {
   promise = getConfigs();
   promise
       .then(configs => {
-        console.log(configs);
         this.setState({
           visible: true,
           checkAll: configs.methods.length===method_options.length,
