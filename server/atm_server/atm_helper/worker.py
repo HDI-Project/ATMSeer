@@ -15,9 +15,9 @@ from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         load_config, initialize_logging)
 from atm.constants import RunStatus
 
-from .error import ApiError
-from .db import get_db
-from .cache import get_cache
+from atm_server.error import ApiError
+from atm_server.db import get_db
+from atm_server.cache import get_cache
 
 
 logger = logging.getLogger('atm_server')
@@ -138,9 +138,9 @@ def monitor_dispatch_worker(datarun_id):
             datarun = db.get_datarun(datarun_id)
             if datarun.status == RunStatus.RUNNING:
                 # The datarun is still running
-                mark_datarun_pending(db.datarun_id)
+                mark_datarun_pending(db, datarun_id)
             return
-        if cache.get(key) is None:
+        if cache.get(key) is None or cache.get(key) != p_inner.pid:
             while True:
                 p_inner.terminate()
                 # terminate() only sends the signal, wait a while to check
@@ -159,9 +159,11 @@ def monitor_dispatch_worker(datarun_id):
                 # The datarun is still running
                 mark_datarun_pending(db,datarun_id)
             logger.warning("Process (PID: %d) terminated (exitcode: %d)" % (p_inner.pid, p_inner.exitcode))
+            cache.delete(key)
             return
         # Sleep for a while
         time.sleep(0.001)
+
 
 def start_worker(datarun_id):
     """
@@ -181,7 +183,7 @@ def start_worker(datarun_id):
     p = Process(target=monitor_dispatch_worker, args=(datarun_id,))
     p.start()
     # Sleep a while
-    time.sleep(0.01)
+    time.sleep(0.1)
     return
 
 
@@ -189,12 +191,18 @@ def stop_worker(datarun_id):
     key = datarun_id2key(datarun_id)
     cache = get_cache()
     pid = cache.get(key)
-    
+
     if pid is not None:
         logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
         # Then we delete the datarun process_id cache (as a signal of terminating)
-        cache.delete(key)
-        return True
+        cache.set(key, 'stop')
+        while True:
+            if cache.has(key):
+                time.sleep(1)
+            else:
+                return True
+        # cache.delete(key)
+        # return True
     logger.warning("Cannot find corresponding process for datarun %d" % datarun_id)
     db = get_db()
     datarun = db.get_datarun(datarun_id)

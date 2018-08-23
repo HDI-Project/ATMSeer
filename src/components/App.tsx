@@ -51,7 +51,7 @@ class App extends React.Component<{}, IState> {
         </Header>
         <Content className='appContent' >
           <Row style={{"height": "100%"}}>
-            <Col span={6} className="col">
+            <Col span={4} className="col">
               <SidePanel
                 {...this.state}
                 setDatarunID={this.setDatarunID}
@@ -60,7 +60,7 @@ class App extends React.Component<{}, IState> {
               />
             </Col >
 
-            <Col span={18}  className="col">
+            <Col span={20}  className="col">
             <div className="shadowBox" >
               <DataRuns datarunID={this.state.datarunID} datarunStatus={this.state.datarunStatus}/>
               </div>
@@ -71,7 +71,7 @@ class App extends React.Component<{}, IState> {
           </Row>
         </Content>
       </Layout>
-      
+
     );
   }
 }

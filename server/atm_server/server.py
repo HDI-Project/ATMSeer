@@ -11,7 +11,7 @@ from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         add_arguments_datarun, add_arguments_logging,
                         load_config, initialize_logging)
 
-from atm_server import SERVER_ROOT
+from atm_server import SERVER_ROOT, db
 from atm_server.config import Config, ProductionConfig, DevelopmentConfig
 from atm_server.api import api
 
@@ -50,6 +50,7 @@ def create_app(config=None):
     def hello():
         return 'Hello, World!'
 
+    db.init_app(app)
     app.register_blueprint(api, url_prefix='/api')
 
     return app

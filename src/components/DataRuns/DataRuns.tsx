@@ -10,11 +10,10 @@ import {IDatarun} from 'types';
 import {getClassifierSummary, getClassifiers, IClassifierInfo} from '../../service/dataService';
 
 //components
-import Methods from './Methods';
+import MethodsLineChart from './MethodsLineChart';
 //import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
-import Histogram from "./Histogram";
-//import { IDatarunStatusTypes } from 'types';
+// import Histogram from "./Histogram";
 // import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
@@ -63,12 +62,12 @@ export default class DataRuns extends React.Component<IProps, IState>{
 
     }
     public startOrStopUpdateCycle() {
-        this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
-        // if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
-        //     this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
-        // } else {
-        //     clearInterval(this.intervalID);
-        // }
+        // this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
+        if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
+            this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
+        } else {
+            clearInterval(this.intervalID);
+        }
     }
     public componentDidMount(){
         // this.getData()
@@ -77,6 +76,9 @@ export default class DataRuns extends React.Component<IProps, IState>{
         this.startOrStopUpdateCycle();
     }
     componentDidUpdate(prevProps: IProps) {
+        if (this.state.runCSV==''){
+            this.getData();
+        }
         if (prevProps.datarunID !== this.props.datarunID) {
             this.getData();
         }
@@ -97,15 +99,15 @@ export default class DataRuns extends React.Component<IProps, IState>{
             return (
         <div style={{height: '100%'}}>
 
-            <div className="runTracker" style={{height: '20%', display: "flex"}}>
-                <Histogram datarun={datarun} width={40}/>
-                <BarChart run={runCSV} width={60} />
+            <div className="runTracker" style={{height: '15%', display: "flex"}}>
+                {/* <Histogram datarun={datarun} width={40}/> */}
+                <BarChart run={runCSV} width={100} />
             </div>
             {/* <div style={{height: "80%", overflowY: "scroll"}}>
                 <HyperPartitions classifiers={classifiers} />
             </div> */}
 
-            <Methods height={80} datarun={datarun}/>
+            <MethodsLineChart height={85} datarun={datarun}/>
 
         </div>)
         }else{

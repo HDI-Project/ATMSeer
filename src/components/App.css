@@ -10,7 +10,7 @@
 .col{
   padding: 10px;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: hidden;
 
 }
 .appHeader {

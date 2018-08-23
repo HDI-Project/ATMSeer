@@ -1,11 +1,14 @@
 .lb-classifier {
     background-color: #dddddd;
+    color:  #dddddd;
     position: absolute;
     left: 100px;
     top: 12px;
 }
 
 .lb-classifier-metric {
-    float: right;
-    margin-right: 5px;
+    background-color: transparent;
+    position: absolute;
+    left: 100px;
+    top: 12px;
 }

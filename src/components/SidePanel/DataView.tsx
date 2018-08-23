@@ -86,7 +86,6 @@ export default class DataView extends React.Component<IProps, IState>{
         if (labels) {
             const features = dataset.slice(0, dataset.length-1);
             const classSet = new Set(labels.data);
-            console.info(classSet, labels.data)
             const classes: (number|string)[] = Array.from(classSet);
 
             //legend of classes
@@ -94,6 +93,7 @@ export default class DataView extends React.Component<IProps, IState>{
                 return <span key={className} className='classLegend'>
                     <span style={{color: EChartsColor[i],  margin:'2px'}}/>
                     {className}
+                    ({labels.data.filter(d=>d==className).length})
                 </span>
             })
 

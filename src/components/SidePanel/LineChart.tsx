@@ -19,7 +19,6 @@ export default class LineChart extends React.Component<LineChartProps, LineChart
 
     public computeOption() {
         const { scores, hyperpartitions } = this.props;
-        console.log(hyperpartitions);
         const id2hp: {[id: number]: IHyperpartitionInfo} = {};
         hyperpartitions.forEach(hp => {
             id2hp[hp.id] = hp;

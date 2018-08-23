@@ -25,7 +25,7 @@ export default class Methods extends React.Component<IProps, IState>{
                 const methodDef = methodsDef[name]
                 return <div key={name + '_used'} className="usedMethodContainer"
                     style={{ height: `35%`, width: '33%' }}>
-                    <div className="methods">
+                    <div className="method">
                         <Method methodDef={methodDef} classifiers={datarun[name]} />
                     </div>
                 </div>
