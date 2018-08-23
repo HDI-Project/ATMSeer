@@ -15,9 +15,9 @@ from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         load_config, initialize_logging)
 from atm.constants import RunStatus
 
-from .error import ApiError
-from .db import get_db
-from .cache import get_cache
+from atm_server.error import ApiError
+from atm_server.db import get_db
+from atm_server.cache import get_cache
 
 
 logger = logging.getLogger('atm_server')
@@ -138,7 +138,7 @@ def monitor_dispatch_worker(datarun_id):
             datarun = db.get_datarun(datarun_id)
             if datarun.status == RunStatus.RUNNING:
                 # The datarun is still running
-                mark_datarun_pending(db.datarun_id)
+                mark_datarun_pending(db, datarun_id)
             return
         if cache.get(key) is None or cache.get(key) != p_inner.pid:
             while True:
@@ -163,6 +163,7 @@ def monitor_dispatch_worker(datarun_id):
             return
         # Sleep for a while
         time.sleep(0.001)
+
 
 def start_worker(datarun_id):
     """

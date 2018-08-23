@@ -1,19 +1,30 @@
 import * as React from 'react';
+<<<<<<< HEAD
 import { Modal, Button, Icon, Checkbox,InputNumber,message,Select,Collapse   } from 'antd';
+=======
+import { Modal, Button, Checkbox,InputNumber,message,Select  } from 'antd';
+>>>>>>> origin/dev-yao
 import * as methodsDef from "../../assets/methodsDef.json";
-import { IConfigsInfo, IConfigsUploadResponse } from 'service/dataService';
-import { getConfigs,postConfigs } from 'service/dataService';
+import { IConfigsInfo } from 'service/dataService';
+import { getConfigs } from 'service/dataService';
 
 export interface SettingsModalProps {
-
+    onSubmit: (configs: IConfigsInfo) => Promise<any>;
+    button?: React.ReactNode;
 }
 
 export interface SettingsModalState {
+<<<<<<< HEAD
     loading: boolean
     visible: boolean,
     indeterminate: boolean,
     checkAll: boolean,
     configs: IConfigsInfo
+=======
+    configs: IConfigsInfo;
+    loading: boolean;
+    visible: boolean;
+>>>>>>> origin/dev-yao
 }
 
 const method_options =  Object.keys(methodsDef).map(
@@ -43,10 +54,11 @@ export default class SettingsModal extends React.Component<SettingsModalProps, S
             budget_type : "classifier",
             tuner : "gp"
 
-        },
+            },
 
+        };
     }
-};
+
 showModal =() => {
   this.initModal();
 }
@@ -84,7 +96,9 @@ showModal =() => {
   handleOk = () => {
     // Submit
     this.setState({ loading: true });
-    let promise:Promise<IConfigsUploadResponse> = postConfigs(this.state.configs);
+    console.log(this.state.configs);
+    // let promise:Promise<IConfigsUploadResponse> = postConfigs(this.state.configs);
+    const promise = this.props.onSubmit(this.state.configs);
     promise.then(status => {
       if(status.success == true){
         message.success("Submit Configs Successfully.");
@@ -190,9 +204,8 @@ showModal =() => {
       <div>
         <Button
             onClick={this.showModal}
-        >
-            <Icon type='setting' />Settings
-        </Button>
+            children={this.props.button}
+        />
         <Modal
           visible={visible}
           title="Settings"
