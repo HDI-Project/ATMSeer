@@ -7,7 +7,11 @@ import { IMethod, IDatarun, IClassifier } from "types";
 import { getColor } from 'helper';
 import "./MethodsLineChart.css"
 //import ReactEcharts from "echarts-for-react";
-
+/*const sortSwitchStyle = {
+     position: "absolute" as "absolute",
+     top: "5px",
+     right: "5px"
+ }*/
 export interface IState {
 }
 export interface IProps {
@@ -63,7 +67,6 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         selectedMethodName :[],
         selectedHyperpartitionName : "",
         configsMethod:[],
-        initializedConfigs:0
     };
     onMethodsOverViewClick = (Methods:string)=>{
         // Show Methods
@@ -152,15 +155,43 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         d3.select("#top_container").attr("transform", "translate(" + margin.left + "," + margin.right + ")").call(zoom);
         */
     }
+    componentWillReceiveProps(nextProps : IProps) {
+        let { datarun } = nextProps;
+        let usedMethods = Object.keys(datarun);
+        this.setState({
+            configsMethod:usedMethods
+        });
+    }
+    onCheckBoxChange=(e : any)=>{
+        let checked = e.target.checked;
+        let value = e.target.value;
+        if(checked==false){
+            let configsMethod : string[] = this.state.configsMethod;
+            let index = configsMethod.indexOf(value);
+            if(index>-1){
+                configsMethod.splice(index, 1);
+                this.setState({
+                    configsMethod:configsMethod
+                });
+
+            }
+        }else{
+            let configsMethod : string[] = this.state.configsMethod;
+            configsMethod.push(value);
+            this.setState({
+                configsMethod:configsMethod
+            });
+
+            
+        }
+    }
     public render() {
         // const methodLen = Object.keys(methodsDef).length
         let { datarun, height } = this.props;
-        let {mode,selectedHyperpartitionName,initializedConfigs} = this.state;
+        let {mode,selectedHyperpartitionName} = this.state;
         let selectedMethodName:string[] = this.state.selectedMethodName;
         selectedHyperpartitionName;
         let usedMethods: string[] = Object.keys(datarun);
-        console.log("usedMethods:");
-        console.log(usedMethods);
         let totallen = 0;
         usedMethods.forEach((name: string, i: number)=>{
             const classifier_num = datarun[name].length;
@@ -290,15 +321,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             }
 
         });
-        if(initializedConfigs==0){
-            let copyusedmethods = Object.assign([], sortedusedMethods)
-            console.log(sortedusedMethods)
-            this.setState({
-                initializedConfigs:1,
-                configsMethod:copyusedmethods
-            });
-        }
-        
+   
         let generateHp = ()=>{
             if(mode==1||mode==2){
                 let gap = 20;
@@ -509,37 +532,49 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 return <g />
             }
         };
-
-
+        console.log("render");
+        let allmethods = sortedusedMethods.concat(unusedMethods);
+        console.log(allmethods.length);
+        /**
+         * <foreignObject key={"submit_"+(++this.index)} y={480} x={1100} width="120" height="50">
+                        <Button key={"_button_"+(++this.index)}>Submit</Button>
+                            </foreignObject>
+         */
+        /**
+         * {allmethods.map((name: string, i: number) => {
+                               
+                               //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
+                               return (<div key={name+"_text_"+(++this.index)} style={{position: "absolute",left:(20+i*85)+"px",top:"120px"}} >
+                                      
+                                       <Checkbox  key={name+"_checkbox_"+(++this.index)}  >{name}</Checkbox></div>
+                               
+                                  )
+                           })}
+         * 
+         */
         return (<div className="methods" id="methodstop" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
             <div className="usedMethodContainer"
                     style={{ height: "100%", width: "100%" }}>
-                    
-                        <svg style={{ height: '100%', width: '100%' }} id="chart">
-                        <foreignObject y={480} x={1100} width="120" height="50">
-                        <Button>Submit</Button>
-                            </foreignObject>
+                        <div style={{position: "absolute",bottom:"10px",right:"50px"}}>
+                         <Button key={"_button_"+(++this.index)}>Submit</Button></div>
+                        
+                        <svg style={{ height: '100%', width: '100%' }} id="chart" xmlns="http://www.w3.org/2000/svg">
+                        
                             <g id="top_container">
-                            {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
-                               
-                                this.index++;
-                                let checked = false;
-                                let configsMethod : string[] = this.state.configsMethod;
-
-                                if(configsMethod.indexOf(name)>-1){
-                                    checked=true;
-                                }
-                                console.log(name);
-                                console.log(sortedusedMethods);
-                                console.log(configsMethod);
-                                console.log(checked);
-                                //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
-                                return (<foreignObject key={name+"_text_"+this.index} y={2+20-20} x={2+i*85+35-35} width="75" height="20">
-                                        <Checkbox checked={checked}>{name}</Checkbox>
-
-                                    </foreignObject>)
-                            })}
                             
+                            {allmethods.map((name: string, i: number) => {
+                               let checked = false;
+                               let configsMethod : string[] = this.state.configsMethod;
+                               if(configsMethod.indexOf(name)>-1){
+                                    checked= true;
+                            };
+                               //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
+                               return (<foreignObject key={name+"_text_"+(++this.index)} x={2+i*85} y={2} width={75} height={30}>
+                                      
+                                       <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></foreignObject>
+                               
+                                  )
+                           })}
                             {sortedusedMethods.map((name: string, i: number) => {
                                 const methodDef = methodsDef[name];
                                 let  testin = selectedMethodName.indexOf(name);
