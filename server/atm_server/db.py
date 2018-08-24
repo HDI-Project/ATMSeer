@@ -9,6 +9,27 @@ from atm.constants import ClassifierStatus
 from .error import ApiError
 
 
+def check_db_mappers(db):
+    mapper = inspect(db.Dataset)
+    if not mapper.has_property('dataruns'):
+        raise ApiError('DB %s has no property dataruns' % str(mapper), 500)
+    mapper = inspect(db.Datarun)
+    if not mapper.has_property('hyperpartitions'):
+        raise ApiError('DB %s has no property hyperpartitions' % str(mapper), 500)
+    if not mapper.has_property('classifiers'):
+        raise ApiError('DB %s has no property classifiers' % str(mapper), 500)
+    mapper = inspect(db.Hyperpartition)
+    if not mapper.has_property('classifiers'):
+        raise ApiError('DB %s has no property classifiers' % str(mapper), 500)
+    if not mapper.has_property('datarun'):
+        raise ApiError('DB %s has no property datarun' % str(mapper), 500)
+    mapper = inspect(db.Classifier)
+    if not mapper.has_property('hyperpartition'):
+        raise ApiError('DB %s has no property hyperpartition' % str(mapper), 500)
+    if not mapper.has_property('datarun'):
+        raise ApiError('DB %s has no property datarun' % str(mapper), 500)
+
+
 def get_db():
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
@@ -19,8 +40,8 @@ def get_db():
         db = Database(sql_conf.dialect, sql_conf.database, sql_conf.username,
                         sql_conf.password, sql_conf.host, sql_conf.port,
                         sql_conf.query)
-        if g.db.Hyperpartition.classifiers
-
+        check_db_mappers(db)
+        db.session = db.get_session()
         g.db = db
     return g.db
 
@@ -29,7 +50,8 @@ def teardown_db(e=None):
     db = g.pop('db', None)
     # Close db connection
     if db is not None:
-        pass
+        if db.session is not None:
+            db.session.close()
 
 
 def init_app(app):
@@ -124,6 +146,7 @@ def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=No
             .join(db.Classifier.hyperpartition)\
             .join(db.Classifier.datarun)\
             .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
+
 
         # query = db.session.query(
         #     db.Classifier,
