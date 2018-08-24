@@ -1,7 +1,7 @@
 import ReactEcharts from "echarts-for-react";
-import {getColor} from "../../helper"
+import {getColor} from "helper"
 import * as React from "react";
-import { IDatarun } from "../../types";
+import { IDatarun } from "types";
 
 export interface IProps{
     datarun:IDatarun, width: number

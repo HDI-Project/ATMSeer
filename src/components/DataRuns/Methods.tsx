@@ -1,8 +1,8 @@
 import { } from 'antd';
 import * as React from 'react';
 import * as methodsDef from "../../assets/methodsDef.json";
-import { IMethod, IDatarun, IClassifier } from "../../types";
-import { getColor } from '../../helper';
+import { IMethod, IDatarun, IClassifier } from "types";
+import { getColor } from 'helper';
 import "./Methods.css"
 import ReactEcharts from "echarts-for-react";
 

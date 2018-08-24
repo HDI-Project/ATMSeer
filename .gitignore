@@ -5,6 +5,7 @@
 
 # data
 public/data/csvs/
+atm/data/
 
 # env
 /pyenv

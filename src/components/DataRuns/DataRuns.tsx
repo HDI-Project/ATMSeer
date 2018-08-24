@@ -3,13 +3,15 @@
 import * as React from "react";
 
 //
-import {parseDatarun} from "../../helper";
-import {IDatarun} from '../../types';
+import {parseDatarun} from "helper";
+import {IDatarun} from 'types';
 // import {URL} from '../../Const';
+//import {getClassifierSummary} from 'service/dataService';
 import {getClassifierSummary, getClassifiers, IClassifierInfo} from '../../service/dataService';
 
 //components
-import Methods from './Methods';
+import MethodsLineChart from './MethodsLineChart';
+//import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
 // import Histogram from "./Histogram";
 // import HyperPartitions from "./HyperPartitions";
@@ -61,7 +63,11 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public startOrStopUpdateCycle() {
         // this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
+<<<<<<< HEAD
         if (this.props.datarunStatus != IDatarunStatusTypes.PENDING) {
+=======
+        if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
+>>>>>>> origin/master
             this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
         } else {
             clearInterval(this.intervalID);
@@ -91,6 +97,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
         const {runCSV} = this.state
         // const {classifiers} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
+        //console.log(runCSV);
+        //console.log(datarun);
         if (Object.keys(datarun).length>0){
             return (
         <div style={{height: '100%'}}>
@@ -103,7 +111,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <HyperPartitions classifiers={classifiers} />
             </div> */}
 
-            <Methods height={85} datarun={datarun}/>
+            <MethodsLineChart height={85} datarun={datarun}/>
 
         </div>)
         }else{

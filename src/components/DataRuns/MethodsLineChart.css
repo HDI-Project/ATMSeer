@@ -1,0 +1,45 @@
+.methods{
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+.usedMethodContainer{
+    padding: 3px 8px;
+    float: left;
+}
+
+.method{
+    border: .4px solid rgba(0,0,0, 0.2);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06);
+    /* height: ${100/methods.length}% */
+    height: 100%;
+    padding: 2px 5px;
+}
+
+.unusedMethod{
+    border: 2px dashed rgba(0,0,0, 0.3);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.06);
+    padding: 2px 5px;
+    margin: 5px;
+    float: left;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    color: aliceblue;
+    width: 180px;
+    height: 60px;
+    padding: 10px;
+    font: 12px sans-serif;
+    background: rgba(0, 0, 0, 0.671);
+    border: 10px;
+    border-radius: 5px;
+    pointer-events: none;
+  }
+  .link {
+    fill: none;
+    stroke: rgba(0,0,0, 0.3);
+    stroke-width: 1.5px;
+  }
+  
