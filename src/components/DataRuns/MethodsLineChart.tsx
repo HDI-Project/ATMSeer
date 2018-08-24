@@ -162,9 +162,28 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             configsMethod:usedMethods
         });
     }
-    onCheckBoxChange(e : any){
-        console.log(`checked = ${e.target.checked}`);
-        console.log(`value = ${e.target.value}`);
+    onCheckBoxChange=(e : any)=>{
+        let checked = e.target.checked;
+        let value = e.target.value;
+        if(checked==false){
+            let configsMethod : string[] = this.state.configsMethod;
+            let index = configsMethod.indexOf(value);
+            if(index>-1){
+                configsMethod.splice(index, 1);
+                this.setState({
+                    configsMethod:configsMethod
+                });
+
+            }
+        }else{
+            let configsMethod : string[] = this.state.configsMethod;
+            configsMethod.push(value);
+            this.setState({
+                configsMethod:configsMethod
+            });
+
+            
+        }
     }
     public render() {
         // const methodLen = Object.keys(methodsDef).length
@@ -552,7 +571,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
                                return (<foreignObject key={name+"_text_"+(++this.index)} x={2+i*85} y={2} width={75} height={30}>
                                       
-                                       <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} onChange={this.onCheckBoxChange} >{name}</Checkbox></foreignObject>
+                                       <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></foreignObject>
                                
                                   )
                            })}
