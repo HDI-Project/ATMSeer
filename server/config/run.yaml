@@ -5,7 +5,7 @@ data_description: Example dataset description
 dataset_id: null
 gridding: 0
 k_window: 5
-methods: [rf, knn]
+methods: [rf, knn, svm, dt, pa, logreg, bnb, mlp, ada, mnb, gp, gnb, sgd, et]
 metric: f1
 priority: 1
 r_minimum: 2

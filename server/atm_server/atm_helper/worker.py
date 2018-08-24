@@ -91,9 +91,11 @@ def work(*args):
     initialize_logging(log_config)
 
     # let's go
-    _logger.warn('Worker started!')
+    datarun_ids = [int(i) for i in _args.dataruns]
+    _logger.warning(datarun_ids)
+    _logger.warning('Worker started!')
     atm_work(db=Database(**vars(sql_config)),
-             datarun_ids=_args.dataruns,
+             datarun_ids=datarun_ids,
              choose_randomly=_args.choose_randomly,
              save_files=_args.save_files,
              cloud_mode=_args.cloud_mode,
@@ -101,7 +103,7 @@ def work(*args):
              log_config=log_config,
              total_time=_args.time,
              wait=False)
-    _logger.warn('Worker exited.')
+    _logger.warning('Worker exited.')
 
 
 def dispatch_worker(datarun_id):
@@ -178,7 +180,6 @@ def start_worker(datarun_id):
     if datarun.status != RunStatus.PENDING:
         # Do nothing if the datarun is already running or complete
         return None
-
     # Create and start the process
     p = Process(target=monitor_dispatch_worker, args=(datarun_id,))
     p.start()
@@ -192,7 +193,7 @@ def stop_worker(datarun_id):
     cache = get_cache()
     pid = cache.get(key)
 
-    if pid is not None:
+    if pid is not None and pid != 'stop':
         logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
         # Then we delete the datarun process_id cache (as a signal of terminating)
         cache.set(key, 'stop')

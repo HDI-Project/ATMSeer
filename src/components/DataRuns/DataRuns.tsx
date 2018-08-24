@@ -11,7 +11,7 @@ import {getClassifierSummary, getClassifiers, IClassifierInfo} from '../../servi
 //components
 import Methods from './Methods';
 import BarChart from './BarChart';
-import Histogram from "./Histogram";
+// import Histogram from "./Histogram";
 // import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
@@ -61,7 +61,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public startOrStopUpdateCycle() {
         // this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
-        if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
+        if (this.props.datarunStatus != IDatarunStatusTypes.PENDING) {
             this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
         } else {
             clearInterval(this.intervalID);
@@ -74,6 +74,9 @@ export default class DataRuns extends React.Component<IProps, IState>{
         this.startOrStopUpdateCycle();
     }
     componentDidUpdate(prevProps: IProps) {
+        if (this.state.runCSV==''){
+            this.getData();
+        }
         if (prevProps.datarunID !== this.props.datarunID) {
             this.getData();
         }
@@ -92,15 +95,15 @@ export default class DataRuns extends React.Component<IProps, IState>{
             return (
         <div style={{height: '100%'}}>
 
-            <div className="runTracker" style={{height: '20%', display: "flex"}}>
-                <Histogram datarun={datarun} width={40}/>
-                <BarChart run={runCSV} width={60} />
+            <div className="runTracker" style={{height: '15%', display: "flex"}}>
+                {/* <Histogram datarun={datarun} width={40}/> */}
+                <BarChart run={runCSV} width={100} />
             </div>
             {/* <div style={{height: "80%", overflowY: "scroll"}}>
                 <HyperPartitions classifiers={classifiers} />
             </div> */}
 
-            <Methods height={80} datarun={datarun}/>
+            <Methods height={85} datarun={datarun}/>
 
         </div>)
         }else{

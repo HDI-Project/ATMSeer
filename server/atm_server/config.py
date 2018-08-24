@@ -1,6 +1,6 @@
 
 class Config(object):
-    UPLOAD_FOLDER = 'atm/data'
+    UPLOAD_FOLDER = 'datasets'
     ALLOWED_EXTENSIONS = set(['csv'])
 
 

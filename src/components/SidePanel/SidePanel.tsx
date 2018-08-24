@@ -27,7 +27,7 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
 
     public render() {
         return (
-            <div className="side-panel">
+            <div className="side-panel" style={{overflowY:"hidden"}}>
                 <DataSelector {...this.props} />
                 <Tabs
                     defaultActiveKey="1"
@@ -36,7 +36,7 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
                         <DataView datarunID={this.props.datarunID} />
                     </TabPane>
                     <TabPane tab="LeaderBoard" key="2">
-                        <LeaderBoard datarunID={this.props.datarunID} datarunStatus={this.props.datarunStatus}/>
+                        <LeaderBoard datarunID={this.props.datarunID} datarunStatus={this.props.datarunStatus} setDatarunStatus={this.props.setDatarunStatus}/>
                     </TabPane>
                 </Tabs>
             </div>

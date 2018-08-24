@@ -1,14 +1,14 @@
 import ReactEcharts from "echarts-for-react";
 import { getColor } from "helper"
 import * as React from "react";
-import { Switch } from "antd";
+// import { Switch } from "antd";
 import {EChartOption} from "echarts";
 
-const sortSwitchStyle = {
-    position: "absolute" as "absolute",
-    top: "5px",
-    right: "5px"
-}
+// const sortSwitchStyle = {
+//     position: "absolute" as "absolute",
+//     top: "5px",
+//     right: "5px"
+// }
 export interface IProps {
     run: any,
     width: number
@@ -35,6 +35,7 @@ export default class BarChart extends React.Component<IProps, IState>{
         // // hold a list of performance scores (to later find the max)
         // let performanceArray = [0]
 
+        let scoreTarget = points[0].split(',')[headers.indexOf('metrics')]
         let data = points.map((point: any) => {
             point = point.split(',')
             let performanceIdx = headers.indexOf('performance')
@@ -94,13 +95,13 @@ export default class BarChart extends React.Component<IProps, IState>{
         };
         const option = {
             title: {
-                text: "data run tracker",
+                text: "Trials",
                 left: '5%',
                 top: '0.5%',
             },
             xAxis: {
                 type: 'category',
-                name: this.state.sorted?"":"trial ID",
+                // name: this.state.sorted?"":"trial ID",
                 nameLocation: "middle",
                 nameGap: 5,
                 // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -110,12 +111,15 @@ export default class BarChart extends React.Component<IProps, IState>{
                 type: 'value',
                 min: 'dataMin',
                 max: 1,
+                name: scoreTarget,
+                nameLocation: "middle",
+                nameGap: 28
             },
             grid: {
                 left: '5%',
                 right: '5%',
                 top: '25%',
-                bottom: '30%',
+                bottom: '5%',
             },
             tooltip: {},
             series,
@@ -137,11 +141,11 @@ export default class BarChart extends React.Component<IProps, IState>{
                     style={{ width: `100%`, height: '100%' }}
                     notMerge={true}
                 />
-                <div className="sortSwitch" style={sortSwitchStyle}>
+                {/* <div className="sortSwitch" style={sortSwitchStyle}>
                     {"sorted by "}
                     <Switch checkedChildren="score" unCheckedChildren="time"
                         defaultChecked={false} onChange={this.changeSort} />
-                </div>
+                </div> */}
             </div>
 
         )
