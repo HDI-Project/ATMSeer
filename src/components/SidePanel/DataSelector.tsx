@@ -154,6 +154,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         const { datarunStatus } = this.props;
         const { isProcessing } = this.state;
         const running = datarunStatus === IDatarunStatusTypes.RUNNING;
+        const completed = datarunStatus === IDatarunStatusTypes.COMPLETE;
         // upload button
         const uploadProps = {
             name: 'file',
@@ -173,7 +174,6 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                     <Row gutter={6}>
 
                         <Col span={24} className="dataViewColContainer">
-
                             <SettingsModal onSubmit={postConfigs} button={settingButton}/>
                         </Col>
                     </Row>
@@ -209,7 +209,10 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                     <span>Dataruns</span>
                     <Row gutter={6}>
                         <Col span={3} className="dataViewColContainer">
-                            <SettingsModal onSubmit={this.newDatarun} button={<Icon type="plus"/>}/>
+                            <SettingsModal
+                                onSubmit={this.newDatarun}
+                                buttonOptions={{icon: 'plus', shape: 'circle'}}
+                            />
                         </Col>
                         <Col span={13} className="dataViewColContainer">
                             <Select
@@ -232,12 +235,12 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                                 disabled={datarunStatus === IDatarunStatusTypes.COMPLETE || this.props.datasetID === null || isProcessing}
                             >
                                 <Icon type={isProcessing ? 'loading' : (running ? 'pause' : 'caret-right')} />
-                                {running ? 'Stop' : (datarunStatus === IDatarunStatusTypes.PENDING ? 'Run' : 'Complete')}
+                                {running ? 'Stop' : (completed ? 'Complete' : 'Run')}
                             </Button>
                         </Col>
                     </Row>
                 </div>
-                </div>
+            </div>
 
         );
     }

@@ -28,3 +28,23 @@ export enum IClassifierStatusTypes {
     ERRORED = 'errored',
     COMPLETE = 'complete',
 }
+
+export interface IHyperParameterNumeric {
+    type: 'int' | 'int_exp' | 'float' | 'float_exp';
+    range: [number, number]
+}
+
+export interface IHyperParameterCategorical {
+    type: 'int_cat' | 'float_cat' | 'string' | 'bool';
+    values: (number | string | boolean | null)[];
+}
+
+export interface IHyperParameterList {
+    type: 'list';
+    list_length: number[];
+    element: IHyperParameter;
+}
+
+export type IHyperParameter = IHyperParameterNumeric | IHyperParameterCategorical | IHyperParameterList;
+
+export type IMethodType = 'logreg' | 'svm' | 'sgd' | 'dt' | 'et' | 'rf' | 'gnb' | 'mnb' | 'bnb' | 'gp' | 'pa' | 'knn' | 'mlp' | 'ada';

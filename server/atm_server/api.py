@@ -10,14 +10,15 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.exc import InvalidRequestError
 
 from atm.enter_data import enter_data, create_dataset
-from atm.constants import ClassifierStatus, RunStatus
+from atm.constants import ClassifierStatus, RunStatus, PartitionStatus
 from atm.config import load_config
 
 from .utils import flaskJSONEnCoder
 from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
     fetch_classifiers, fetch_hyperpartitions
-from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun
+from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun, \
+    create_datarun_configs, update_datarun_config, load_datarun_config
 
 
 api = Blueprint('api', __name__)
@@ -340,7 +341,7 @@ def post_new_datarun(dataset_id):
     upload_run_conf.dataset_id = dataset_id
     db = get_db()
     datarun_id = new_datarun(db, upload_run_conf, run_per_partition)
-
+    create_datarun_configs(datarun_id)
     return jsonify({'success': True, 'id': datarun_id})
 
 
@@ -419,3 +420,56 @@ def configs_info():
         current_app.config.update({'RUN_CONF': run_conf})
         result['success']=True
     return jsonify(result)
+
+
+@api.route('/hyperparameters/<int:datarun_id>', methods=['GET', 'POST'])
+def post_update_hyperparameters(datarun_id):
+    result = {'success': False}
+    method = request.args.get('method', None, type=str)
+
+    if request.method == 'GET':
+        return jsonify(load_datarun_config(datarun_id, method))
+    else:
+        hp_updates = request.get_json()
+        if hp_updates is None:
+            raise ApiError('Empty or invalid json data!', 400)
+        if method is not None:
+            try:
+                update_datarun_config(datarun_id, method, hp_updates)
+            except ValueError as e:
+                raise ApiError(e, 400)
+        else:
+            for method, update in hp_updates.items():
+                try:
+                    update_datarun_config(datarun_id, method, update)
+                except ValueError as e:
+                    raise ApiError(e, 400)
+    result['success'] = True
+    return jsonify(result)
+
+
+@api.route('/disable_hyperpartition', methods=['POST'])
+def post_disable_hyperpartition():
+    db = get_db()
+    hyperpartition_ids = request.get_json()
+    print(hyperpartition_ids)
+
+    if hyperpartition_ids is None:
+        raise ApiError('Empty or invalid json data!', 400)
+    for _id in hyperpartition_ids:
+        db.mark_hyperpartition_errored(_id)
+    return jsonify({'success': True})
+
+
+@api.route('/enable_hyperpartition', methods=['POST'])
+def post_enable_hyperpartition():
+    db = get_db()
+    hyperpartition_ids = request.get_json()
+    print(hyperpartition_ids)
+    if hyperpartition_ids is None:
+        raise ApiError('Empty or invalid json data!', 400)
+    for _id in hyperpartition_ids:
+        hyperpartition = db.get_hyperpartition(_id)
+        hyperpartition.status = PartitionStatus.INCOMPLETE
+    db.session.commit()
+    return jsonify({'success': True})

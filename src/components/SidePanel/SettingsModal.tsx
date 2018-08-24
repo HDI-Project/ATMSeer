@@ -4,9 +4,11 @@ import * as methodsDef from "../../assets/methodsDef.json";
 import { IConfigsInfo } from 'service/dataService';
 import { getConfigs } from 'service/dataService';
 
+
 export interface SettingsModalProps {
     onSubmit: (configs: IConfigsInfo) => Promise<any>;
     button?: React.ReactNode;
+    buttonOptions?: any;
 }
 
 export interface SettingsModalState {
@@ -195,6 +197,7 @@ showModal =() => {
         <Button
             onClick={this.showModal}
             children={this.props.button}
+            {...(this.props.buttonOptions)}
         />
         <Modal
           visible={visible}

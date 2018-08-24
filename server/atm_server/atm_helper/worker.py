@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import atexit
 from datetime import datetime
 import argparse
 import logging
@@ -18,6 +19,7 @@ from atm.constants import RunStatus
 from atm_server.error import ApiError
 from atm_server.db import get_db
 from atm_server.cache import get_cache
+from .method_config import datarun_config
 
 
 logger = logging.getLogger('atm_server')
@@ -53,7 +55,7 @@ def return_stdout_stderr(f):
 
 
 @return_stdout_stderr
-def work(*args):
+def work(datarun_id, args=None):
     """
     A copy of the code in atm/scripts/worker.py
     A call to this function will start and run a simple worker
@@ -70,8 +72,6 @@ def work(*args):
     # add worker-specific arguments
     parser.add_argument('--cloud-mode', action='store_true', default=False,
                         help='Whether to run this worker in cloud mode')
-    parser.add_argument('--dataruns', help='Only train on dataruns with these ids',
-                        nargs='+')
     parser.add_argument('--time', help='Number of seconds to run worker', type=int)
     parser.add_argument('--choose-randomly', action='store_true',
                         help='Choose dataruns to work on randomly (default = sequential order)')
@@ -91,17 +91,19 @@ def work(*args):
     initialize_logging(log_config)
 
     # let's go
-    _logger.warn('Worker started!')
-    atm_work(db=Database(**vars(sql_config)),
-             datarun_ids=_args.dataruns,
-             choose_randomly=_args.choose_randomly,
-             save_files=_args.save_files,
-             cloud_mode=_args.cloud_mode,
-             aws_config=aws_config,
-             log_config=log_config,
-             total_time=_args.time,
-             wait=False)
-    _logger.warn('Worker exited.')
+    _logger.warning('Worker started!')
+    with datarun_config(datarun_id) as config:
+        _logger.warning('Using configs from', config.config_path)
+        atm_work(db=Database(**vars(sql_config)),
+                 datarun_ids=[datarun_id],
+                 choose_randomly=_args.choose_randomly,
+                 save_files=_args.save_files,
+                 cloud_mode=_args.cloud_mode,
+                 aws_config=aws_config,
+                 log_config=log_config,
+                 total_time=_args.time,
+                 wait=False)
+    _logger.warning('Worker exited.')
 
 
 def dispatch_worker(datarun_id):
@@ -110,9 +112,14 @@ def dispatch_worker(datarun_id):
     :param datarun_id: the id of the datarun
     :return: Return a handle of the process
     """
-    args = ['--dataruns', str(datarun_id)]
-    p = Process(target=work, args=args)
+    # args = ['--dataruns', str(datarun_id)]
+    p = Process(target=work, args=(datarun_id, ))
     p.start()
+
+    def kill_it():
+        if p is not None and p.is_alive():
+            p.terminate()
+    atexit.register(kill_it)
     return p
     # Do nothing if the db is already running or complete
 
@@ -171,6 +178,7 @@ def start_worker(datarun_id):
     :param datarun_id: the id of the datarun
     :return: Return a handle of the process
     """
+    os.setpgrp()
     db = get_db()
     datarun = db.get_datarun(datarun_id)
     if datarun is None:
@@ -178,10 +186,18 @@ def start_worker(datarun_id):
     if datarun.status != RunStatus.PENDING:
         # Do nothing if the datarun is already running or complete
         return None
-
     # Create and start the process
     p = Process(target=monitor_dispatch_worker, args=(datarun_id,))
     p.start()
+
+    def kill_it():
+        if p is not None and p.is_alive():
+            p.terminate()
+        cache = get_cache()
+        key = datarun_id2key(datarun_id)
+        if cache.has(key):
+            cache.delete(key)
+    atexit.register(kill_it)
     # Sleep a while
     time.sleep(0.1)
     return
@@ -191,15 +207,8 @@ def stop_worker(datarun_id):
     key = datarun_id2key(datarun_id)
     cache = get_cache()
     pid = cache.get(key)
-    # TODO: maybe there is a better way to solve the problem
-    # where the cache has been set stop, then the real pid will be lost.
-    # How can I find whether the real pid is alive?
-    if pid == 'stop':
-        logger.warning("This worker of datarun %d has already stopped." % datarun_id)
-        cache.delete(key)
-        return True
-        
-    if pid is not None:
+
+    if pid is not None and pid != 'stop':
         logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
         # Then we delete the datarun process_id cache (as a signal of terminating)
         cache.set(key, 'stop')
@@ -236,7 +245,7 @@ def datarun_id2key(datarun_id):
 def register_worker_process(process, datarun_id):
     key = datarun_id2key(datarun_id)
     cache = get_cache()
-    if cache.has(key):
+    if cache.has(key) and cache.get(key) != 'stop':
         raise ApiError("There should be only one live working process for one datarun!", 500)
     cache.set(key, process.pid)
     logger.warning("Worker process (PID: %d) for datarun %d registered" % (process.pid, datarun_id))
