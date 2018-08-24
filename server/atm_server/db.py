@@ -83,13 +83,13 @@ def fetch_entity(entity_name, filters=None, one=False):
         # Remove None valued keys
         filters = {key: val for key, val in filters.items() if val is not None}
     try:
-        with db_session(db):
-            if one:
-                result = db.session.query(entity).filter_by(**filters).one()
-                return object_as_dict(result)
-            else:
-                result = db.session.query(entity).filter_by(**filters).all()
-                return [object_as_dict(item) for item in result]
+        # with db_session(db):
+        if one:
+            result = db.session.query(entity).filter_by(**filters).one()
+            return object_as_dict(result)
+        else:
+            result = db.session.query(entity).filter_by(**filters).all()
+            return [object_as_dict(item) for item in result]
 
     except Exception:
         raise ApiError('Not found', status_code=404)
@@ -119,6 +119,7 @@ def metric_string(model, target):
 def params_string(params):
     return '; '.join(['%s = %s' % (k, params[k]) for k in sorted(params.keys())])
 
+
 def hyperpartition_string(hp):
     cats = [hp.method]
     for cat_key, cat_value in hp.categoricals:
@@ -136,53 +137,53 @@ def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=No
         trail ID, method, parameters, metrics, score target, performance
     """
     db = get_db()
-    with db_session(db):
-        query = db.session.query(
-            db.Classifier,
-            db.Hyperpartition.method,
-            db.Datarun.metric,
-            db.Datarun.score_target)\
-            .select_from(db.Classifier)\
-            .join(db.Classifier.hyperpartition)\
-            .join(db.Classifier.datarun)\
-            .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
+    # with db_session(db):
+    query = db.session.query(
+        db.Classifier,
+        db.Hyperpartition.method,
+        db.Datarun.metric,
+        db.Datarun.score_target)\
+        .select_from(db.Classifier)\
+        .join(db.Classifier.hyperpartition)\
+        .join(db.Classifier.datarun)\
+        .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
 
 
-        # query = db.session.query(
-        #     db.Classifier,
-        #     db.Hyperpartition.method,
-        #     db.Datarun.metric,
-        #     db.Datarun.score_target)\
-        #     .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
-        #     .filter(db.Classifier.datarun_id == db.Datarun.id)\
-        #     .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
-        if dataset_id is not None:
-            query = query.filter(db.Datarun.dataset_id == dataset_id)
-        if datarun_id is not None:
-            query = query.filter(db.Classifier.datarun_id == datarun_id)
-        if method is not None:
-            query = query.filter(db.Hyperpartition.method == method)
-        if hyperpartition_id is not None:
-            query = query.filter(db.Classifier.hyperpartition_id ==
-                                 hyperpartition_id)
+    # query = db.session.query(
+    #     db.Classifier,
+    #     db.Hyperpartition.method,
+    #     db.Datarun.metric,
+    #     db.Datarun.score_target)\
+    #     .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
+    #     .filter(db.Classifier.datarun_id == db.Datarun.id)\
+    #     .filter(db.Classifier.status == ClassifierStatus.COMPLETE)
+    if dataset_id is not None:
+        query = query.filter(db.Datarun.dataset_id == dataset_id)
+    if datarun_id is not None:
+        query = query.filter(db.Classifier.datarun_id == datarun_id)
+    if method is not None:
+        query = query.filter(db.Hyperpartition.method == method)
+    if hyperpartition_id is not None:
+        query = query.filter(db.Classifier.hyperpartition_id ==
+                             hyperpartition_id)
 
-        return [['trail ID', 'method', 'parameters', 'metrics', 'score target', 'performance']] + [
-            [
-                str(classifier.id),
-                method,
-                params_string(classifier.hyperparameter_values),
-                metric,
-                score_target[:-len('_judgment_metric')],
-                metric_string(classifier, score_target)
-            ] for classifier, method, metric, score_target in query.all()]
+    return [['trail ID', 'method', 'parameters', 'metrics', 'score target', 'performance']] + [
+        [
+            str(classifier.id),
+            method,
+            params_string(classifier.hyperparameter_values),
+            metric,
+            score_target[:-len('_judgment_metric')],
+            metric_string(classifier, score_target)
+        ] for classifier, method, metric, score_target in query.all()]
 
 
 def fetch_dataset_path(dataset_id, train=True):
     db = get_db()
     try:
-        with db_session(db):
-            dataset = db.get_dataset(dataset_id)
-            return dataset.train_path if train else dataset.test_path
+        # with db_session(db):
+        dataset = db.get_dataset(dataset_id)
+        return dataset.train_path if train else dataset.test_path
 
     except Exception:
         raise ApiError('Not found', status_code=404)
@@ -192,37 +193,37 @@ def summarize_datarun(datarun_id, classifier_start=None, classifier_end=None):
     db = get_db()
     datarun = db.get_datarun(datarun_id)
 
-    with db_session(db):
-        query = db.session.query(
-            db.Classifier,
-            db.Hyperpartition.method)\
-            .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
-            .filter(db.Classifier.status == ClassifierStatus.COMPLETE)\
-            .filter(db.Classifier.datarun_id == datarun_id)
-        classifiers, methods = zip(*query.all())
-        classifiers = classifiers[classifier_start:classifier_end]
-        methods = methods[classifier_start:classifier_end]
-        if 'cv' in datarun.score_target or 'mu_sigma' in datarun.score_target:
-            scores = [c.cv_judgment_metric for c in classifiers]
-        else:
-            scores = [c.test_judgment_metric for c in classifiers]
+    # with db_session(db):
+    query = db.session.query(
+        db.Classifier,
+        db.Hyperpartition.method)\
+        .filter(db.Classifier.hyperpartition_id == db.Hyperpartition.id)\
+        .filter(db.Classifier.status == ClassifierStatus.COMPLETE)\
+        .filter(db.Classifier.datarun_id == datarun_id)
+    classifiers, methods = zip(*query.all())
+    classifiers = classifiers[classifier_start:classifier_end]
+    methods = methods[classifier_start:classifier_end]
+    if 'cv' in datarun.score_target or 'mu_sigma' in datarun.score_target:
+        scores = [c.cv_judgment_metric for c in classifiers]
+    else:
+        scores = [c.test_judgment_metric for c in classifiers]
 
-        best_idx = int(np.argmax(scores))
-        best_classifier = classifiers[best_idx]
-        best_score = scores[best_idx]
-        method_tries = defaultdict(int)
-        for method in methods:
-            method_tries[method] += 1
+    best_idx = int(np.argmax(scores))
+    best_classifier = classifiers[best_idx]
+    best_score = scores[best_idx]
+    method_tries = defaultdict(int)
+    for method in methods:
+        method_tries[method] += 1
 
-        return {
-            'n_classifiers': len(scores),
-            'best_score': best_score,
-            'best_method': methods[best_idx],
-            'best_classifier_id': best_classifier.id,
-            'method_tries': method_tries
-            # 'best_classifier': best_classifier.
-            # 'best_idx':
-        }
+    return {
+        'n_classifiers': len(scores),
+        'best_score': best_score,
+        'best_method': methods[best_idx],
+        'best_classifier_id': best_classifier.id,
+        'method_tries': method_tries
+        # 'best_classifier': best_classifier.
+        # 'best_idx':
+    }
 
 
 def fetch_classifiers(classifier_id=None, dataset_id=None, datarun_id=None, hyperpartition_id=None,
