@@ -75,6 +75,7 @@ export function MethodHeader(params: IClassifierInfo) {
 export interface LeaderBoardProps {
     datarunID: number | null;
     datarunStatus: IDatarunStatusTypes;
+    setDatarunStatus: (status: IDatarunStatusTypes) => void;
 }
 
 export interface LeaderBoardState {
@@ -105,7 +106,10 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         });
         // getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
         if (updateDatarunInfo) {
-            getDatarun(datarunID).then(datarunInfo => this.setState({ datarunInfo }));
+            getDatarun(datarunID).then(datarunInfo => {
+                this.setState({ datarunInfo });
+                this.props.setDatarunStatus(datarunInfo.status);
+            });
             getHyperpartitions().then(hyperpartitions => {
                 // console.log(hyperpartitions);
                 if (Array.isArray(hyperpartitions))

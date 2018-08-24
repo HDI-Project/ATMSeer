@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { URL } from 'Const';
 import { IDatarunStatusTypes, IClassifierStatusTypes } from 'types';
+import { IHyperParameter, IMethodType } from '../types/index';
 
 // const API = `${URL}/api`;
 
@@ -63,6 +64,7 @@ export interface IClassifierInfo {
     method: string;
     hyperparameters: {[param: string]: boolean | number | string}
 }
+
 export interface IConfigsInfo {
     methods : string[];
     budget: number;
@@ -75,13 +77,22 @@ export interface IConfigsInfo {
     tuner: string;
     priority :number;
 }
-export interface IConfigsUploadResponse {
+
+export interface ICommonResponse {
     success: boolean;
 }
+
+export interface IConfigsUploadResponse extends ICommonResponse {}
+
 export interface INewDatarunResponse {
     success: boolean;
     id: number;
 }
+
+export interface IMethodHyperParameters {
+    [name: string]: IHyperParameter;
+}
+
 export async function getDatasets(): Promise<IDatasetInfo[]> {
     const url = `/datasets`;
     const res = await axiosInstance.get(url);
@@ -248,6 +259,80 @@ export async function postConfigs(configs : any): Promise<IConfigsUploadResponse
     formData.append('configs', JSON.stringify(configs));
 
     const res = await axiosInstance.post(`/configs`, formData);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+/**
+ * update the hyperparameters ranges for a method of a datarun
+ *
+ * @export
+ * @param {number} datarun_id
+ * @param {string} method
+ * @param {IMethodHyperParameters} config
+ * @returns {Promise<ICommonResponse>}
+ */
+export async function postMethodHyperparameters(
+    datarun_id: number, method: IMethodType, config: IMethodHyperParameters
+): Promise<ICommonResponse> {
+    const params = { method };
+    const headers = {'Content-Type': 'application/json'};
+    const res = await axiosInstance.post(`/hyperparameters/${datarun_id}`, config, {params, headers});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function postHyperparameters(
+    datarun_id: number, config: {[method: string]: IMethodHyperParameters}
+): Promise<ICommonResponse> {
+    const headers = {'Content-Type': 'application/json'};
+    const res = await axiosInstance.post(`/hyperparameters/${datarun_id}`, config, {headers});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function getMethodHyperparameter(
+    datarun_id: number, method: IMethodType
+): Promise<{hyperparameters: IMethodHyperParameters}> {
+    const params = { method };
+    const res = await axiosInstance.get(`/hyperparameters/${datarun_id}`, {params});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function getHyperparameters(
+    datarun_id: number
+): Promise<{[method: string]: {hyperparameters: IMethodHyperParameters}}> {
+    const res = await axiosInstance.get(`/hyperparameters/${datarun_id}`);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+
+export async function disableHyperpartitions(datarun_ids: number[] | number): Promise<ICommonResponse> {
+    const headers = {'Content-Type': 'application/json'};
+    const data = Array.isArray(datarun_ids) ? datarun_ids : [datarun_ids];
+    const res = await axiosInstance.post(`/disable_hyperpartition`, data, {headers});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export async function enableHyperpartitions(datarun_ids: number[] | number): Promise<ICommonResponse> {
+    const headers = {'Content-Type': 'application/json'};
+    const data = Array.isArray(datarun_ids) ? datarun_ids : [datarun_ids];
+    const res = await axiosInstance.post(`/enable_hyperpartition`, data, {headers});
     if (res.status === 200) {
         return res.data;
     }
