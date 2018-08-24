@@ -1,4 +1,4 @@
-//import { Button } from 'antd';
+import { Button,Checkbox } from 'antd';
 import * as React from 'react';
 import * as methodsDef from "../../assets/methodsDef.json";
 import { IMethod, IDatarun, IClassifier } from "types";
@@ -53,14 +53,17 @@ export interface HyperpartitionHeatmapProps{
     methodName?:string,
     onClick:(a:string)=>void,
     selected?:boolean,    
-    hpname:string
+    hpname:string,
+    methodSelected:boolean
 }
 export default class MethodsLineChart extends React.Component<IProps, IState>{
     index = 0;
     state={
         mode : 0,
         selectedMethodName :[],
-        selectedHyperpartitionName : ""
+        selectedHyperpartitionName : "",
+        configsMethod:[],
+        initializedConfigs:0
     };
     onMethodsOverViewClick = (Methods:string)=>{
         // Show Methods
@@ -152,10 +155,12 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
     public render() {
         // const methodLen = Object.keys(methodsDef).length
         let { datarun, height } = this.props;
-        let {mode,selectedHyperpartitionName} = this.state;
+        let {mode,selectedHyperpartitionName,initializedConfigs} = this.state;
         let selectedMethodName:string[] = this.state.selectedMethodName;
         selectedHyperpartitionName;
         let usedMethods: string[] = Object.keys(datarun);
+        console.log("usedMethods:");
+        console.log(usedMethods);
         let totallen = 0;
         usedMethods.forEach((name: string, i: number)=>{
             const classifier_num = datarun[name].length;
@@ -244,21 +249,21 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         }
         
             
-            if(mode==2){
-                const methodDef = methodsDef[hyperpartition2Method[selectedHyperpartitionName]];
-                if(!methodDef||!hyperpartitionData[selectedHyperpartitionName]){
-                    mode=0;
-                    selectedHyperpartitionName="";
-                    selectedMethodName=[];
-                    console.log("roll back also");
-                    this.setState({
-                        mode : 0,
-                        selectedMethodName:[],
-                        selectedHyperpartitionName : ""
-                    });
-                }
+        if(mode==2){
+            const methodDef = methodsDef[hyperpartition2Method[selectedHyperpartitionName]];
+            if(!methodDef||!hyperpartitionData[selectedHyperpartitionName]){
+                mode=0;
+                selectedHyperpartitionName="";
+                selectedMethodName=[];
+                console.log("roll back also");
+                this.setState({
+                    mode : 0,
+                    selectedMethodName:[],
+                    selectedHyperpartitionName : ""
+                });
             }
-        
+        }
+    
 
         // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methodsDef should be obtained by requesting server the config file
         const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
@@ -285,7 +290,14 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             }
 
         });
-        
+        if(initializedConfigs==0){
+            let copyusedmethods = Object.assign([], sortedusedMethods)
+            console.log(sortedusedMethods)
+            this.setState({
+                initializedConfigs:1,
+                configsMethod:copyusedmethods
+            });
+        }
         
         let generateHp = ()=>{
             if(mode==1||mode==2){
@@ -317,9 +329,20 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let pathgenerator:any[] = [];
                 let array = sortedhpname.map((name: string, i: number) => {
                     let selected = selectedHyperpartitionName===name;
+                    
                     nowx+=lastwidth;lastwidth=0;
                     const selectedMethod = hyperpartition2Method[name];
                     const methodDef = methodsDef[selectedMethod];
+
+                    let methodselected = selected;
+                    if(methodselected==false){
+                        const nowselectedMethod = hyperpartition2Method[selectedHyperpartitionName];
+                        if(nowselectedMethod===selectedMethod){
+                            methodselected=true;
+                        }
+                    }
+
+
                     const hplen:number = hyperpartitionData[name].length;
                     let horizontalnum = Math.ceil(hplen/verticalnum);
                     let hpwidth = hpmargin + horizontalnum * (rectwidth+1);
@@ -352,7 +375,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     hpname={name}
                     totallen={totallen} 
                     selected={selected}
-                    onClick={this.onHyperpartitionsOverViewClick}/>);
+                    onClick={this.onHyperpartitionsOverViewClick}
+                    methodSelected={methodselected}/>);
              });
                 let array2 = pathgenerator.map((node: any, i: number) => {
                         let mean_y = (node.y1 + node.y2) / 2;
@@ -410,10 +434,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     rangeMap[data.name]={min:data.min,max:data.max};
                 });
                 let hyperparameterData : any = {};
-                console.log(HyperparameterList);
                 //let totallen = classifiers.length;
-                hyperpartitionData[selectedHyperpartitionName].forEach(((classifier: IClassifier, idx: number) => {
-        
+                let pushData = (classifier: IClassifier, idx: number , selected:boolean) =>{
                     let par_dict = {}
                     let parameters = classifier['parameters'].split('; ')
                     parameters = parameters.map((p: string) => {
@@ -439,7 +461,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                 hyperparameterData[p.name]=[];
                             }
                             let thisvalue = parseFloat(value);
-                            hyperparameterData[p.name].push({value:thisvalue,performance:performance});
+                            hyperparameterData[p.name].push({value:thisvalue,performance:performance,selected:selected});
                             
                         } else {
                             //return value;
@@ -447,14 +469,23 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     })
                     
                 }
-                )); 
+               
+                Method2hyperpartition[selectedMethod].forEach((value:string,index:number)=>{
+                    if(value!=selectedHyperpartitionName){
+                        hyperpartitionData[value].forEach(((classifier: IClassifier, idx: number) => {
+                            pushData(classifier,idx,false);
+                        }
+                        ));
+                    }else{
+                        hyperpartitionData[value].forEach(((classifier: IClassifier, idx: number) => {
+                            pushData(classifier,idx,true);
+                        }
+                        ));
+                    }
+                })
                 let keys = Object.keys(hyperparameterData);
-                console.log("keys");
-                console.log(keys);
                
                 let array = (keys.map((name:string,index:number)=>{
-                    console.log("hyper:"+name);
-                    console.log(hyperparameterData[name].length);
                     return (<DotBarChart x={2+5+20+160*index} 
                         y={30+5+85+100+73+30+3} 
                         width={150} 
@@ -485,12 +516,29 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     style={{ height: "100%", width: "100%" }}>
                     
                         <svg style={{ height: '100%', width: '100%' }} id="chart">
+                        <foreignObject y={480} x={1100} width="120" height="50">
+                        <Button>Submit</Button>
+                            </foreignObject>
                             <g id="top_container">
                             {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                                
                                 this.index++;
-                                return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
-                                })}
+                                let checked = false;
+                                let configsMethod : string[] = this.state.configsMethod;
+
+                                if(configsMethod.indexOf(name)>-1){
+                                    checked=true;
+                                }
+                                console.log(name);
+                                console.log(sortedusedMethods);
+                                console.log(configsMethod);
+                                console.log(checked);
+                                //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
+                                return (<foreignObject key={name+"_text_"+this.index} y={2+20-20} x={2+i*85+35-35} width="75" height="20">
+                                        <Checkbox checked={checked}>{name}</Checkbox>
+
+                                    </foreignObject>)
+                            })}
                             
                             {sortedusedMethods.map((name: string, i: number) => {
                                 const methodDef = methodsDef[name];
@@ -690,7 +738,7 @@ class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, 
     renderD3() {
         const d3 = require("d3");
         // Get Datasets
-        const { methodDef, classifiers,onClick ,selected} = this.props;
+        const { methodDef, classifiers,onClick ,selected,methodSelected} = this.props;
         let bestperformance = 0;
         let classifierPerformance:number[]=classifiers.map((classifier:IClassifier)=>{
             let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
@@ -749,7 +797,7 @@ class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, 
         .attr("width", width + margin.left + margin.right)
         .attr("height",height + margin.top + margin.bottom)
         .attr("fill","white")
-        .attr("stroke",selected?"#A4A0A0":"#E0D6D4")
+        .attr("stroke",selected?"#424242":methodSelected?"#B19F9B":"#E0D6D4")
         .attr("stroke-width",2);
         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         
@@ -762,18 +810,23 @@ class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, 
         let groups = svg
             .append('g')
             .attr("class", "group");
-        
+        let rect_scale = 0.5;
         let rectArray = groups.selectAll("g.rectArray")
         .data(classifierPerformance);
         //console.log(classifierPerformance.length);
         rectArray.enter()
         .append("rect")
         .style("fill",getColor(methodDef.name))
-        .attr("fill-opacity",function(d:any,i:any){return d*0.9+0.1;})
-        .attr("width", rectwidth)
-        .attr("height",rectheight)
-        .attr("x", function(d:any,i:any) {return  (i%horizontalnum)*(rectwidth+1);})
-        .attr("y", function(d:any,i:any) { return  Math.floor(i/horizontalnum)*(rectheight+1)-rectheight/2;});
+        //.attr("fill-opacity",function(d:any,i:any){return d*0.9+0.1;})
+        .attr("width", function(d:any,i:any) {return (d*rect_scale+1-rect_scale)*rectwidth;})
+        .attr("height", function(d:any,i:any){return (d*rect_scale+1-rect_scale)*rectheight;})
+        .attr("x", function(d:any,i:any) {
+            let thiswidth = (d*rect_scale+1-rect_scale)*rectwidth;
+            return  (i%horizontalnum)*(rectwidth+1)+(rectwidth-thiswidth)/2.0;})
+        .attr("y", function(d:any,i:any) { 
+            let thisheight = (d*rect_scale+1-rect_scale)*rectheight;
+            return  Math.floor(i/horizontalnum)*(rectheight+1)-thisheight/2.0;
+        });
         
             
 
@@ -811,7 +864,9 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
             histogram.push(0)
         }
         let displaydata:any[]=[];
+        let markerdata:any[]=[];
         let datacluster:any={};
+        
         console.log("length");
         console.log(classifiers.length);
         classifiers.forEach((classifier:any)=>{
@@ -825,7 +880,8 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
             if(!datacluster[rangeIdx]){
                 datacluster[rangeIdx]=[];
             }
-            datacluster[rangeIdx].push(classifier.performance);
+            let opacity = classifier.selected? 1:0.3;
+            datacluster[rangeIdx].push({performance:classifier.performance,opacity:opacity});
             //let data = {idx:rangeIdx,performance:classifier.performance};
 
             //let data = {y:(rangeIdx+0.5)*1/totaltick,x:histogram[rangeIdx],performance:classifier.performance};
@@ -834,19 +890,26 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
             
         });
         let dkeys = Object.keys(datacluster);
+        let maxhorizontalnum = 19;
         dkeys.map((value:string)=>{
             let rangeIdx = parseInt(value);
             datacluster[value].sort(
-                function(a:number,b:number){
-                    return a-b;
+                function(a:any,b:any){
+                    return b.performance-a.performance;
                 }
             )
-            datacluster[value].map((performance:number,i:number)=>{
-                console.log("performance"+performance);
-
-                let data = {y:(rangeIdx+0.5)*1/totaltick,x:i,performance:performance};
-                displaydata.push(data);
+            
+            datacluster[value].map((obj:any,i:number)=>{
+                //console.log("performance"+performance);
+                if(i<maxhorizontalnum){
+                    let data = {y:(rangeIdx+0.5)*1/totaltick,x:i,performance:obj.performance,opacity:obj.opacity};
+                    displaydata.push(data);
+                }
             });
+            if(datacluster[value].length>maxhorizontalnum){
+                markerdata.push({y:(rangeIdx+0.5)*1/totaltick,x:maxhorizontalnum});
+            }
+            
             
         })
         // Set the ranges
@@ -885,34 +948,43 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
         let groups = svg
             .append('g')
             .attr("class", "group");
-       /* function generate_array(d:number,index:number){ 
-            // index*step -> performance range
-            // d -> number
-            if(d>0){
-                var arr = new Array(d);
-                for(var i=0;i<d;i++){
-                    arr[i] = {y:(index+0.5)*0.1,x:i};
-                }
-                console.log(d);
-                return arr;
-            }else{
-                return [];
-            }
-        }*/
+
         let rectArray = groups.selectAll("g.rectArray")
         .data(displaydata);
-
+        let rectwidth : number= 5;
+        let rectheight : number = 5;
+        let rect_scale = 0.5;
         rectArray.enter()
         .append('g')
         .attr("class", "rectArray")
         .append("rect")
         .style("fill",getColor(methodDef.name))
-        .style("opacity",function(d:any,i:any){return d.performance;})
-        .attr("width", 5)
-        .attr("height",5)
-        .attr("x", function(d:any,i:any) {return d.x*6; })
-        .attr("y", function(d:any,i:any) { return yScale(d.y)-2.5; });
-        
+        .style("opacity",function(d:any,i:any){return d.opacity;})
+        .attr("width", function(d:any,i:any) {return (d.performance*rect_scale+1-rect_scale)*rectwidth;})
+        .attr("height",function(d:any,i:any) {return (d.performance*rect_scale+1-rect_scale)*rectheight;})
+        .attr("x", function(d:any,i:any) {
+            let width = (d.performance*rect_scale+1-rect_scale)*rectwidth;
+            return d.x*6+rectwidth/2.0-width/2.0; 
+        })
+        .attr("y", function(d:any,i:any) { 
+            let height = (d.performance*rect_scale+1-rect_scale)*rectheight;
+            return yScale(d.y)-2.5+rectheight/2.0-height/2.0; });
+        function generateMarkerPath(x:number,y:number,width:number,height:number){
+            let x1=x;
+            let y1=y;
+            let x2= x+width;
+            let y2 = y+height/2;
+            let x3 = x;
+            let y3 = y+height;
+            return "M"+x1+" "+y1+" L"+x2+" "+y2+" L"+x3+" "+y3+" Z";
+        }
+        let markerArray = groups.selectAll("g.marker").data(markerdata);
+        markerArray.enter()
+        .append('g')
+        .attr("class","marker")
+        .append('path')
+        .attr("fill",getColor(methodDef.name))
+        .attr("d",function(d:any,i:any){return generateMarkerPath(d.x*6,yScale(d.y)-2.5,rectwidth,rectheight);})
 
       }
     render() {

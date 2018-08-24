@@ -68,6 +68,7 @@ def fetch_entity(entity_name, filters=None, one=False):
                 return [object_as_dict(item) for item in result]
 
     except Exception:
+        teardown_db()
         raise ApiError('Not found', status_code=404)
 
 

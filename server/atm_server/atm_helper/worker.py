@@ -191,6 +191,13 @@ def stop_worker(datarun_id):
     key = datarun_id2key(datarun_id)
     cache = get_cache()
     pid = cache.get(key)
+    # TODO: maybe there is a better way to solve the problem
+    # where the cache has been set stop, then the real pid will be lost.
+    # How can I find whether the real pid is alive?
+    if pid == 'stop':
+        logger.warning("This worker of datarun %d has already stopped." % datarun_id)
+        cache.delete(key)
+        return True
 
     if pid is not None:
         logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
