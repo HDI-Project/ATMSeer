@@ -41,4 +41,9 @@ div.tooltip {
     fill: none;
     stroke-width: 1.5px;
   }
-  
+  .bottomright {
+    position: absolute;
+    bottom: 80px;
+    right: 30px;
+    font-size: 18px;
+}
