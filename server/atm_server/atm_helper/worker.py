@@ -93,7 +93,7 @@ def work(datarun_id, args=None):
     # let's go
     _logger.warning('Worker started!')
     with datarun_config(datarun_id) as config:
-        _logger.warning('Using configs from', config.config_path)
+        _logger.warning('Using configs from ' + config.config_path)
         atm_work(db=Database(**vars(sql_config)),
                  datarun_ids=[datarun_id],
                  choose_randomly=_args.choose_randomly,

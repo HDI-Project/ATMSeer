@@ -6,6 +6,7 @@ import DataRuns  from './DataRuns';
 // import DataView from "./DataView";
 import SidePanel from './SidePanel';
 import { IDatarunStatusTypes } from 'types';
+//import { IConfigsInfo } from 'service/dataService';
 
 
 
@@ -41,6 +42,8 @@ class App extends React.Component<{}, IState> {
   public setDatarunStatus(datarunStatus: IDatarunStatusTypes): void{
     this.setState({datarunStatus});
   }
+  
+  
   public render() {
     return (
       <Layout className="app" >
@@ -62,7 +65,12 @@ class App extends React.Component<{}, IState> {
 
             <Col span={20}  className="col">
             <div className="shadowBox" >
-              <DataRuns datarunID={this.state.datarunID} datarunStatus={this.state.datarunStatus}/>
+              <DataRuns 
+                datarunID={this.state.datarunID} 
+                datarunStatus={this.state.datarunStatus} 
+                datasetID={this.state.datasetID}
+                setDatarunID={this.setDatarunID}
+                />
               </div>
             </Col>
             {/* <Col span={6} className="col">

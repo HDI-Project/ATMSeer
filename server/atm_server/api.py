@@ -344,7 +344,6 @@ def post_new_datarun(dataset_id):
     create_datarun_configs(datarun_id)
     return jsonify({'success': True, 'id': datarun_id})
 
-
 @api.route('/simple_worker', methods=['GET', 'POST'])
 def dispatch_simple_worker():
     """

@@ -46,11 +46,16 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         this.setState({ datasets });
     }
 
-    public async getDataruns(datasetID: number) {
+    public async getDataruns(datasetID: number, datarunID:number = -1) {
         const dataruns = await getDataruns({ dataset_id: datasetID });
         this.setState({ dataruns });
         // Select the first run as default
-        if (dataruns.length > 0) this.onSelectDatarun(dataruns[0].id);
+        if (dataruns.length > 0) {
+            if(datarunID == -1){
+                datarunID = dataruns[0].id;
+            }
+            this.onSelectDatarun(datarunID);
+        }
         else this.props.setDatarunID(null);
     }
 
@@ -117,6 +122,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         p.then((status) => {
             if (status.success) {
                 this.getDataruns(datasetID);
+                
             }
         })
         return p;
@@ -127,11 +133,21 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         if (datasetID !== prevProps.datasetID && datasetID) {
             this.getDataruns(datasetID);
         }
-        if (datarunID !== prevProps.datarunID && datarunID) {
+        if (datarunID !== prevProps.datarunID && datarunID && datasetID ) {
+            // Automatically try to correct the datarun list once.
+            let findflag = false;
+            for(let i = 0; i<this.state.dataruns.length;i++){
+                if(this.state.dataruns[i].id == datarunID){
+                    findflag = true;
+                }
+            }
+            if(findflag == false){
+                this.getDataruns(datasetID,datarunID);
+            }
             getDatarun(datarunID)
-                .then((datarun) => {
-                    this.props.setDatarunStatus(datarun.status);
-                });
+                    .then((datarun) => {
+                        this.props.setDatarunStatus(datarun.status);
+                    });
         }
         if (datarunStatus !== prevProps.datarunStatus && datarunID === prevProps.datarunID) {
             switch (datarunStatus) {

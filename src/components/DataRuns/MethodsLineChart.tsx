@@ -1,11 +1,13 @@
-import { Button,Checkbox } from 'antd';
+import { Button,Checkbox,message,InputNumber } from 'antd';
 import * as React from 'react';
 import * as methodsDef from "../../assets/methodsDef.json";
 import { IMethod, IDatarun, IClassifier } from "types";
+import { IConfigsInfo,INewDatarunResponse } from 'service/dataService';
+import { getConfigs,postNewDatarun} from 'service/dataService';
 //import { IDatarun } from "types";
 //import { getColor ,RED,YELLOW, getGradientColor} from 'helper';
 import { getColor } from 'helper';
-import "./MethodsLineChart.css"
+import "./MethodsLineChart.css";
 //import ReactEcharts from "echarts-for-react";
 /*const sortSwitchStyle = {
      position: "absolute" as "absolute",
@@ -13,10 +15,18 @@ import "./MethodsLineChart.css"
      right: "5px"
  }*/
 export interface IState {
+    mode : number,
+    selectedMethodName : string[],
+    selectedHyperpartitionName :string,
+    loading : boolean ,
+    configsMethod : string[],
+    configsBudget:number
 }
 export interface IProps {
     height: number,
-    datarun: IDatarun
+    datarun: IDatarun,
+    datasetID: number | null,
+    setDatarunID: (id: number) => void
 }
 export interface ChartProps {
     width: number,
@@ -61,13 +71,23 @@ export interface HyperpartitionHeatmapProps{
     methodSelected:boolean
 }
 export default class MethodsLineChart extends React.Component<IProps, IState>{
+    constructor(props:IProps){
+        super(props);
+        let usedMethods:any[] = Object.keys(this.props.datarun);
+        this.state={
+            mode : 0,
+            selectedMethodName :[],
+            selectedHyperpartitionName : "",
+            loading:false,
+            configsMethod:usedMethods,
+            configsBudget:1000
+        };
+        
+    }
     index = 0;
-    state={
-        mode : 0,
-        selectedMethodName :[],
-        selectedHyperpartitionName : "",
-        configsMethod:[],
-    };
+    
+    displayMethod = [];
+    allMethods = [];
     onMethodsOverViewClick = (Methods:string)=>{
         // Show Methods
         console.log("onclick");
@@ -158,9 +178,11 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
     componentWillReceiveProps(nextProps : IProps) {
         let { datarun } = nextProps;
         let usedMethods = Object.keys(datarun);
-        this.setState({
-            configsMethod:usedMethods
-        });
+        if(this.state.loading==false){
+            this.setState({
+                configsMethod:usedMethods
+            });
+        }
     }
     onCheckBoxChange=(e : any)=>{
         let checked = e.target.checked;
@@ -185,6 +207,54 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             
         }
     }
+
+    
+    createNewDataRun = () => {
+        // get configs from server ;
+        // submit configs in this view
+        // switch to the new datarun.
+        let methods = this.state.configsMethod;
+        let budget = this.state.configsBudget;
+        if(this.props.datasetID!=null){
+            let promise: Promise<IConfigsInfo>;
+            promise = getConfigs();
+            promise
+                .then(configs => {
+                    configs.methods = methods;
+                    configs.budget = budget;
+                    this.setState({ loading: true });
+                    let datasetID : number= this.props.datasetID?this.props.datasetID:0;
+                    let promise:Promise<INewDatarunResponse> = postNewDatarun(datasetID,configs);
+                    //const promise = this.props.onSubmit(this.state.configs);
+                    console.log("post new data run in methods view");
+                    console.log(configs);
+                    promise.then(status => {
+                        if(status.success == true){
+                            message.success("Submit Configs Successfully. Datarun ID:"+status.id);
+                            this.props.setDatarunID(status.id);
+                        }else{
+                            message.error("Submit Configs Failed.");
+                        }
+                        this.setState({ loading: false });
+                    }).catch(error=>{
+                        console.log(error);
+                        message.error("Submit Configs Failed.");
+                        this.setState({ loading: false});
+                
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+                }
+       }
+
+       onBudgetChange = (budget : any) =>{
+       
+        this.setState({configsBudget:budget});
+      }
+
+
     public render() {
         // const methodLen = Object.keys(methodsDef).length
         let { datarun, height } = this.props;
@@ -556,12 +626,14 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             <div className="usedMethodContainer"
                     style={{ height: "100%", width: "100%" }}>
                         <div style={{position: "absolute",bottom:"10px",right:"50px"}}>
-                         <Button key={"_button_"+(++this.index)}>Submit</Button></div>
+                        <h4>Budget</h4>
+                        <InputNumber min={1} value={this.state.configsBudget} style={{ width: "130px" }} onChange={this.onBudgetChange} />
+                        <br /><Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.createNewDataRun}>Create New Data Run</Button>
+                        <br /><Button key={"_button_"+(++this.index)}>Update Hyperparameters Range</Button></div>
                         
                         <svg style={{ height: '100%', width: '100%' }} id="chart" xmlns="http://www.w3.org/2000/svg">
                         
                             <g id="top_container">
-                            
                             {allmethods.map((name: string, i: number) => {
                                let checked = false;
                                let configsMethod : string[] = this.state.configsMethod;
@@ -574,6 +646,23 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                        <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></foreignObject>
                                
                                   )
+                                 /* return  <Checkbox 
+                                    style={{
+                                        position:'absolute',
+                                        left:2+i*85,
+                                        top: 2,
+                                        width:75,
+                                        height:30
+                                            // transform:"translate("+(2+i*85)+","+(2)+")"
+                                    }} 
+                                    key={name+"_checkbox_"+(++this.index)} 
+                                    checked={checked} value={name} onChange={this.onCheckBoxChange} 
+                                    >
+                                  {name}
+                                  </Checkbox>*/
+
+                               
+                                  
                            })}
                             {sortedusedMethods.map((name: string, i: number) => {
                                 const methodDef = methodsDef[name];
@@ -616,8 +705,12 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
       
     }
 }
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  The main component presented above.
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 class LineChart extends React.Component<ChartProps, {}>{
     TAG = "LineChart_";
     componentDidMount() {
@@ -975,11 +1068,32 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         //Create Y axis
-        svg.append("g")
+        let g_axis = svg.append("g")
             .attr("transform", "translate(0,0)")
-            .attr("class", "y axis")
-            .call(yAxis);
-        
+            .attr("class", "bundle-axis")
+            
+        g_axis.append("g")
+        .attr("transform", "translate(0,0)")
+        .attr("class", "y axis").call(yAxis);
+
+
+        function brushended() {
+            if (!d3.event.sourceEvent) return; // Only transition after input.
+            if (!d3.event.selection) return; // Ignore empty selections.
+            let d0 = d3.event.selection.map(yScale2.invert);
+            let min = d0[1];
+            let max = d0[0];
+            console.log("brush min max");
+            console.log(min);
+            console.log(max);
+          }
+          
+
+
+        g_axis.append("g")
+        .attr("class", "brush")
+        .call(d3.brushY()
+            .extent([[-6, 0], [6, height]]).on("end", brushended));
         let groups = svg
             .append('g')
             .attr("class", "group");
