@@ -437,7 +437,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         });
    
         let generateHp = ()=>{
-            if(mode==1||mode==2){
+            if(mode==0||mode==1||mode==2){
                 let gap = 20;
                 let nowx = 2;
                 let lastwidth = 0;
@@ -450,7 +450,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     // horizontalnum should be set to be Math.ceil(num/verticalnum) 
                     //let horizontalnum = Math.floor(width/(rectwidth+1));
                 let hpname :string[]= [];
-                selectedMethodName.forEach((name: string, i: number) =>{
+                usedMethods.forEach((name: string, i: number) =>{
                     hpname = hpname.concat(Method2hyperpartition[name]);
                 });
                 let performance = hpname.map((name: string, i: number) =>{
@@ -484,20 +484,23 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     let horizontalnum = Math.ceil(hplen/verticalnum);
                     let hpwidth = hpmargin + horizontalnum * (rectwidth+1);
                     lastwidth = hpwidth+gap;
-                    let  index0 = sortedusedMethods.indexOf(selectedMethod);
-                    if(index0>-1)
-                    {
-                        let x1 = (2+index0*85)+35;
-                        let y1 = 100;
-                        let x2 = nowx+hpwidth/2;
-                        let y2 = 30+85+100;
-                        pathgenerator.push({
-                            x1:x1,
-                            x2:x2,
-                            y1:y1,
-                            y2:y2,
-                            color:getColor(methodDef.name)
-                        })
+                    let index1 = this.state.selectedMethodName.indexOf(selectedMethod);
+                    if(index1>-1){
+                        let  index0 = sortedusedMethods.indexOf(selectedMethod);
+                        if(index0>-1)
+                        {
+                            let x1 = (2+index0*85)+35;
+                            let y1 = 100;
+                            let x2 = nowx+hpwidth/2;
+                            let y2 = 30+85+100;
+                            pathgenerator.push({
+                                x1:x1,
+                                x2:x2,
+                                y1:y1,
+                                y2:y2,
+                                color:getColor(methodDef.name)
+                            })
+                        }
                     }
                     
                 return (<HyperpartitionHeatmap 
