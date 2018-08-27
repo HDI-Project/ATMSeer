@@ -36,19 +36,29 @@ def create_datarun_configs(datarun_id):
     # Copy default run configuration
     shutil.copy(current_app.config['RUN_CONFIG'], config_path)
 
-
-def load_datarun_config(datarun_id=None):
+def load_datarun_config_dict(datarun_id=None):
     """
     Load the run config (i.e., run.yaml) of a datarun.
     If datarun_id is None, load the default run config (i.e., config/run.yaml)
+    Return a dict
     """
     if datarun_id is None:
         config_path = current_app.config['RUN_CONFIG']
     else:
         config_path = get_datarun_config_path(datarun_id)
         config_path = os.path.join(config_path, 'run.yaml')
+    run_args = {}
     with open(config_path) as f:
         run_args = yaml.load(f)
+    return run_args
+    
+def load_datarun_config(datarun_id=None):
+    """
+    Load the run config (i.e., run.yaml) of a datarun.
+    If datarun_id is None, load the default run config (i.e., config/run.yaml)
+    Return a RunConfig Object
+    """
+    run_args = load_datarun_config_dict(datarun_id)
 
     if datarun_id is not None:
         # The values in db might be different
@@ -74,7 +84,11 @@ def update_datarun_config(datarun_id, config):
     try:
         # First update the dataruns table
         datarun = db.get_datarun(datarun_id)
-        for key, val in config.items():
+        # describe the datarun by its tuner and selector
+        myconfig = copy.deepcopy(config)
+        myconfig["description"] = '__'.join([myconfig["tuner"], myconfig["selector"]])
+        myconfig["score_target"] = myconfig["score_target"] + '_judgment_metric'
+        for key, val in myconfig.items():
             if val is None:
                 continue
             if hasattr(datarun, key):

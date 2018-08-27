@@ -18,7 +18,8 @@ from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
     fetch_classifiers, fetch_hyperpartitions
 from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun, \
-    create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config
+    create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
+    load_datarun_config_dict
 
 
 api = Blueprint('api', __name__)
@@ -37,10 +38,13 @@ def allowed_file(filename):
 
 @api.errorhandler(ApiError)
 def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
+    # response = jsonify(error.to_dict())
+    # response.status_code = error.status_code
+    logging.exception(error)
+    response = jsonify({"error":str(error)})
+    response.status_code = 500
     return response
-
+    
 @api.errorhandler(InvalidRequestError)
 def handle_db_request_error(error):
     logging.exception(error)
@@ -397,10 +401,10 @@ def configs_info():
     datarun_id = request.args.get('datarun_id', None, type=int)
     result = {'success': False}
     # with datarun_config(datarun_id):
-    run_path = current_app.config['run_config']
+    # run_path = current_app.config['run_config']
     if request.method == 'GET':
         try:
-            config = load_datarun_config(datarun_id)
+            config = load_datarun_config_dict(datarun_id)
         except FileNotFoundError as e:
             raise ApiError(e, 404)
         return jsonify(config)
@@ -409,7 +413,7 @@ def configs_info():
         #     result.update(run_args)
         #     result.update({'success':True})
     elif request.method == 'POST':
-
+        run_path = current_app.config['RUN_CONFIG']
         # Get local set configs
         run_args = {}
         with open(run_path) as f:
