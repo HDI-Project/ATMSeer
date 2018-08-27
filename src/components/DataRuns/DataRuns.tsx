@@ -35,6 +35,8 @@ export interface IState{
 export interface IProps{
     datarunID: number | null;
     datarunStatus: IDatarunStatusTypes;
+    datasetID: number | null;
+    setDatarunID: (id: number) => void;
 }
 export default class DataRuns extends React.Component<IProps, IState>{
     private intervalID: number
@@ -107,7 +109,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <HyperPartitions classifiers={classifiers} />
             </div> */}
 
-            <MethodsLineChart height={85} datarun={datarun}/>
+            <MethodsLineChart height={85} datarun={datarun} 
+            datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}/>
 
         </div>)
         }else{
