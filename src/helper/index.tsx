@@ -2,17 +2,20 @@ import {IClassifier, IDatarun} from 'types';
 
 const names: string[] = []
 const COLORS: string[] = [
-    // ' #9e0142',
-    ' #fdae61',
-    // ' #d53e4f',
-    ' #a0ef98',
-    ' #f46d43',
-    // ' #ffffbf',
-    ' #66c2a5',
-    ' #3288bd',
-    ' #5e4fa2',
-    ' #d53e4f',
-    ' #fee08b',
+    "#1A7AB1",
+    "#ADC8E6",
+    "#FF772D",
+    "#FFB87F",
+    "#2AA13A",
+    "#98E090",
+    "#FF9398",
+    "#9467B9",
+    "#C5B0D3",
+    "#C49B95",
+    "#E474C0",
+    "#F7B4D1",
+    "#BCBC3D",
+    "#07C1CD"
     ]
 
 const GREEN: string[] = [
@@ -221,7 +224,7 @@ const parseDatarun=(csv: string|any)=>{
     lines.forEach((row:string, idx:number) => {
         const cells = row.split(',')
         let record:IClassifier = {'trail ID':idx, method:''}
-        
+
         cells.forEach((cell, idx)=>{
             record[keys[idx]] = cell
         })

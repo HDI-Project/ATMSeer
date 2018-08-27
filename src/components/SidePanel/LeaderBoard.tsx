@@ -81,6 +81,7 @@ export interface LeaderBoardProps {
 export interface LeaderBoardState {
     datarunInfo: IDatarunInfo | null;
     hyperpartitions: IHyperpartitionInfo[];
+    hyperpartitionStrings: string[];
     summary: IDatarunSummary | null;
     // scores: {[id: string]: number}[];
 }
@@ -94,6 +95,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             summary: null,
             datarunInfo: null,
             hyperpartitions: [],
+            hyperpartitionStrings: []
             // scores: [],
         };
     }
@@ -114,8 +116,14 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                 // console.log(hyperpartitions);
                 if (Array.isArray(hyperpartitions))
                    {
-                       hyperpartitions=hyperpartitions.filter(d=>d.datarun_id==datarunID)
-                       this.setState({ hyperpartitions });
+                        hyperpartitions = hyperpartitions.filter(d=>d.datarun_id==datarunID)
+                       let hyperpartitionStrings=Array.from(
+                           new Set(
+                               hyperpartitions.map(d=>d.hyperpartition_string)
+                            )
+                        )
+
+                       this.setState({ hyperpartitionStrings, hyperpartitions });
                    }
                 else
                     console.error('The fetched hyperpartitions should be an array!');
@@ -146,16 +154,17 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
     }
     public render() {
 
-        const { summary, datarunInfo, hyperpartitions} = this.state
-        // const {scores, hyperpartitions } = this.state;
+        const { summary, datarunInfo, hyperpartitionStrings, hyperpartitions} = this.state
         const methods = Array.from(new Set(hyperpartitions.map(d=>d.method)))
+        console.info("hp", hyperpartitions, "methods", methods)
         const best = summary ? summary.topClassifiers[0] : undefined;
         const progressAlgorithm = (percent:number)=>{
             return `${methods.length}/14`
         }
         const progressHyperpartiton = (percent:number)=>{
-            return `${hyperpartitions.length}/172`
+            return `${hyperpartitionStrings.length}/172`
         }
+
         return summary ? (
             <div >
                 <div>
@@ -191,7 +200,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <b>Hyperpartitions Coverage</b>:{' '}
                         <Progress
                         type="circle"
-                        percent={100*hyperpartitions.length/172}
+                        percent={100*hyperpartitionStrings.length/172}
                         format={progressHyperpartiton}
                         width={40}
                         strokeWidth={10}
