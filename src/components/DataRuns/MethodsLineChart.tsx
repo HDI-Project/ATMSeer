@@ -570,8 +570,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             };
                                //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
                                return (<foreignObject key={name+"_text_"+(++this.index)} x={2+i*85} y={2} width={75} height={30}>
-                                      
-                                       <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></foreignObject>
+                                      <body>
+                                       <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></body></foreignObject>
                                
                                   )
                            })}
