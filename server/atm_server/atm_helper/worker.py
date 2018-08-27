@@ -19,7 +19,7 @@ from atm.constants import RunStatus
 from atm_server.error import ApiError
 from atm_server.db import get_db
 from atm_server.cache import get_cache
-from .method_config import datarun_config
+from .datarun_config import datarun_config
 
 
 logger = logging.getLogger('atm_server')

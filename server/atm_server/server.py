@@ -31,10 +31,11 @@ def create_app(config=None):
 
     if config is None:
         config = {}
-    if config.get('run_config', None) is None:
-        config['run_config'] = os.path.join(SERVER_ROOT, '../config/run.yaml')
-    if config.get('sql_config', None) is None:
-        config['sql_config'] = os.path.join(SERVER_ROOT, '../config/sql.yaml')
+    config = {key: val for key, val in config.items() if val is not None}
+    if config.get('run_config', None) is not None:
+        config['RUN_CONFIG'] = config['run_config']
+    if config.get('sql_config', None) is not None:
+        config['SQL_CONFIG'] = config['sql_config']
 
     # print(config)
     app.config.update(config)
@@ -52,7 +53,7 @@ def create_app(config=None):
 
     db.init_app(app)
     app.register_blueprint(api, url_prefix='/api')
-
+    print(app.config)
     return app
 
 
