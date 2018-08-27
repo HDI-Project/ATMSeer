@@ -135,7 +135,7 @@ def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=No
     """
     Get the summarized information about classifiers, filtered by the passed-in arguments.
     The header of the csv:
-        trail ID, method, parameters, metrics, score target, performance
+        trail ID, method, parameters, metrics, score target, performance , hyperpartitionID
     """
     db = get_db()
     # with db_session(db):
@@ -168,14 +168,15 @@ def summarize_classifiers(dataset_id=None, datarun_id=None, hyperpartition_id=No
         query = query.filter(db.Classifier.hyperpartition_id ==
                              hyperpartition_id)
 
-    return [['trail ID', 'method', 'parameters', 'metrics', 'score target', 'performance']] + [
+    return [['trail ID', 'method', 'parameters', 'metrics', 'score target', 'performance', 'hyperpartitionID']] + [
         [
             str(classifier.id),
             method,
             params_string(classifier.hyperparameter_values),
             metric,
             score_target[:-len('_judgment_metric')],
-            metric_string(classifier, score_target)
+            metric_string(classifier, score_target),
+            str(classifier.hyperpartition_id)
         ] for classifier, method, metric, score_target in query.all()]
 
 

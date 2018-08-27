@@ -7,7 +7,7 @@ import {parseDatarun} from "helper";
 import {IDatarun} from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
-import {getClassifierSummary, getClassifiers, IClassifierInfo} from '../../service/dataService';
+import {getClassifierSummary, getClassifiers,getHyperpartitions, IClassifierInfo,IHyperpartitionInfo} from '../../service/dataService';
 
 //components
 import MethodsLineChart from './MethodsLineChart';
@@ -30,7 +30,9 @@ import { UPDATE_INTERVAL_MS } from "Const";
 
 export interface IState{
     runCSV:string,
-    classifiers: IClassifierInfo[]
+    classifiers: IClassifierInfo[],
+    hyperpartitions: IHyperpartitionInfo[]
+ 
 }
 export interface IProps{
     datarunID: number | null;
@@ -45,7 +47,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
         this.getData = this.getData.bind(this)
         this.state = {
             runCSV:'',
-            classifiers:[]
+            classifiers:[],
+            hyperpartitions:[]
         }
     }
     public async getData() {
@@ -58,8 +61,19 @@ export default class DataRuns extends React.Component<IProps, IState>{
             const runCSV = await getClassifierSummary(datarunID);
             // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
             // const banditData = res.data
-            const classifiers = await getClassifiers(datarunID)
-            this.setState({runCSV, classifiers})
+            const classifiers = await getClassifiers(datarunID);
+            let sethyperpartitions = this.state.hyperpartitions;
+            getHyperpartitions().then(hyperpartitions => {
+                // console.log(hyperpartitions);
+                if (Array.isArray(hyperpartitions))
+                   {
+                    sethyperpartitions=hyperpartitions.filter(d=>d.datarun_id==datarunID)
+                       //this.setState({ hyperpartitions });
+                   }
+                else
+                    console.error('The fetched hyperpartitions should be an array!');
+            });
+            this.setState({runCSV:runCSV, classifiers:classifiers, hyperpartitions:sethyperpartitions})
         }
 
     }
@@ -95,6 +109,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         const {runCSV} = this.state
         // const {classifiers} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
+        console.log(datarun);
         //console.log(runCSV);
         //console.log(datarun);
         if (Object.keys(datarun).length>0){
@@ -109,8 +124,9 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <HyperPartitions classifiers={classifiers} />
             </div> */}
 
-            <MethodsLineChart height={85} datarun={datarun} 
-            datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}/>
+            <MethodsLineChart height={85} datarun={datarun} hyperpartitions={this.state.hyperpartitions}
+            datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
+            datarunID={this.props.datarunID}/>
 
         </div>)
         }else{
