@@ -2,8 +2,8 @@ import { Button,Checkbox,message,InputNumber } from 'antd';
 import * as React from 'react';
 import * as methodsDef from "../../assets/methodsDef.json";
 import { IMethod, IDatarun, IClassifier } from "types";
-import { IConfigsInfo,INewDatarunResponse } from 'service/dataService';
-import { getConfigs,postNewDatarun} from 'service/dataService';
+import { IConfigsInfo,INewDatarunResponse,IUpdateDatarunConfig, ICommonResponse,IHyperpartitionInfo } from 'service/dataService';
+import { getConfigs,getDatarunConfigs,postNewDatarun,updateDatarunConfigs} from 'service/dataService';
 //import { IDatarun } from "types";
 //import { getColor ,RED,YELLOW, getGradientColor} from 'helper';
 import { getColor } from 'helper';
@@ -30,7 +30,9 @@ export interface IProps {
     height: number,
     datarun: IDatarun,
     datasetID: number | null,
-    setDatarunID: (id: number) => void
+    datarunID: number | null,
+    setDatarunID: (id: number) => void,
+    hyperpartitions : IHyperpartitionInfo[]
 }
 export interface ChartProps {
     width: number,
@@ -82,14 +84,15 @@ export interface HyperpartitionHeatmapProps{
 export default class MethodsLineChart extends React.Component<IProps, IState>{
     constructor(props:IProps){
         super(props);
-        let usedMethods:any[] = Object.keys(this.props.datarun);
+        //let usedMethods:any[] = Object.keys(this.props.datarun);
+        this.getCurrentConfigs();
         this.state={
             mode : 0,
             selectedMethodName :[],
             nowselectedMethodName:"",
             selectedHyperpartitionName : "",
             loading:false,
-            configsMethod:usedMethods,
+            configsMethod:[],
             configsBudget:1000,
             hyperparametersRangeSelectedName:"",
             hyperparametersRangeSelected:[],
@@ -198,19 +201,20 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
        // height = 820 (0.78)
        // totalwidth = 2133
        // totalheight = 1047 
-       const d3 = require("d3");
-       console.log("methodstop width height");
-       console.log(d3.select("#methodstop"));
-       console.log(d3.select("#methodstop").node().getBoundingClientRect());
+      // const d3 = require("d3");
+       //console.log("methodstop width height");
+       //console.log(d3.select("#methodstop"));
+       //console.log(d3.select("#methodstop").node().getBoundingClientRect());
 
     }
     componentWillReceiveProps(nextProps : IProps) {
-        let { datarun } = nextProps;
-        let usedMethods = Object.keys(datarun);
+        //let { datarun } = nextProps;
+        //let usedMethods = Object.keys(datarun);
         if(this.state.loading==false){
-            this.setState({
+           /* this.setState({
                 configsMethod:usedMethods
-            });
+            });*/
+            this.getCurrentConfigs();
         }
     }
     onCheckBoxChange=(e : any)=>{
@@ -277,7 +281,60 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 });
                 }
        }
-
+       getCurrentConfigs = () =>{
+        if(this.props.datarunID!=null){
+            let promise: Promise<IConfigsInfo>;
+            let datarunID : number= this.props.datarunID?this.props.datarunID:0;
+            promise = getDatarunConfigs(datarunID);
+            promise.then(configs=>{
+                this.setState({
+                    configsMethod:configs.methods,
+                    configsBudget:configs.budget
+                })
+            })
+        }
+       }
+       updateCurrentDataRun = () => {
+        // get configs from server ;
+        // submit configs in this view
+        // switch to the new datarun.
+        let methods = this.state.configsMethod;
+        let budget = this.state.configsBudget;
+        if(this.props.datarunID!=null){
+            let promise: Promise<IConfigsInfo>;
+            let datarunID : number= this.props.datarunID?this.props.datarunID:0;
+            promise = getDatarunConfigs(datarunID);
+            promise
+                .then(configs => {
+                    configs.methods = methods;
+                    configs.budget = budget;
+                    this.setState({ loading: true });
+                    
+                    let submitconfigs : IUpdateDatarunConfig = {};
+                    submitconfigs.configs = configs;
+                    let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
+                    //const promise = this.props.onSubmit(this.state.configs);
+                    console.log("update data run in methods view");
+                    console.log(configs);
+                    promise.then(status => {
+                        if(status.success == true){
+                            message.success("Update Configs Successfully.");
+                        }else{
+                            message.error("Update Configs Failed.");
+                        }
+                        this.setState({ loading: false });
+                    }).catch(error=>{
+                        console.log(error);
+                        message.error("Update Configs Failed.");
+                        this.setState({ loading: false});
+                
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+                }
+       }
        onBudgetChange = (budget : any) =>{
        
         this.setState({configsBudget:budget});
@@ -331,7 +388,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         let HeatmapAttr ={topgap:100,height:73};
         let DetailChartAttr = {left:20+5,width:150,topgap:30,top:12,horizontalgap:10,height:175,extraheight:45,extray:8};
 
-        // Calculate
+        // ------------ Detail Layout Coordinates Calculation -------------------------//
         let hratio = 0.18;
         if(topheight*hratio>methodBoxAttr.height+methodBoxAttr.y){
             methodBoxAttr.height=topheight*hratio - methodBoxAttr.y;
@@ -339,6 +396,9 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         }
         if(topwidth<methodBoxAttr.x+methodnumber*(methodBoxAttr.width+methodBoxAttr.gap)){
             methodBoxAttr.width = (topwidth-methodBoxAttr.x)/methodnumber-methodBoxAttr.gap;
+            if(methodBoxAttr.width<70){
+                methodBoxAttr.width=70;
+            }
             methodBoxAttr.height = methodBoxAttr.width;
         }
         let methodBoxHeight = methodBoxAttr.height+methodBoxAttr.gap+methodBoxAttr.y;
@@ -355,9 +415,18 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         if(topheight>HeatmapBottomY+DetailChartAttr.topgap+DetailChartAttr.top+DetailChartAttr.height+DetailChartAttr.extraheight){
             DetailChartAttr.height = topheight - (HeatmapBottomY+DetailChartAttr.topgap+DetailChartAttr.top+DetailChartAttr.extraheight);
         }
-        
+        // ------------ End Detail Layout Coordinates Calculation -------------------------//
 
-        // Data preprocessing ..
+        // ------------ Data preprocessing  ----------------------------------------------//
+
+        let hpid2hp : any = {};
+        this.props.hyperpartitions.forEach((data:IHyperpartitionInfo)=>{
+            hpid2hp[data.id]=data;
+        });
+
+
+
+
         usedMethods.forEach((name: string, i: number)=>{
             const classifier_num = datarun[name].length;
             totallen+=classifier_num;
@@ -365,6 +434,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         let hyperpartitionData : IDatarun= {};
         let hyperpartition2Method : {[hyperpartition:string]:string}= {};
         let Method2hyperpartition : {[method:string]:string[]} = {};
+        let hyperpartition2hpid : {[hyperpartition:string]:number}= {};
         usedMethods.forEach((name: string, i: number) => {
             const methodDef = methodsDef[name];
             const classifiers = datarun[name];
@@ -410,14 +480,20 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 }
                 hyperpartitionData[HyperpartitionName].push(classifier);
                 hyperpartition2Method[HyperpartitionName] = name;
-                
-                
+                if(hyperpartition2hpid[HyperpartitionName]){
+                    if( hyperpartition2hpid[HyperpartitionName] !== parseInt(classifier["hyperpartitionID"])){
+                        console.log("inconsistent id mapping" + HyperpartitionName);
+                    }
+                }
+                hyperpartition2hpid[HyperpartitionName] = parseInt(classifier["hyperpartitionID"]);
             }
             )); 
         });
-        // Data preprocessing  end
+        console.log("id mapping");
+        console.log(hyperpartition2hpid);
+        // ------------ Data preprocessing  End----------------------------------------------//
 
-        // mode selection checked
+        // ------------- Mode selection checked ----------------------------------------------//
         //let usedHyperpartitions: string[] = Object.keys(hyperpartitionData);
         if(mode==1||mode==2){
             //is method name exist?
@@ -461,7 +537,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 });
             }
         }
-    
+        // ------------- Mode selection checked end----------------------------------------------//
 
         // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methodsDef should be obtained by requesting server the config file
         const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
@@ -810,8 +886,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         <div style={{position: "absolute",bottom:"10px",right:"50px"}}>
                         <h4>Budget</h4>
                         <InputNumber min={1} value={this.state.configsBudget} style={{ width: "130px" }} onChange={this.onBudgetChange} />
-                        <br /><Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.createNewDataRun}>Create New Data Run</Button>
-                        <br /><Button key={"_button_"+(++this.index)}>Update Hyperparameters Range</Button></div>
+                        <br /><Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update</Button>
+                        <br /></div>
                         
                         <svg style={{ height: '100%', width: '100%' }} id="chart" xmlns="http://www.w3.org/2000/svg">
                         
@@ -874,7 +950,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             {
                                 unusedMethods.map((name: string,i:number) => {
                                     let index = i+sortedusedMethods.length;
-                                return (<rect key={name + '_unused'} strokeDasharray="5,5" x={2+index*85} y={30} width={70} height={70} fill="white" strokeWidth={2} stroke="#E0D6D4" />)})
+                                return (<rect key={name + '_unused'} strokeDasharray="5,5" x={methodBoxAttr.x+index*(methodBoxAttr.width+methodBoxAttr.gap)} y={methodBoxAttr.y} width={methodBoxAttr.width} height={methodBoxAttr.height} fill="white" strokeWidth={2} stroke="#E0D6D4" />)})
                                 
                             }
                             {generateHp()}

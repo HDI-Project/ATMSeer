@@ -254,6 +254,9 @@ export async function getConfigs(): Promise<IConfigsInfo> {
     }
     throw res;
 }
+
+
+
 export async function postConfigs(configs : any): Promise<IConfigsUploadResponse> {
     const formData = new FormData();
     formData.append('configs', JSON.stringify(configs));
@@ -362,6 +365,15 @@ export interface IUpdateDatarunConfig {
 export async function updateDatarunConfigs(datarun_id: number, config: IUpdateDatarunConfig): Promise<ICommonResponse> {
     const headers = {'Content-Type': 'application/json'};
     const res = await axiosInstance.post(`/update_datarun_config/${datarun_id}`, config, {headers});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+export async function getDatarunConfigs(datarun_id : number): Promise<IConfigsInfo> {
+    const url = `/configs`;
+    const params = { datarun_id };
+    const res = await axiosInstance.get(url, { params });
     if (res.status === 200) {
         return res.data;
     }
