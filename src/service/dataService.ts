@@ -319,9 +319,9 @@ export async function getHyperparameters(
 }
 
 
-export async function disableHyperpartitions(datarun_ids: number[] | number): Promise<ICommonResponse> {
+export async function disableHyperpartitions(hyperpartitionIds: number[] | number): Promise<ICommonResponse> {
     const headers = {'Content-Type': 'application/json'};
-    const data = Array.isArray(datarun_ids) ? datarun_ids : [datarun_ids];
+    const data = Array.isArray(hyperpartitionIds) ? hyperpartitionIds : [hyperpartitionIds];
     const res = await axiosInstance.post(`/disable_hyperpartition`, data, {headers});
     if (res.status === 200) {
         return res.data;
@@ -329,10 +329,39 @@ export async function disableHyperpartitions(datarun_ids: number[] | number): Pr
     throw res;
 }
 
-export async function enableHyperpartitions(datarun_ids: number[] | number): Promise<ICommonResponse> {
+export async function enableHyperpartitions(hyperpartitionIds: number[] | number): Promise<ICommonResponse> {
     const headers = {'Content-Type': 'application/json'};
-    const data = Array.isArray(datarun_ids) ? datarun_ids : [datarun_ids];
+    const data = Array.isArray(hyperpartitionIds) ? hyperpartitionIds : [hyperpartitionIds];
     const res = await axiosInstance.post(`/enable_hyperpartition`, data, {headers});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+
+export interface IUpdateDatarunConfig {
+    // The run config ('run.yaml'), all fields inside configs are optional
+    // If some method is removed from the configs.methods,
+    // their corresponding hyperpartition will also be disabled
+    // However, don't add new method in the config if they are not present in the initial config (when datarun is created).
+    // New method will not be added
+    configs?: Partial<IConfigsInfo>;
+    // The ids of active hyperpartitions.
+    // If not provided, then this field is ignored, we will only consider the methods field in configs.
+    // If provided, then the method field in configs would be neglected (has no effect)
+    hyperpartitions?: number[];
+    // The configs of methods
+    // Be careful with the format of IMethodHyperParameters
+    method_configs?: {[method: string]: IMethodHyperParameters}
+}
+
+/**
+ * Update the configurations of a datarun
+ */
+export async function updateDatarunConfigs(datarun_id: number, config: IUpdateDatarunConfig): Promise<ICommonResponse> {
+    const headers = {'Content-Type': 'application/json'};
+    const res = await axiosInstance.post(`/update_datarun_config/${datarun_id}`, config, {headers});
     if (res.status === 200) {
         return res.data;
     }
