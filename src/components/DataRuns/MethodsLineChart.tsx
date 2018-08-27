@@ -188,6 +188,21 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         let margin = {left:0,right:0,top:0,bottom:0};
         d3.select("#top_container").attr("transform", "translate(" + margin.left + "," + margin.right + ")").call(zoom);
         */
+       // My computer
+       // width = 1313 (0.82)
+       // height = 567 (0.77)
+       // tptalwidth = 1600
+       // totalheight = 730
+       // Large Computer
+       // width = 1757 (0.82)
+       // height = 820 (0.78)
+       // totalwidth = 2133
+       // totalheight = 1047 
+       const d3 = require("d3");
+       console.log("methodstop width height");
+       console.log(d3.select("#methodstop"));
+       console.log(d3.select("#methodstop").node().getBoundingClientRect());
+
     }
     componentWillReceiveProps(nextProps : IProps) {
         let { datarun } = nextProps;
@@ -304,6 +319,44 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         let selectedMethodName:string[] = this.state.selectedMethodName;
         let usedMethods: string[] = Object.keys(datarun);
         let totallen = 0;
+        //  Width and height constant
+        const d3 = require("d3");
+        let bodyAttr = d3.select("body").node().getBoundingClientRect();
+        let topheight = (bodyAttr.height-10) * 0.75;
+        
+        let topwidth = bodyAttr.width * 0.80;
+        let methodnumber =  Object.keys(methodsDef).length;
+        // Default Attr:
+        let methodBoxAttr = {width : 70,height:70,gap:15,x:2,y:30,checkboxY:2,checkboxWidth:75,checkboxHeight:30};
+        let HeatmapAttr ={topgap:100,height:73};
+        let DetailChartAttr = {left:20+5,width:150,topgap:30,top:12,horizontalgap:10,height:175,extraheight:45,extray:8};
+
+        // Calculate
+        let hratio = 0.18;
+        if(topheight*hratio>methodBoxAttr.height+methodBoxAttr.y){
+            methodBoxAttr.height=topheight*hratio - methodBoxAttr.y;
+            methodBoxAttr.width=topheight*hratio - methodBoxAttr.y;
+        }
+        if(topwidth<methodBoxAttr.x+methodnumber*(methodBoxAttr.width+methodBoxAttr.gap)){
+            methodBoxAttr.width = (topwidth-methodBoxAttr.x)/methodnumber-methodBoxAttr.gap;
+            methodBoxAttr.height = methodBoxAttr.width;
+        }
+        let methodBoxHeight = methodBoxAttr.height+methodBoxAttr.gap+methodBoxAttr.y;
+        hratio = 0.35;
+        if(topheight*hratio>methodBoxHeight+10){
+            HeatmapAttr.topgap = topheight*hratio - (methodBoxHeight);
+        }
+        hratio = 0.50;
+        if(topheight*hratio>methodBoxHeight+HeatmapAttr.topgap+73){
+            HeatmapAttr.height = topheight*hratio - (methodBoxHeight+HeatmapAttr.topgap);
+        }
+        let HeatmapBottomY = methodBoxHeight+HeatmapAttr.topgap+HeatmapAttr.height;
+
+        if(topheight>HeatmapBottomY+DetailChartAttr.topgap+DetailChartAttr.top+DetailChartAttr.height+DetailChartAttr.extraheight){
+            DetailChartAttr.height = topheight - (HeatmapBottomY+DetailChartAttr.topgap+DetailChartAttr.top+DetailChartAttr.extraheight);
+        }
+        
+
         // Data preprocessing ..
         usedMethods.forEach((name: string, i: number)=>{
             const classifier_num = datarun[name].length;
@@ -435,13 +488,13 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             }
 
         });
-   
+
         let generateHp = ()=>{
             if(mode==0||mode==1||mode==2){
                 let gap = 20;
                 let nowx = 2;
                 let lastwidth = 0;
-                let hpheight = 73;
+                let hpheight = HeatmapAttr.height;
                 let hpmargin = 12;
                 let rectwidth = 5;
                 let rectheight = 5;
@@ -485,14 +538,15 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     let hpwidth = hpmargin + horizontalnum * (rectwidth+1);
                     lastwidth = hpwidth+gap;
                     let index1 = this.state.selectedMethodName.indexOf(selectedMethod);
+                    let nowy = methodBoxAttr.y+methodBoxAttr.height+methodBoxAttr.gap+HeatmapAttr.topgap;
                     if(index1>-1){
                         let  index0 = sortedusedMethods.indexOf(selectedMethod);
                         if(index0>-1)
                         {
-                            let x1 = (2+index0*85)+35;
-                            let y1 = 100;
+                            let x1 = (methodBoxAttr.x+index0*(methodBoxAttr.width+methodBoxAttr.gap))+methodBoxAttr.width/2;
+                            let y1 = methodBoxAttr.y+methodBoxAttr.height;
                             let x2 = nowx+hpwidth/2;
-                            let y2 = 30+85+100;
+                            let y2 = nowy;
                             pathgenerator.push({
                                 x1:x1,
                                 x2:x2,
@@ -506,7 +560,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 return (<HyperpartitionHeatmap 
                     key={name+"_used_"+(++this.index)} 
                     x={nowx} 
-                    y={30+85+100} 
+                    y={nowy} 
                     width={hpwidth} 
                     height={hpheight} 
                     methodDef={methodDef} 
@@ -684,7 +738,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     
                 })
                 let keys = Object.keys(hyperparameterData);
-                
+                let nowy = methodBoxAttr.y+methodBoxAttr.height+methodBoxAttr.gap+HeatmapAttr.topgap+HeatmapAttr.height
+                +DetailChartAttr.topgap+DetailChartAttr.top;
                 let array = (keys.map((name:string,index:number)=>{
                     let alreadySelectedRange = [];
                     if(hyperparametersRangeAlreadySelected[methodDef.name]){
@@ -692,10 +747,12 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             alreadySelectedRange = hyperparametersRangeAlreadySelected[methodDef.name][name];
                         }
                     }
-                    return (<DotBarChart x={2+5+20+160*index} 
-                        y={30+5+85+100+73+30+3} 
-                        width={150} 
-                        height={175} 
+                    let nowx = methodBoxAttr.x+DetailChartAttr.left+(DetailChartAttr.width+DetailChartAttr.horizontalgap)*index;
+                   
+                    return (<DotBarChart x={nowx} 
+                        y={nowy} 
+                        width={DetailChartAttr.width} 
+                        height={DetailChartAttr.height} 
                         min={rangeMap[name].min}
                         max={rangeMap[name].max}
                         valueType={rangeMap[name].valueType}
@@ -708,11 +765,17 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         name={"hpd"+(++this.index)} 
                         key={"hpdetail"+(++this.index)}/>)
                 }));
-                let finalwidth = 5+20+160*(keys.length);
+                let finalwidth = DetailChartAttr.left+(DetailChartAttr.width+DetailChartAttr.horizontalgap)*(keys.length);
                     
-                let array2=  (<rect key={'_rect_'+(++this.index)} x={2} y={30+85+100+73+30-2} width={finalwidth} height={220} fill="none" strokeWidth={2} stroke="#E0D6D4" />)
-                    
-                
+                let array2=  (
+                    <rect key={'_rect_'+(++this.index)} 
+                    x={methodBoxAttr.x} 
+                    y={nowy-DetailChartAttr.extray} 
+                    width={finalwidth} 
+                    height={DetailChartAttr.height+DetailChartAttr.extraheight} 
+                    fill="none" 
+                    strokeWidth={2} 
+                    stroke="#E0D6D4" />)
                 return array.concat(array2);
                 
             }else{
@@ -740,6 +803,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
          * 
          */
 
+
         return (<div className="methods" id="methodstop" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
             <div className="usedMethodContainer"
                     style={{ height: "100%", width: "100%" }}>
@@ -759,9 +823,9 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                     checked= true;
                             };
                                //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
-                               return (<foreignObject key={name+"_text_"+(++this.index)} x={2+i*85} y={2} width={75} height={30}>
-                                      <body>
-                                       <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></body></foreignObject>
+                               return (<foreignObject key={name+"_text_"+(++this.index)} x={methodBoxAttr.x+i*(methodBoxAttr.width+methodBoxAttr.gap)} y={methodBoxAttr.checkboxY} width={methodBoxAttr.checkboxWidth} height={methodBoxAttr.checkboxHeight}>
+                                      
+                                       <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></foreignObject>
                                
                                   )
                                  /* return  <Checkbox 
@@ -794,10 +858,10 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                 this.index++;
                                 return (
                                 <LineChart key={name+"_used_"+this.index} 
-                                        x={2+i*85} 
-                                        y={30} 
-                                        width={70} 
-                                        height={70} 
+                                        x={methodBoxAttr.x+i*(methodBoxAttr.width+methodBoxAttr.gap)} 
+                                        y={methodBoxAttr.y} 
+                                        width={methodBoxAttr.width} 
+                                        height={methodBoxAttr.height} 
                                         methodDef={methodDef} 
                                         classifiers={datarun[name]} 
                                         name={name} 
