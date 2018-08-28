@@ -18,7 +18,8 @@ from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
     fetch_classifiers, fetch_hyperpartitions
 from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun, \
-    create_datarun_configs, update_datarun_config, load_datarun_config
+    create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
+    load_datarun_config_dict
 
 
 api = Blueprint('api', __name__)
@@ -37,8 +38,11 @@ def allowed_file(filename):
 
 @api.errorhandler(ApiError)
 def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
+    # response = jsonify(error.to_dict())
+    # response.status_code = error.status_code
+    logging.exception(error)
+    response = jsonify({"error":str(error)})
+    response.status_code = 500
     return response
 
 @api.errorhandler(InvalidRequestError)
@@ -394,15 +398,22 @@ def stop_single_worker(datarun_id):
 @api.route('/configs', methods=['GET','POST'])
 def configs_info():
     """Fetch or set the info of run configs"""
-    result = {}
-    result['success']=False
-    run_path = current_app.config['run_config']
+    datarun_id = request.args.get('datarun_id', None, type=int)
+    result = {'success': False}
+    # with datarun_config(datarun_id):
+    # run_path = current_app.config['run_config']
     if request.method == 'GET':
-        with open(run_path) as f:
-            run_args = yaml.load(f)
-            result.update(run_args)
-            result.update({'success':True})
+        try:
+            config = load_datarun_config_dict(datarun_id)
+        except FileNotFoundError as e:
+            raise ApiError(e, 404)
+        return jsonify(config)
+        # with open(run_path) as f:
+        #     run_args = yaml.load(f)
+        #     result.update(run_args)
+        #     result.update({'success':True})
     elif request.method == 'POST':
+        run_path = current_app.config['RUN_CONFIG']
         # Get local set configs
         run_args = {}
         with open(run_path) as f:
@@ -422,25 +433,25 @@ def configs_info():
 
 
 @api.route('/hyperparameters/<int:datarun_id>', methods=['GET', 'POST'])
-def post_update_hyperparameters(datarun_id):
+def update_hyperparameters(datarun_id):
     result = {'success': False}
     method = request.args.get('method', None, type=str)
 
     if request.method == 'GET':
-        return jsonify(load_datarun_config(datarun_id, method))
+        return jsonify(load_datarun_method_config(datarun_id, method))
     else:
         hp_updates = request.get_json()
         if hp_updates is None:
             raise ApiError('Empty or invalid json data!', 400)
         if method is not None:
             try:
-                update_datarun_config(datarun_id, method, hp_updates)
+                update_datarun_method_config(datarun_id, method, hp_updates)
             except ValueError as e:
                 raise ApiError(e, 400)
         else:
             for method, update in hp_updates.items():
                 try:
-                    update_datarun_config(datarun_id, method, update)
+                    update_datarun_method_config(datarun_id, method, update)
                 except ValueError as e:
                     raise ApiError(e, 400)
     result['success'] = True
@@ -471,4 +482,63 @@ def post_enable_hyperpartition():
         hyperpartition = db.get_hyperpartition(_id)
         hyperpartition.status = PartitionStatus.INCOMPLETE
     db.session.commit()
+    return jsonify({'success': True})
+
+
+@api.route('/update_datarun_config/<int:datarun_id>', methods=['POST'])
+def post_update_datarun_config(datarun_id):
+    """
+    Update the configuration of a datarun_id
+    Payload is a json similar to the following (all fields are optional):
+    {
+        configs: {  # Something similar to the run.yaml, fields inside configs are optional
+            methods: ['ada', ...],  # A list of method strings representing the valid methods
+            ...
+        },
+        hyperpartitions: [102, 103, ...],  # A list of the ids of that are active hyperpartitions
+        method_configs: {
+            'ada': {  # name of the method that you want to update config
+                "n_estimators": {  # name of the hyperparameter that you want to change range or value
+                    "type": "int",  # the type should be included to avoid invalid input
+                    "range": [25, 500]
+                },
+                ...
+            },
+            ...
+        }
+    }
+    """
+
+    update_json = request.get_json()
+    if 'configs' in update_json:
+        configs = update_json['configs']
+        with datarun_config(datarun_id) as run_config:
+            run_config.update_run_config(configs)
+    if 'hyperpartitions' in update_json:
+        hyperpartition_ids = update_json['hyperpartitions']
+        db = get_db()
+        try:
+            query = db.session.query(db.Hyperpartition)
+            query = query.filter(db.Hyperpartition.id.in_(hyperpartition_ids))
+            query = query.filter(db.Hyperpartition.status != PartitionStatus.GRIDDING_DONE)
+            query.update({db.Hyperpartition.status: PartitionStatus.INCOMPLETE}, synchronize_session=False)
+
+            query = db.session.query(db.Hyperpartition)
+            query = query.filter(db.Hyperpartition.id.notin_(hyperpartition_ids))
+            query = query.filter(db.Hyperpartition.status != PartitionStatus.GRIDDING_DONE)
+            query.update({db.Hyperpartition.status: PartitionStatus.ERRORED}, synchronize_session=False)
+
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
+
+    if 'method_configs' in update_json:
+        method_configs = update_json['method_configs']
+        for method, hp_update in method_configs.items():
+            try:
+                update_datarun_method_config(datarun_id, method, hp_update)
+            except ValueError as e:
+                raise ApiError(e, 400)
+
     return jsonify({'success': True})
