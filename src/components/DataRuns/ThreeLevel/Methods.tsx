@@ -1,0 +1,522 @@
+import * as React from "react";
+import { IClassifier, IMethod, IDatarun } from "types";
+import { getColor } from "helper";
+import * as methodsDef from "assets/methodsDef.json";
+
+const d3 = require("d3");
+
+export interface IProps {
+    datarun: IDatarun,
+    onSelectMethod: (methodName:string)=>void,
+    usedMethods: string[],
+    unusedMethods: string[]
+}
+
+
+
+export default class methods extends React.Component<IProps, {}>{
+    public gap = 15
+    public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
+    public methodBoxAttr = {
+        // width : 70,
+        height: this.height * 0.9,
+        width: this.height *1.1,
+        gap: this.gap,
+        x: 2*this.gap,
+        y: 2 * this.gap,
+        checkboxY: 2,
+        checkboxWidth: 75,
+        checkboxHeight: 30
+    }
+    public getbestperformance(list: IClassifier[]) {
+        if (list.length > 0) {
+            let classifierPerformance: number[] = list.map((classifier: IClassifier) => {
+                let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
+                return performance;
+            });
+            classifierPerformance.sort(function (a: any, b: any) {
+                return b - a;
+            });
+            return classifierPerformance[0];
+        } else {
+            return 0;
+        }
+
+    }
+    public getmaxnum(classifiers: IClassifier[]) {
+        let step = 0.1;
+        let data: number[] = [];
+
+        for (let i = 0; i <= 1 / step; i++) {
+            data.push(0)
+        }
+        let bestperformance = 0;
+        classifiers.forEach((classifier: IClassifier) => {
+            let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
+            if (performance > bestperformance) {
+                bestperformance = performance;
+            }
+            let rangeIdx = Math.floor(performance / step)
+            data[rangeIdx] = data[rangeIdx] + 1
+        });
+        let maxvalue = 0;
+        data.forEach((p: any) => {
+            if (p > maxvalue) {
+                maxvalue = p;
+            }
+        })
+        return maxvalue;
+    }
+    render() {
+        let { datarun, usedMethods, unusedMethods } = this.props
+
+        let performance = usedMethods.map((name: string, i: number) => {
+            return { value: this.getbestperformance(datarun[name]), name: name };
+        });
+        performance.sort(function (a: any, b: any) {
+            return b.value - a.value;
+        });
+        let sortedusedMethods = performance.map((d: any) => {
+            return d.name;
+        });
+        let maxnum = Math.max(
+            ...Object.values(datarun)
+                .map((d: IClassifier[]) => this.getmaxnum(d))
+        )
+        // // calculate the max num
+        // sortedusedMethods.forEach((name: string, i: number)=>{
+        //     let num = this.getmaxnum(datarun[name]);
+        //     if(num>maxnum){
+        //         maxnum=num;
+        //     }
+        // });
+        return <g className="methods" transform={`translate(0, ${this.gap})`}>
+            <text
+                textAnchor="middle"
+                x={this.methodBoxAttr.x + this.methodBoxAttr.width + this.gap}
+                y={this.gap}
+            >
+                Algorithms
+            </text>
+            <g className="usedMethods">
+                {sortedusedMethods.map((name: string, i: number) => {
+                    const methodDef = methodsDef[name];
+                    // let  testin = selectedMethodName.indexOf(name);
+                    let selected = false;
+                    // if (testin > -1) {
+                    //     selected = true;
+                    // }
+                    //const classifier_num = datarun[name].length;
+                    //const top_width = classifier_num*6+60;
+                    // this.index++;
+                    return (
+                        <LineChart key={name + "_used_" + i}
+                            // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
+                            // y={this.methodBoxAttr.y}
+                            x={
+                                this.methodBoxAttr.x +
+                                (i % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
+                            }
+                            y={
+                                this.methodBoxAttr.y +
+                                Math.floor(i / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                            }
+                            width={this.methodBoxAttr.width}
+                            height={this.methodBoxAttr.height}
+                            methodDef={methodDef}
+                            classifiers={datarun[name]}
+                            name={name}
+                            totallen={maxnum}
+                            onClick={this.props.onSelectMethod}
+                            selected={selected}
+                        />)
+
+                })}
+            </g>
+            <g className="unusedMethods">{
+                unusedMethods.map((name: string, i: number) => {
+                    let index = i + usedMethods.length;
+                    return (<g
+                        key={name + '_unused'}
+                        transform={`translate(
+                    ${
+                            this.methodBoxAttr.x +
+                            (index % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
+                            },
+                    ${
+                            this.methodBoxAttr.y +
+                            Math.floor(index / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                            }
+                )`}
+                    >
+                        <rect
+                            strokeDasharray="5,5"
+                            width={this.methodBoxAttr.width}
+                            height={this.methodBoxAttr.height}
+                            fill="white" strokeWidth={2} stroke="#E0D6D4" />
+                        <text
+                            x={this.methodBoxAttr.width}
+                            y={this.methodBoxAttr.height}
+                            textAnchor="end"
+                        >
+                            {name}
+                        </text>
+                    </g>)
+                })
+            } </g>
+        </g>
+    }
+}
+
+export interface LineChartProps {
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    methodDef: IMethod,
+    classifiers: IClassifier[],
+    name: string,
+    totallen?: number,
+    methodName?: string,
+    onClick:(a:string)=>void,
+    selected?: boolean,
+
+
+}
+
+class LineChart extends React.Component<LineChartProps, {}>{
+    TAG = "LineChart_";
+    componentDidMount() {
+        this.renderD3();
+    }
+    renderD3() {
+        // Get Datasets
+        const { methodDef, classifiers, totallen, selected } = this.props;
+        let step = 0.1;
+        let data: number[] = [];
+
+        for (let i = 0; i < 1 / step; i++) {
+            data.push(0)
+        }
+        let bestperformance = 0;
+        classifiers.forEach((classifier: IClassifier) => {
+            let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
+            if (performance > bestperformance) {
+                bestperformance = performance;
+            }
+            let rangeIdx = Math.floor(performance / step)
+            data[rangeIdx] = data[rangeIdx] + 1
+        });
+        let total = 0;
+        let bestindex = 0;
+        // let frequentindex = 0;
+        let maxfrequency = 0;
+        data.forEach((d: any, i: any) => {
+            if (d > 0 && i > bestindex) {
+                bestindex = i;
+            }
+            if (d > maxfrequency) {
+                // frequentindex=i;
+                maxfrequency = d;
+            }
+            total += d;
+        });
+        //total;
+        let yAxisData: string[] = []
+        for (let i = 0; i <= 1 / step; i++) {
+            yAxisData.push(`${(i * step).toFixed(2)}`)
+        }
+
+        // g
+        // Set the dimensions of the canvas / graph
+        //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
+        let margin = { top: 2, right: 2, bottom: 2, left: 2 },
+            width = this.props.width - margin.left - margin.right,
+            height = this.props.height - margin.top - margin.bottom,
+            top_margin = { top: this.props.y, left: this.props.x };
+
+        // Set the ranges
+        // let	xScale = d3.scaleLinear().range([0, width]);
+        let yScale = d3.scaleBand()
+            .rangeRound([height, 0])
+            .paddingInner(0.1);
+        let xScale = d3.scaleLinear().range([0, width]);
+
+
+        xScale.domain([0, totallen]);
+        yScale.domain(data.map((d, i) => i/10));
+        //Create SVG element
+        let tooltip = d3.select("#tooltip");
+        //let top_methods = d3.select("#methodstop");
+
+        if (tooltip.empty()) {
+            tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .attr("id", "tooltip")
+                .style("opacity", 0)
+                .style("left", "0px")
+                .style("top", "0px");;
+        }
+        let top_svg = d3.select("#" + this.TAG + this.props.name).attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
+            // .on("click",()=>{onClick(this.props.name)})
+            .on("mousemove", function (d: any) {
+
+                tooltip.transition()
+                    .duration(100)
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                tooltip.style("opacity", 0.7).html(methodDef.fullname + "<br/>" + "best performance:" + bestperformance.toFixed(2) + "<br/>" + "trial number:" + total)
+
+            })
+
+            .on("mouseout", function (d: any) {
+                tooltip
+                    .style("opacity", 0);
+            });;
+        top_svg.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("fill", "white")
+            .attr("stroke-width", 2)
+            .attr("stroke", selected ? "#A4A0A0" : "#E0D6D4")
+            .on('click', ()=>{
+                this.props.onClick(this.props.name)
+            })
+
+        let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+        // var line = d3.line()
+        // .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
+        // .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
+        // .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+
+        // function generateArray(index: number) {
+        //     let data: any[] = [];
+        //     data.push({ x: 0, y: index * step });
+        //     data.push({ x: totallen, y: index * step });
+        //     return data;
+        // }
+
+        // var straightline = d3.line()
+        //     .x(function (d: any, i: any) { return xScale(d.x); }) // set the x values for the line generator
+        //     .y(function (d: any, i: any) { return yScale(d.y); }) // set the y values for the line generator
+        // svg.append("path")
+        //     .datum(generateArray(bestindex))
+        //     .attr("class", "line")
+        //     .attr("fill", "none")
+        //     .attr("stroke", "#E0D6D4")
+        //     .attr("stroke-width", 2)
+        //     .attr("stroke-dasharray", "5,5")
+        //     .attr("d", straightline);
+        // svg.append("path")
+        //     .datum(generateArray(frequentindex))
+        //     .attr("class", "line")
+        //     .attr("fill","none")
+        //     .attr("stroke","#E0D6D4")
+        //     .attr("stroke-width",2)
+        //     .attr("stroke-dasharray","5,5")
+        //     .attr("d", straightline);
+        svg.selectAll('.methods_bar')
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "method_bar")
+            .style("fill", getColor(methodDef.name))
+            .attr("x", 0)
+            .attr("y", (d: any, i: number) => (
+                yScale(i/10) - yScale.bandwidth() / 2
+            ))
+            .attr("width", (d: any) => xScale(d))
+            .attr("height", yScale.bandwidth())
+
+        svg.append("text")
+            .attr("class", "hp_name")
+            .attr('x', width)
+            .attr('y', height)
+            .attr('text-anchor', "end")
+            .text(`${this.props.name}: ${classifiers.length}`)
+
+        // // Add the X Axis
+        // svg.append("g")
+        //     .attr("transform", "translate(0," + height + ")")
+        //     .call(d3.axisBottom(xScale));
+
+        // Add the Y Axis
+        svg.append("g")
+            .attr('transform', `translate(${-margin.left}, 0)`)
+            .call(d3.axisLeft(yScale).ticks(3))
+    }
+    render() {
+        const { name } = this.props;
+        return <g id={this.TAG + name} />
+    }
+}
+
+// class LineChart2 extends React.Component<LineChartProps, {}>{
+//     TAG = "LineChart_";
+//     componentDidMount() {
+//         this.renderD3();
+//     }
+//     renderD3() {
+//         // Get Datasets
+//         const { methodDef, classifiers,totallen,selected } = this.props;
+//         let step = 0.1;
+//         let data:number[] = [];
+
+//         for (let i =0; i<=1/step; i++){
+//             data.push(0)
+//         }
+//         let bestperformance = 0;
+//         classifiers.forEach((classifier:IClassifier)=>{
+//             let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
+//             if(performance>bestperformance){
+//                 bestperformance=performance;
+//             }
+//             let rangeIdx = Math.floor(performance/step)
+//             data[rangeIdx] = data[rangeIdx]+1
+//         });
+//         let total = 0;
+//         let bestindex = 0;
+//         // let frequentindex = 0;
+//         // let maxfrequency = 0;
+//         data.forEach((d:any,i:any)=>{
+//             if(d>0&&i>bestindex){
+//                 bestindex=i;
+//             }
+//             // if(d>maxfrequency){
+//             //     // frequentindex=i;
+//             //     maxfrequency=d;
+//             // }
+//             total+=d;
+//         });
+//         //total;
+//         let yAxisData:string[] = []
+//         for (let i =0; i<=1/step; i++){
+//             yAxisData.push(`${(i*step).toFixed(2)}`)
+//         }
+
+//         // g
+//         // Set the dimensions of the canvas / graph
+//         //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
+//         let	margin = {top: 1, right: 1, bottom: 1, left: 1},
+//             width = this.props.width - margin.left - margin.right,
+//             height = this.props.height - margin.top - margin.bottom,
+//             top_margin = {top:this.props.y,left:this.props.x};
+
+//         // Set the ranges
+//         let	xScale = d3.scaleLinear().range([0, width]);
+//         let	yScale = d3.scaleLinear().range([height, 0]);
+
+
+//         xScale.domain([0, totallen]);
+//         yScale.domain([0, 1]);
+//         //Create SVG element
+//         let tooltip = d3.select("#tooltip");
+//         //let top_methods = d3.select("#methodstop");
+
+//         if(tooltip.empty()){
+//             tooltip = d3.select("body").append("div")
+//             .attr("class", "tooltip")
+//             .attr("id","tooltip")
+//             .style("opacity", 0)
+//             .style("left",  "0px")
+//               .style("top",  "0px");;
+//         }
+//         let top_svg = d3.select("#"+this.TAG+this.props.name).attr("width", width + margin.left + margin.right)
+//         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
+//         // .on("click",()=>{onClick(this.props.name)})
+//         .on("mousemove", function(d:any) {
+
+//             tooltip.transition()
+//               .duration(100)
+//               .style("left", (d3.event.pageX) + "px")
+//               .style("top", (d3.event.pageY - 28) + "px");
+//               tooltip.style("opacity", 0.7).html(methodDef.fullname+"<br/>"+"best performance:"+bestperformance.toFixed(2) + "<br/>" + "trial number:"+total)
+
+//             })
+
+//           .on("mouseout", function(d:any) {
+//             tooltip
+//               .style("opacity", 0);
+//             });;
+//         top_svg.append("rect")
+//         .attr("x",0)
+//         .attr("y",0)
+//         .attr("width", width + margin.left + margin.right)
+//         .attr("height",height + margin.top + margin.bottom)
+//         .attr("fill","white")
+//         .attr("stroke-width",2)
+//         .attr("stroke",selected?"#A4A0A0":"#E0D6D4")
+//         ;
+//         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+//         let line = d3.line()
+//         .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
+//         .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
+//         .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+//         let area = d3.area()
+//         .y(function(d:any) { return yScale(d) })
+//         .x0(0)
+//         .x1(function(d:any) { return xScale(d); })
+
+//         console.info(area, line)
+
+//         function generateArray(index:number){
+//             let data:any[] = [];
+//             data.push({x:0,y:index*step});
+//             data.push({x:totallen,y:index*step});
+//             return data;
+//         }
+
+//         var straightline = d3.line()
+//             .x(function(d:any, i:any) { return xScale(d.x); }) // set the x values for the line generator
+//             .y(function(d:any,i:any) { return yScale(d.y); }) // set the y values for the line generator
+//         svg.append("path")
+//             .datum(generateArray(bestindex))
+//             .attr("class", "line")
+//             .attr("fill","none")
+//             .attr("stroke","#E0D6D4")
+//             .attr("stroke-width",2)
+//             .attr("stroke-dasharray","5,5")
+//             .attr("d", straightline);
+//         // svg.append("path")
+//         //     .datum(generateArray(frequentindex))
+//         //     .attr("class", "line")
+//         //     .attr("fill","none")
+//         //     .attr("stroke","#E0D6D4")
+//         //     .attr("stroke-width",2)
+//         //     .attr("stroke-dasharray","5,5")
+//         //     .attr("d", straightline);
+//         svg.append("path")
+//             .datum(data)
+//             .attr("class", "line")
+//             .attr("fill","none")
+//             .attr("stroke",getColor(methodDef.name))
+//             .attr("stroke-width",2)
+//             .attr("d", line);
+
+//         // svg.append("path")
+//         //     .datum(data)
+//         //     .attr("class", "line")
+//         //     .attr("fill",getColor(methodDef.name))
+//         //     .attr("d", area);
+
+//         svg.append("text")
+//             .attr("class", "hp_name")
+//             .attr('x', width)
+//             .attr('y', height)
+//             .attr('text-anchor', "end")
+//             .text(this.props.name)
+//       }
+//     render() {
+//         const {name}=this.props;
+//         return <g id={this.TAG+name}/>
+//     }
+// }
