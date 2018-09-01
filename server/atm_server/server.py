@@ -53,7 +53,6 @@ def create_app(config=None):
 
     db.init_app(app)
     app.register_blueprint(api, url_prefix='/api')
-    print(app.config)
     return app
 
 
