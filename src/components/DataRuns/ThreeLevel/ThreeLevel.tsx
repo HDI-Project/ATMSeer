@@ -46,8 +46,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             .filter(
                 (name: string) => usedMethods.indexOf(name) < 0
             )
-        hyperpartitions = hyperpartitions.filter(d=>d.method==selectedMethod)
-        classifiers = classifiers.filter(d=>d.method==selectedMethod)
         let svgWidth = window.innerWidth*5/6
         return <div
             style={{
@@ -76,6 +74,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
                 // datarun={datarun}
+                selectedMethod={selectedMethod}
                 classifiers={classifiers}
                 />
             </g>
@@ -84,7 +83,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 textAnchor="middle"
                 x={svgWidth/6}
                 y={10}
-            >HyperParameters</text>
+            >HyperParameters of {selectedMethod}</text>
             <HyperParameters classifiers={classifiers} selectedMethod={selectedMethod}/>
             </g>
             </svg>

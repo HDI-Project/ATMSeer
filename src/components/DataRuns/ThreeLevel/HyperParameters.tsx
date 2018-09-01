@@ -13,7 +13,9 @@ const d3 = require("d3");
 
 export default class HyperParameters extends React.Component<IProps, {}>{
     render() {
+        console.info('should render hyperparameter', this.props.selectedMethod)
         let { classifiers, selectedMethod } = this.props
+        classifiers = classifiers.filter(d=>d.method==selectedMethod)
         if (selectedMethod) {
             let HyperparameterList: any[] = [];
             let idx = 0
@@ -81,8 +83,12 @@ class HyperParameter extends React.Component<HyProps, {}>{
     componentDidMount() {
         this.renderD3();
     }
-    componentWillUnmount() {
-        // d3.select("#" + this.TAG + this.props.idx).remove()
+    // componentWillUnmount() {
+    //     // d3.select("#" + this.TAG + this.props.idx).remove()
+    // }
+    componentDidUpdate(){
+        d3.select("#" + this.TAG + this.props.idx).selectAll('*').remove()
+        this.renderD3()
     }
     renderD3() {
         let { box, hp, classifiers, idx } = this.props

@@ -8,6 +8,7 @@ const d3 = require("d3");
 export interface IProps{
     hyperpartitions: IHyperpartitionInfo[],
     // datarun: IDatarun,
+    selectedMethod: string,
     classifiers: IClassifierInfo[]
 }
 export default class HyperPartitions extends React.Component<IProps, {}>{
@@ -16,9 +17,10 @@ export default class HyperPartitions extends React.Component<IProps, {}>{
         gap: 20,
         width: 180
     }
-    public generateCurve(){
+    public renderD3(){
         let {hpsInfo, maxLen} = this.sortHpByperformance()
         let {height, width, gap} = this.hyperpartitionBox
+
         let g = d3.select('.HyperPartitions')
         // let x = d3.scaleLinear()
         //         .rangeRound([0, width]);
@@ -40,12 +42,10 @@ export default class HyperPartitions extends React.Component<IProps, {}>{
 
         let hpLine = g.selectAll(".hpLine")
         .data(hpsInfo)
+        console.info('hpline', hpLine)
 
         hpLine.enter().append("g")
         .attr("class", "hpLine")
-        .merge(hpLine)
-
-        hpLine.exit().remove()
 
         let hpGroup = hpLine.append("g")
             .attr("transform",
@@ -133,7 +133,7 @@ export default class HyperPartitions extends React.Component<IProps, {}>{
         // .attr('x', (d:any)=>width*d.scores.length/maxLen)
         .attr('x', width+ 2)
         .attr('y', height)
-        .text( (d:any)=>d.bestScore.toFixed(3))
+        .text( (d:any)=>d.bestScore>0?d.bestScore.toFixed(3):'')
 
         hpGroup.append('g')
         .attr('transform', `translate(${0}, ${height})`)
@@ -163,7 +163,9 @@ export default class HyperPartitions extends React.Component<IProps, {}>{
     }
 
     public sortHpByperformance(){
-        let {hyperpartitions:hps,classifiers:cls} = this.props
+        let {hyperpartitions:hps,classifiers:cls, selectedMethod} = this.props
+        cls = cls.filter(d=>d.method==selectedMethod)
+        hps = hps.filter(d=>d.method==selectedMethod)
         let hpsInfo = hps.map(hp=>{
             let filteredCls = cls
                     .filter(
@@ -185,11 +187,16 @@ export default class HyperPartitions extends React.Component<IProps, {}>{
         return {hps, hpsInfo, maxLen}
     }
     componentDidMount(){
-        this.generateCurve()
+        this.renderD3()
     }
-    shouldComponentUpdate(){
-        this.generateCurve()
-        return false
+    // shouldComponentUpdate(){
+    //     console.info('should render hyperpartition', this.props.selectedMethod)
+    //     this.renderD3()
+    //     return false
+    // }
+    componentDidUpdate(){
+        d3.select('.HyperPartitions').selectAll('*').remove()
+        this.renderD3()
     }
     render(){
 

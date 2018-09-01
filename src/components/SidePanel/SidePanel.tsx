@@ -30,7 +30,7 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
             <div className="side-panel" style={{overflowY:"hidden"}}>
                 <DataSelector {...this.props} />
                 <Tabs
-                    defaultActiveKey="1"
+                    defaultActiveKey="2"
                 >
                     <TabPane tab="Data" key="1">
                         <DataView datarunID={this.props.datarunID} />

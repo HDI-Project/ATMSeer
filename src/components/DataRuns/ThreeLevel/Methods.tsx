@@ -47,7 +47,7 @@ export default class methods extends React.Component<IProps, {}>{
         let step = 0.1;
         let data: number[] = [];
 
-        for (let i = 0; i <= 1 / step; i++) {
+        for (let i = 0; i < 1 / step; i++) {
             data.push(0)
         }
         let bestperformance = 0;
@@ -230,7 +230,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
         // g
         // Set the dimensions of the canvas / graph
         //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
-        let margin = { top: 2, right: 2, bottom: 2, left: 2 },
+        let margin = { top: 0, right: 2, bottom: 0, left: 2 },
             width = this.props.width - margin.left - margin.right,
             height = this.props.height - margin.top - margin.bottom,
             top_margin = { top: this.props.y, left: this.props.x };
@@ -321,7 +321,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
         //     .attr("stroke-width",2)
         //     .attr("stroke-dasharray","5,5")
         //     .attr("d", straightline);
-        svg.selectAll('.methods_bar')
+        svg.selectAll('.method_bar')
             .data(data)
             .enter()
             .append("rect")
@@ -329,7 +329,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .style("fill", getColor(methodDef.name))
             .attr("x", 0)
             .attr("y", (d: any, i: number) => (
-                yScale(i/10) - yScale.bandwidth() / 2
+                yScale(i/10)
             ))
             .attr("width", (d: any) => xScale(d))
             .attr("height", yScale.bandwidth())
@@ -349,7 +349,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
         // Add the Y Axis
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale).ticks(3))
+            .call(d3.axisLeft(yScale).ticks(0, 1, 0.2))
     }
     render() {
         const { name } = this.props;
