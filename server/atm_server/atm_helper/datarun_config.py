@@ -232,10 +232,6 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
         {hp: {'type': ..., 'range': ...}})
     """
     assert isinstance(hyperparameter_configs, dict)
-    print("update_datarun_method_config")
-    print(datarun_id)
-    print(method)
-    print(hyperparameter_configs)
     config = load_datarun_method_config(datarun_id, method)
     hyperparmeters = config['hyperparameters']
     for hp, val in hyperparameter_configs.items():
@@ -265,17 +261,12 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
         # query = query.filter(db.Hyperpartition.tunable_hyperparameters_64 != object_to_base_64(part.tunables))
 
         hps = list(query.all())
-        print(hps)
-        print(str(part.tunables))
-        print(base_64_to_object(object_to_base_64(part.tunables)))
         if len(hps) == 1:
             hp = hps[0]
             hp.tunables = part.tunables
         elif len(hps) > 1:
             raise ValueError('Multiple hyperpartitions found!')
     db.session.commit()
-    print("update_datarun_method_config end")
-
 
 
 
