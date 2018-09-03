@@ -8,7 +8,7 @@ from flask import current_app
 from sqlalchemy.exc import IntegrityError
 import atm
 from atm.method import Method
-from atm.utilities import object_to_base_64
+from atm.utilities import object_to_base_64, base_64_to_object
 from atm.constants import METHODS_MAP, PartitionStatus
 from atm.config import RunConfig
 
@@ -176,6 +176,10 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
         {hp: {'type': ..., 'range': ...}})
     """
     assert isinstance(hyperparameter_configs, dict)
+    print("update_datarun_method_config")
+    print(datarun_id)
+    print(method)
+    print(hyperparameter_configs)
     config = load_datarun_method_config(datarun_id, method)
     hyperparmeters = config['hyperparameters']
     for hp, val in hyperparameter_configs.items():
@@ -186,9 +190,9 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
                 hp, hyperparmeters[hp]['type'], val['type']))
         hyperparmeters[hp] = val
 
+    save_datarun_method_config(datarun_id, method, config)
     _method = Method(method)
     parts = _method.get_hyperpartitions()
-    save_datarun_method_config(datarun_id, method, config)
 
     db = get_db()
     for part in parts:
@@ -204,12 +208,17 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
         query = query.filter(db.Hyperpartition.tunable_hyperparameters_64 != object_to_base_64(part.tunables))
 
         hps = list(query.all())
+        print(hps)
+        print(str(part.tunables))
+        print(base_64_to_object(object_to_base_64(part.tunables)))
         if len(hps) == 1:
             hp = hps[0]
             hp.tunables = part.tunables
         elif len(hps) > 1:
             raise ValueError('Multiple hyperpartitions found!')
     db.session.commit()
+    print("update_datarun_method_config end")
+
 
 
 class datarun_config:
