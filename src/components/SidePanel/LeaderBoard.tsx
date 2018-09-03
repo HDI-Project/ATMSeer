@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Collapse, Tag, Progress  } from 'antd';
 import { IDatarunStatusTypes } from 'types';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IHyperpartitionInfo, getHyperpartitions } from 'service/dataService';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun } from 'service/dataService';
+// import { IHyperpartitionInfo, getHyperpartitions}  from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
 // import LineChart from './LineChart';
@@ -19,21 +20,25 @@ export interface IDatarunSummary {
     nTried: number;
     topClassifiers: IClassifierInfo[];
     nTriedByMethod: { [method: string]: number };
+    triedHyperpartition: number[]
 }
 
 export function computeDatarunSummary(classifiers: IClassifierInfo[]): IDatarunSummary {
     // This need to fix to support other metric?
     classifiers = [...classifiers];
     classifiers.sort((a, b) => -a.cv_metric + b.cv_metric);
-    const nTriedByMethod = {};
+    let nTriedByMethod = {};
+    let triedHyperpartition = []
     classifiers.forEach(c => {
         const nTried = nTriedByMethod[c.method];
         nTriedByMethod[c.method] = nTried ? nTried + 1 : 1;
     });
+    triedHyperpartition = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)))
     return {
         nTried: classifiers.length,
         topClassifiers: classifiers.slice(0, TOP_K),
-        nTriedByMethod
+        nTriedByMethod,
+        triedHyperpartition,
     };
 }
 
@@ -80,7 +85,8 @@ export interface LeaderBoardProps {
 
 export interface LeaderBoardState {
     datarunInfo: IDatarunInfo | null;
-    hyperpartitions: IHyperpartitionInfo[];
+    // hyperpartitions: IHyperpartitionInfo[];
+    // hyperpartitionStrings: string[];
     summary: IDatarunSummary | null;
     // scores: {[id: string]: number}[];
 }
@@ -93,7 +99,8 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         this.state = {
             summary: null,
             datarunInfo: null,
-            hyperpartitions: [],
+            // hyperpartitions: [],
+            // hyperpartitionStrings: []
             // scores: [],
         };
     }
@@ -101,7 +108,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         const { datarunID } = this.props;
         if (datarunID === null) return;
         getClassifiers(datarunID).then(classifiers => {
-            // console.log(classifiers);
+            console.log('classifiers', classifiers);
             this.setState({ summary: computeDatarunSummary(classifiers) });
         });
         // getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
@@ -110,16 +117,22 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                 this.setState({ datarunInfo });
                 this.props.setDatarunStatus(datarunInfo.status);
             });
-            getHyperpartitions().then(hyperpartitions => {
-                // console.log(hyperpartitions);
-                if (Array.isArray(hyperpartitions))
-                   {
-                       hyperpartitions=hyperpartitions.filter(d=>d.datarun_id==datarunID)
-                       this.setState({ hyperpartitions });
-                   }
-                else
-                    console.error('The fetched hyperpartitions should be an array!');
-            });
+            // getHyperpartitions().then(hyperpartitions => {
+            //     // console.log(hyperpartitions);
+            //     if (Array.isArray(hyperpartitions))
+            //        {
+            //             hyperpartitions = hyperpartitions.filter(d=>d.datarun_id==datarunID)
+            //            let hyperpartitionStrings=Array.from(
+            //                new Set(
+            //                    hyperpartitions.map(d=>d.hyperpartition_string)
+            //                 )
+            //             )
+
+            //            this.setState({ hyperpartitionStrings, hyperpartitions });
+            //        }
+            //     else
+            //         console.error('The fetched hyperpartitions should be an array!');
+            // });
         }
     }
     public startOrStopUpdateCycle() {
@@ -146,16 +159,17 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
     }
     public render() {
 
-        const { summary, datarunInfo, hyperpartitions} = this.state
-        // const {scores, hyperpartitions } = this.state;
-        const methods = Array.from(new Set(hyperpartitions.map(d=>d.method)))
+        const { summary, datarunInfo} = this.state
         const best = summary ? summary.topClassifiers[0] : undefined;
+        let methods_num = summary?Object.keys(summary.nTriedByMethod).length:0
+        let hp_num = summary?summary.triedHyperpartition.length:0
         const progressAlgorithm = (percent:number)=>{
-            return `${methods.length}/14`
+            return `${methods_num}/14`
         }
         const progressHyperpartiton = (percent:number)=>{
-            return `${hyperpartitions.length}/172`
+            return `${hp_num}/172`
         }
+
         return summary ? (
             <div >
                 <div>
@@ -182,7 +196,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <b>Algorithm Coverage</b>:{' '}
                         <Progress
                         type="circle"
-                        percent={100*methods.length/14}
+                        percent={100*methods_num/14}
                         format={progressAlgorithm}
                         width={40}
                         strokeWidth={10}
@@ -191,7 +205,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <b>Hyperpartitions Coverage</b>:{' '}
                         <Progress
                         type="circle"
-                        percent={100*hyperpartitions.length/172}
+                        percent={100*hp_num/172}
                         format={progressHyperpartiton}
                         width={40}
                         strokeWidth={10}

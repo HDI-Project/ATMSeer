@@ -7,6 +7,8 @@ import warnings
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
 import atm
+from atm.method import Method
+from atm.utilities import object_to_base_64
 from atm.constants import METHODS_MAP, PartitionStatus
 from atm.config import RunConfig
 
@@ -51,7 +53,7 @@ def load_datarun_config_dict(datarun_id=None):
     with open(config_path) as f:
         run_args = yaml.load(f)
     return run_args
-    
+
 def load_datarun_config(datarun_id=None):
     """
     Load the run config (i.e., run.yaml) of a datarun.
@@ -76,7 +78,6 @@ def update_datarun_config(datarun_id, config):
     Note: new methods will not be added (If they are not exist in the config when the datarun is created)
     :param datarun_id:
     :param config:
-    :return: True if update success, False if update failed
     """
 
     # Now update the fields in db so that configs really changes
@@ -86,8 +87,11 @@ def update_datarun_config(datarun_id, config):
         datarun = db.get_datarun(datarun_id)
         # describe the datarun by its tuner and selector
         myconfig = copy.deepcopy(config)
-        myconfig["description"] = '__'.join([myconfig["tuner"], myconfig["selector"]])
-        myconfig["score_target"] = myconfig["score_target"] + '_judgment_metric'
+        tuner = myconfig.get("tuner", datarun.tuner)
+        selector = myconfig.get("selector", datarun.selector)
+        myconfig["description"] = '__'.join([tuner, selector])
+        if "score_target" in myconfig:
+            myconfig["score_target"] = myconfig["score_target"] + '_judgment_metric'
         for key, val in myconfig.items():
             if val is None:
                 continue
@@ -160,7 +164,7 @@ def load_datarun_method_config(datarun_id, method=None):
 def save_datarun_method_config(datarun_id, method, config):
     """Save the config of a method of a datarun"""
     config_path = get_datarun_config_path(datarun_id, method)
-    with open(config_path) as f:
+    with open(config_path, 'w') as f:
         json.dump(config, f)
 
 
@@ -182,7 +186,30 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
                 hp, hyperparmeters[hp]['type'], val['type']))
         hyperparmeters[hp] = val
 
+    _method = Method(method)
+    parts = _method.get_hyperpartitions()
     save_datarun_method_config(datarun_id, method, config)
+
+    db = get_db()
+    for part in parts:
+        # if necessary, create a new datarun for each hyperpartition.
+        # This setting is useful for debugging.
+
+        # create a new hyperpartition in the database
+        query = db.session.query(db.Hyperpartition).filter(db.Hyperpartition.datarun_id == datarun_id)
+        query = query.filter(db.Hyperpartition.method == method)
+        # We assume that the categorical and constants are fixed
+        query = query.filter(db.Hyperpartition.categorical_hyperparameters_64 == object_to_base_64(part.categoricals))
+        query = query.filter(db.Hyperpartition.constant_hyperparameters_64 == object_to_base_64(part.constants))
+        query = query.filter(db.Hyperpartition.tunable_hyperparameters_64 != object_to_base_64(part.tunables))
+
+        hps = list(query.all())
+        if len(hps) == 1:
+            hp = hps[0]
+            hp.tunables = part.tunables
+        elif len(hps) > 1:
+            raise ValueError('Multiple hyperpartitions found!')
+    db.session.commit()
 
 
 class datarun_config:

@@ -46,7 +46,7 @@ export interface ChartProps {
     methodName?:string,
     onClick:(a:string)=>void,
     selected?:boolean,
-    
+
 
 }
 export interface DetailChartProps{
@@ -64,7 +64,7 @@ export interface DetailChartProps{
     hintRange:number[],
     onSelectedChange:(method:string,name:string,range:number[])=>void,
     valueType:string
-    
+
 }
 export interface HyperpartitionHeatmapProps{
     width: number,
@@ -77,7 +77,7 @@ export interface HyperpartitionHeatmapProps{
     totallen?:number,
     methodName?:string,
     onClick:(a:string)=>void,
-    selected?:boolean,    
+    selected?:boolean,
     hpname:string,
     methodSelected:boolean
 }
@@ -98,10 +98,10 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             hyperparametersRangeSelected:[],
             hyperparametersRangeAlreadySelected:{}
         };
-        
+
     }
     index = 0;  // global component key index
-    
+
     displayMethod = [];
     allMethods = [];
     onMethodsOverViewClick = (Methods:string)=>{
@@ -112,10 +112,10 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         if (i > -1) {
             selectedMethodName.splice(i, 1);
             this.setState({selectedMethodName : selectedMethodName});
-            
+
         }else{
             selectedMethodName.push(Methods);
-            
+
             //if(this.state.mode==0||this.state.mode==2){
                 this.setState({
                     mode : 1,
@@ -130,7 +130,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
            // }
         }
 
-        
+
     };
     onHyperpartitionsOverViewClick = (HyperpatitionName:string)=>{
         //alert("onclick "+HyperpatitionName);
@@ -152,12 +152,12 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         }else{
             return 0;
         }
-        
+
     }
     public getmaxnum(classifiers:IClassifier[]){
         let step = 0.1;
         let data:number[] = [];
-        
+
         for (let i =0; i<=1/step; i++){
             data.push(0)
         }
@@ -200,7 +200,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
        // width = 1757 (0.82)
        // height = 820 (0.78)
        // totalwidth = 2133
-       // totalheight = 1047 
+       // totalheight = 1047
       // const d3 = require("d3");
        //console.log("methodstop width height");
        //console.log(d3.select("#methodstop"));
@@ -237,11 +237,11 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 configsMethod:configsMethod
             });
 
-            
+
         }
     }
 
-    
+
     createNewDataRun = () => {
         // get configs from server ;
         // submit configs in this view
@@ -273,7 +273,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         console.log(error);
                         message.error("Submit Configs Failed.");
                         this.setState({ loading: false});
-                
+
                     });
                 })
                 .catch(error => {
@@ -309,7 +309,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     configs.methods = methods;
                     configs.budget = budget;
                     this.setState({ loading: true });
-                    
+
                     let submitconfigs : IUpdateDatarunConfig = {};
                     submitconfigs.configs = configs;
                     let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
@@ -327,7 +327,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         console.log(error);
                         message.error("Update Configs Failed.");
                         this.setState({ loading: false});
-                
+
                     });
                 })
                 .catch(error => {
@@ -336,7 +336,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 }
        }
        onBudgetChange = (budget : any) =>{
-       
+
         this.setState({configsBudget:budget});
       }
 
@@ -360,14 +360,14 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
          }
          if(update){
             hyperparametersRangeAlreadySelected[methodname][hpaName]=range;
-           
+
             this.setState({
                 hyperparametersRangeSelectedName : hpaName,
                 hyperparametersRangeSelected : range,
                 hyperparametersRangeAlreadySelected : hyperparametersRangeAlreadySelected
             })
          }
-         
+
       }
     public render() {
         // const methodLen = Object.keys(methodsDef).length
@@ -380,7 +380,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
         const d3 = require("d3");
         let bodyAttr = d3.select("body").node().getBoundingClientRect();
         let topheight = (bodyAttr.height-10) * 0.75;
-        
+
         let topwidth = bodyAttr.width * 0.80;
         let methodnumber =  Object.keys(methodsDef).length;
         // Default Attr:
@@ -454,13 +454,13 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     return par_dict[k] = v
                 })
                 // for the hidden layer sizes in MLP
-    
+
                 if (par_dict['len(hidden_layer_sizes)']) {
                     for (let i = parseInt(par_dict['len(hidden_layer_sizes)']); i < 3; i++) {
                         par_dict[`hidden_layer_sizes[${i}]`] = 0
                     }
                 }
-    
+
                 // add perforamce
                 par_dict['performance'] = parseFloat(classifier['performance'].split(' +- '))
                 let ScatterPlotCategory : any[] = [methodDef.fullname];
@@ -487,7 +487,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 }
                 hyperpartition2hpid[HyperpartitionName] = parseInt(classifier["hyperpartitionID"]);
             }
-            )); 
+            ));
         });
         console.log("id mapping");
         console.log(hyperpartition2hpid);
@@ -521,8 +521,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 });
             }
         }
-        
-            
+
+
         if(mode==2){
             const methodDef = methodsDef[hyperpartition2Method[selectedHyperpartitionName]];
             if(!methodDef||!hyperpartitionData[selectedHyperpartitionName]){
@@ -541,7 +541,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
 
         // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methodsDef should be obtained by requesting server the config file
         const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
-        
+
         let hpname :string[]= [];
         usedMethods.forEach((name: string, i: number) =>{
             hpname = hpname.concat(Method2hyperpartition[name]);
@@ -576,7 +576,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let rectheight = 5;
                 let verticalnum = Math.floor((hpheight-hpmargin)/(rectheight+1));
 
-                    // horizontalnum should be set to be Math.ceil(num/verticalnum) 
+                    // horizontalnum should be set to be Math.ceil(num/verticalnum)
                     //let horizontalnum = Math.floor(width/(rectwidth+1));
                 let hpname :string[]= [];
                 usedMethods.forEach((name: string, i: number) =>{
@@ -591,11 +591,11 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let sortedhpname = performance.map((d:any)=>{
                     return d.name;
                 });
-                
+
                 let pathgenerator:any[] = [];
                 let array = sortedhpname.map((name: string, i: number) => {
                     let selected = selectedHyperpartitionName===name;
-                    
+
                     nowx+=lastwidth;lastwidth=0;
                     const selectedMethod = hyperpartition2Method[name];
                     const methodDef = methodsDef[selectedMethod];
@@ -632,18 +632,18 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             })
                         }
                     }
-                    
-                return (<HyperpartitionHeatmap 
-                    key={name+"_used_"+(++this.index)} 
-                    x={nowx} 
-                    y={nowy} 
-                    width={hpwidth} 
-                    height={hpheight} 
-                    methodDef={methodDef} 
-                    classifiers={hyperpartitionData[name]} 
-                    name={"hp"+this.index} 
+
+                return (<HyperpartitionHeatmap
+                    key={name+"_used_"+(++this.index)}
+                    x={nowx}
+                    y={nowy}
+                    width={hpwidth}
+                    height={hpheight}
+                    methodDef={methodDef}
+                    classifiers={hyperpartitionData[name]}
+                    name={"hp"+this.index}
                     hpname={name}
-                    totallen={totallen} 
+                    totallen={totallen}
                     selected={selected}
                     onClick={this.onHyperpartitionsOverViewClick}
                     methodSelected={methodselected}/>);
@@ -651,8 +651,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let array2 = pathgenerator.map((node: any, i: number) => {
                         let mean_y = (node.y1 + node.y2) / 2;
                         let pathlang = "M"+node.x1+","+node.y1+"C"+node.x1+","+mean_y+" "+node.x2+","+mean_y+" "+node.x2+","+node.y2;
-                        return (<path key={"_path_"+(++this.index)}  
-                        d={pathlang} 
+                        return (<path key={"_path_"+(++this.index)}
+                        d={pathlang}
                         stroke={node.color}
                         fill="none"
                         strokeWidth={1.5} />);
@@ -662,8 +662,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 return <g />
             }
         };
-        // end of generate Hp 
-        
+        // end of generate Hp
+
         let generateHpdetail = ()=>{
             if(mode==2||mode==1){
                 console.log("show detail");
@@ -678,7 +678,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let HyperparameterList: any[] = [];
                 let idx = 0
                 let rangeMap : any ={};
-                
+
                 let hintRangeMap : any ={};
                 // hyperparameter analysis
                 methodDef.root_hyperparameters.forEach((p: string) => {
@@ -690,10 +690,10 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         } else { // range in the form of [max]
                             HyperparameterList.push({ dim: idx, name: p, type: 'value', min: 0, max: parameter['range'][0] ,valueType :parameter['type']})
                         }
-        
+
                     } else if (parameter['type'] == 'list') { // the hidden layer sizes in MLP
                         for (let hidden_l = 0; hidden_l < parameter['list_length'].length; hidden_l++) {
-        
+
                             HyperparameterList.push({
                                 dim: idx + hidden_l, name: `${p}[${hidden_l}]`, type: 'value',
                                 min: 0,
@@ -702,7 +702,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             })
                         }
                         idx = idx + parameter['list_length'].length - 1
-        
+
                     } else {
                         HyperparameterList.push({
                             dim: idx, name: p, type: 'value',valueType :parameter['type']
@@ -724,19 +724,19 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         return par_dict[k] = v
                     })
                     // for the hidden layer sizes in MLP
-        
+
                     if (par_dict['len(hidden_layer_sizes)']) {
                         for (let i = parseInt(par_dict['len(hidden_layer_sizes)']); i < 3; i++) {
                             par_dict[`hidden_layer_sizes[${i}]`] = 0
                         }
                     }
-        
+
                     // add perforamce
                     par_dict['performance'] = parseFloat(classifier['performance'].split(' +- '));
                     let performance = parseFloat(classifier['performance'].split(' +- ')[0])
                     //let trailID : number = classifier['trail ID'];
                     let hpaSelect : boolean = true;
-                    
+
                     let filterRange = hyperparametersRangeAlreadySelected[methodDef.name];
                     if(filterRange){
                         let filterkeys = Object.keys(filterRange);
@@ -749,7 +749,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                         if(filterRange[name].length==2){
                                             let hpamin = filterRange[name][0];
                                             let hpamax = filterRange[name][1];
-                                            
+
                                             if(data<hpamin||data>hpamax){
                                                 hpaSelect = false;
                                             }
@@ -762,7 +762,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         }  else{
                             hpaSelect=false;
                         }
-                        
+
                     }else{
                         hpaSelect = false;
                     }
@@ -774,7 +774,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             }
                             let thisvalue = parseFloat(value);
                             hyperparameterData[p.name].push({value:thisvalue,performance:performance,selected:selected});
-                            
+
                             // calculate hint
                             if(hpaSelect){
                                 if(!hintRangeMap[p.name]){
@@ -795,11 +795,11 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             //return value;
                         }
                     })
-                    
+
                 }
                // Calculate the display data.
                 Method2hyperpartition[selectedMethod].forEach((value:string,index:number)=>{
-                    
+
                     if(value==selectedHyperpartitionName||mode==1){
                         hyperpartitionData[value].forEach(((classifier: IClassifier, idx: number) => {
                             pushData(classifier,idx,true);
@@ -811,7 +811,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         }
                         ));
                     }
-                    
+
                 })
                 let keys = Object.keys(hyperparameterData);
                 let nowy = methodBoxAttr.y+methodBoxAttr.height+methodBoxAttr.gap+HeatmapAttr.topgap+HeatmapAttr.height
@@ -824,36 +824,36 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         }
                     }
                     let nowx = methodBoxAttr.x+DetailChartAttr.left+(DetailChartAttr.width+DetailChartAttr.horizontalgap)*index;
-                   
-                    return (<DotBarChart x={nowx} 
-                        y={nowy} 
-                        width={DetailChartAttr.width} 
-                        height={DetailChartAttr.height} 
+
+                    return (<DotBarChart x={nowx}
+                        y={nowy}
+                        width={DetailChartAttr.width}
+                        height={DetailChartAttr.height}
                         min={rangeMap[name].min}
                         max={rangeMap[name].max}
                         valueType={rangeMap[name].valueType}
-                        methodDef={methodDef} 
-                        classifiers={hyperparameterData[name]} 
+                        methodDef={methodDef}
+                        classifiers={hyperparameterData[name]}
                         hyname={name}
                         alreadySelectedRange={alreadySelectedRange}
                         hintRange={hintRangeMap[name]?hintRangeMap[name]:[]}
                         onSelectedChange={this.onBrushSelected}
-                        name={"hpd"+(++this.index)} 
+                        name={"hpd"+(++this.index)}
                         key={"hpdetail"+(++this.index)}/>)
                 }));
                 let finalwidth = DetailChartAttr.left+(DetailChartAttr.width+DetailChartAttr.horizontalgap)*(keys.length);
-                    
+
                 let array2=  (
-                    <rect key={'_rect_'+(++this.index)} 
-                    x={methodBoxAttr.x} 
-                    y={nowy-DetailChartAttr.extray} 
-                    width={finalwidth} 
-                    height={DetailChartAttr.height+DetailChartAttr.extraheight} 
-                    fill="none" 
-                    strokeWidth={2} 
+                    <rect key={'_rect_'+(++this.index)}
+                    x={methodBoxAttr.x}
+                    y={nowy-DetailChartAttr.extray}
+                    width={finalwidth}
+                    height={DetailChartAttr.height+DetailChartAttr.extraheight}
+                    fill="none"
+                    strokeWidth={2}
                     stroke="#E0D6D4" />)
                 return array.concat(array2);
-                
+
             }else{
                 return <g />
             }
@@ -868,15 +868,15 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
          */
         /**
          * {allmethods.map((name: string, i: number) => {
-                               
+
                                //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
                                return (<div key={name+"_text_"+(++this.index)} style={{position: "absolute",left:(20+i*85)+"px",top:"120px"}} >
-                                      
+
                                        <Checkbox  key={name+"_checkbox_"+(++this.index)}  >{name}</Checkbox></div>
-                               
+
                                   )
                            })}
-         * 
+         *
          */
 
 
@@ -888,9 +888,9 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                         <InputNumber min={1} value={this.state.configsBudget} style={{ width: "130px" }} onChange={this.onBudgetChange} />
                         <br /><Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update</Button>
                         <br /></div>
-                        
+
                         <svg style={{ height: '100%', width: '100%' }} id="chart" xmlns="http://www.w3.org/2000/svg">
-                        
+
                             <g id="top_container">
                             {allmethods.map((name: string, i: number) => {
                                let checked = false;
@@ -900,11 +900,11 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                             };
                                //return (<text key={name+"_text_"+this.index} x={2+i*85+35}  y={2+20} width={70} textAnchor="middle" fontFamily="sans-serif" fontSize="20px" fill="black">{name}</text>)
                                return (<foreignObject key={name+"_text_"+(++this.index)} x={methodBoxAttr.x+i*(methodBoxAttr.width+methodBoxAttr.gap)} y={methodBoxAttr.checkboxY} width={methodBoxAttr.checkboxWidth} height={methodBoxAttr.checkboxHeight}>
-                                      
+
                                        <Checkbox  key={name+"_checkbox_"+(++this.index)} checked={checked} value={name} onChange={this.onCheckBoxChange} >{name}</Checkbox></foreignObject>
-                               
+
                                   )
-                                 /* return  <Checkbox 
+                                 /* return  <Checkbox
                                     style={{
                                         position:'absolute',
                                         left:2+i*85,
@@ -912,15 +912,15 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                         width:75,
                                         height:30
                                             // transform:"translate("+(2+i*85)+","+(2)+")"
-                                    }} 
-                                    key={name+"_checkbox_"+(++this.index)} 
-                                    checked={checked} value={name} onChange={this.onCheckBoxChange} 
+                                    }}
+                                    key={name+"_checkbox_"+(++this.index)}
+                                    checked={checked} value={name} onChange={this.onCheckBoxChange}
                                     >
                                   {name}
                                   </Checkbox>*/
 
-                               
-                                  
+
+
                            })}
                             {sortedusedMethods.map((name: string, i: number) => {
                                 const methodDef = methodsDef[name];
@@ -933,34 +933,34 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                                 //const top_width = classifier_num*6+60;
                                 this.index++;
                                 return (
-                                <LineChart key={name+"_used_"+this.index} 
-                                        x={methodBoxAttr.x+i*(methodBoxAttr.width+methodBoxAttr.gap)} 
-                                        y={methodBoxAttr.y} 
-                                        width={methodBoxAttr.width} 
-                                        height={methodBoxAttr.height} 
-                                        methodDef={methodDef} 
-                                        classifiers={datarun[name]} 
-                                        name={name} 
-                                        totallen={maxnum} 
+                                <LineChart key={name+"_used_"+this.index}
+                                        x={methodBoxAttr.x+i*(methodBoxAttr.width+methodBoxAttr.gap)}
+                                        y={methodBoxAttr.y}
+                                        width={methodBoxAttr.width}
+                                        height={methodBoxAttr.height}
+                                        methodDef={methodDef}
+                                        classifiers={datarun[name]}
+                                        name={name}
+                                        totallen={maxnum}
                                         onClick={this.onMethodsOverViewClick}
                                         selected={selected}
                                         />)
-                                    
+
                             })}
                             {
                                 unusedMethods.map((name: string,i:number) => {
                                     let index = i+sortedusedMethods.length;
                                 return (<rect key={name + '_unused'} strokeDasharray="5,5" x={methodBoxAttr.x+index*(methodBoxAttr.width+methodBoxAttr.gap)} y={methodBoxAttr.y} width={methodBoxAttr.width} height={methodBoxAttr.height} fill="white" strokeWidth={2} stroke="#E0D6D4" />)})
-                                
+
                             }
                             {generateHp()}
                             {generateHpdetail()}
                             </g>
-                         </svg>  
+                         </svg>
                     </div>
                 </div>)
-    
-      
+
+
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -980,7 +980,7 @@ class LineChart extends React.Component<ChartProps, {}>{
         const { methodDef, classifiers,totallen,onClick,selected } = this.props;
         let step = 0.1;
         let data:number[] = [];
-        
+
         for (let i =0; i<=1/step; i++){
             data.push(0)
         }
@@ -1012,7 +1012,7 @@ class LineChart extends React.Component<ChartProps, {}>{
         for (let i =0; i<=1/step; i++){
             yAxisData.push(`${(i*step).toFixed(2)}`)
         }
-        
+
         // g
         // Set the dimensions of the canvas / graph
         //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
@@ -1024,7 +1024,7 @@ class LineChart extends React.Component<ChartProps, {}>{
         // Set the ranges
         let	xScale = d3.scaleLinear().range([0, width]);
         let	yScale = d3.scaleLinear().range([height, 0]);
-        
+
 
         xScale.domain([0, totallen]);
         yScale.domain([0, 1]);
@@ -1044,15 +1044,15 @@ class LineChart extends React.Component<ChartProps, {}>{
         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
         .on("click",()=>{onClick(this.props.name)})
         .on("mousemove", function(d:any) {
-            
+
             tooltip.transition()
               .duration(100)
               .style("left", (d3.event.pageX) + "px")
               .style("top", (d3.event.pageY - 28) + "px");
               tooltip.style("opacity", 0.7).html(methodDef.fullname+"<br/>"+"best performance:"+bestperformance.toFixed(2) + "<br/>" + "trial number:"+total)
-             
+
             })
-            
+
           .on("mouseout", function(d:any) {
             tooltip
               .style("opacity", 0);
@@ -1071,7 +1071,7 @@ class LineChart extends React.Component<ChartProps, {}>{
 
         var line = d3.line()
         .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
-        .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator 
+        .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
         .curve(d3.curveMonotoneX) // apply smoothing to the line
 
 
@@ -1086,28 +1086,28 @@ class LineChart extends React.Component<ChartProps, {}>{
             .x(function(d:any, i:any) { return xScale(d.x); }) // set the x values for the line generator
             .y(function(d:any,i:any) { return yScale(d.y); }) // set the y values for the line generator
         svg.append("path")
-            .datum(generateArray(bestindex)) 
-            .attr("class", "line") 
+            .datum(generateArray(bestindex))
+            .attr("class", "line")
             .attr("fill","none")
             .attr("stroke","#E0D6D4")
             .attr("stroke-width",2)
             .attr("stroke-dasharray","5,5")
-            .attr("d", straightline); 
+            .attr("d", straightline);
         svg.append("path")
-            .datum(generateArray(frequentindex)) 
-            .attr("class", "line") 
+            .datum(generateArray(frequentindex))
+            .attr("class", "line")
             .attr("fill","none")
             .attr("stroke","#E0D6D4")
             .attr("stroke-width",2)
             .attr("stroke-dasharray","5,5")
-            .attr("d", straightline); 
+            .attr("d", straightline);
         svg.append("path")
-            .datum(data) 
-            .attr("class", "line") 
+            .datum(data)
+            .attr("class", "line")
             .attr("fill","none")
             .attr("stroke",getColor(methodDef.name))
             .attr("stroke-width",2)
-            .attr("d", line); 
+            .attr("d", line);
       }
     render() {
         const {name}=this.props;
@@ -1164,15 +1164,15 @@ class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, 
         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
         .on("click",()=>{onClick(this.props.hpname)})
         .on("mousemove", function(d:any) {
-            
+
             tooltip_hp.transition()
               .duration(100)
               .style("left", (d3.event.pageX) + "px")
               .style("top", (d3.event.pageY - 28) + "px");
               tooltip_hp.style("opacity", 0.7).html(methodDef.fullname+"<br/>"+"best performance:"+bestperformance.toFixed(2) + "<br/>" + "trial number:"+total)
-             
+
             })
-            
+
           .on("mouseout", function(d:any) {
             tooltip_hp
               .style("opacity", 0);
@@ -1186,11 +1186,11 @@ class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, 
         .attr("stroke",selected?"#424242":methodSelected?"#B19F9B":"#E0D6D4")
         .attr("stroke-width",2);
         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        
+
         let rectwidth = 5;
         let rectheight = 5;
         //let verticalnum = Math.floor(height/(rectheight+1));
-        // horizontalnum should be set to be Math.ceil(num/verticalnum) 
+        // horizontalnum should be set to be Math.ceil(num/verticalnum)
         let horizontalnum = Math.floor(width/(rectwidth+1));
 
         let groups = svg
@@ -1209,14 +1209,14 @@ class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, 
         .attr("x", function(d:any,i:any) {
             let thiswidth = (d*rect_scale+1-rect_scale)*rectwidth;
             return  (i%horizontalnum)*(rectwidth+1)+(rectwidth-thiswidth)/2.0;})
-        .attr("y", function(d:any,i:any) { 
+        .attr("y", function(d:any,i:any) {
             let thisheight = (d*rect_scale+1-rect_scale)*rectheight;
             return  Math.floor(i/horizontalnum)*(rectheight+1)-thisheight/2.0;
         });
-        
-            
 
-        
+
+
+
     }
 
     render() {
@@ -1245,20 +1245,20 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
         let totaltick = height/6;
         //let step = (max-min)/totaltick;
         let histogram:number[] = [];
-        
+
         for (let i =0; i<totaltick; i++){
             histogram.push(0)
         }
         let displaydata:any[]=[];
-        
+
         console.log("length");
         console.log(classifiers.length);
         classifiers.forEach((classifier:any)=>{
-            let opacity = classifier.selected? 0.5:0.1;
+            let opacity = classifier.selected? 0.8:0.1;
             let data = {y:classifier.value,x:classifier.performance,opacity:opacity};
             displaydata.push(data);
         });
-        
+
         // Set the ranges
         let xScale = d3.scaleLinear().range([0,width]);
         xScale.domain([0,1]);
@@ -1281,14 +1281,14 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
                     //})
                     //.ticks(axisticks);
 
-        
+
         //Create SVG element
         let top_svg = d3.select("#"+this.TAG+this.props.name).attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")");;
         // text label for the x axis
-        top_svg.append("text")             
+        top_svg.append("text")
         .attr("transform",
-                "translate(" + (0) + " ," + 
+                "translate(" + (0) + " ," +
                             (height + margin.top + 40) + ")")
         .style("text-anchor", "start")
         .text(this.props.hyname);
@@ -1298,7 +1298,7 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
         let g_axis = svg.append("g")
             .attr("transform", "translate(0,0)")
             .attr("class", "bundle-axis")
-            
+
         g_axis.append("g")
         .attr("transform", "translate(0,0)")
         .attr("class", "y axis").call(yAxis);
@@ -1340,7 +1340,7 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
             brush.move(brush_g,[yScale2(alreadySelectedRange[1]),yScale2(alreadySelectedRange[0])]);
         }
         brush.on("end", brushended);
-        
+
         let groups = svg
             .append('g')
             .attr("class", "group");
@@ -1358,11 +1358,11 @@ class DotBarChart extends React.Component<DetailChartProps, {}>{
         .attr("width", function(d:any,i:any) {return rectwidth;})
         .attr("height",function(d:any,i:any) {return rectheight;})
         .attr("x", function(d:any,i:any) {
-            return xScale(d.x); 
+            return xScale(d.x);
         })
-        .attr("y", function(d:any,i:any) { 
+        .attr("y", function(d:any,i:any) {
             return yScale2(d.y)-2.5; });
-        
+
       }
     render() {
         const {name}=this.props;
