@@ -1,5 +1,5 @@
 export const URL = process.env.NODE_ENV === 'development'
-    ? 'http://atmapi.hkustvis.org'
+    ? 'http://localhost:7777'
     : 'location.origin'
 
 export const UPDATE_INTERVAL_MS = 5000;

@@ -186,9 +186,9 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
                 hp, hyperparmeters[hp]['type'], val['type']))
         hyperparmeters[hp] = val
 
+    save_datarun_method_config(datarun_id, method, config)
     _method = Method(method)
     parts = _method.get_hyperpartitions()
-    save_datarun_method_config(datarun_id, method, config)
 
     db = get_db()
     for part in parts:
@@ -210,6 +210,7 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
         elif len(hps) > 1:
             raise ValueError('Multiple hyperpartitions found!')
     db.session.commit()
+
 
 
 class datarun_config:
