@@ -308,14 +308,33 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 .then(configs => {
                     configs.methods = methods;
                     configs.budget = budget;
+                    
+                    // Workflow: 
+                    // filter selected method hyperparameters.
+
+                    // normalized the value.
+                    // construct method_config. (the server will check type and automatically update the configs in the list.)
+                    // submit.
+                    
+                    let methods_configs:any = {};
+                    methods_configs["knn"] = {
+                        "n_neighbors":{
+                            "type" : "int",
+                            "range" : [8,10]
+                        }
+                    }
+                    
                     this.setState({ loading: true });
 
                     let submitconfigs : IUpdateDatarunConfig = {};
                     submitconfigs.configs = configs;
+                    submitconfigs.method_configs = methods_configs;
                     let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
                     //const promise = this.props.onSubmit(this.state.configs);
                     console.log("update data run in methods view");
                     console.log(configs);
+                    //console.log(this.state.hyperparametersRangeAlreadySelected);
+                   
                     promise.then(status => {
                         if(status.success == true){
                             message.success("Update Configs Successfully.");
@@ -674,7 +693,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     selectedMethod  = hyperpartition2Method[selectedHyperpartitionName];
                 }
                 let methodDef = methodsDef[selectedMethod];
-
+                // methodDef['hyperparameters'][name]['type']
                 let HyperparameterList: any[] = [];
                 let idx = 0
                 let rangeMap : any ={};
