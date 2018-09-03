@@ -7,7 +7,7 @@ import warnings
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
 import atm
-from atm.method import Method
+from atm.method import Method, HYPERPARAMETER_TYPES, List
 from atm.utilities import object_to_base_64
 from atm.constants import METHODS_MAP, PartitionStatus
 from atm.config import RunConfig
@@ -19,6 +19,62 @@ from atm_server.error import ApiError
 # DATARUN_METHOD_CONFIG_DIR = 'atm/run_config'
 
 DEFAULT_METHOD_PATH = atm.constants.METHOD_PATH
+
+
+class NewMethod(Method):
+
+    def __init__(self, method, method_path):
+        if method in METHODS_MAP:
+            # if the configured method is a code, look up the path to its json
+            config_path = os.path.join(method_path, METHODS_MAP[method])
+        else:
+            # otherwise, it must be a path to a file
+            config_path = method
+
+        with open(config_path) as f:
+            config = json.load(f)
+
+        self.name = config['name']
+        self.root_params = config['root_hyperparameters']
+        self.conditions = config['conditional_hyperparameters']
+        self.class_path = config['class']
+
+        # create hyperparameters from the parameter config
+        self.parameters = {}
+        for k, v in list(config['hyperparameters'].items()):
+            param_type = HYPERPARAMETER_TYPES[v['type']]
+            self.parameters[k] = param_type(name=k, **v)
+
+        # List hyperparameters are special. These are replaced in the
+        # CPT with a size hyperparameter and sets of element hyperparameters
+        # conditioned on the size.
+        for name, param in list(self.parameters.items()):
+            if type(param) == List:
+                elements, conditions = param.get_elements()
+                for e in elements:
+                    self.parameters[e] = param.element
+
+                # add the size parameter, remove the list parameter
+                self.parameters[param.length.name] = param.length
+                del self.parameters[param.name]
+
+                # if this is a root param, replace its name with the new size
+                # name in the root params list
+                if param.name in self.root_params:
+                    self.root_params.append(param.length.name)
+                    self.root_params.remove(param.name)
+
+                # if this is a conditional param, replace it there instead
+                for var, cond in list(self.conditions.items()):
+                    for val, deps in list(cond.items()):
+                        if param.name in deps:
+                            deps.append(param.length.name)
+                            deps.remove(param.name)
+                            self.conditions[var][val] = deps
+
+                # finally, add all the potential sets of list elements as
+                # conditions of the list's size
+                self.conditions[param.length.name] = conditions
 
 
 def get_datarun_config_path(datarun_id, method=None):
@@ -187,7 +243,8 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
         hyperparmeters[hp] = val
 
     save_datarun_method_config(datarun_id, method, config)
-    _method = Method(method)
+
+    _method = NewMethod(method, get_datarun_config_path(datarun_id))
     parts = _method.get_hyperpartitions()
 
     db = get_db()
@@ -201,7 +258,7 @@ def update_datarun_method_config(datarun_id, method, hyperparameter_configs):
         # We assume that the categorical and constants are fixed
         query = query.filter(db.Hyperpartition.categorical_hyperparameters_64 == object_to_base_64(part.categoricals))
         query = query.filter(db.Hyperpartition.constant_hyperparameters_64 == object_to_base_64(part.constants))
-        query = query.filter(db.Hyperpartition.tunable_hyperparameters_64 != object_to_base_64(part.tunables))
+        # query = query.filter(db.Hyperpartition.tunable_hyperparameters_64 != object_to_base_64(part.tunables))
 
         hps = list(query.all())
         if len(hps) == 1:
