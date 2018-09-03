@@ -510,35 +510,36 @@ def post_update_datarun_config(datarun_id):
     """
 
     update_json = request.get_json()
-    if 'configs' in update_json:
-        configs = update_json['configs']
-        with datarun_config(datarun_id) as run_config:
+    with datarun_config(datarun_id) as run_config:
+
+        if 'configs' in update_json:
+            configs = update_json['configs']
             run_config.update_run_config(configs)
-    if 'hyperpartitions' in update_json:
-        hyperpartition_ids = update_json['hyperpartitions']
-        db = get_db()
-        try:
-            query = db.session.query(db.Hyperpartition)
-            query = query.filter(db.Hyperpartition.id.in_(hyperpartition_ids))
-            query = query.filter(db.Hyperpartition.status != PartitionStatus.GRIDDING_DONE)
-            query.update({db.Hyperpartition.status: PartitionStatus.INCOMPLETE}, synchronize_session=False)
-
-            query = db.session.query(db.Hyperpartition)
-            query = query.filter(db.Hyperpartition.id.notin_(hyperpartition_ids))
-            query = query.filter(db.Hyperpartition.status != PartitionStatus.GRIDDING_DONE)
-            query.update({db.Hyperpartition.status: PartitionStatus.ERRORED}, synchronize_session=False)
-
-            db.session.commit()
-        except:
-            db.session.rollback()
-            raise
-
-    if 'method_configs' in update_json:
-        method_configs = update_json['method_configs']
-        for method, hp_update in method_configs.items():
+        if 'hyperpartitions' in update_json:
+            hyperpartition_ids = update_json['hyperpartitions']
+            db = get_db()
             try:
-                update_datarun_method_config(datarun_id, method, hp_update)
-            except ValueError as e:
-                raise ApiError(e, 400)
+                query = db.session.query(db.Hyperpartition)
+                query = query.filter(db.Hyperpartition.id.in_(hyperpartition_ids))
+                query = query.filter(db.Hyperpartition.status != PartitionStatus.GRIDDING_DONE)
+                query.update({db.Hyperpartition.status: PartitionStatus.INCOMPLETE}, synchronize_session=False)
+
+                query = db.session.query(db.Hyperpartition)
+                query = query.filter(db.Hyperpartition.id.notin_(hyperpartition_ids))
+                query = query.filter(db.Hyperpartition.status != PartitionStatus.GRIDDING_DONE)
+                query.update({db.Hyperpartition.status: PartitionStatus.ERRORED}, synchronize_session=False)
+
+                db.session.commit()
+            except:
+                db.session.rollback()
+                raise
+
+        if 'method_configs' in update_json:
+            method_configs = update_json['method_configs']
+            for method, hp_update in method_configs.items():
+                try:
+                    update_datarun_method_config(datarun_id, method, hp_update)
+                except ValueError as e:
+                    raise ApiError(e, 400)
 
     return jsonify({'success': True})
