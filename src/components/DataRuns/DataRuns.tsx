@@ -7,16 +7,17 @@ import {parseDatarun} from "helper";
 import {IDatarun} from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
-import {getClassifierSummary, getClassifiers,getHyperpartitions, IClassifierInfo,IHyperpartitionInfo} from '../../service/dataService';
+import {getClassifierSummary, getClassifiers,getHyperpartitions, IClassifierInfo,IHyperpartitionInfo} from 'service/dataService';
 
 //components
-import MethodsLineChart from './MethodsLineChart';
+// import MethodsLineChart from './MethodsLineChart';
 //import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
 // import Histogram from "./Histogram";
 // import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
+import ThreeLevel from "./ThreeLevel";
 
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
@@ -32,7 +33,7 @@ export interface IState{
     runCSV:string,
     classifiers: IClassifierInfo[],
     hyperpartitions: IHyperpartitionInfo[]
- 
+
 }
 export interface IProps{
     datarunID: number | null;
@@ -62,18 +63,16 @@ export default class DataRuns extends React.Component<IProps, IState>{
             // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
             // const banditData = res.data
             const classifiers = await getClassifiers(datarunID);
-            let sethyperpartitions = this.state.hyperpartitions;
-            getHyperpartitions().then(hyperpartitions => {
+            let hyperpartitions = await  getHyperpartitions(undefined, datarunID).then(hyperpartitions => {
                 // console.log(hyperpartitions);
-                if (Array.isArray(hyperpartitions))
-                   {
-                    sethyperpartitions=hyperpartitions.filter(d=>d.datarun_id==datarunID)
-                       //this.setState({ hyperpartitions });
-                   }
-                else
-                    console.error('The fetched hyperpartitions should be an array!');
+                if (Array.isArray(hyperpartitions)){
+                       return hyperpartitions
+                }else
+                    {console.error('The fetched hyperpartitions should be an array!');
+                    return []
+                }
             });
-            this.setState({runCSV:runCSV, classifiers:classifiers, hyperpartitions:sethyperpartitions})
+            this.setState({runCSV:runCSV, classifiers:classifiers, hyperpartitions})
         }
 
     }
@@ -106,7 +105,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
         window.clearInterval(this.intervalID)
     }
     public render(){
-        const {runCSV} = this.state
+        let {runCSV, hyperpartitions, classifiers} = this.state
+        hyperpartitions = hyperpartitions.filter(d=>d.datarun_id==this.props.datarunID)
         // const {classifiers} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
         console.log(datarun);
@@ -116,7 +116,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             return (
         <div style={{height: '100%'}}>
 
-            <div className="runTracker" style={{height: '15%', display: "flex"}}>
+            <div className="runTracker" style={{height: '10%', display: "flex"}}>
                 {/* <Histogram datarun={datarun} width={40}/> */}
                 <BarChart run={runCSV} width={100} />
             </div>
@@ -124,7 +124,11 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 <HyperPartitions classifiers={classifiers} />
             </div> */}
 
-            <MethodsLineChart height={85} datarun={datarun} hyperpartitions={this.state.hyperpartitions}
+            {/* <MethodsLineChart height={85} datarun={datarun} hyperpartitions={this.state.hyperpartitions}
+            datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
+            datarunID={this.props.datarunID}/> */}
+            <ThreeLevel height={90} datarun={datarun} hyperpartitions={hyperpartitions}
+            classifiers={classifiers}
             datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
             datarunID={this.props.datarunID}/>
 

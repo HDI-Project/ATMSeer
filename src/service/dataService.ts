@@ -142,8 +142,16 @@ export async function getClassifiers(
     throw res;
 }
 
-export async function getHyperpartitions(id?: number): Promise<IHyperpartitionInfo[]> {
-    const url = id ? `/hyperpartitions/${id}` : `/hyperpartitions`;
+export async function getHyperpartitions(hp_id?: number, datarun_id?:number): Promise<IHyperpartitionInfo[]> {
+    const url = hp_id ?
+        `/hyperpartitions/${hp_id}`
+        :
+        (
+        datarun_id?
+            `/hyperpartitions?&datarun_id=${datarun_id}`
+            :
+            `/hyperpartitions/`
+        );
     const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
