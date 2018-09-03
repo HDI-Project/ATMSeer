@@ -94,7 +94,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
     renderD3() {
         let { box, hp, classifiers, idx, selectedMethod } = this.props
         let scatterData = classifiers.map(cls => {
-            return { hp: cls.hyperparameters[hp.name], score: cls.cv_metric }
+            return { hp: cls.hyperparameters[hp.name]||0, score: cls.cv_metric }
         })
         let methodColor = getColor(selectedMethod)
 
