@@ -19,6 +19,7 @@ export interface IState {
     selectedMethodName : string[],
     nowselectedMethodName : string,
     selectedHyperpartitionName :string,
+    selectedHyperpartitionId : number,
     loading : boolean ,
     configsMethod : string[],
     configsBudget:number,
@@ -76,10 +77,11 @@ export interface HyperpartitionHeatmapProps{
     name:string,
     totallen?:number,
     methodName?:string,
-    onClick:(a:string)=>void,
+    onClick:(a:string,b:number)=>void,
     selected?:boolean,
     hpname:string,
-    methodSelected:boolean
+    methodSelected:boolean,
+    hpid:number
 }
 export default class MethodsLineChart extends React.Component<IProps, IState>{
     constructor(props:IProps){
@@ -96,7 +98,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             configsBudget:1000,
             hyperparametersRangeSelectedName:"",
             hyperparametersRangeSelected:[],
-            hyperparametersRangeAlreadySelected:{}
+            hyperparametersRangeAlreadySelected:{},
+            selectedHyperpartitionId:0
         };
 
     }
@@ -132,11 +135,12 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
 
 
     };
-    onHyperpartitionsOverViewClick = (HyperpatitionName:string)=>{
+    onHyperpartitionsOverViewClick = (HyperpatitionName:string,HyperpartitionId:number)=>{
         //alert("onclick "+HyperpatitionName);
         this.setState({
             mode : 2,
-            selectedHyperpartitionName : HyperpatitionName
+            selectedHyperpartitionName : HyperpatitionName,
+            selectedHyperpartitionId : HyperpartitionId
         });
     };
     public getbestperformance(list:IClassifier[]){
@@ -316,25 +320,28 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     // construct method_config. (the server will check type and automatically update the configs in the list.)
                     // submit.
                     
-                    let methods_configs:any = {};
-                    methods_configs["knn"] = {
-                        "n_neighbors":{
-                            "type" : "int",
-                            "range" : [8,10]
-                        }
-                    }
+                    //let methods_configs:any = {};
+                    //methods_configs["knn"] = {
+                    //    "n_neighbors":{
+                    //        "type" : "int",
+                    //        "range" : [8,10]
+                    //    }
+                    // }
                     
                     this.setState({ loading: true });
 
                     let submitconfigs : IUpdateDatarunConfig = {};
                     submitconfigs.configs = configs;
-                    submitconfigs.method_configs = methods_configs;
+                    if(this.state.mode==2&&this.state.selectedHyperpartitionName!=""){
+                        submitconfigs.hyperpartitions=[this.state.selectedHyperpartitionId];
+                    }
+                    //submitconfigs.method_configs = methods_configs;
                     let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
                     //const promise = this.props.onSubmit(this.state.configs);
                     console.log("update data run in methods view");
                     console.log(configs);
                     //console.log(this.state.hyperparametersRangeAlreadySelected);
-                   
+                    
                     promise.then(status => {
                         if(status.success == true){
                             message.success("Update Configs Successfully.");
@@ -508,8 +515,8 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
             }
             ));
         });
-        console.log("id mapping");
-        console.log(hyperpartition2hpid);
+        //console.log("id mapping");
+        //console.log(hyperpartition2hpid);
         // ------------ Data preprocessing  End----------------------------------------------//
 
         // ------------- Mode selection checked ----------------------------------------------//
@@ -614,7 +621,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                 let pathgenerator:any[] = [];
                 let array = sortedhpname.map((name: string, i: number) => {
                     let selected = selectedHyperpartitionName===name;
-
+                    let id = hyperpartition2hpid[name];
                     nowx+=lastwidth;lastwidth=0;
                     const selectedMethod = hyperpartition2Method[name];
                     const methodDef = methodsDef[selectedMethod];
@@ -662,6 +669,7 @@ export default class MethodsLineChart extends React.Component<IProps, IState>{
                     classifiers={hyperpartitionData[name]}
                     name={"hp"+this.index}
                     hpname={name}
+                    hpid={id}
                     totallen={totallen}
                     selected={selected}
                     onClick={this.onHyperpartitionsOverViewClick}
@@ -1181,7 +1189,7 @@ class HyperpartitionHeatmap extends React.Component<HyperpartitionHeatmapProps, 
 
         let top_svg = d3.select("#"+this.TAG+this.props.name).attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
-        .on("click",()=>{onClick(this.props.hpname)})
+        .on("click",()=>{onClick(this.props.hpname,this.props.hpid)})
         .on("mousemove", function(d:any) {
 
             tooltip_hp.transition()

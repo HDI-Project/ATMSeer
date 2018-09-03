@@ -1,6 +1,6 @@
 import {IClassifier, IDatarun} from 'types';
 
-const names: string[] = []
+const names: string[] = ['svm', 'knn', 'mlp', 'bnb', 'sgd', 'pa','dt','rf','et','mnb','ada','logreg','gp','gnb'] // fix the color of methods
 const COLORS: string[] = [
     "#1A7AB1",
     "#ADC8E6",
