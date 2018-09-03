@@ -1,26 +1,34 @@
 import * as React from "react";
-import { IClassifier, IMethod, IDatarun } from "types";
+import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
+import {IHyperpartitionInfo, IClassifierInfo} from 'service/dataService';
 
 const d3 = require("d3");
 
 export interface IProps {
-    datarun: IDatarun,
+    classifiers: IClassifierInfo[],
     onSelectMethod: (methodName:string)=>void,
     usedMethods: string[],
-    unusedMethods: string[]
+    unusedMethods: string[],
+    width: number,
+    selectedMethod: string,
+    hyperpartitions: IHyperpartitionInfo[]
+}
+
+export interface IState {
+
 }
 
 
-
-export default class methods extends React.Component<IProps, {}>{
-    public gap = 15
-    public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
+export default class methods extends React.Component<IProps, IState>{
+    public gap = 20
+    width = (this.props.width - 6*this.gap)/2
+    // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
     public methodBoxAttr = {
         // width : 70,
-        height: this.height * 0.9,
-        width: this.height *1.1,
+        height: this.width * 0.7,
+        width: this.width,
         gap: this.gap,
         x: 2*this.gap,
         y: 2 * this.gap,
@@ -43,7 +51,7 @@ export default class methods extends React.Component<IProps, {}>{
         }
 
     }
-    public getmaxnum(classifiers: IClassifier[]) {
+    public getmaxnum(classifiers: IClassifierInfo[]) {
         let step = 0.1;
         let data: number[] = [];
 
@@ -51,8 +59,8 @@ export default class methods extends React.Component<IProps, {}>{
             data.push(0)
         }
         let bestperformance = 0;
-        classifiers.forEach((classifier: IClassifier) => {
-            let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
+        classifiers.forEach((classifier: IClassifierInfo) => {
+            let performance = classifier['cv_metric'];
             if (performance > bestperformance) {
                 bestperformance = performance;
             }
@@ -68,21 +76,30 @@ export default class methods extends React.Component<IProps, {}>{
         return maxvalue;
     }
     render() {
-        let { datarun, usedMethods, unusedMethods } = this.props
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions } = this.props
 
         let performance = usedMethods.map((name: string, i: number) => {
-            return { value: this.getbestperformance(datarun[name]), name: name };
+            return {
+                bestScore: Math.max(
+                    ...classifiers.filter(
+                            (d:any)=>d.method==name
+                        ).map(
+                            d=>d['cv_metric']
+                        )
+                ),
+                name: name
+            };
         });
         performance.sort(function (a: any, b: any) {
-            return b.value - a.value;
+            return b.bestScore - a.bestScore;
         });
         let sortedusedMethods = performance.map((d: any) => {
             return d.name;
         });
         let maxnum = Math.max(
-            ...Object.values(datarun)
-                .map((d: IClassifier[]) => this.getmaxnum(d))
-        )
+            ...usedMethods.map(
+                (name:string)=>this.getmaxnum(classifiers.filter(d=>d.method==name))
+        ))
         // // calculate the max num
         // sortedusedMethods.forEach((name: string, i: number)=>{
         //     let num = this.getmaxnum(datarun[name]);
@@ -90,19 +107,12 @@ export default class methods extends React.Component<IProps, {}>{
         //         maxnum=num;
         //     }
         // });
-        return <g className="methods" transform={`translate(0, ${this.gap})`}>
-            <text
-                textAnchor="middle"
-                x={this.methodBoxAttr.x + this.methodBoxAttr.width + this.gap}
-                y={this.gap}
-            >
-                Algorithms
-            </text>
+        return <g className="methods" >
             <g className="usedMethods">
                 {sortedusedMethods.map((name: string, i: number) => {
                     const methodDef = methodsDef[name];
                     // let  testin = selectedMethodName.indexOf(name);
-                    let selected = false;
+                    let selected = (name==this.props.selectedMethod)
                     // if (testin > -1) {
                     //     selected = true;
                     // }
@@ -124,11 +134,12 @@ export default class methods extends React.Component<IProps, {}>{
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
                             methodDef={methodDef}
-                            classifiers={datarun[name]}
+                            classifiers={classifiers.filter((d:any)=>d.method==name)}
                             name={name}
                             totallen={maxnum}
                             onClick={this.props.onSelectMethod}
                             selected={selected}
+                            hyperpartitoins = {hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name)}
                         />)
 
                 })}
@@ -174,13 +185,13 @@ export interface LineChartProps {
     x: number,
     y: number,
     methodDef: IMethod,
-    classifiers: IClassifier[],
+    classifiers: IClassifierInfo[],
     name: string,
     totallen?: number,
     methodName?: string,
     onClick:(a:string)=>void,
     selected?: boolean,
-
+    hyperpartitoins: IHyperpartitionInfo[]
 
 }
 
@@ -191,7 +202,8 @@ class LineChart extends React.Component<LineChartProps, {}>{
     }
     renderD3() {
         // Get Datasets
-        const { methodDef, classifiers, totallen, selected } = this.props;
+        const { methodDef, classifiers, totallen, selected, hyperpartitoins } = this.props;
+        let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)))
         let step = 0.1;
         let data: number[] = [];
 
@@ -199,8 +211,8 @@ class LineChart extends React.Component<LineChartProps, {}>{
             data.push(0)
         }
         let bestperformance = 0;
-        classifiers.forEach((classifier: IClassifier) => {
-            let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
+        classifiers.forEach((classifier: IClassifierInfo) => {
+            let performance = classifier['cv_metric'];
             if (performance > bestperformance) {
                 bestperformance = performance;
             }
@@ -275,6 +287,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
                     .style("opacity", 0);
             });;
         top_svg.append("rect")
+            .attr('class', `${this.props.name} methodRect`)
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", width + margin.left + margin.right)
@@ -283,6 +296,11 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("stroke-width", 2)
             .attr("stroke", selected ? "#A4A0A0" : "#E0D6D4")
             .on('click', ()=>{
+                d3.selectAll('rect.methodRect')
+                    .attr("stroke", "#E0D6D4")
+                d3.select(`rect.${this.props.name}`)
+                    .attr('stroke', "#A4A0A0")
+                    .attr("stroke-width", 3)
                 this.props.onClick(this.props.name)
             })
 
@@ -335,11 +353,23 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("height", yScale.bandwidth())
 
         svg.append("text")
-            .attr("class", "hp_name")
+            .attr("class", "method_name")
             .attr('x', width)
-            .attr('y', height)
+            .attr('y', height-12)
             .attr('text-anchor', "end")
             .text(`${this.props.name}: ${classifiers.length}`)
+        svg.append("text")
+            .attr("class", "best_score")
+            .attr('x', width)
+            .attr('y', height )
+            .attr('text-anchor', "end")
+            .text(`best: ${bestperformance.toFixed(3)}`)
+        svg.append('text')
+            .attr('class', 'hps')
+            .attr("transform", `translate(${width+margin.left},${height/2}) rotate(${90})`)
+            .attr('text-anchor', 'middle')
+            .text(`hp:${usedHpID.length}/${hyperpartitoins.length}`)
+
 
         // // Add the X Axis
         // svg.append("g")

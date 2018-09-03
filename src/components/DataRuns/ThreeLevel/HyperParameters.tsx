@@ -52,11 +52,11 @@ export default class HyperParameters extends React.Component<IProps, {}>{
             let box = {
                 width: 200,
                 height: 100,
-                margin: 30
+                margin: 40
             }
             return <g className="hyperParameters">
                 {HyperparameterList.map((hp, i) => {
-                    return <HyperParameter key={hp} classifiers={classifiers} hp={hp} idx={i} box={box} />
+                    return <HyperParameter key={hp} classifiers={classifiers} hp={hp} idx={i} box={box} selectedMethod={selectedMethod}/>
                 })}
             </g>
         } else {
@@ -69,6 +69,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
 
 export interface HyProps {
     classifiers: IClassifierInfo[],
+    selectedMethod: string,
     hp: any,
     idx: number,
     box: {
@@ -91,11 +92,11 @@ class HyperParameter extends React.Component<HyProps, {}>{
         this.renderD3()
     }
     renderD3() {
-        let { box, hp, classifiers, idx } = this.props
+        let { box, hp, classifiers, idx, selectedMethod } = this.props
         let scatterData = classifiers.map(cls => {
             return { hp: cls.hyperparameters[hp.name], score: cls.cv_metric }
         })
-        let methodColor = getColor(classifiers[0].method)
+        let methodColor = getColor(selectedMethod)
 
         // calculate the area chart
         const num_step = 20
@@ -114,20 +115,20 @@ class HyperParameter extends React.Component<HyProps, {}>{
         let { width, height, margin } = box
         let svg = d3.select("#" + this.TAG + idx)
             .append('g')
-            .attr('transform', `translate(${0}, ${margin + idx * (height + margin)})`)
+            .attr('transform', `translate(${0}, ${margin + idx * (height*5/4 + margin)})`)
 
 
         let x = d3.scaleLinear().range([0, width])
         let y = d3.scaleLinear().range([height, 0]);
-        let yNum = d3.scaleLinear().range([0, height / 3]);
+        let yArea = d3.scaleLinear().range([height/4, 0]);
         x.domain([hp.min, hp.max]);
         y.domain([0, 1]);
-        yNum.domain(d3.extent(areaData, (d: number[]) => d.length))
+        yArea.domain(d3.extent(areaData, (d: number[]) => d.length))
 
         let area = d3.area()
             .x(function (d: any, i: number) { return x(hp.min + i * step); })
-            .y1(height)
-            .y0(function (d: any) { return height + yNum(d.length); })
+            .y1(height*5/4)
+            .y0(function (d: any) { return height + yArea(d.length); })
             .curve(d3.curveCardinal)
 
 
@@ -171,19 +172,25 @@ class HyperParameter extends React.Component<HyProps, {}>{
 
         // Add the X Axis
         svg.append("g")
+            .attr('class','xAxis')
+            .attr("transform", "translate(0," + height*5/4 + ")")
+            .call(d3.axisBottom(x).ticks(5));
+        svg.append("g")
+            .attr('class','xAxis_')
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x).ticks(0));
 
         // x axis lable;
         svg.append("text")
             .attr("transform",
-                "translate(" + (width + margin / 2) + " ," +
-                (height + margin / 2) + ")")
-            .style("text-anchor", "start")
+                "translate(" + (width) + " ," +
+                (height*5/4 + margin*0.75) + ")")
+            .style("text-anchor", "end")
             .text(hp.name);
 
         // Add the Y Axis
         svg.append("g")
+            .attr('class', 'yAxis')
             .call(d3.axisLeft(y));
 
         // text label for the y axis
