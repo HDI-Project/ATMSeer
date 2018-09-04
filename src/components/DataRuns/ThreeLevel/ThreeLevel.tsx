@@ -104,7 +104,29 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 });
                 }
        }
+    onMethodsCheckBoxChange=(e : any)=>{
+        let checked = e.target.checked;
+        let value = e.target.value;
+        if(checked==false){
+            let configsMethod : string[] = this.state.configsMethod;
+            let index = configsMethod.indexOf(value);
+            if(index>-1){
+                configsMethod.splice(index, 1);
+                this.setState({
+                    configsMethod:configsMethod
+                });
 
+            }
+        }else{
+            let configsMethod : string[] = this.state.configsMethod;
+            configsMethod.push(value);
+            this.setState({
+                configsMethod:configsMethod
+            });
+
+
+        }
+    }
     render(){
         let {datarun, hyperpartitions, classifiers} = this.props
         let {selectedMethod} = this.state
@@ -145,6 +167,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 usedMethods = {usedMethods}
                 unusedMethods = {unusedMethods}
                 hyperpartitions={hyperpartitions}
+                configsMethod = {this.state.configsMethod}
+                onMethodsCheckBoxChange = {this.onMethodsCheckBoxChange}
             />
             </g>
             <g transform={`translate(${width1}, ${headerHeight})`}>

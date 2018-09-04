@@ -3,6 +3,7 @@ import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo} from 'service/dataService';
+import { Checkbox } from 'antd';
 
 const d3 = require("d3");
 
@@ -13,7 +14,9 @@ export interface IProps {
     unusedMethods: string[],
     width: number,
     selectedMethod: string,
-    hyperpartitions: IHyperpartitionInfo[]
+    hyperpartitions: IHyperpartitionInfo[],
+    configsMethod : string[],
+    onMethodsCheckBoxChange: (e:any)=>void
 }
 
 export interface IState {
@@ -108,6 +111,30 @@ export default class methods extends React.Component<IProps, IState>{
         //     }
         // });
         return <g className="methods" >
+                    {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
+                            let checked = false;
+                            let configsMethod : string[] = this.props.configsMethod;
+                            if(configsMethod.indexOf(name)>-1){
+                                    checked= true;
+                            };
+                            return (<foreignObject 
+                                        key={name+"_text_"+i} 
+                                        x={this.methodBoxAttr.x +
+                                            (i % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                                        y={this.methodBoxAttr.y +
+                                            Math.floor(i / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap) + this.methodBoxAttr.height} 
+                                        width={this.methodBoxAttr.checkboxWidth} 
+                                        height={this.methodBoxAttr.checkboxHeight}>
+                                       <Checkbox  
+                                        key={name+"_checkbox_"+(i)} 
+                                        checked={checked} 
+                                        value={name} 
+                                        onChange={this.props.onMethodsCheckBoxChange} >
+                                        {name}
+                                        </Checkbox>
+                                        </foreignObject>
+                                  )
+                    })}
             <g className="usedMethods">
                 {sortedusedMethods.map((name: string, i: number) => {
                     const methodDef = methodsDef[name];
