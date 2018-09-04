@@ -3,7 +3,8 @@ import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo} from 'service/dataService';
-
+import { Checkbox } from 'antd';
+import "./Methods.css";
 const d3 = require("d3");
 
 export interface IProps {
@@ -13,7 +14,9 @@ export interface IProps {
     unusedMethods: string[],
     width: number,
     selectedMethod: string,
-    hyperpartitions: IHyperpartitionInfo[]
+    hyperpartitions: IHyperpartitionInfo[],
+    configsMethod : string[],
+    onMethodsCheckBoxChange: (e:any)=>void
 }
 
 export interface IState {
@@ -108,6 +111,30 @@ export default class methods extends React.Component<IProps, IState>{
         //     }
         // });
         return <g className="methods" >
+                    {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
+                            let checked = false;
+                            let configsMethod : string[] = this.props.configsMethod;
+                            if(configsMethod.indexOf(name)>-1){
+                                    checked= true;
+                            };
+                            return (<foreignObject 
+                                        key={name+"_text_"+i} 
+                                        x={this.methodBoxAttr.x +
+                                            (i % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                                        y={this.methodBoxAttr.y +
+                                            Math.floor(i / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap) + this.methodBoxAttr.height} 
+                                        width={this.methodBoxAttr.checkboxWidth} 
+                                        height={this.methodBoxAttr.checkboxHeight}>
+                                       <Checkbox  
+                                        key={name+"_checkbox_"+(i)} 
+                                        checked={checked} 
+                                        value={name} 
+                                        onChange={this.props.onMethodsCheckBoxChange} >
+                                        {name}
+                                        </Checkbox>
+                                        </foreignObject>
+                                  )
+                    })}
             <g className="usedMethods">
                 {sortedusedMethods.map((name: string, i: number) => {
                     const methodDef = methodsDef[name];
@@ -233,7 +260,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             }
             total += d;
         });
-        //total;
+        total;
         let yAxisData: string[] = []
         for (let i = 0; i <= 1 / step; i++) {
             yAxisData.push(`${(i * step).toFixed(2)}`)
@@ -258,9 +285,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
         //Create SVG element
-        let tooltip = d3.select("#tooltip");
+       // let tooltip = d3.select("#tooltip");
         //let top_methods = d3.select("#methodstop");
-
+        /*
         if (tooltip.empty()) {
             tooltip = d3.select("body").append("div")
                 .attr("class", "tooltip")
@@ -268,23 +295,23 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 .style("opacity", 0)
                 .style("left", "0px")
                 .style("top", "0px");;
-        }
+        }*/
         let top_svg = d3.select("#" + this.TAG + this.props.name).attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
             // .on("click",()=>{onClick(this.props.name)})
             .on("mousemove", function (d: any) {
-
+                    /*
                 tooltip.transition()
                     .duration(100)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
                 tooltip.style("opacity", 0.7).html(methodDef.fullname + "<br/>" + "best performance:" + bestperformance.toFixed(2) + "<br/>" + "trial number:" + total)
-
+                    */
             })
 
             .on("mouseout", function (d: any) {
-                tooltip
-                    .style("opacity", 0);
+               // tooltip
+               //     .style("opacity", 0);
             });;
         top_svg.append("rect")
             .attr('class', `${this.props.name} methodRect`)
