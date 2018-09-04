@@ -8,8 +8,10 @@ const d3 = require("d3");
 export interface IProps {
     hyperpartitions: IHyperpartitionInfo[],
     // datarun: IDatarun,
+    datarunID: number|null,
     selectedMethod: string,
-    classifiers: IClassifierInfo[]
+    classifiers: IClassifierInfo[],
+    compareK: number
 }
 export interface IState {
 
@@ -23,7 +25,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
     numPerRow = 14
     public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string) {
             // let num_all_hp = hpsInfo.length
-            hpsInfo = hpsInfo.filter(d => d.scores.length > 0)
+            hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0)
             let { height, width, gap } = this.hyperpartitionBox
 
             // let g = d3.select('.HyperPartitions')
@@ -47,7 +49,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             y.domain([0, 1]);
 
 
-            let pos = [[gap, height]]
+            let pos = [[gap+0.5*width, height]]
             for (let i = 0; i < hpsInfo.length; i++) {
                 let currentPos = [0, 0]
                 if (hpsInfo[i].method == selectedMethod) {
@@ -56,7 +58,14 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     currentPos = [pos[i][0], pos[i][1] + (2 * gap)]
                 }
                 if (pos[i][1] > window.innerHeight * 0.8) {
-                    currentPos = [pos[i][0] + width * 1.5, 2*(height+gap)]
+                    currentPos = [
+                        pos[i][0] + width * 1.5,
+                        height + (
+                            hpsInfo[i].method == selectedMethod?
+                            (2 * height + gap)
+                            :(2*gap)
+                        )
+                    ]
                 }
                 pos.push(currentPos)
             }
@@ -78,9 +87,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
             hps.filter((d: any) => d.method == selectedMethod)
                 .selectAll('.hpBar')
-                .data((d: any) => d.scores)
+                .data((d: any) => d.sortedCls)
                 .enter().append("rect")
                 .attr("class", "hpBar")
+                .attr('id', (d:any)=>`_${d.id}`)
                 .style('fill', function (d: any) {
                     return getColor(selectedMethod)
                 })
@@ -90,9 +100,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr("height", 0)
                 .transition(trans)
                 .attr("x", (d: any, i: number) => x(i))
-                .attr("y", (d: any) => y(d) - height)
+                .attr("y", (d: any) => y(d.cv_metric) - height)
                 .attr("width", x.bandwidth())
-                .attr("height", (d: any) => (height - y(d)))
+                .attr("height", (d: any) => (height - y(d.cv_metric)))
 
 
             // hpGroup.append('g')
@@ -126,18 +136,19 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             hps.filter((d: any) => d.method == selectedMethod)
                 .append('text')
                 .attr('class', "num_cls")
-                .attr('x', (d: any) => width * d.scores.length / maxLen - 2)
-                .attr('y', 0)
-                .text((d: any) => d.scores.length)
-                .attr('text-anchor', 'end')
+                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
+                .attr('y', -1)
+                .text((d: any) => d.sortedCls.length)
+                .attr('text-anchor', 'start')
 
 
             hps.filter((d: any) => d.method == selectedMethod)
                 .append('text')
                 .attr('class', "best_score")
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
-                .attr('x', width + 2)
+                .attr('x', -gap)
                 .attr('y', 0)
+                .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
 
             hps.filter((d: any) => d.method == selectedMethod)
@@ -162,8 +173,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 )
 
             //update
-            let hpUpdate = hps
-                // .transition(trans)
+            hps.transition(trans)
                 .attr("transform",
                     (d: any, i: number) => {
                         return `translate(${pos[i + 1][0]},${pos[i + 1][1]})`
@@ -172,7 +182,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
 
 
-            hpUpdate.filter((d: any) => d.method != selectedMethod)
+            hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('.hpBar')
                 .transition(trans)
                 .attr('width', 0)
@@ -181,11 +191,12 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('y', height)
                 .remove()
 
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .selectAll('.hpBar')
-                .data((d: any) => d.scores)
+                .data((d: any) => d.sortedCls)
                 .enter().append("rect")
                 .attr("class", "hpBar")
+                .attr('id', (d:any)=>`_${d.id}`)
                 .style('fill', function (d: any) {
                     return getColor(selectedMethod)
                 })
@@ -195,11 +206,11 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr("height", 0)
                 .transition(trans)
                 .attr("x", (d: any, i: number) => x(i))
-                .attr("y", (d: any) => y(d) - height)
+                .attr("y", (d: any) => y(d.cv_metric) - height)
                 .attr("width", x.bandwidth())
-                .attr("height", (d: any) => (height - y(d)))
+                .attr("height", (d: any) => (height - y(d.cv_metric)))
 
-            hpUpdate.selectAll('.out_hyperPartition')
+            hps.selectAll('.out_hyperPartition')
                 .transition(trans)
                 .attr('height', (d: any) => d.method == selectedMethod ? (height + 2 * strokeWidth) : gap)
                 .attr('y', (d: any) => d.method == selectedMethod ? (-strokeWidth - height) : (gap))
@@ -209,27 +220,28 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .style('stroke', 'gray')
                 .style('stroke-width', strokeWidth)
 
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .append('text')
                 .attr('class', "num_cls")
-                .attr('x', (d: any) => width * d.scores.length / maxLen - 2)
-                .attr('y', 0)
-                .text((d: any) => d.scores.length)
-                .attr('text-anchor', 'end')
+                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
+                .attr('y', -1)
+                .text((d: any) => d.sortedCls.length)
+                .attr('text-anchor', 'start')
                 .attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .append('text')
                 .attr('class', "best_score")
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
-                .attr('x', width + 2)
+                .attr('x', -gap)
                 .attr('y', 0)
+                .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
                 .attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .append('g')
                 .attr('class', 'hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
@@ -252,12 +264,12 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .transition(trans)
                 .attr('opacity', 1)
 
-            hpUpdate.filter((d: any) => d.method != selectedMethod)
+            hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('text')
                 .transition(trans)
                 .attr('opacity', 1e-6)
                 .remove()
-            hpUpdate.filter((d: any) => d.method != selectedMethod)
+            hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('g.hp_name')
                 .transition(trans)
                 .attr('opacity', 1e-6)
@@ -274,25 +286,23 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
 
     public sortHpByperformance(props: IProps) {
-        let { hyperpartitions: hps, classifiers: cls, selectedMethod } = props
+        let { hyperpartitions: hps, classifiers, selectedMethod } = props
         // cls = cls.filter(d=>d.method==selectedMethod)
         // hps = hps.filter(d=>d.method==selectedMethod)
         let hpsInfo = hps.map(hp => {
-            let filteredCls = cls
+            let filteredCls = classifiers
                 .filter(
                     cls => cls.hyperpartition_id == hp.id
                 )
-            let scores = filteredCls.map(
-                d => d.cv_metric
-            ).sort((a, b) => (b - a))
+            let sortedCls = filteredCls.sort((a, b) => (b.cv_metric - a.cv_metric))
             return {
                 ...hp,
-                bestScore: Math.max(...scores),
-                scores
+                bestScore: Math.max(...sortedCls.map(d=>d.cv_metric)),
+                sortedCls
             }
         })
         hpsInfo.sort((a, b) => (b.bestScore - a.bestScore))
-        let maxLen = Math.max(...hpsInfo.map(d => d.scores.length))
+        let maxLen = Math.max(...hpsInfo.map(d => d.sortedCls.length))
         if (maxLen < 0) maxLen = 0
 
 
@@ -303,18 +313,58 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
     }
     componentDidMount() {
         let { maxLen, hpsInfo, selectedMethod } = this.sortHpByperformance(this.props)
+
+        let { compareK, classifiers} = this.props
+        let comparedCls = classifiers.slice(0, compareK)
+        let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
+        if (comparedMethods.length==1){
+            selectedMethod = comparedMethods[0]
+        }
         if(hpsInfo.length>0){
             this.renderD3(hpsInfo, maxLen, selectedMethod)
         }
+
+        if (comparedMethods.length==1){
+            let g = d3.select('g.HyperPartitions')
+            g.selectAll('rect.hpBar')
+            .attr('opacity', 0.2)
+
+            comparedCls.forEach(cls=>{
+                g.select(`rect#_${cls.id}`)
+                .attr('opacity', 1)
+            })
+        }
     }
     shouldComponentUpdate(nextProps: IProps, nextStates: IState) {
-        if (this.props != nextProps || this.props.hyperpartitions.length == 0) {
-            let { maxLen, hpsInfo, selectedMethod } = this.sortHpByperformance(nextProps)
+        let { maxLen, hpsInfo, selectedMethod } = this.sortHpByperformance(nextProps)
+        let { compareK, classifiers} = nextProps
+        let comparedCls = classifiers.slice(0, compareK)
+        let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
+        if (comparedMethods.length==1){
+            selectedMethod = comparedMethods[0]
+        }
 
-            // d3.select(`.HyperPartitions_${this.props.selectedMethod}`).remove()
-
+        if (this.props != nextProps || this.props.hyperpartitions.length == 0) { //update
             this.renderD3(hpsInfo, maxLen, selectedMethod)
         }
+        if(this.props.datarunID!=nextProps.datarunID){//remove and redraw
+            d3.select(`.HyperPartitions`).selectAll('*').remove()
+            this.renderD3(hpsInfo, maxLen, selectedMethod)
+        }
+        //
+
+        if (comparedMethods.length==1){
+            let g = d3.selectAll('g.hpGroup')
+            console.info('d3, compare, hyperpartition', comparedMethods, comparedCls)
+            g.selectAll('rect.hpBar')
+            .attr('opacity', 0.2)
+
+            comparedCls.forEach(cls=>{
+                g.select(`rect#_${cls.id}`)
+                .attr('opacity', 1)
+            })
+        }
+
         return false
     }
     // componentWillUpdate(){

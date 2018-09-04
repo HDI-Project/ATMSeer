@@ -16,6 +16,7 @@ export interface IState {
   datarunID: number | null;
   datasetID: number | null;
   datarunStatus: IDatarunStatusTypes;
+  compareK: number // 0=> don't compare
 }
 
 
@@ -26,10 +27,12 @@ class App extends React.Component<{}, IState> {
     this.setDatarunID = this.setDatarunID.bind(this);
     this.setDatasetID = this.setDatasetID.bind(this);
     this.setDatarunStatus = this.setDatarunStatus.bind(this);
+    this.compareTopK = this.compareTopK.bind(this);
     this.state = {
         datarunStatus: IDatarunStatusTypes.PENDING,
         datarunID: null,
-        datasetID: null
+        datasetID: null,
+        compareK: 0 // 0=> don't compare
     };
 }
   public setDatarunID(id: number): void{
@@ -39,12 +42,16 @@ class App extends React.Component<{}, IState> {
   public setDatasetID(datasetID: number): void{
     this.setState({datasetID});
   }
+  public compareTopK(topK:number){
+      this.setState({compareK: topK})
+  }
   public setDatarunStatus(datarunStatus: IDatarunStatusTypes): void{
     this.setState({datarunStatus});
   }
-  
-  
+
+
   public render() {
+      let {datarunID, datasetID, compareK, datarunStatus} = this.state
     return (
       <Layout className="app" >
         <Header className='appHeader'>
@@ -60,16 +67,18 @@ class App extends React.Component<{}, IState> {
                 setDatarunID={this.setDatarunID}
                 setDatasetID={this.setDatasetID}
                 setDatarunStatus={this.setDatarunStatus}
+                compareTopK={this.compareTopK}
               />
             </Col >
 
             <Col span={20}  className="col">
             <div className="shadowBox" >
-              <DataRuns 
-                datarunID={this.state.datarunID} 
-                datarunStatus={this.state.datarunStatus} 
-                datasetID={this.state.datasetID}
+              <DataRuns
+                datarunID={datarunID}
+                datarunStatus={datarunStatus}
+                datasetID={datasetID}
                 setDatarunID={this.setDatarunID}
+                compareK={compareK}
                 />
               </div>
             </Col>
