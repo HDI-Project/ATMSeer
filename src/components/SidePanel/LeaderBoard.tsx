@@ -81,7 +81,7 @@ export interface LeaderBoardProps {
     datarunID: number | null;
     datarunStatus: IDatarunStatusTypes;
     setDatarunStatus: (status: IDatarunStatusTypes) => void;
-    compareTopK: (topk:number)=>void;
+    setTopK: (topk:number)=>void;
 }
 
 export interface LeaderBoardState {
@@ -247,7 +247,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             size='small'
                             style={{float:'right'}}
                             // tslint:disable-next-line:jsx-no-lambda
-                            onClick={()=>this.props.compareTopK(topK)}
+                            onClick={()=>this.props.setTopK(topK)}
                         /> */}
                         <span style={{float:'right'}} >
                         <Switch
@@ -255,7 +255,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             unCheckedChildren={<Icon type="bars" />}
                             defaultChecked={false}
                             // tslint:disable-next-line:jsx-no-lambda
-                            onChange={(checked:boolean)=>this.props.compareTopK(checked?topK:0)}
+                            onChange={(checked:boolean)=>this.props.setTopK(checked?topK:0)}
                         />
                         </span>
                     </h4>

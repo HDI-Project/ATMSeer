@@ -69,6 +69,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                         box={box}
                         selectedMethod={selectedMethod}
                         comparedCls={comparedCls}
+                        valueType={hp.valueType}
                         />
                 })}
             </g>
@@ -86,6 +87,7 @@ export interface HyProps {
     hp: any,
     idx: number,
     comparedCls: IClassifierInfo[],
+    valueType: string,
     box: {
         width: number,
         height: number,
@@ -133,42 +135,49 @@ class HyperParameter extends React.Component<HyProps, {}>{
 
     }
     renderD3() {
-        let { box, hp, classifiers, idx, selectedMethod } = this.props
+        let { box, hp, classifiers, idx, selectedMethod, valueType } = this.props
         classifiers.reverse() // reverse so that good classifiers is on the top
         let scatterData = classifiers.map(cls => {
             return { hp: cls.hyperparameters[hp.name]||0, score: cls.cv_metric, ...cls }
         })
         let methodColor = getColor(selectedMethod)
 
+        let { width, height, margin } = box
+        let x = d3.scaleLinear().range([0, width])
+        let y = d3.scaleLinear().range([height, 0]);
+        if(valueType=="float_exp"){
+            x = d3.scaleLog().range([0, width])
+        }
+        let yArea = d3.scaleLinear().range([height/4, 0]);
+        x.domain([hp.min, hp.max]);
+        y.domain([0, 1]);
+
         // calculate the area chart
         const num_step = 20
         let areaData: number[][] = Array.from(new Array(num_step).keys()).map(d => [])
-        const step = (hp.max - hp.min) / num_step
+        const step = width / num_step
         scatterData.forEach(d => {
             if (typeof (d.hp) == 'number') {
-                let rangeIndex = Math.floor((d.hp - hp.min) / step)
+                let rangeIndex = Math.floor((x(d.hp) - 0) / step)
+
                 rangeIndex = rangeIndex >= num_step ? (num_step - 1) : rangeIndex
                 areaData[rangeIndex].push(d.score)
             }
         })
-        areaData.push(areaData[areaData.length - 1])
+        areaData.unshift(areaData[0])
 
         //draw
-        let { width, height, margin } = box
+
         let svg = d3.select("#" + this.TAG + idx)
             .append('g')
             .attr('transform', `translate(${0}, ${margin + idx * (height*5/4 + margin)})`)
 
 
-        let x = d3.scaleLinear().range([0, width])
-        let y = d3.scaleLinear().range([height, 0]);
-        let yArea = d3.scaleLinear().range([height/4, 0]);
-        x.domain([hp.min, hp.max]);
-        y.domain([0, 1]);
+
         yArea.domain(d3.extent(areaData, (d: number[]) => d.length))
 
         let area = d3.area()
-            .x(function (d: any, i: number) { return x(hp.min + i * step); })
+            .x(function (d: any, i: number) { return i*step; })
             .y1(height*5/4)
             .y0(function (d: any) { return height + yArea(d.length); })
             .curve(d3.curveCardinal)

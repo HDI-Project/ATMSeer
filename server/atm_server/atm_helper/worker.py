@@ -10,7 +10,7 @@ from multiprocessing import Process
 
 import atm
 from atm.worker import work as atm_work
-from atm.database import Database, db_session, try_with_session
+from atm.database import Database
 from atm.config import (add_arguments_aws_s3, add_arguments_sql,
                         add_arguments_logging,
                         load_config, initialize_logging)
@@ -63,6 +63,8 @@ def work(datarun_id, args=None):
     _logger = logging.getLogger('atm_server.worker:work')
     _logger.setLevel(logging.DEBUG)
     fh = logging.FileHandler('logs/works.log')
+    fmt = '%(asctime)-12s %(name)s - %(levelname)s  %(message)s'
+    fh.setFormatter(logging.Formatter(fmt))
     _logger.addHandler(fh)
     parser = argparse.ArgumentParser(description='Add more classifiers to database')
     add_arguments_sql(parser)
@@ -94,15 +96,21 @@ def work(datarun_id, args=None):
     _logger.warning('Worker started!')
     with datarun_config(datarun_id) as config:
         _logger.warning('Using configs from ' + config.config_path)
-        atm_work(db=Database(**vars(sql_config)),
-                 datarun_ids=[datarun_id],
-                 choose_randomly=_args.choose_randomly,
-                 save_files=_args.save_files,
-                 cloud_mode=_args.cloud_mode,
-                 aws_config=aws_config,
-                 log_config=log_config,
-                 total_time=_args.time,
-                 wait=False)
+        db = Database(**vars(sql_config))
+        try:
+            atm_work(db=db,
+                     datarun_ids=[datarun_id],
+                     choose_randomly=_args.choose_randomly,
+                     save_files=_args.save_files,
+                     cloud_mode=_args.cloud_mode,
+                     aws_config=aws_config,
+                     log_config=log_config,
+                     total_time=_args.time,
+                     wait=False)
+        except Exception as e:
+            _logger.error(e)
+            mark_running_datarun_pending(db, datarun_id)
+            raise e
     _logger.warning('Worker exited.')
 
 
@@ -133,21 +141,21 @@ def monitor_dispatch_worker(datarun_id):
         logger.error("Cannot create worker process!")
         return
     register_worker_process(p_inner, datarun_id)
-    key = datarun_id2key(datarun_id)
-    cache = get_cache()
+    # key = datarun_id2key(datarun_id)
+    # cache = get_cache()
     while True:
         # Check start
         if not p_inner.is_alive():
             # Clean the cache
             logger.warning("Process (PID: %d) exited." % p_inner.pid)
-            cache.delete(key)
-            db = get_db()
-            datarun = db.get_datarun(datarun_id)
-            if datarun.status == RunStatus.RUNNING:
-                # The datarun is still running
-                mark_datarun_pending(db, datarun_id)
+            clean_worker_cache(datarun_id)
+            # db = get_db()
+            # datarun = db.get_datarun(datarun_id)
+            # if datarun.status == RunStatus.RUNNING:
+            #     # The datarun is still running
+            #     mark_datarun_pending(db, datarun_id)
             return
-        if cache.get(key) is None or cache.get(key) != p_inner.pid:
+        if should_worker_stop(datarun_id):
             while True:
                 p_inner.terminate()
                 # terminate() only sends the signal, wait a while to check
@@ -160,13 +168,13 @@ def monitor_dispatch_worker(datarun_id):
                     break
             # Since we have break the run, we need to update the datarun status
             # Note that the run may or may not be complete, due to the delay in terminating
-            db = get_db()
-            datarun = db.get_datarun(datarun_id)
-            if datarun.status == RunStatus.RUNNING:
-                # The datarun is still running
-                mark_datarun_pending(db,datarun_id)
+            # db = get_db()
+            # datarun = db.get_datarun(datarun_id)
+            # if datarun.status == RunStatus.RUNNING:
+            #     # The datarun is still running
+            #     mark_datarun_pending(db,datarun_id)
             logger.warning("Process (PID: %d) terminated (exitcode: %d)" % (p_inner.pid, p_inner.exitcode))
-            cache.delete(key)
+            clean_worker_cache(datarun_id)
             return
         # Sleep for a while
         time.sleep(0.001)
@@ -204,45 +212,57 @@ def start_worker(datarun_id):
 
 
 def stop_worker(datarun_id):
-    key = datarun_id2key(datarun_id)
-    cache = get_cache()
-    pid = cache.get(key)
     # TODO: maybe there is a better way to solve the problem
     # where the cache has been set stop, then the real pid will be lost.
     # How can I find whether the real pid is alive?
-    if pid == 'stop':
-        logger.warning("This worker of datarun %d has already stopped." % datarun_id)
-        cache.delete(key)
-        return True
 
-    if pid is not None and pid != 'stop':
-        logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
-        # Then we delete the datarun process_id cache (as a signal of terminating)
-        cache.set(key, 'stop')
-        while True:
-            if cache.has(key):
-                time.sleep(1)
-            else:
-                return True
+
+    # if pid == 'stop':
+    #     logger.warning("This worker of datarun %d has already stopped." % datarun_id)
+    #     cache.delete(key)
+    #     return True
+    #
+    # if pid is not None and pid != 'stop':
+    #     logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
+    #     # Then we delete the datarun process_id cache (as a signal of terminating)
+    #     cache.set(key, 'stop')
+    #     while True:
+    #         time.sleep(0.1)
+    #         if cache.has(key):
+    #             time.sleep(0.9)
+    #         else:
+    #             return True
         # cache.delete(key)
         # return True
-    logger.warning("Cannot find corresponding process for datarun %d" % datarun_id)
+    # logger.warning("Cannot find corresponding process for datarun %d" % datarun_id)
+    start_time = time.time()
+    key = datarun_id2key(datarun_id)
+    flag = False
+    while True:
+        signal_worker_stop(datarun_id)
+        if time.time() - start_time > 2:
+            flag = False
+            # raise ValueError('Cannot stop the process after 2s!')
+        time.sleep(0.1)
+        if get_cache().has(key):
+            time.sleep(0.4)
+        else:
+            break
+
     db = get_db()
+    mark_running_datarun_pending(db, datarun_id)
+    return flag
+
+
+def mark_running_datarun_pending(db, datarun_id):
     datarun = db.get_datarun(datarun_id)
     if datarun is None:
         # WARNING: Raise ERROR
         raise ApiError("No datarun found with the given id: %d" % datarun_id, 404)
     if datarun.status == RunStatus.RUNNING:
-        # The datarun maybe terminated.
-        mark_datarun_pending(db,datarun_id)
-    return False
-
-
-@try_with_session(commit=True)
-def mark_datarun_pending(db, datarun_id):
-    datarun = db.get_datarun(datarun_id)
-    datarun.status = RunStatus.PENDING
-    datarun.end_time = datetime.now()
+        datarun.status = RunStatus.PENDING
+        datarun.end_time = datetime.now()
+        db.session.commit()
 
 
 def datarun_id2key(datarun_id):
@@ -252,7 +272,39 @@ def datarun_id2key(datarun_id):
 def register_worker_process(process, datarun_id):
     key = datarun_id2key(datarun_id)
     cache = get_cache()
-    if cache.has(key) and cache.get(key) != 'stop':
+    if not should_worker_stop(datarun_id):
         raise ApiError("There should be only one live working process for one datarun!", 500)
     cache.set(key, process.pid)
+    cache.set(key + '(should_stop)', False)
     logger.warning("Worker process (PID: %d) for datarun %d registered" % (process.pid, datarun_id))
+
+
+def should_worker_stop(datarun_id):
+    key = datarun_id2key(datarun_id)
+    cache = get_cache()
+    if cache.has(key) and not cache.get(key + '(should_stop)'):
+        return False
+    return True
+
+
+def signal_worker_stop(datarun_id):
+    key = datarun_id2key(datarun_id)
+    cache = get_cache()
+    if cache.has(key):
+        pid = cache.get(key)
+        if cache.get(key + '(should_stop)'):
+            logger.warning("Stopped signal of worker process (PID: %d) already sent!" % pid)
+        else:
+            logger.warning("Terminating the worker process (PID: %d) of datarun %d" % (pid, datarun_id))
+            cache.set(key + '(should_stop)', True)
+            return True
+    else:
+        logger.warning("Worker process for datarun %d already removed!" % datarun_id)
+    return False
+
+
+def clean_worker_cache(datarun_id):
+    key = datarun_id2key(datarun_id)
+    cache = get_cache()
+    cache.delete(key)
+    cache.delete(key + '(should_stop)')

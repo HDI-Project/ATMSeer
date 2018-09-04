@@ -14,7 +14,7 @@ export interface SidePanelProps {
     setDatasetID: (id: number) => void;
     setDatarunID: (id: number) => void;
     setDatarunStatus: (status: IDatarunStatusTypes) => void;
-    compareTopK: (topK:number)=>void;
+    setTopK: (topK:number)=>void;
 }
 
 export interface SidePanelState {}
@@ -41,7 +41,7 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
                             datarunID={this.props.datarunID}
                             datarunStatus={this.props.datarunStatus}
                             setDatarunStatus={this.props.setDatarunStatus}
-                            compareTopK = {this.props.compareTopK}
+                            setTopK = {this.props.setTopK}
                         />
                     </TabPane>
                 </Tabs>
