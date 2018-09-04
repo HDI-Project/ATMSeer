@@ -4,7 +4,7 @@ import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo} from 'service/dataService';
 import { Checkbox } from 'antd';
-
+import "./Methods.css";
 const d3 = require("d3");
 
 export interface IProps {
@@ -260,7 +260,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             }
             total += d;
         });
-        //total;
+        total;
         let yAxisData: string[] = []
         for (let i = 0; i <= 1 / step; i++) {
             yAxisData.push(`${(i * step).toFixed(2)}`)
@@ -285,9 +285,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
         //Create SVG element
-        let tooltip = d3.select("#tooltip");
+       // let tooltip = d3.select("#tooltip");
         //let top_methods = d3.select("#methodstop");
-
+        /*
         if (tooltip.empty()) {
             tooltip = d3.select("body").append("div")
                 .attr("class", "tooltip")
@@ -295,23 +295,23 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 .style("opacity", 0)
                 .style("left", "0px")
                 .style("top", "0px");;
-        }
+        }*/
         let top_svg = d3.select("#" + this.TAG + this.props.name).attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
             // .on("click",()=>{onClick(this.props.name)})
             .on("mousemove", function (d: any) {
-
+                    /*
                 tooltip.transition()
                     .duration(100)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
                 tooltip.style("opacity", 0.7).html(methodDef.fullname + "<br/>" + "best performance:" + bestperformance.toFixed(2) + "<br/>" + "trial number:" + total)
-
+                    */
             })
 
             .on("mouseout", function (d: any) {
-                tooltip
-                    .style("opacity", 0);
+               // tooltip
+               //     .style("opacity", 0);
             });;
         top_svg.append("rect")
             .attr('class', `${this.props.name} methodRect`)
