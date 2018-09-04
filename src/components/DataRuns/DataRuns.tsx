@@ -28,19 +28,19 @@ import ThreeLevel from "./ThreeLevel";
 //   });
 
 
-
-export interface IState{
-    runCSV:string,
-    classifiers: IClassifierInfo[],
-    hyperpartitions: IHyperpartitionInfo[]
-
-}
 export interface IProps{
     datarunID: number | null;
     datarunStatus: IDatarunStatusTypes;
     datasetID: number | null;
+    compareK: number
     setDatarunID: (id: number) => void;
 }
+export interface IState{
+    runCSV:string,
+    classifiers: IClassifierInfo[],
+    hyperpartitions: IHyperpartitionInfo[]
+}
+
 export default class DataRuns extends React.Component<IProps, IState>{
     private intervalID: number
     constructor(props: IProps) {
@@ -106,10 +106,10 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
     public render(){
         let {runCSV, hyperpartitions, classifiers} = this.state
+        let {datasetID, datarunID, compareK} = this.props
         hyperpartitions = hyperpartitions.filter(d=>d.datarun_id==this.props.datarunID)
         // const {classifiers} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
-        console.log(datarun);
         //console.log(runCSV);
         //console.log(datarun);
         if (Object.keys(datarun).length>0){
@@ -127,10 +127,16 @@ export default class DataRuns extends React.Component<IProps, IState>{
             {/* <MethodsLineChart height={85} datarun={datarun} hyperpartitions={this.state.hyperpartitions}
             datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
             datarunID={this.props.datarunID}/> */}
-            <ThreeLevel height={90} datarun={datarun} hyperpartitions={hyperpartitions}
+            <ThreeLevel
+            height={90}
+            datarun={datarun}
+            hyperpartitions={hyperpartitions}
             classifiers={classifiers}
-            datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
-            datarunID={this.props.datarunID}/>
+            datasetID={datasetID}
+            setDatarunID={this.props.setDatarunID}
+            compareK={compareK}
+            datarunID={datarunID}
+            />
 
         </div>)
         }else{

@@ -5,7 +5,8 @@ import * as methodsDef from "assets/methodsDef.json";
 
 export interface IProps {
     classifiers: IClassifierInfo[],
-    selectedMethod: string
+    selectedMethod: string,
+    compareK:number
 }
 
 const d3 = require("d3");
@@ -13,10 +14,14 @@ const d3 = require("d3");
 
 export default class HyperParameters extends React.Component<IProps, {}>{
     render() {
-        console.info('should render hyperparameter', this.props.selectedMethod)
-        let { classifiers, selectedMethod } = this.props
+        let { classifiers, selectedMethod, compareK } = this.props
+        let comparedCls = classifiers.slice(0, compareK)
+        let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
+        if (comparedMethods.length==1){
+            selectedMethod = comparedMethods[0]
+        }
         classifiers = classifiers.filter(d=>d.method==selectedMethod)
-        if (selectedMethod) {
+        if (classifiers.length>0) {
             let HyperparameterList: any[] = [];
             let idx = 0
             let methodDef = methodsDef[selectedMethod];
@@ -56,7 +61,15 @@ export default class HyperParameters extends React.Component<IProps, {}>{
             }
             return <g className="hyperParameters">
                 {HyperparameterList.map((hp, i) => {
-                    return <HyperParameter key={hp} classifiers={classifiers} hp={hp} idx={i} box={box} selectedMethod={selectedMethod}/>
+                    return <HyperParameter
+                        key={hp}
+                        classifiers={classifiers}
+                        hp={hp}
+                        idx={i}
+                        box={box}
+                        selectedMethod={selectedMethod}
+                        comparedCls={comparedCls}
+                        />
                 })}
             </g>
         } else {
@@ -72,6 +85,7 @@ export interface HyProps {
     selectedMethod: string,
     hp: any,
     idx: number,
+    comparedCls: IClassifierInfo[],
     box: {
         width: number,
         height: number,
@@ -83,18 +97,46 @@ class HyperParameter extends React.Component<HyProps, {}>{
     TAG = "HyperParameter_";
     componentDidMount() {
         this.renderD3();
+        let g = d3.select("#" + this.TAG + this.props.idx)
+        let {comparedCls} = this.props
+        g.selectAll(`circle.dot`)
+            .attr('opacity', 1)
+        if(comparedCls.length>0){
+            g.selectAll(`circle.dot`)
+            .attr('opacity', 0.2)
+        }
+        comparedCls.forEach(d=>{
+            g.select(`#_${d.id}`)
+            .attr('opacity', 1)
+        })
     }
     // componentWillUnmount() {
     //     // d3.select("#" + this.TAG + this.props.idx).remove()
     // }
     componentDidUpdate(){
-        d3.select("#" + this.TAG + this.props.idx).selectAll('*').remove()
+        let g = d3.select("#" + this.TAG + this.props.idx)
+
+        g.selectAll('*').remove()
         this.renderD3()
+
+        let {comparedCls} = this.props
+        g.selectAll(`circle.dot`)
+            .attr('opacity', 1)
+        if(comparedCls.length>0){
+            g.selectAll(`circle.dot`)
+            .attr('opacity', 0.2)
+        }
+        comparedCls.forEach(d=>{
+            g.select(`#_${d.id}`)
+            .attr('opacity', 1)
+        })
+
     }
     renderD3() {
         let { box, hp, classifiers, idx, selectedMethod } = this.props
+        classifiers.reverse() // reverse so that good classifiers is on the top
         let scatterData = classifiers.map(cls => {
-            return { hp: cls.hyperparameters[hp.name]||0, score: cls.cv_metric }
+            return { hp: cls.hyperparameters[hp.name]||0, score: cls.cv_metric, ...cls }
         })
         let methodColor = getColor(selectedMethod)
 
@@ -165,10 +207,13 @@ class HyperParameter extends React.Component<HyProps, {}>{
             .data(scatterData)
             .enter().append("circle")
             .attr("class", 'dot')
-            .attr("r", 3)
+            .attr('id',(d:any)=>`_${d.id}`)
+            .attr("r", 4)
             .attr("cx", function (d: any) { return x(d.hp); })
             .attr("cy", function (d: any) { return y(d.score); })
             .style('fill', getColor(classifiers[0].method))
+            .attr('stroke', 'white')
+            .attr('stroke-width', 1)
 
         // Add the X Axis
         svg.append("g")

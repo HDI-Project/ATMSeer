@@ -14,7 +14,8 @@ export interface IProps {
     datarunID: number | null,
     setDatarunID: (id: number) => void,
     hyperpartitions : IHyperpartitionInfo[],
-    classifiers: IClassifierInfo[]
+    classifiers: IClassifierInfo[],
+    compareK: number
 }
 
 export interface IState {
@@ -106,7 +107,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
        }
 
     render(){
-        let {datarun, hyperpartitions, classifiers} = this.props
+        let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
+        classifiers = classifiers.sort(
+            (a,b)=>b.cv_metric-a.cv_metric
+        ) // best performance in the front
         let {selectedMethod} = this.state
         let usedMethods: string[] = Object.keys(datarun);
         let unusedMethods = Object.keys(methodsDef)
@@ -145,6 +149,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 usedMethods = {usedMethods}
                 unusedMethods = {unusedMethods}
                 hyperpartitions={hyperpartitions}
+                compareK={compareK}
             />
             </g>
             <g transform={`translate(${width1}, ${headerHeight})`}>
@@ -156,8 +161,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
                 // datarun={datarun}
+                datarunID={datarunID}
                 selectedMethod={selectedMethod}
                 classifiers={classifiers}
+                compareK={compareK}
                 />
             </g>
             <g transform={`translate(${width1+width2}, ${headerHeight})`}>
@@ -166,7 +173,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 x={width3}
                 y={10}
             >HyperParameters of {selectedMethod}</text>
-            <HyperParameters classifiers={classifiers} selectedMethod={selectedMethod}/>
+            <HyperParameters classifiers={classifiers} selectedMethod={selectedMethod} compareK={compareK}/>
             </g>
             </svg>
 
