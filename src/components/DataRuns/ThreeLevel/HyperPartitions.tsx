@@ -162,8 +162,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 )
 
             //update
-            let hpUpdate = hps
-                // .transition(trans)
+            hps.transition(trans)
                 .attr("transform",
                     (d: any, i: number) => {
                         return `translate(${pos[i + 1][0]},${pos[i + 1][1]})`
@@ -172,7 +171,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
 
 
-            hpUpdate.filter((d: any) => d.method != selectedMethod)
+            hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('.hpBar')
                 .transition(trans)
                 .attr('width', 0)
@@ -181,7 +180,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('y', height)
                 .remove()
 
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .selectAll('.hpBar')
                 .data((d: any) => d.scores)
                 .enter().append("rect")
@@ -199,7 +198,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr("width", x.bandwidth())
                 .attr("height", (d: any) => (height - y(d)))
 
-            hpUpdate.selectAll('.out_hyperPartition')
+            hps.selectAll('.out_hyperPartition')
                 .transition(trans)
                 .attr('height', (d: any) => d.method == selectedMethod ? (height + 2 * strokeWidth) : gap)
                 .attr('y', (d: any) => d.method == selectedMethod ? (-strokeWidth - height) : (gap))
@@ -209,7 +208,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .style('stroke', 'gray')
                 .style('stroke-width', strokeWidth)
 
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .append('text')
                 .attr('class', "num_cls")
                 .attr('x', (d: any) => width * d.scores.length / maxLen - 2)
@@ -219,7 +218,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .append('text')
                 .attr('class', "best_score")
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
@@ -229,7 +228,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
-            hpUpdate.filter((d: any) => d.method == selectedMethod)
+            hps.filter((d: any) => d.method == selectedMethod)
                 .append('g')
                 .attr('class', 'hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
@@ -252,12 +251,12 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .transition(trans)
                 .attr('opacity', 1)
 
-            hpUpdate.filter((d: any) => d.method != selectedMethod)
+            hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('text')
                 .transition(trans)
                 .attr('opacity', 1e-6)
                 .remove()
-            hpUpdate.filter((d: any) => d.method != selectedMethod)
+            hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('g.hp_name')
                 .transition(trans)
                 .attr('opacity', 1e-6)
