@@ -22,7 +22,9 @@ export interface IState {
     selectedMethod:string,
     configsBudget: number,
     configsMethod : string[],
-    loading: boolean
+    loading: boolean,
+    hyperparametersRangeAlreadySelected:any,
+    hyperpartitionsAlreadySelected:any
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
@@ -34,7 +36,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             selectedMethod: '',
             configsBudget: 100,
             configsMethod: [],
-            loading: false
+            loading: false,
+            hyperparametersRangeAlreadySelected:{},
+            hyperpartitionsAlreadySelected:{}
+
         }
     }
 
@@ -82,6 +87,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
                     let submitconfigs : IUpdateDatarunConfig = {};
                     submitconfigs.configs = configs;
+                    submitconfigs.method_configs = this.state.hyperparametersRangeAlreadySelected;
                     let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
                     //const promise = this.props.onSubmit(this.state.configs);
                     console.log("update data run in methods view");
@@ -128,6 +134,37 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
         }
     }
+    onBrushSelected = (methodname:string, hpaName: string,hpatype:string,range:number[])=>{
+        let {hyperparametersRangeAlreadySelected} = this.state;
+        let update : boolean = false;
+        if(hpatype=="int"){
+            range[0]=Math.floor(range[0]);
+            range[1]=Math.ceil(range[1]);
+        }
+        if(!hyperparametersRangeAlreadySelected[methodname]){
+           hyperparametersRangeAlreadySelected[methodname]={};
+        }
+        if(hyperparametersRangeAlreadySelected[methodname][hpaName]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"]){
+           if(hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][0]==range[0]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][1]==range[1]){
+               // nothing
+           }else{
+               update = true;
+           }
+        }else{
+            if(range.length>0){
+                update = true;
+
+           }
+        }
+        if(update){
+           hyperparametersRangeAlreadySelected[methodname][hpaName]={"type":hpatype,"range":range};
+           console.log(hyperparametersRangeAlreadySelected);
+           this.setState({
+               hyperparametersRangeAlreadySelected : hyperparametersRangeAlreadySelected
+           })
+        }
+
+     }
     render(){
         let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
         classifiers = classifiers.sort(
@@ -197,7 +234,13 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 x={width3}
                 y={10}
             >HyperParameters of {selectedMethod}</text>
-            <HyperParameters classifiers={classifiers} selectedMethod={selectedMethod} compareK={compareK}/>
+            <HyperParameters 
+                classifiers={classifiers} 
+                selectedMethod={selectedMethod} 
+                compareK={compareK}
+                alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
+                onSelectedChange={this.onBrushSelected}
+                />
             </g>
             </svg>
 

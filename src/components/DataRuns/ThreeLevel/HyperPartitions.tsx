@@ -151,7 +151,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
 
-            hps.filter((d: any) => d.method == selectedMethod)
+
+             // Text Append   
+            /*hps.filter((d: any) => d.method == selectedMethod)
                 .append('g')
                 .attr('class', 'hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
@@ -170,8 +172,27 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             >
                 ${d.hyperpartition_string}
             </div>`
-                )
+                )*/
 
+          
+                /*
+            return (<foreignObject 
+                        key={name+"_text_"+i} 
+                        x={ this.methodBoxAttr.x +
+                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                        y={this.methodBoxAttr.y +
+                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
+                        width={this.methodBoxAttr.checkboxWidth} 
+                        height={this.methodBoxAttr.checkboxHeight}>
+                        <Checkbox  
+                        key={name+"_checkbox_"+(i)} 
+                        checked={checked} 
+                        value={name} 
+                        onChange={this.props.onMethodsCheckBoxChange} >
+                        {name}
+                        </Checkbox>
+                        </foreignObject>
+                    )*/
             //update
             hps.transition(trans)
                 .attr("transform",

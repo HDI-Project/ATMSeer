@@ -142,10 +142,10 @@ export default class methods extends React.Component<IProps, IState>{
                             };
                             return (<foreignObject 
                                         key={name+"_text_"+i} 
-                                        x={this.methodBoxAttr.x +
-                                            (i % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                                        x={ this.methodBoxAttr.x +
+                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
                                         y={this.methodBoxAttr.y +
-                                            Math.floor(i / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap) + this.methodBoxAttr.height} 
+                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
                                         width={this.methodBoxAttr.checkboxWidth} 
                                         height={this.methodBoxAttr.checkboxHeight}>
                                        <Checkbox  
