@@ -133,8 +133,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             // .style('stroke', 'white')
             // .style('stroke-width', 2)
 
-            hps.filter((d: any) => d.method == selectedMethod)
-                .append('text')
+            let textEnter = hps.filter((d: any) => d.method == selectedMethod)
+                    .append('g')
+                    .attr('class', 'caption')
+            textEnter.append('text')
                 .attr('class', "num_cls")
                 .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
                 .attr('y', -1)
@@ -142,8 +144,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('text-anchor', 'start')
 
 
-            hps.filter((d: any) => d.method == selectedMethod)
-                .append('text')
+            textEnter.append('text')
                 .attr('class', "best_score")
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
                 .attr('x', -gap)
@@ -151,16 +152,14 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
 
-
-             // Text Append   
-            /*hps.filter((d: any) => d.method == selectedMethod)
-                .append('g')
+            textEnter.append('g')
                 .attr('class', 'hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
                 .append('foreignObject')
                 .attr('width', width)
                 .attr('height', height)
                 .append('xhtml:div')
+                .attr('class',  'div_caption')
                 .html((d: any) =>
                     `<div
                 style='text-overflow: ellipsis;
@@ -172,7 +171,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             >
                 ${d.hyperpartition_string}
             </div>`
-                )*/
+                )
 
           
                 /*
@@ -241,9 +240,16 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .style('stroke', 'gray')
                 .style('stroke-width', strokeWidth)
 
-            hps.filter((d: any) => d.method == selectedMethod)
-                .append('text')
-                .attr('class', "num_cls")
+            let textUpdate = hps.filter((d: any) => d.method == selectedMethod)
+                .selectAll('g.caption')
+                .data((d:any)=>[d])
+
+            textUpdate.exit()
+                .transition(trans)
+                .attr('opacity', 1e-6)
+                .remove()
+
+            textUpdate.selectAll('text.num_cls')
                 .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
                 .attr('y', -1)
                 .text((d: any) => d.sortedCls.length)
@@ -251,9 +257,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
-            hps.filter((d: any) => d.method == selectedMethod)
-                .append('text')
-                .attr('class', "best_score")
+            textUpdate.selectAll('text.best_score')
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
                 .attr('x', -gap)
                 .attr('y', 0)
@@ -262,14 +266,12 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
-            hps.filter((d: any) => d.method == selectedMethod)
-                .append('g')
-                .attr('class', 'hp_name')
+            textUpdate.selectAll('g.hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
-                .append('foreignObject')
+                .select('foreignObject')
                 .attr('width', width)
                 .attr('height', height)
-                .append('xhtml:div')
+                .select('.div_caption')
                 .html((d: any) =>
                     `<div
                 style='text-overflow: ellipsis;
@@ -286,12 +288,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('opacity', 1)
 
             hps.filter((d: any) => d.method != selectedMethod)
-                .selectAll('text')
-                .transition(trans)
-                .attr('opacity', 1e-6)
-                .remove()
-            hps.filter((d: any) => d.method != selectedMethod)
-                .selectAll('g.hp_name')
+                .selectAll('g.caption')
                 .transition(trans)
                 .attr('opacity', 1e-6)
                 .remove()
