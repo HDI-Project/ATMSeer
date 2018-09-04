@@ -140,6 +140,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 textAnchor="middle"
                 x={width1/2}
                 y={10}
+                style={{ font: "bold 16px sans-serif" }}
             >Algorithms</text>
             <Methods
                 classifiers={classifiers}
@@ -157,6 +158,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 textAnchor="middle"
                 x={width2/2}
                 y={10}
+                style={{ font: "bold 16px sans-serif" }}
             >HyperPartitions of {selectedMethod}</text>
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
@@ -172,6 +174,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 textAnchor="end"
                 x={width3}
                 y={10}
+                style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of {selectedMethod}</text>
             <HyperParameters classifiers={classifiers} selectedMethod={selectedMethod} compareK={compareK}/>
             </g>

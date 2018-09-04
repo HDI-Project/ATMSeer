@@ -235,18 +235,12 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('y', -1)
                 .text((d: any) => d.sortedCls.length)
                 .attr('text-anchor', 'start')
-                .attr('opacity', 1e-6)
-                .transition(trans)
-                .attr('opacity', 1)
             textUpdate.selectAll('text.best_score')
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
                 .attr('x', -gap)
                 .attr('y', 0)
                 .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
-                .attr('opacity', 1e-6)
-                .transition(trans)
-                .attr('opacity', 1)
             textUpdate.selectAll('g.hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
                 .select('foreignObject')
@@ -264,9 +258,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             >
                 ${d.hyperpartition_string}
             </div>`
-                ).attr('opacity', 1e-6)
-                .transition(trans)
-                .attr('opacity', 1)
+                )
 
             hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('g.caption')
@@ -323,7 +315,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             this.renderD3(hpsInfo, maxLen, selectedMethod)
         }
 
-        if (comparedMethods.length==1){
+        if (comparedMethods.length>=1){
             let g = d3.select('g.HyperPartitions')
             g.selectAll('rect.hpBar')
             .attr('opacity', 0.2)
@@ -352,7 +344,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         }
         //
 
-        if (comparedMethods.length==1){
+        if (comparedMethods.length>=1){
             let g = d3.selectAll('g.hpGroup')
             console.info('d3, compare, hyperpartition', comparedMethods, comparedCls)
             g.selectAll('rect.hpBar')
