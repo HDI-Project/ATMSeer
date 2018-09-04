@@ -284,7 +284,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 )
             let scores = filteredCls.map(
                 d => d.cv_metric
-            ).sort((a, b) => (a - b))
+            ).sort((a, b) => (b - a))
             return {
                 ...hp,
                 bestScore: Math.max(...scores),
