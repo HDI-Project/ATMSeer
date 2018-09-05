@@ -20,7 +20,7 @@ from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db,
 from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun, \
     create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
     load_datarun_config_dict
-
+from recommender.predict_dataset import Recommender
 
 api = Blueprint('api', __name__)
 
@@ -573,4 +573,11 @@ def post_click_event():
 
 @api.route('/getRecommendation/<int:dataset_id>', methods=['GET'])
 def getRecommendation(dataset_id):
-    return jsonify({'result':["mlp","svm","sgd"]})
+    """Get Recommendation"""
+    train = request.args.get('train', True, type=bool)
+    dataset_path = fetch_dataset_path(dataset_id, train)
+    rec = Recommender(current_app['DATASET_META_DIR'])
+    result = rec.predict_dataset(dataset_path,dataset_id)
+    if len(result)>=3:
+        result = result[0:2]
+    return jsonify({'result':result})
