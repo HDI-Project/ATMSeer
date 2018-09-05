@@ -18,8 +18,8 @@ class Recommender:
                     'KurtosisMean', 'SkewnessMin', 'NumberOfClasses', 'SymbolsMean']
         self.features = set(self.feature_list)
         self.column_title =  ["dataset_name"] + self.feature_list
-        self.pre_meta_path = './recommender_dataset/data_meta_first.csv' 
-        self.pre_PMA_path = './recommender_dataset/dataset_method_PMA.csv'
+        self.pre_meta_path = './server/recommender_dataset/data_meta_first.csv' 
+        self.pre_PMA_path = './server/recommender_dataset/dataset_method_PMA.csv'
         self.saved_meta_path = saved_meta_path
         if not os.path.exists(self.saved_meta_path):
             os.makedirs(self.saved_meta_path)
@@ -118,6 +118,7 @@ class Recommender:
         result2 = df6.groupby(df6.method).apply(lambda x: np.average(x.PMA, weights=x.value))
         result2 = result2.sort_values(ascending=False)
         # print(df6)
+        
         result2.to_csv(self.getSavedResultPath(dataset_name))
 
     def predict_dataset(self,predict_dataset_path,datasetID):
@@ -129,7 +130,8 @@ class Recommender:
             computed = os.path.exists(result_path)
             if not computed:
                 raise ValueError("Fail to compute predict dataset")
-        df9 = pd.read_csv(result_path)
+        df9 = pd.Series.from_csv(result_path)
+        print(df9)
         result3 = df9.index.tolist()
         result3 = [str1[len('classify_'):len(str1)] for str1 in result3]
         result3 = [str1  for str1 in result3 if not str1 == 'dbn']
