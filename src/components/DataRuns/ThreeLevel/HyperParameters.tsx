@@ -5,7 +5,10 @@ import * as methodsDef from "assets/methodsDef.json";
 
 export interface IProps {
     classifiers: IClassifierInfo[],
-    selectedMethod: string
+    selectedMethod: string,
+    compareK:number,
+    onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
+    alreadySelectedRange:any
 }
 
 const d3 = require("d3");
@@ -13,10 +16,14 @@ const d3 = require("d3");
 
 export default class HyperParameters extends React.Component<IProps, {}>{
     render() {
-        console.info('should render hyperparameter', this.props.selectedMethod)
-        let { classifiers, selectedMethod } = this.props
+        let { classifiers, selectedMethod, compareK } = this.props
+        let comparedCls = classifiers.slice(0, compareK)
+        let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
+        if (comparedMethods.length==1){
+            selectedMethod = comparedMethods[0]
+        }
         classifiers = classifiers.filter(d=>d.method==selectedMethod)
-        if (selectedMethod) {
+        if (classifiers.length>0) {
             let HyperparameterList: any[] = [];
             let idx = 0
             let methodDef = methodsDef[selectedMethod];
@@ -56,7 +63,18 @@ export default class HyperParameters extends React.Component<IProps, {}>{
             }
             return <g className="hyperParameters">
                 {HyperparameterList.map((hp, i) => {
-                    return <HyperParameter key={hp} classifiers={classifiers} hp={hp} idx={i} box={box} selectedMethod={selectedMethod}/>
+                    return <HyperParameter
+                        key={hp}
+                        classifiers={classifiers}
+                        hp={hp}
+                        idx={i}
+                        box={box}
+                        selectedMethod={selectedMethod}
+                        comparedCls={comparedCls}
+                        onSelectedChange={this.props.onSelectedChange}
+                        alreadySelectedRange={this.props.alreadySelectedRange[hp.name]?this.props.alreadySelectedRange[hp.name]:{}}
+                        valueType={hp.valueType}
+                        />
                 })}
             </g>
         } else {
@@ -72,61 +90,120 @@ export interface HyProps {
     selectedMethod: string,
     hp: any,
     idx: number,
+    comparedCls: IClassifierInfo[],
+    valueType: string,
     box: {
         width: number,
         height: number,
         margin: number
-    }
+    },
+    onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
+    alreadySelectedRange:any
 }
+/**
+ * export interface DetailChartProps{
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    methodDef: IMethod,
+    classifiers : IClassifier[],
+    name:string,
+    min:number,
+    max:number,
+    hyname:string,
+    alreadySelectedRange:number[],
+    hintRange:number[],
+    onSelectedChange:(method:string,name:string,range:number[])=>void,
+    valueType:string
+
+}
+ */
 
 class HyperParameter extends React.Component<HyProps, {}>{
     TAG = "HyperParameter_";
     componentDidMount() {
         this.renderD3();
+        let g = d3.select("#" + this.TAG + this.props.idx)
+        let {comparedCls} = this.props
+        g.selectAll(`circle.dot`)
+            .attr('opacity', 1)
+        if(comparedCls.length>0){
+            g.selectAll(`circle.dot`)
+            .attr('opacity', 0.2)
+        }
+        comparedCls.forEach(d=>{
+            g.select(`#_${d.id}`)
+            .attr('opacity', 1)
+        })
     }
     // componentWillUnmount() {
     //     // d3.select("#" + this.TAG + this.props.idx).remove()
     // }
     componentDidUpdate(){
-        d3.select("#" + this.TAG + this.props.idx).selectAll('*').remove()
+        let g = d3.select("#" + this.TAG + this.props.idx)
+
+        g.selectAll('*').remove()
         this.renderD3()
+
+        let {comparedCls} = this.props
+        g.selectAll(`circle.dot`)
+            .attr('opacity', 1)
+        if(comparedCls.length>0){
+            g.selectAll(`circle.dot`)
+            .attr('opacity', 0.2)
+        }
+        comparedCls.forEach(d=>{
+            g.select(`#_${d.id}`)
+            .attr('opacity', 1)
+        })
+
     }
     renderD3() {
-        let { box, hp, classifiers, idx, selectedMethod } = this.props
+        let { box, hp, classifiers, idx, selectedMethod, onSelectedChange, alreadySelectedRange,valueType } = this.props
+        classifiers.reverse() // reverse so that good classifiers is on the top
         let scatterData = classifiers.map(cls => {
-            return { hp: cls.hyperparameters[hp.name], score: cls.cv_metric }
+            return { hp: cls.hyperparameters[hp.name]||0, score: cls.cv_metric, ...cls }
         })
         let methodColor = getColor(selectedMethod)
+
+        let { width, height, margin } = box
+        let x = d3.scaleLinear().range([0, width])
+        let y = d3.scaleLinear().range([height, 0]);
+        if(valueType=="float_exp"){
+            x = d3.scaleLog().range([0, width])
+        }
+        let yArea = d3.scaleLinear().range([height/4, 0]);
+        x.domain([hp.min, hp.max]);
+        y.domain([0, 1]);
 
         // calculate the area chart
         const num_step = 20
         let areaData: number[][] = Array.from(new Array(num_step).keys()).map(d => [])
-        const step = (hp.max - hp.min) / num_step
+        const step = width / num_step
         scatterData.forEach(d => {
             if (typeof (d.hp) == 'number') {
-                let rangeIndex = Math.floor((d.hp - hp.min) / step)
+                let rangeIndex = Math.floor((x(d.hp) - 0) / step)
+
                 rangeIndex = rangeIndex >= num_step ? (num_step - 1) : rangeIndex
+                rangeIndex = rangeIndex < 0 ? 0 : rangeIndex;
                 areaData[rangeIndex].push(d.score)
             }
         })
-        areaData.push(areaData[areaData.length - 1])
+        areaData.unshift(areaData[0])
 
         //draw
-        let { width, height, margin } = box
+
         let svg = d3.select("#" + this.TAG + idx)
             .append('g')
             .attr('transform', `translate(${0}, ${margin + idx * (height*5/4 + margin)})`)
 
 
-        let x = d3.scaleLinear().range([0, width])
-        let y = d3.scaleLinear().range([height, 0]);
-        let yArea = d3.scaleLinear().range([height/4, 0]);
-        x.domain([hp.min, hp.max]);
-        y.domain([0, 1]);
+
         yArea.domain(d3.extent(areaData, (d: number[]) => d.length))
 
         let area = d3.area()
-            .x(function (d: any, i: number) { return x(hp.min + i * step); })
+            .x(function (d: any, i: number) { return i*step; })
             .y1(height*5/4)
             .y0(function (d: any) { return height + yArea(d.length); })
             .curve(d3.curveCardinal)
@@ -156,7 +233,30 @@ class HyperParameter extends React.Component<HyProps, {}>{
             .attr('d', area)
             .style('fill', `url(#area-gradient-${hp.name})`)
 
+        // brush
+        function brushended() {
+            if (!d3.event.sourceEvent) return; // Only transition after input.
+            if (!d3.event.selection) return; // Ignore empty selections.
+            let d0 = d3.event.selection.map(x.invert);
+            let min = d0[0];
+            let max = d0[1];
+            console.log("brush min max");
+            console.log(min);
+            console.log(max);
+            onSelectedChange(selectedMethod,hp.name,hp.valueType,[min,max]);
 
+        }
+
+
+        let brush : any;
+        let brush_g = svg.append("g")
+                    .attr("class", "brush")
+                    .call(brush = d3.brushX()
+                    .extent([[x(hp.min), height], [x(hp.max), height*5/4]]));
+        if(alreadySelectedRange["range"]&&alreadySelectedRange["range"].length==2){
+            brush.move(brush_g,[x(alreadySelectedRange["range"][0]),x(alreadySelectedRange["range"][1])]);
+        }
+        brush.on("end", brushended);
 
         //scatter chart
         svg.append('g')
@@ -165,10 +265,13 @@ class HyperParameter extends React.Component<HyProps, {}>{
             .data(scatterData)
             .enter().append("circle")
             .attr("class", 'dot')
-            .attr("r", 3)
+            .attr('id',(d:any)=>`_${d.id}`)
+            .attr("r", 4)
             .attr("cx", function (d: any) { return x(d.hp); })
             .attr("cy", function (d: any) { return y(d.score); })
             .style('fill', getColor(classifiers[0].method))
+            .attr('stroke', 'white')
+            .attr('stroke-width', 1)
 
         // Add the X Axis
         svg.append("g")

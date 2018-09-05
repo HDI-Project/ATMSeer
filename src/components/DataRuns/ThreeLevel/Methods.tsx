@@ -17,6 +17,8 @@ export interface IProps {
     hyperpartitions: IHyperpartitionInfo[],
     configsMethod : string[],
     onMethodsCheckBoxChange: (e:any)=>void
+    compareK:number,
+    methodSelected:any
 }
 
 export interface IState {
@@ -78,8 +80,30 @@ export default class methods extends React.Component<IProps, IState>{
         })
         return maxvalue;
     }
+    componentDidUpdate(){
+        let {classifiers, compareK } = this.props
+        let comparedCls = classifiers.slice(0, compareK)
+
+        let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
+        if(compareK>0){
+            d3.selectAll('g.algorithm')
+            .attr('opacity', 0.5)
+
+            comparedMethods.forEach((methodName:string)=>{
+                d3.select(`g#LineChart_${methodName}`)
+                .attr('opacity', 1)
+            })
+        }else{
+            d3.selectAll('g.algorithm')
+            .attr('opacity', 1)
+        }
+
+
+    }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions } = this.props
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected} = this.props
+
+
 
         let performance = usedMethods.map((name: string, i: number) => {
             return {
@@ -112,22 +136,33 @@ export default class methods extends React.Component<IProps, IState>{
         // });
         return <g className="methods" >
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
-                            let checked = false;
+                            /*let checked = false;
                             let configsMethod : string[] = this.props.configsMethod;
                             if(configsMethod.indexOf(name)>-1){
                                     checked= true;
-                            };
+                            };*/
+                            let checked = false;
+                            let indeterminate = false;
+                            let disabled = false;
+                            if(methodSelected[name]){
+                                checked = methodSelected[name].checked;
+                                indeterminate = methodSelected[name].indeterminate;
+                                disabled = methodSelected[name].disabled;
+                            }
+
                             return (<foreignObject 
                                         key={name+"_text_"+i} 
-                                        x={this.methodBoxAttr.x +
-                                            (i % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                                        x={ this.methodBoxAttr.x +
+                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
                                         y={this.methodBoxAttr.y +
-                                            Math.floor(i / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap) + this.methodBoxAttr.height} 
+                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
                                         width={this.methodBoxAttr.checkboxWidth} 
                                         height={this.methodBoxAttr.checkboxHeight}>
                                        <Checkbox  
                                         key={name+"_checkbox_"+(i)} 
                                         checked={checked} 
+                                        indeterminate={indeterminate}
+                                        disabled={disabled}
                                         value={name} 
                                         onChange={this.props.onMethodsCheckBoxChange} >
                                         {name}
@@ -152,11 +187,11 @@ export default class methods extends React.Component<IProps, IState>{
                             // y={this.methodBoxAttr.y}
                             x={
                                 this.methodBoxAttr.x +
-                                (i % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
+                                Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
                             }
                             y={
                                 this.methodBoxAttr.y +
-                                Math.floor(i / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap)
                             }
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
@@ -179,11 +214,11 @@ export default class methods extends React.Component<IProps, IState>{
                         transform={`translate(
                     ${
                             this.methodBoxAttr.x +
-                            (index % 2) * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
+                            Math.floor(index / 7)* (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
                             },
                     ${
                             this.methodBoxAttr.y +
-                            Math.floor(index / 2) * (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                            (index % 7)  * (this.methodBoxAttr.height + this.methodBoxAttr.gap)
                             }
                 )`}
                     >
@@ -410,7 +445,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
     }
     render() {
         const { name } = this.props;
-        return <g id={this.TAG + name} />
+        return <g id={this.TAG + name} className='algorithm'/>
     }
 }
 
