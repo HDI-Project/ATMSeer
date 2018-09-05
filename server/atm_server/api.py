@@ -44,7 +44,7 @@ def handle_invalid_usage(error):
     response = jsonify({"error":str(error)})
     response.status_code = 500
     return response
-    
+
 @api.errorhandler(InvalidRequestError)
 def handle_db_request_error(error):
     logging.exception(error)
@@ -544,3 +544,33 @@ def post_update_datarun_config(datarun_id):
                     raise ApiError(e, 400)
 
     return jsonify({'success': True})
+
+
+@api.route('/postClickEvent', methods=['POST'])
+def post_click_event():
+    """
+    A click event is a json file.
+    includes 
+    type
+    description
+    time
+    ip
+    """
+    filename = './atm/clickevent.json'
+    if not os.path.exists(filename):
+        with open(filename, 'w') as f:
+            json.dump([], f)
+    configs = []
+    with open(filename, 'r') as f:
+        configs = json.load(f)
+    click_event_json = request.get_json()
+    click_event_json["ip"]=request.remote_addr
+    configs.append(click_event_json)
+    with open(filename, 'w') as f:
+        json.dump(configs, f)
+    return jsonify({'success': True})
+
+
+@api.route('/getRecommendation/<int:dataset_id>', methods=['GET'])
+def getRecommendation(dataset_id):
+    return jsonify({'result':["mlp","svm","sgd"]})
