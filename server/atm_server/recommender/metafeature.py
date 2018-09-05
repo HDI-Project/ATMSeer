@@ -7,7 +7,7 @@ from scipy.io import arff
 import scipy.sparse
 import six
 
-from logging_ import get_logger
+from atm_server.recommender.logging_ import get_logger
 
 
 class AbstractMetaFeature(object):

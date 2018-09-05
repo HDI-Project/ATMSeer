@@ -576,7 +576,7 @@ def getRecommendation(dataset_id):
     """Get Recommendation"""
     train = request.args.get('train', True, type=bool)
     dataset_path = fetch_dataset_path(dataset_id, train)
-    rec = Recommender(current_app['DATASET_META_DIR'])
+    rec = Recommender(current_app.config['DATASET_META_DIR'])
     result = rec.predict_dataset(dataset_path,dataset_id)
     if len(result)>=3:
         result = result[0:2]

@@ -1,4 +1,4 @@
-import metafeatures
+import atm_server.recommender.metafeatures as metafeatures
 import pandas as pd
 import math
 import numpy as np
@@ -25,10 +25,10 @@ class Recommender:
             os.makedirs(self.saved_meta_path)
 
     def getSavedDataMetaPath(self,dataset_name):
-        return self.saved_meta_path + "/data_meta_"+dataset_name+".csv"
+        return self.saved_meta_path + "/data_meta_"+str(dataset_name)+".csv"
 
     def getSavedResultPath(self,dataset_name):
-        return self.saved_meta_path + "/data_result_"+dataset_name+".csv"
+        return self.saved_meta_path + "/data_result_"+str(dataset_name)+".csv"
 
     def calculate_dataset(self,path_to_dataset,dataset_name):
         '''
