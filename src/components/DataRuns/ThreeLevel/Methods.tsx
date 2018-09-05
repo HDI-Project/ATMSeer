@@ -17,7 +17,8 @@ export interface IProps {
     hyperpartitions: IHyperpartitionInfo[],
     configsMethod : string[],
     onMethodsCheckBoxChange: (e:any)=>void
-    compareK:number
+    compareK:number,
+    methodSelected:any
 }
 
 export interface IState {
@@ -80,7 +81,7 @@ export default class methods extends React.Component<IProps, IState>{
         return maxvalue;
     }
     componentDidUpdate(){
-        let {classifiers, compareK} = this.props
+        let {classifiers, compareK } = this.props
         let comparedCls = classifiers.slice(0, compareK)
 
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
@@ -100,7 +101,7 @@ export default class methods extends React.Component<IProps, IState>{
 
     }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions} = this.props
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected} = this.props
 
 
 
@@ -135,11 +136,20 @@ export default class methods extends React.Component<IProps, IState>{
         // });
         return <g className="methods" >
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
-                            let checked = false;
+                            /*let checked = false;
                             let configsMethod : string[] = this.props.configsMethod;
                             if(configsMethod.indexOf(name)>-1){
                                     checked= true;
-                            };
+                            };*/
+                            let checked = false;
+                            let indeterminate = false;
+                            let disabled = false;
+                            if(methodSelected[name]){
+                                checked = methodSelected[name].checked;
+                                indeterminate = methodSelected[name].indeterminate;
+                                disabled = methodSelected[name].disabled;
+                            }
+
                             return (<foreignObject 
                                         key={name+"_text_"+i} 
                                         x={ this.methodBoxAttr.x +
@@ -151,6 +161,8 @@ export default class methods extends React.Component<IProps, IState>{
                                        <Checkbox  
                                         key={name+"_checkbox_"+(i)} 
                                         checked={checked} 
+                                        indeterminate={indeterminate}
+                                        disabled={disabled}
                                         value={name} 
                                         onChange={this.props.onMethodsCheckBoxChange} >
                                         {name}

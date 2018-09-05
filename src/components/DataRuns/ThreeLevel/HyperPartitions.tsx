@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IHyperpartitionInfo, IClassifierInfo } from "service/dataService"
 import { getColor } from "helper";
-
+//import {Checkbox} from "antd";
 
 // import { IDatarun } from "types";
 const d3 = require("d3");
@@ -11,7 +11,10 @@ export interface IProps {
     datarunID: number|null,
     selectedMethod: string,
     classifiers: IClassifierInfo[],
-    compareK: number
+    compareK: number,
+    hyperpartitionsSelected:number[],
+    onHpsCheckBoxChange: (e:any)=>void
+
 }
 export interface IState {
 
@@ -23,7 +26,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         width: 160
     }
     numPerRow = 14
-    public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string) {
+    public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any) {
+            console.log("rerender hyperpartitions");
             // let num_all_hp = hpsInfo.length
             hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0)
             let { height, width, gap } = this.hyperpartitionBox
@@ -151,7 +155,25 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('y', 0)
                 .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
-
+            
+                let generateText = (d:any)=>{
+                    let selected="";
+                    if(hyperpartitionsSelected.indexOf(d.id)>-1){
+                        selected="checked";
+                    }
+                   
+                    return  `<div
+                        style='text-overflow: ellipsis;
+                        width: ${width}px;
+                        height: ${height}px;
+                        overflow:hidden;
+                        white-space:nowrap';
+                        padding: 2px;
+                    >
+                    <input type="checkbox" name="${d.hyperpartition_string}" value="${d.id}" ${selected}>  ${d.hyperpartition_string}
+                    </div>`
+                };
+                
             textEnter.append('g')
                 .attr('class', 'hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
@@ -160,18 +182,11 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('height', height)
                 .append('xhtml:div')
                 .attr('class',  'div_caption')
-                .html((d: any) =>
-                    `<div
-                style='text-overflow: ellipsis;
-                width: ${width}px;
-                height: ${height}px;
-                overflow:hidden;
-                white-space:nowrap';
-                padding: 2px;
-            >
-                ${d.hyperpartition_string}
-            </div>`
-                )
+                .html(generateText)
+                .on("click",(d:any)=>{
+                    this.props.onHpsCheckBoxChange(d.id);
+                })
+                
 
           
                 /*
@@ -183,13 +198,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                             (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
                         width={this.methodBoxAttr.checkboxWidth} 
                         height={this.methodBoxAttr.checkboxHeight}>
-                        <Checkbox  
-                        key={name+"_checkbox_"+(i)} 
-                        checked={checked} 
-                        value={name} 
-                        onChange={this.props.onMethodsCheckBoxChange} >
-                        {name}
-                        </Checkbox>
+                       
                         </foreignObject>
                     )*/
             //update
@@ -272,18 +281,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('width', width)
                 .attr('height', height)
                 .select('.div_caption')
-                .html((d: any) =>
-                    `<div
-                style='text-overflow: ellipsis;
-                width: ${width}px;
-                height: ${height}px;
-                overflow:hidden;
-                white-space:nowrap';
-                padding: 2px;
-            >
-                ${d.hyperpartition_string}
-            </div>`
-                ).attr('opacity', 1e-6)
+                .html(generateText).attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
 
@@ -332,14 +330,14 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
     componentDidMount() {
         let { maxLen, hpsInfo, selectedMethod } = this.sortHpByperformance(this.props)
 
-        let { compareK, classifiers} = this.props
+        let { compareK, classifiers,hyperpartitionsSelected} = this.props
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
         if (comparedMethods.length==1){
             selectedMethod = comparedMethods[0]
         }
         if(hpsInfo.length>0){
-            this.renderD3(hpsInfo, maxLen, selectedMethod)
+            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
         }
 
         if (comparedMethods.length==1){
@@ -355,7 +353,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
     }
     shouldComponentUpdate(nextProps: IProps, nextStates: IState) {
         let { maxLen, hpsInfo, selectedMethod } = this.sortHpByperformance(nextProps)
-        let { compareK, classifiers} = nextProps
+        let { compareK, classifiers,hyperpartitionsSelected} = nextProps
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
         if (comparedMethods.length==1){
@@ -363,11 +361,11 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         }
 
         if (this.props != nextProps || this.props.hyperpartitions.length == 0) { //update
-            this.renderD3(hpsInfo, maxLen, selectedMethod)
+            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
         }
         if(this.props.datarunID!=nextProps.datarunID){//remove and redraw
             d3.select(`.HyperPartitions`).selectAll('*').remove()
-            this.renderD3(hpsInfo, maxLen, selectedMethod)
+            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
         }
         //
 
