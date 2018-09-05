@@ -2,7 +2,9 @@ import * as React from "react";
 import Methods from './Methods';
 import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
-import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse, updateDatarunConfigs} from 'service/dataService';
+import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, 
+    getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
+     updateDatarunConfigs, postClickEvent,IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
 import {Button, InputNumber, message} from 'antd';
@@ -15,7 +17,8 @@ export interface IProps {
     setDatarunID: (id: number) => void,
     hyperpartitions : IHyperpartitionInfo[],
     classifiers: IClassifierInfo[],
-    compareK: number
+    compareK: number,
+    recommendationResult:IRecommendationResult
 }
 
 export interface IState {
@@ -46,7 +49,16 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     }
 
     onSelectMethod(methodName:string){
-        console.info('select method', methodName)
+        console.info('select method', methodName);
+        let eventlog:IClickEvent = {
+            type:"method",
+            description:{
+                action:"selected",
+                name:methodName
+            },
+            time:new Date().toString()
+        }
+        postClickEvent(eventlog);
         this.setState({selectedMethod: methodName})
     }
 
@@ -128,33 +140,38 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         console.log("onMethodsCheckBoxChange")
         if(checked==false){
             //un selected
-            console.log(checked);
+            let configsMethod : string[] = this.state.configsMethod;
+            let index = configsMethod.indexOf(value);
+            if(index>-1){
+                configsMethod.splice(index, 1);
+            }
+
+
             methodSelected[value].checked=false;
             methodSelected[value].indeterminate=false;
             methodSelected[value].disabled=false;
             let hpid = this.fetchHpId(value);
             configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-          
-            console.log(hpid);
-            console.log(configsHyperpartitions);
+            
             this.setState({
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
                 methodSelected:methodSelected,
+                configsMethod:configsMethod
                 
             });
 
         }else{
-            console.log(checked);
+            let configsMethod : string[] = this.state.configsMethod;
+            configsMethod.push(value);
             methodSelected[value].checked=true;
             methodSelected[value].indeterminate=false;
             methodSelected[value].disabled=false;
-         let hpid = this.fetchHpId(value);
-         configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
-            console.log(hpid);
-            console.log(configsHyperpartitions);
+            let hpid = this.fetchHpId(value);
+            configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
             this.setState({
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected
+                methodSelected:methodSelected,
+                configsMethod:configsMethod
                 
             });
 
@@ -164,8 +181,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     onHyperpartitionCheckBoxChange=(id : number)=>{
         let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
         let value = id;
-        console.log(value);
-        console.log(checked);
         if(checked==false){
             // un selected
             let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
@@ -177,6 +192,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 let hpid = this.fetchHpId(method);
                 let judgeSet = hpid.filter((d:any)=>configsHyperpartitions.indexOf(d)>-1);
                 let methodSelected = this.state.methodSelected;
+                let configsMethod : string[] = this.state.configsMethod;
+
                 if(judgeSet.length>0){
                     // Fetch method intersect hpid 
                     // method unselected
@@ -185,10 +202,15 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 }else{
                     methodSelected[method].checked=false;
                     methodSelected[method].indeterminate=false;
+                    let index = configsMethod.indexOf(method);
+                    if(index>-1){
+                        configsMethod.splice(index, 1);
+                    }
                 }
                 this.setState({
                     hyperpartitionsAlreadySelected:configsHyperpartitions,
-                    methodSelected:methodSelected
+                    methodSelected:methodSelected,
+                    configsMethod:configsMethod
 
                 });
 
@@ -197,15 +219,17 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
             configsHyperpartitions.push(value);
             let hp :any= this.props.hyperpartitions.filter((d:any)=>d.id==value);
-            console.log(hp);
             let method = hp[0].method;
             let hpid = this.fetchHpId(method);
             let judgeSet = Array.from(new Set(configsHyperpartitions.concat(hpid)));
             let methodSelected = this.state.methodSelected;
+            let configsMethod : string[] = this.state.configsMethod;
+            configsMethod = Array.from(new Set(configsMethod.concat([method])));
+
             if(judgeSet.length==configsHyperpartitions.length){
                 //selected
                 methodSelected[method].checked=true;
-                methodSelected[method].indeterminate=false;
+                methodSelected[method].indeterminate=false;              
             }else{
                 methodSelected[method].checked=false;
                 methodSelected[method].indeterminate=true;
@@ -213,7 +237,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
             this.setState({
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected
+                methodSelected:methodSelected,
+                configsMethod:configsMethod
             });
 
 
@@ -255,9 +280,18 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             let {hyperpartitions} = nextProps;
             let methodhistogram:any ={};
             let methodSelected:any={};
-            let hyperpartitionsAlreadySelected:number[] = hyperpartitions.map((d:any)=>{
-                return d.id;
-            });
+            let mode = 1;
+            let hyperpartitionsAlreadySelected:number[] = [];
+            if(mode==0){
+                hyperpartitionsAlreadySelected = hyperpartitions.map((d:any)=>{
+                    return d.id;
+                });
+            }else if(mode==1){
+                hyperpartitionsAlreadySelected = hyperpartitions.filter((d:any)=>d.status!="errored").map((d:any)=>{
+                    return d.id;
+                });
+            }
+            
             Object.keys(methodsDef).forEach((d:string)=>{
                 if(!methodhistogram[d]){
                     methodhistogram[d]={total:0,enable:0};
@@ -268,7 +302,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     methodhistogram[d.method]={total:0,enable:0};
                     console.log("unknown method : "+d.method);
                 }
-                if(d.status=="incomplete"||d.status=="gridding_done"){
+                if(!(d.status=="errored")){
                     methodhistogram[d.method].total++;
                     methodhistogram[d.method].enable++;
                 }else{
@@ -277,10 +311,24 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 
             });
             Object.keys(methodhistogram).forEach((d:string)=>{
-                if(methodhistogram[d].total==0){
-                    methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
-                }else{
-                    methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
+                // 0 -> simple selection:
+                // 1 -> complex selection:
+                if(mode==0){
+                    if(methodhistogram[d].total==0){
+                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
+                    }else{
+                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
+                    }
+                }else if(mode==1){
+                    if(methodhistogram[d].total==0){
+                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
+                    }else if(methodhistogram[d].enable==0){
+                        methodSelected[d] = {checked:false,disabled:false,indeterminate:false};
+                    }else if(methodhistogram[d].total == methodhistogram[d].enable){
+                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
+                    }else{
+                        methodSelected[d] = {checked:false,disabled:false,indeterminate:true};
+                    }
                 }
             });
             
@@ -340,6 +388,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodSelected = {this.state.methodSelected}
                 onMethodsCheckBoxChange = {this.onMethodsCheckBoxChange}
                 compareK={compareK}
+                recommendationResult={this.props.recommendationResult}
             />
             </g>
             <g transform={`translate(${width1}, ${headerHeight})`}>

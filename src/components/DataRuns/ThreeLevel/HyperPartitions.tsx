@@ -275,24 +275,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('width', width)
                 .attr('height', height)
                 .select('.div_caption')
-<<<<<<< HEAD
                 .html(generateText).attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
-=======
-                .html((d: any) =>
-                    `<div
-                style='text-overflow: ellipsis;
-                width: ${width}px;
-                height: ${height}px;
-                overflow:hidden;
-                white-space:nowrap';
-                padding: 2px;
-            >
-                ${d.hyperpartition_string}
-            </div>`
-                )
->>>>>>> dev-qianwen
 
             hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('g.caption')
