@@ -126,8 +126,10 @@ def hyperpartition_string(hp):
     for cat_key, cat_value in hp.categoricals:
         if type(cat_value) is str:
             cats.append(cat_value)
-        elif cat_value:
+        elif type(cat_value) is bool:
             cats.append(cat_key)
+        elif cat_key == 'len(hidden_layer_sizes)' and type(cat_value) is int:
+            cats.append('%d_hidden_layer' % cat_value)
     return '-'.join(cats)
 
 
@@ -272,9 +274,9 @@ def fetch_hyperpartitions(hyperpartition_id=None, dataset_id=None, datarun_id=No
     if nice is False:
         return [object_as_dict(item) for item in hyperpartitions]
 
-    print(hyperpartitions[0].categoricals)
-    print(hyperpartitions[0].tunables)
-    print(hyperpartitions[0].constants)
+    # print(hyperpartitions[0].categoricals)
+    # print(hyperpartitions[0].tunables)
+    # print(hyperpartitions[0].constants)
     return [
         {
             'id': hp.id,

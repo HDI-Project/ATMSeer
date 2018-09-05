@@ -331,7 +331,7 @@ def post_new_datarun(dataset_id):
         raise ApiError('No configs in the post form!', status_code=400)
 
     configs = request.form['configs']
-    print(configs)
+    # print(configs)
     configs = json.loads(configs)
 
     run_conf = current_app.config['RUN_CONF']
@@ -347,6 +347,7 @@ def post_new_datarun(dataset_id):
     datarun_id = new_datarun(db, upload_run_conf, run_per_partition)
     create_datarun_configs(datarun_id)
     return jsonify({'success': True, 'id': datarun_id})
+
 
 @api.route('/simple_worker', methods=['GET', 'POST'])
 def dispatch_simple_worker():
@@ -462,7 +463,7 @@ def update_hyperparameters(datarun_id):
 def post_disable_hyperpartition():
     db = get_db()
     hyperpartition_ids = request.get_json()
-    print(hyperpartition_ids)
+    # print(hyperpartition_ids)
 
     if hyperpartition_ids is None:
         raise ApiError('Empty or invalid json data!', 400)
@@ -475,7 +476,7 @@ def post_disable_hyperpartition():
 def post_enable_hyperpartition():
     db = get_db()
     hyperpartition_ids = request.get_json()
-    print(hyperpartition_ids)
+    # print(hyperpartition_ids)
     if hyperpartition_ids is None:
         raise ApiError('Empty or invalid json data!', 400)
     for _id in hyperpartition_ids:

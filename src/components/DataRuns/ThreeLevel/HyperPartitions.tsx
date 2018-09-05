@@ -99,7 +99,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     return getColor(selectedMethod)
                 })
                 .attr("x", (d: any, i: number) => x(0))
-                .attr("y", (d: any) => 0 )
+                .attr("y", (d: any) => height )
                 .attr("width", 0)
                 .attr("height", 0)
                 .transition(trans)
@@ -230,7 +230,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     return getColor(selectedMethod)
                 })
                 .attr("x", (d: any, i: number) => x(0))
-                .attr("y", (d: any) => 0 )
+                .attr("y", (d: any) => height )
                 .attr("width", 0)
                 .attr("height", 0)
                 .transition(trans)
@@ -263,27 +263,36 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('y', -1)
                 .text((d: any) => d.sortedCls.length)
                 .attr('text-anchor', 'start')
-                .attr('opacity', 1e-6)
-                .transition(trans)
-                .attr('opacity', 1)
             textUpdate.selectAll('text.best_score')
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
                 .attr('x', -gap)
                 .attr('y', 0)
                 .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
-                .attr('opacity', 1e-6)
-                .transition(trans)
-                .attr('opacity', 1)
             textUpdate.selectAll('g.hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
                 .select('foreignObject')
                 .attr('width', width)
                 .attr('height', height)
                 .select('.div_caption')
+<<<<<<< HEAD
                 .html(generateText).attr('opacity', 1e-6)
                 .transition(trans)
                 .attr('opacity', 1)
+=======
+                .html((d: any) =>
+                    `<div
+                style='text-overflow: ellipsis;
+                width: ${width}px;
+                height: ${height}px;
+                overflow:hidden;
+                white-space:nowrap';
+                padding: 2px;
+            >
+                ${d.hyperpartition_string}
+            </div>`
+                )
+>>>>>>> dev-qianwen
 
             hps.filter((d: any) => d.method != selectedMethod)
                 .selectAll('g.caption')
@@ -340,7 +349,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
         }
 
-        if (comparedMethods.length==1){
+        if (comparedMethods.length>=1){
             let g = d3.select('g.HyperPartitions')
             g.selectAll('rect.hpBar')
             .attr('opacity', 0.2)
@@ -369,7 +378,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         }
         //
 
-        if (comparedMethods.length==1){
+        if (comparedMethods.length>=1){
             let g = d3.selectAll('g.hpGroup')
             console.info('d3, compare, hyperpartition', comparedMethods, comparedCls)
             g.selectAll('rect.hpBar')
