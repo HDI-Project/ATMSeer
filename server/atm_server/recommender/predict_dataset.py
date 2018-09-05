@@ -18,8 +18,8 @@ class Recommender:
                     'KurtosisMean', 'SkewnessMin', 'NumberOfClasses', 'SymbolsMean']
         self.features = set(self.feature_list)
         self.column_title =  ["dataset_name"] + self.feature_list
-        self.pre_meta_path = './data_meta_first.csv' 
-        self.pre_PMA_path = './dataset_method_PMA.csv'
+        self.pre_meta_path = './recommender_dataset/data_meta_first.csv' 
+        self.pre_PMA_path = './recommender_dataset/dataset_method_PMA.csv'
         self.saved_meta_path = saved_meta_path
         if not os.path.exists(self.saved_meta_path):
             os.makedirs(self.saved_meta_path)
