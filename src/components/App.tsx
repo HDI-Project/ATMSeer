@@ -6,7 +6,7 @@ import DataRuns from './DataRuns';
 // import DataView from "./DataView";
 import SidePanel from './SidePanel';
 import { IDatarunStatusTypes } from 'types';
-import { getDatarun } from 'service/dataService';
+import { getDatarun,IClickEvent,postClickEvent } from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 
 
@@ -60,7 +60,20 @@ class App extends React.Component<{}, IState> {
         }
     }
     public setTopK(topK:number){
-      this.setState({compareK: topK})
+        let action="selected";
+        if(topK==0){
+            action="unselected";
+        }
+        let eventlog:IClickEvent = {
+            type:"compare",
+            description:{
+                action:action,
+                topK:topK
+            },
+            time:new Date().toString()
+        }
+        postClickEvent(eventlog);
+        this.setState({compareK: topK})
     }
     public startOrStopUpdateCycle(datarunStatus: IDatarunStatusTypes) {
         if (datarunStatus === IDatarunStatusTypes.RUNNING) {

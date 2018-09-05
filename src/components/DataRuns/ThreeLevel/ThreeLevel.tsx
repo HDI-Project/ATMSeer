@@ -2,7 +2,9 @@ import * as React from "react";
 import Methods from './Methods';
 import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
-import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse, updateDatarunConfigs} from 'service/dataService';
+import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, 
+    getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
+     updateDatarunConfigs, postClickEvent,IClickEvent} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
 import {Button, InputNumber, message} from 'antd';
@@ -46,7 +48,16 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     }
 
     onSelectMethod(methodName:string){
-        console.info('select method', methodName)
+        console.info('select method', methodName);
+        let eventlog:IClickEvent = {
+            type:"method",
+            description:{
+                action:"selected",
+                name:methodName
+            },
+            time:new Date().toString()
+        }
+        postClickEvent(eventlog);
         this.setState({selectedMethod: methodName})
     }
 

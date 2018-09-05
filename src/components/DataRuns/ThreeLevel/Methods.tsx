@@ -5,6 +5,7 @@ import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo} from 'service/dataService';
 import { Checkbox } from 'antd';
 import "./Methods.css";
+
 const d3 = require("d3");
 
 export interface IProps {

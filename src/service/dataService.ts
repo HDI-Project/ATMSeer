@@ -387,3 +387,28 @@ export async function getDatarunConfigs(datarun_id : number): Promise<IConfigsIn
     }
     throw res;
 }
+/*
+Post Click Event
+type: method, compare, classifier
+description: {
+    action: "selected"
+    "unselected"
+    id: classifier id
+    name: [method name]
+}
+time: time
+*/
+export interface IClickEvent {
+    type:string,
+    description:any,
+    time:string
+}
+
+export async function postClickEvent(log:IClickEvent):Promise<ICommonResponse>{
+    const headers = {'Content-Type': 'application/json'};
+    const res = await axiosInstance.post(`/postClickEvent`, log, {headers});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
