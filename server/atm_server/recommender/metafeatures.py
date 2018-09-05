@@ -14,11 +14,11 @@ from sklearn.utils import check_array
 from sklearn.multiclass import OneVsRestClassifier
 
 from sklearn.preprocessing import Imputer
-from OneHotEncoder import OneHotEncoder
+from atm_server.recommender.OneHotEncoder import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 
-from logging_ import get_logger
-from metafeature import MetaFeature, HelperFunction, DatasetMetafeatures, \
+from atm_server.recommender.logging_ import get_logger
+from atm_server.recommender.metafeature import MetaFeature, HelperFunction, DatasetMetafeatures, \
     MetaFeatureValue
 
 
