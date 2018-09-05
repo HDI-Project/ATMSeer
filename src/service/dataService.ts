@@ -412,3 +412,14 @@ export async function postClickEvent(log:IClickEvent):Promise<ICommonResponse>{
     }
     throw res;
 }
+export interface IRecommendationResult {
+    result : string[];
+}
+export async function getRecommendation(dataset_id : number): Promise<IRecommendationResult> {
+    const url = `/getRecommendation/${dataset_id}`;
+    const res = await axiosInstance.get(url);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}

@@ -569,3 +569,8 @@ def post_click_event():
     with open(filename, 'w') as f:
         json.dump(configs, f)
     return jsonify({'success': True})
+
+
+@api.route('/getRecommendation/<int:dataset_id>', methods=['GET'])
+def getRecommendation(dataset_id):
+    return jsonify({'result':["mlp","svm","sgd"]})

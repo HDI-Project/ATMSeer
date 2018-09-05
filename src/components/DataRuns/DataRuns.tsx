@@ -8,7 +8,7 @@ import {parseDatarun} from "helper";
 import {IDatarun} from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
-import {getClassifierSummary, getClassifiers,getHyperpartitions, IClassifierInfo,IHyperpartitionInfo} from 'service/dataService';
+import {getClassifierSummary, getClassifiers,getHyperpartitions,IRecommendationResult, IClassifierInfo,IHyperpartitionInfo, getRecommendation} from 'service/dataService';
 
 //components
 // import MethodsLineChart from './MethodsLineChart';
@@ -39,7 +39,8 @@ export interface IProps{
 export interface IState{
     runCSV:string,
     classifiers: IClassifierInfo[],
-    hyperpartitions: IHyperpartitionInfo[]
+    hyperpartitions: IHyperpartitionInfo[],
+    recommendationResult:IRecommendationResult
 }
 export interface IDatarunSummary {
     nTried: number;
@@ -55,7 +56,10 @@ export default class DataRuns extends React.Component<IProps, IState>{
         this.state = {
             runCSV:'',
             classifiers:[],
-            hyperpartitions:[]
+            hyperpartitions:[],
+            recommendationResult:{
+                result:[]
+            }
         }
     }
     public async getData() {
@@ -63,8 +67,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
         // const {datarunID} = this.props
         // const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
         // const run = res.data
-        const {datarunID} = this.props
-        if (datarunID !== null) {
+        const {datarunID,datasetID} = this.props
+        if (datarunID !== null && datasetID !== null) {
             const runCSV = await getClassifierSummary(datarunID);
             // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
             // const banditData = res.data
@@ -78,7 +82,11 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     return []
                 }
             });
-            this.setState({runCSV:runCSV, classifiers:classifiers, hyperpartitions})
+            let recommendationResult = await getRecommendation(datasetID);
+            this.setState({runCSV:runCSV, 
+                classifiers:classifiers, 
+                hyperpartitions:hyperpartitions,
+                recommendationResult:recommendationResult})
         }
 
     }
@@ -208,6 +216,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             setDatarunID={this.props.setDatarunID}
             compareK={compareK}
             datarunID={datarunID}
+            recommendationResult={this.state.recommendationResult}
             />
 
         </div>)

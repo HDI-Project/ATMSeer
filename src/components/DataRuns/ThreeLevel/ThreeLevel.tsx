@@ -4,7 +4,7 @@ import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
 import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, 
     getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
-     updateDatarunConfigs, postClickEvent,IClickEvent} from 'service/dataService';
+     updateDatarunConfigs, postClickEvent,IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
 import {Button, InputNumber, message} from 'antd';
@@ -17,7 +17,8 @@ export interface IProps {
     setDatarunID: (id: number) => void,
     hyperpartitions : IHyperpartitionInfo[],
     classifiers: IClassifierInfo[],
-    compareK: number
+    compareK: number,
+    recommendationResult:IRecommendationResult
 }
 
 export interface IState {
@@ -387,6 +388,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodSelected = {this.state.methodSelected}
                 onMethodsCheckBoxChange = {this.onMethodsCheckBoxChange}
                 compareK={compareK}
+                recommendationResult={this.props.recommendationResult}
             />
             </g>
             <g transform={`translate(${width1}, ${headerHeight})`}>
