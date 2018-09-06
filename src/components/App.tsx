@@ -135,6 +135,7 @@ class App extends React.Component<{}, IState> {
                                     setDatarunID={this.setDatarunID}
                                     compareK = {this.state.compareK}
                                     postClickEvent ={this.postClickEvent}
+                                    setDatarunStatus={this.setDatarunStatus}
                                 />
                             </div>
                         </Col>

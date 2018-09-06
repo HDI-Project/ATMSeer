@@ -8,7 +8,8 @@ import {parseDatarun} from "helper";
 import {IDatarun} from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
-import {getClassifierSummary, getClassifiers,getHyperpartitions,IRecommendationResult, IClassifierInfo,IHyperpartitionInfo, getRecommendation, IClickEvent} from 'service/dataService';
+import {getClassifierSummary, getClassifiers,getHyperpartitions,IRecommendationResult, 
+    IClassifierInfo,IHyperpartitionInfo, getRecommendation, IClickEvent, stopDatarun} from 'service/dataService';
 
 //components
 // import MethodsLineChart from './MethodsLineChart';
@@ -19,6 +20,7 @@ import OverallHistogram from "./OverallHistogram";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
 import ThreeLevel from "./ThreeLevel";
+import AskModal from "./AskModal";
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
 //     // timeout: 1000,
@@ -36,12 +38,15 @@ export interface IProps{
     compareK: number
     setDatarunID: (id: number) => void;
     postClickEvent :(e:IClickEvent)=>void;
+    setDatarunStatus :(e:IDatarunStatusTypes)=>void;
 }
 export interface IState{
     runCSV:string,
     classifiers: IClassifierInfo[],
     hyperpartitions: IHyperpartitionInfo[],
-    recommendationResult:IRecommendationResult
+    recommendationResult:IRecommendationResult,
+    run_threshold:number,
+    askvisible:boolean
 }
 export interface IDatarunSummary {
     nTried: number;
@@ -60,7 +65,9 @@ export default class DataRuns extends React.Component<IProps, IState>{
             hyperpartitions:[],
             recommendationResult:{
                 result:[]
-            }
+            },
+            run_threshold:50,
+            askvisible:false
         }
     }
     public async getData() {
@@ -84,10 +91,35 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 }
             });
             let recommendationResult = await getRecommendation(datasetID);
+            let askvisible = this.state.askvisible;
+            let run_threshold = this.state.run_threshold;
+            if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
+                if(classifiers.length>=run_threshold){
+                    askvisible = true;
+                    if(this.props.datarunID!==null){
+                        let promise = stopDatarun(this.props.datarunID);
+                        promise
+                        .then(datarun => {
+                            // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
+                            this.props.setDatarunStatus(datarun.status);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                    }
+                }
+            }else{
+                if(askvisible==false){
+                    run_threshold = classifiers.length+50;
+                }
+            }
             this.setState({runCSV:runCSV, 
                 classifiers:classifiers, 
                 hyperpartitions:hyperpartitions,
-                recommendationResult:recommendationResult})
+                recommendationResult:recommendationResult,
+                run_threshold:run_threshold,
+                askvisible:askvisible
+            })
         }
 
     }
@@ -119,6 +151,34 @@ export default class DataRuns extends React.Component<IProps, IState>{
     public componentWillUnmount() {
         window.clearInterval(this.intervalID)
     }
+    AskModalCallBack = (mode:number)=>{
+        // mode = 0      continue_running
+        // mode = 1      stop_running
+
+        let {run_threshold,classifiers} = this.state;
+        run_threshold = classifiers.length + 50;
+
+        if(mode==0){
+            /*
+            if(this.props.datarunID!=null){
+                let promise = startDatarun(this.props.datarunID);
+                promise
+                .then(datarun => {
+                    // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
+                    this.props.setDatarunStatus(datarun.status);
+                    
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }*/
+        }
+        this.setState({
+            askvisible:false,
+            run_threshold:run_threshold
+        })
+    }
+    
     public render(){
         let {runCSV, hyperpartitions, classifiers} = this.state
         let {datasetID, datarunID, compareK} = this.props
@@ -164,6 +224,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
 
             <div className="runTracker" style={{height: '15%', display: "flex"}}>
                 {/* <Histogram datarun={datarun} width={40}/> */}
+                <AskModal AskModalCallBack={this.AskModalCallBack} visible={this.state.askvisible}/>
                 <Tabs
                     defaultActiveKey="1"
                     style={{width: '100%'}}
