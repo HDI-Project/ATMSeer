@@ -4,7 +4,7 @@ import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
 import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, 
     getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
-     updateDatarunConfigs, postClickEvent,IClickEvent,IRecommendationResult} from 'service/dataService';
+     updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
 import {Button, InputNumber, message} from 'antd';
@@ -18,7 +18,8 @@ export interface IProps {
     hyperpartitions : IHyperpartitionInfo[],
     classifiers: IClassifierInfo[],
     compareK: number,
-    recommendationResult:IRecommendationResult
+    recommendationResult:IRecommendationResult,
+    postClickEvent:(e:IClickEvent)=>void;
 }
 
 export interface IState {
@@ -58,7 +59,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             },
             time:new Date().toString()
         }
-        postClickEvent(eventlog);
+        this.props.postClickEvent(eventlog);
         this.setState({selectedMethod: methodName})
     }
 

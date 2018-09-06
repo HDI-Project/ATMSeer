@@ -403,8 +403,11 @@ export interface IClickEvent {
     description:any,
     time:string
 }
-
-export async function postClickEvent(log:IClickEvent):Promise<ICommonResponse>{
+export interface IClickBundleEvent{
+    name:string,
+    clickevent:IClickEvent
+}
+export async function postBundleClickEvent(log:IClickBundleEvent):Promise<ICommonResponse>{
     const headers = {'Content-Type': 'application/json'};
     const res = await axiosInstance.post(`/postClickEvent`, log, {headers});
     if (res.status === 200) {
@@ -412,6 +415,7 @@ export async function postClickEvent(log:IClickEvent):Promise<ICommonResponse>{
     }
     throw res;
 }
+
 export interface IRecommendationResult {
     result : string[];
 }

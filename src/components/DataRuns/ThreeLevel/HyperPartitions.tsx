@@ -52,24 +52,43 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             // x.domain([0,10])
             y.domain([0, 1]);
 
+            let lastposx = gap+0.5*width;
+            let lastposy = height;
+            let horizontalnum = 0;
+            let maxhorizontalnum = 10;
 
-            let pos = [[gap+0.5*width, height]]
+            let pos = [[lastposx, lastposy]]
+
             for (let i = 0; i < hpsInfo.length; i++) {
                 let currentPos = [0, 0]
                 if (hpsInfo[i].method == selectedMethod) {
-                    currentPos = [pos[i][0], pos[i][1] + (2 * height + gap)]
-                } else {
-                    currentPos = [pos[i][0], pos[i][1] + (2 * gap)]
+                    //next pos x not changed, y changed
+                    lastposy = lastposy + (2 * height + gap);
+                    currentPos = [lastposx, lastposy]
+                    horizontalnum = 0;
+                } else { 
+                    if(horizontalnum == 0){
+                        lastposy = lastposy + (2*gap);
+                    }
+                    if(horizontalnum<maxhorizontalnum){
+                         //next pos x changed, y not changed
+                        currentPos = [lastposx + (2*gap*horizontalnum), lastposy]
+                        horizontalnum++;
+                    }else{
+                        lastposy = lastposy + (2*gap);
+                        currentPos = [lastposx, lastposy]
+                        horizontalnum = 1;
+                    }
+                    
                 }
-                if (pos[i][1] > window.innerHeight * 0.8) {
-                    currentPos = [
-                        pos[i][0] + width * 1.5,
-                        height + (
-                            hpsInfo[i].method == selectedMethod?
-                            (2 * height + gap)
-                            :(2*gap)
-                        )
-                    ]
+                if (lastposy > window.innerHeight * 0.8) {
+                    lastposx = lastposx + width * 1.5;
+                    lastposy = height + (
+                        hpsInfo[i].method == selectedMethod?
+                        (2 * height + gap)
+                        :(2*gap)
+                    );
+                    currentPos = [lastposx, lastposy]
                 }
                 pos.push(currentPos)
             }
@@ -165,18 +184,18 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     return  `<div
                         style='text-overflow: ellipsis;
                         width: ${width}px;
-                        height: ${height}px;
+                        height: ${height-1}px;
                         overflow:hidden;
                         white-space:nowrap';
                         padding: 2px;
                     >
-                    <input type="checkbox" name="${d.hyperpartition_string}" value="${d.id}" ${selected}>  ${d.hyperpartition_string}
+                    <input type="radio" name="${d.hyperpartition_string}" value="${d.id}" ${selected}>  ${d.hyperpartition_string}
                     </div>`
                 };
                 
             textEnter.append('g')
                 .attr('class', 'hp_name')
-                .attr('transform', `translate(${0}, ${0})`)
+                .attr('transform', `translate(${0}, ${1})`)
                 .append('foreignObject')
                 .attr('width', width)
                 .attr('height', height)
