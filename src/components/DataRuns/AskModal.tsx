@@ -67,7 +67,7 @@ showModal =() => {
               I know
             </Button>,
           ]}>
-            <h4 style={{display: "inline"}}>This datarun has been stopped, you can decide whether this datarun continues running. </h4>
+            <h4 style={{display: "inline"}}>The current process has been stopped. You can decide whether to continue it. </h4>
         </Modal>
       </div>
     );
