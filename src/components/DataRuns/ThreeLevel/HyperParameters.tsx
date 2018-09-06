@@ -56,7 +56,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
 
             let box = {
                 width: 200,
-                height: 100,
+                height: 60,
                 margin: 40
             }
             return <g className="hyperParameters">
@@ -150,12 +150,12 @@ class HyperParameter extends React.Component<HyProps, {}>{
         }
         let yArea = d3.scaleLinear().range([height/4, 0]);
         x.domain([hp.min, hp.max]);
-        y.domain([0, 1]);
+        y.domain(d3.extent(classifiers, (d:IClassifierInfo)=>d.cv_metric));
 
         // calculate the area chart
         const num_step = 20
         let areaData: number[][] = Array.from(new Array(num_step).keys()).map(d => [])
-        const step = width / num_step
+        const step = width / (num_step-1)
         scatterData.forEach(d => {
             if (typeof (d.hp) == 'number') {
                 let rangeIndex = Math.floor((x(d.hp) - 0) / step)
@@ -164,7 +164,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
                 areaData[rangeIndex].push(d.score)
             }
         })
-        areaData.unshift(areaData[0])
+        // areaData.unshift(areaData[0])
 
         //draw
 
@@ -245,7 +245,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
         // Add the Y Axis
         svg.append("g")
             .attr('class', 'yAxis')
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y).ticks(5));
 
         // text label for the y axis
         svg.append("text")
