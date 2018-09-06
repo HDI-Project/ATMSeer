@@ -6,9 +6,9 @@ import DataRuns from './DataRuns';
 // import DataView from "./DataView";
 import SidePanel from './SidePanel';
 import { IDatarunStatusTypes } from 'types';
-import { getDatarun,IClickEvent,postBundleClickEvent,IClickBundleEvent } from 'service/dataService';
+import { getDatarun } from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
-import UploadModal from './UploadModal'
+
 
 
 const { Content, Header } = Layout;
@@ -23,8 +23,6 @@ export interface IState {
 
 class App extends React.Component<{}, IState> {
     private intervalID: number | null;
-    private user_name = "";
-    //private clickevent: IClickEvent[] = [];
     constructor(props: {}) {
         super(props);
         // this.onChange = this.onChange.bind(this)
@@ -62,22 +60,8 @@ class App extends React.Component<{}, IState> {
         }
     }
     public setTopK(topK:number){
-        let action="selected";
-        if(topK==0){
-            action="unselected";
-        }
-        let eventlog:IClickEvent = {
-            type:"compare",
-            description:{
-                action:action,
-                topK:topK
-            },
-            time:new Date().toString()
-        }
-        this.postClickEvent(eventlog);
-        this.setState({compareK: topK})
+      this.setState({compareK: topK})
     }
-
     public startOrStopUpdateCycle(datarunStatus: IDatarunStatusTypes) {
         if (datarunStatus === IDatarunStatusTypes.RUNNING) {
             this.intervalID = window.setInterval(this.updateDatarunStatus, UPDATE_INTERVAL_MS);
@@ -85,17 +69,6 @@ class App extends React.Component<{}, IState> {
             clearInterval(this.intervalID);
             this.intervalID = null;
         }
-    }
-    setUserName = (user_name:string)=>{
-        this.user_name = user_name;
-    }
-    postClickEvent = (log:IClickEvent)=>{
-        //this.clickevent.push(log);
-        let bundlelog : IClickBundleEvent= {
-            name:this.user_name,
-            clickevent:log
-        }
-        postBundleClickEvent(bundlelog);
     }
     componentDidUpdate(prevProps: {}, prevState: IState) {
         if (prevState.datarunID !== this.state.datarunID) {
@@ -109,9 +82,9 @@ class App extends React.Component<{}, IState> {
         return (
             <Layout className="app" >
                 <Header className='appHeader'>
-                ATMSeer
-                        <img src={logo} className='appLogo' />
-                        <UploadModal setUserName={this.setUserName}/>
+                    ATMSeer
+            <img src={logo}
+                        className='appLogo' />
                 </Header>
                 <Content className='appContent' >
                     <Row style={{ "height": "100%" }}>
@@ -122,7 +95,6 @@ class App extends React.Component<{}, IState> {
                                 setDatasetID={this.setDatasetID}
                                 setDatarunStatus={this.setDatarunStatus}
                                 setTopK = {this.setTopK}
-                                postClickEvent = {this.postClickEvent}
                             />
                         </Col >
 
@@ -134,8 +106,6 @@ class App extends React.Component<{}, IState> {
                                     datasetID={this.state.datasetID}
                                     setDatarunID={this.setDatarunID}
                                     compareK = {this.state.compareK}
-                                    postClickEvent ={this.postClickEvent}
-                                    setDatarunStatus={this.setDatarunStatus}
                                 />
                             </div>
                         </Col>

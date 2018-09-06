@@ -2,9 +2,7 @@ import * as React from "react";
 import Methods from './Methods';
 import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
-import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, 
-    getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
-     updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
+import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse, updateDatarunConfigs} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
 import {Button, InputNumber, message} from 'antd';
@@ -17,19 +15,14 @@ export interface IProps {
     setDatarunID: (id: number) => void,
     hyperpartitions : IHyperpartitionInfo[],
     classifiers: IClassifierInfo[],
-    compareK: number,
-    recommendationResult:IRecommendationResult,
-    postClickEvent:(e:IClickEvent)=>void;
+    compareK: number
 }
 
 export interface IState {
     selectedMethod:string,
     configsBudget: number,
     configsMethod : string[],
-    loading: boolean,
-    methodSelected:any,
-    hyperparametersRangeAlreadySelected:any,
-    hyperpartitionsAlreadySelected:number[]
+    loading: boolean
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
@@ -41,25 +34,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             selectedMethod: '',
             configsBudget: 100,
             configsMethod: [],
-            loading: false,
-            methodSelected:{},
-            hyperparametersRangeAlreadySelected:{},
-            hyperpartitionsAlreadySelected:[]
-
+            loading: false
         }
     }
 
     onSelectMethod(methodName:string){
-        console.info('select method', methodName);
-        let eventlog:IClickEvent = {
-            type:"method",
-            description:{
-                action:"selected",
-                name:methodName
-            },
-            time:new Date().toString()
-        }
-        this.props.postClickEvent(eventlog);
+        console.info('select method', methodName)
         this.setState({selectedMethod: methodName})
     }
 
@@ -102,10 +82,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
                     let submitconfigs : IUpdateDatarunConfig = {};
                     submitconfigs.configs = configs;
-                    submitconfigs.method_configs = this.state.hyperparametersRangeAlreadySelected;
-                    if(this.state.hyperpartitionsAlreadySelected.length>0){
-                        submitconfigs.hyperpartitions = this.state.hyperpartitionsAlreadySelected;
-                    }
                     let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
                     //const promise = this.props.onSubmit(this.state.configs);
                     console.log("update data run in methods view");
@@ -129,217 +105,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 });
                 }
        }
-    fetchHpId = (method:string)=>{
-        let hp = this.props.hyperpartitions;
-        return hp.filter((d:any)=>d.method==method).map((d:any)=>d.id);
-    }
-    onMethodsCheckBoxChange=(e : any)=>{
-        let checked = e.target.checked;
-        let value = e.target.value;
-        let methodSelected = this.state.methodSelected;
-        let configsHyperpartitions :number[] = this.state.hyperpartitionsAlreadySelected;
-        console.log("onMethodsCheckBoxChange")
-        if(checked==false){
-            //un selected
-            let configsMethod : string[] = this.state.configsMethod;
-            let index = configsMethod.indexOf(value);
-            if(index>-1){
-                configsMethod.splice(index, 1);
-            }
 
-
-            methodSelected[value].checked=false;
-            methodSelected[value].indeterminate=false;
-            methodSelected[value].disabled=false;
-            let hpid = this.fetchHpId(value);
-            configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-            
-            this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
-                
-            });
-
-        }else{
-            let configsMethod : string[] = this.state.configsMethod;
-            configsMethod.push(value);
-            methodSelected[value].checked=true;
-            methodSelected[value].indeterminate=false;
-            methodSelected[value].disabled=false;
-            let hpid = this.fetchHpId(value);
-            configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
-            this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
-                
-            });
-
-
-        }
-    }
-    onHyperpartitionCheckBoxChange=(id : number)=>{
-        let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
-        let value = id;
-        if(checked==false){
-            // un selected
-            let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
-            let index = configsHyperpartitions.indexOf(value);
-            if(index>-1){
-                configsHyperpartitions.splice(index, 1);
-                let hp :any= this.props.hyperpartitions.filter((d:any)=>d.id==value);
-                let method = hp[0].method;
-                let hpid = this.fetchHpId(method);
-                let judgeSet = hpid.filter((d:any)=>configsHyperpartitions.indexOf(d)>-1);
-                let methodSelected = this.state.methodSelected;
-                let configsMethod : string[] = this.state.configsMethod;
-
-                if(judgeSet.length>0){
-                    // Fetch method intersect hpid 
-                    // method unselected
-                    methodSelected[method].checked=false;
-                    methodSelected[method].indeterminate=true;
-                }else{
-                    methodSelected[method].checked=false;
-                    methodSelected[method].indeterminate=false;
-                    let index = configsMethod.indexOf(method);
-                    if(index>-1){
-                        configsMethod.splice(index, 1);
-                    }
-                }
-                this.setState({
-                    hyperpartitionsAlreadySelected:configsHyperpartitions,
-                    methodSelected:methodSelected,
-                    configsMethod:configsMethod
-
-                });
-
-            }
-        }else{
-            let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
-            configsHyperpartitions.push(value);
-            let hp :any= this.props.hyperpartitions.filter((d:any)=>d.id==value);
-            let method = hp[0].method;
-            let hpid = this.fetchHpId(method);
-            let judgeSet = Array.from(new Set(configsHyperpartitions.concat(hpid)));
-            let methodSelected = this.state.methodSelected;
-            let configsMethod : string[] = this.state.configsMethod;
-            configsMethod = Array.from(new Set(configsMethod.concat([method])));
-
-            if(judgeSet.length==configsHyperpartitions.length){
-                //selected
-                methodSelected[method].checked=true;
-                methodSelected[method].indeterminate=false;              
-            }else{
-                methodSelected[method].checked=false;
-                methodSelected[method].indeterminate=true;
-            }
-
-            this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
-            });
-
-
-        }
-    }
-    onBrushSelected = (methodname:string, hpaName: string,hpatype:string,range:number[])=>{
-        let {hyperparametersRangeAlreadySelected} = this.state;
-        let update : boolean = false;
-        if(hpatype=="int"){
-            range[0]=Math.floor(range[0]);
-            range[1]=Math.ceil(range[1]);
-        }
-        if(!hyperparametersRangeAlreadySelected[methodname]){
-           hyperparametersRangeAlreadySelected[methodname]={};
-        }
-        if(hyperparametersRangeAlreadySelected[methodname][hpaName]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"]){
-           if(hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][0]==range[0]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][1]==range[1]){
-               // nothing
-           }else{
-               update = true;
-           }
-        }else{
-            if(range.length>0){
-                update = true;
-
-           }
-        }
-        if(update){
-           hyperparametersRangeAlreadySelected[methodname][hpaName]={"type":hpatype,"range":range};
-           console.log(hyperparametersRangeAlreadySelected);
-           this.setState({
-               hyperparametersRangeAlreadySelected : hyperparametersRangeAlreadySelected
-           })
-        }
-
-     }
-     componentWillReceiveProps(nextProps : IProps) {
-        if(this.state.loading==false){
-            let {hyperpartitions} = nextProps;
-            let methodhistogram:any ={};
-            let methodSelected:any={};
-            let mode = 1;
-            let hyperpartitionsAlreadySelected:number[] = [];
-            if(mode==0){
-                hyperpartitionsAlreadySelected = hyperpartitions.map((d:any)=>{
-                    return d.id;
-                });
-            }else if(mode==1){
-                hyperpartitionsAlreadySelected = hyperpartitions.filter((d:any)=>d.status!="errored").map((d:any)=>{
-                    return d.id;
-                });
-            }
-            
-            Object.keys(methodsDef).forEach((d:string)=>{
-                if(!methodhistogram[d]){
-                    methodhistogram[d]={total:0,enable:0};
-                }
-            });
-            hyperpartitions.forEach((d:any)=>{
-                if(!methodhistogram[d.method]){
-                    methodhistogram[d.method]={total:0,enable:0};
-                    console.log("unknown method : "+d.method);
-                }
-                if(!(d.status=="errored")){
-                    methodhistogram[d.method].total++;
-                    methodhistogram[d.method].enable++;
-                }else{
-                    methodhistogram[d.method].total++;
-                }
-                
-            });
-            Object.keys(methodhistogram).forEach((d:string)=>{
-                // 0 -> simple selection:
-                // 1 -> complex selection:
-                if(mode==0){
-                    if(methodhistogram[d].total==0){
-                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
-                    }else{
-                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
-                    }
-                }else if(mode==1){
-                    if(methodhistogram[d].total==0){
-                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
-                    }else if(methodhistogram[d].enable==0){
-                        methodSelected[d] = {checked:false,disabled:false,indeterminate:false};
-                    }else if(methodhistogram[d].total == methodhistogram[d].enable){
-                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
-                    }else{
-                        methodSelected[d] = {checked:false,disabled:false,indeterminate:true};
-                    }
-                }
-            });
-            
-            this.setState({
-                methodSelected:methodSelected,
-                hyperpartitionsAlreadySelected:hyperpartitionsAlreadySelected
-            });
-            //this.getCurrentConfigs();
-        }
-    }
     render(){
         let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
         classifiers = classifiers.sort(
@@ -356,8 +122,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         width2 = svgWidth*1/2,
         width3 = svgWidth*1/6,
         headerHeight = 10
-        console.log("three level render");
-        console.log(this.state.hyperpartitionsAlreadySelected);
+
         return <div
             style={{
                 height: `${this.props.height}%`,
@@ -385,11 +150,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 usedMethods = {usedMethods}
                 unusedMethods = {unusedMethods}
                 hyperpartitions={hyperpartitions}
-                configsMethod = {this.state.configsMethod}
-                methodSelected = {this.state.methodSelected}
-                onMethodsCheckBoxChange = {this.onMethodsCheckBoxChange}
                 compareK={compareK}
-                recommendationResult={this.props.recommendationResult}
             />
             </g>
             <g transform={`translate(${width1}, ${headerHeight})`}>
@@ -406,9 +167,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 selectedMethod={selectedMethod}
                 classifiers={classifiers}
                 compareK={compareK}
-                hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
-
-                onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
                 />
             </g>
             <g transform={`translate(${width1+width2}, ${headerHeight})`}>
@@ -418,13 +176,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of {selectedMethod}</text>
-            <HyperParameters 
-                classifiers={classifiers} 
-                selectedMethod={selectedMethod} 
-                compareK={compareK}
-                alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
-                onSelectedChange={this.onBrushSelected}
-                />
+            <HyperParameters classifiers={classifiers} selectedMethod={selectedMethod} compareK={compareK}/>
             </g>
             </svg>
 

@@ -2,10 +2,8 @@ import * as React from "react";
 import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
-import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
-import { Checkbox } from 'antd';
-import "./Methods.css";
-//import * as hint from "assets/small_hint.png"
+import {IHyperpartitionInfo, IClassifierInfo} from 'service/dataService';
+
 const d3 = require("d3");
 
 export interface IProps {
@@ -16,11 +14,7 @@ export interface IProps {
     width: number,
     selectedMethod: string,
     hyperpartitions: IHyperpartitionInfo[],
-    configsMethod : string[],
-    onMethodsCheckBoxChange: (e:any)=>void
-    compareK:number,
-    methodSelected:any,
-    recommendationResult:IRecommendationResult
+    compareK:number
 }
 
 export interface IState {
@@ -83,7 +77,7 @@ export default class methods extends React.Component<IProps, IState>{
         return maxvalue;
     }
     componentDidUpdate(){
-        let {classifiers, compareK } = this.props
+        let {classifiers, compareK} = this.props
         let comparedCls = classifiers.slice(0, compareK)
 
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
@@ -103,7 +97,7 @@ export default class methods extends React.Component<IProps, IState>{
 
     }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected} = this.props
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions} = this.props
 
 
 
@@ -137,51 +131,11 @@ export default class methods extends React.Component<IProps, IState>{
         //     }
         // });
         return <g className="methods" >
-                    {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
-                            /*let checked = false;
-                            let configsMethod : string[] = this.props.configsMethod;
-                            if(configsMethod.indexOf(name)>-1){
-                                    checked= true;
-                            };*/
-                            let checked = false;
-                            let indeterminate = false;
-                            let disabled = false;
-                            if(methodSelected[name]){
-                                checked = methodSelected[name].checked;
-                                indeterminate = methodSelected[name].indeterminate;
-                                disabled = methodSelected[name].disabled;
-                            }
-
-                            return (<foreignObject 
-                                        key={name+"_text_"+i} 
-                                        x={ this.methodBoxAttr.x +
-                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
-                                        y={this.methodBoxAttr.y +
-                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
-                                        width={this.methodBoxAttr.checkboxWidth} 
-                                        height={this.methodBoxAttr.checkboxHeight}>
-                                       <Checkbox  
-                                        key={name+"_checkbox_"+(i)} 
-                                        checked={checked} 
-                                        indeterminate={indeterminate}
-                                        disabled={disabled}
-                                        value={name} 
-                                        onChange={this.props.onMethodsCheckBoxChange} >
-                                        {name}
-                                        </Checkbox>
-                                        </foreignObject>
-                                  )
-                    })}
             <g className="usedMethods">
                 {sortedusedMethods.map((name: string, i: number) => {
                     const methodDef = methodsDef[name];
                     // let  testin = selectedMethodName.indexOf(name);
                     let selected = (name==this.props.selectedMethod)
-                    let index = this.props.recommendationResult.result.indexOf(name);
-                    let flower = 0;
-                    if(index>=0&&index<=2){
-                        flower = 3-index;
-                    }
                     // if (testin > -1) {
                     //     selected = true;
                     // }
@@ -209,7 +163,6 @@ export default class methods extends React.Component<IProps, IState>{
                             onClick={this.props.onSelectMethod}
                             selected={selected}
                             hyperpartitoins = {hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name)}
-                            flower={flower}
                         />)
 
                 })}
@@ -217,15 +170,6 @@ export default class methods extends React.Component<IProps, IState>{
             <g className="unusedMethods">{
                 unusedMethods.map((name: string, i: number) => {
                     let index = i + usedMethods.length;
-                    let index2 = this.props.recommendationResult.result.indexOf(name);
-                    let flower = 0;
-                    if(index2>=0&&index2<=2){
-                        flower = 3-index2;
-                    }
-                    let flowerlist = [];
-                    for(let i = 1;i<=flower;i++){
-                        flowerlist.push(i);
-                    }
                     return (<g
                         key={name + '_unused'}
                         transform={`translate(
@@ -244,9 +188,6 @@ export default class methods extends React.Component<IProps, IState>{
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
                             fill="white" strokeWidth={2} stroke="#E0D6D4" />
-                        {flowerlist.map((d:number)=>{
-                            return <image key={name+"_flower_"+d} opacity={0.5} xlinkHref="small_hint.png" x={this.methodBoxAttr.width-15*d} y={0} width={15} height={15}/>}
-                            )}
                         <text
                             x={this.methodBoxAttr.width}
                             y={this.methodBoxAttr.height}
@@ -273,8 +214,7 @@ export interface LineChartProps {
     methodName?: string,
     onClick:(a:string)=>void,
     selected?: boolean,
-    hyperpartitoins: IHyperpartitionInfo[],
-    flower:number
+    hyperpartitoins: IHyperpartitionInfo[]
 
 }
 
@@ -316,7 +256,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             }
             total += d;
         });
-        total;
+        //total;
         let yAxisData: string[] = []
         for (let i = 0; i <= 1 / step; i++) {
             yAxisData.push(`${(i * step).toFixed(2)}`)
@@ -341,9 +281,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
         //Create SVG element
-       // let tooltip = d3.select("#tooltip");
+        let tooltip = d3.select("#tooltip");
         //let top_methods = d3.select("#methodstop");
-        /*
+
         if (tooltip.empty()) {
             tooltip = d3.select("body").append("div")
                 .attr("class", "tooltip")
@@ -351,23 +291,23 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 .style("opacity", 0)
                 .style("left", "0px")
                 .style("top", "0px");;
-        }*/
+        }
         let top_svg = d3.select("#" + this.TAG + this.props.name).attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
             // .on("click",()=>{onClick(this.props.name)})
             .on("mousemove", function (d: any) {
-                    /*
+
                 tooltip.transition()
                     .duration(100)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
                 tooltip.style("opacity", 0.7).html(methodDef.fullname + "<br/>" + "best performance:" + bestperformance.toFixed(2) + "<br/>" + "trial number:" + total)
-                    */
+
             })
 
             .on("mouseout", function (d: any) {
-               // tooltip
-               //     .style("opacity", 0);
+                tooltip
+                    .style("opacity", 0);
             });;
         top_svg.append("rect")
             .attr('class', `${this.props.name} methodRect`)
@@ -452,15 +392,8 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("transform", `translate(${width+margin.left},${height/2}) rotate(${90})`)
             .attr('text-anchor', 'middle')
             .text(`hp:${usedHpID.length}/${hyperpartitoins.length}`)
-        for(let i = 1;i<=this.props.flower;i++){
-            svg.append('image')
-                .attr('width',15)
-                .attr('height',15)
-                .attr('opacity',0.5)
-                .attr('xlink:href',"small_hint.png")
-                .attr('x',width-15*i)
-                .attr('y',0);
-        }
+
+
         // // Add the X Axis
         // svg.append("g")
         //     .attr("transform", "translate(0," + height + ")")
@@ -470,7 +403,6 @@ class LineChart extends React.Component<LineChartProps, {}>{
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
             .call(d3.axisLeft(yScale).ticks(0, 1, 0.2))
-        
     }
     render() {
         const { name } = this.props;
