@@ -2,6 +2,7 @@ import * as React from "react";
 import { IHyperpartitionInfo, IClassifierInfo } from "service/dataService"
 import { getColor } from "helper";
 //import {Checkbox} from "antd";
+import "./HyperPartitions.css";
 
 // import { IDatarun } from "types";
 const d3 = require("d3");
@@ -181,15 +182,15 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                         selected="checked";
                     }
                    
-                    return  `<div
+                    return  `<div class="RadioBox"
                         style='text-overflow: ellipsis;
                         width: ${width}px;
                         height: ${height-1}px;
                         overflow:hidden;
                         white-space:nowrap';
-                        padding: 2px;
+                        padding: 0px;
                     >
-                    <input type="radio" name="${d.hyperpartition_string}" value="${d.id}" ${selected}>  ${d.hyperpartition_string}
+                    <input type="radio" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
                     </div>`
                 };
                 
