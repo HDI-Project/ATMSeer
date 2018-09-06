@@ -157,7 +157,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             // .style('stroke', 'white')
             // .style('stroke-width', 2)
 
-            let textEnter = hps.filter((d: any) => d.method == selectedMethod)
+            let textEnter = hps.filter((d: any) => true)
                     .append('g')
                     .attr('class', 'caption')
             textEnter.append('text')
