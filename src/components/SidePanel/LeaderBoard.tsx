@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Collapse, Tag, InputNumber, Switch, Icon } from 'antd';
 import { IDatarunStatusTypes } from 'types';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, postClickEvent,IClickEvent } from 'service/dataService';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IClickEvent } from 'service/dataService';
 // import { IHyperpartitionInfo, getHyperpartitions}  from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
@@ -82,6 +82,7 @@ export interface LeaderBoardProps {
     datarunStatus: IDatarunStatusTypes;
     setDatarunStatus: (status: IDatarunStatusTypes) => void;
     setTopK: (topk:number)=>void;
+    postClickEvent:(e:IClickEvent)=>void;
 }
 
 export interface LeaderBoardState {
@@ -188,7 +189,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             },
             time:new Date().toString()
         }
-        postClickEvent(eventlog);
+        this.props.postClickEvent(eventlog);
     }
     public componentWillUnmount() {
         window.clearInterval(this.intervalID)
@@ -219,7 +220,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             style={{
                                 backgroundColor: getColor(best?best.method:''),
                                 borderRadius:'4px',
-                                padding:'2px',
+                                padding:'2px', 
                                 marginLeft: "2px",
                                 color: 'white'
                             }}

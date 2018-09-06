@@ -131,7 +131,7 @@ class Recommender:
             if not computed:
                 raise ValueError("Fail to compute predict dataset")
         df9 = pd.Series.from_csv(result_path)
-        print(df9)
+        #print(df9)
         result3 = df9.index.tolist()
         result3 = [str1[len('classify_'):len(str1)] for str1 in result3]
         result3 = [str1  for str1 in result3 if not str1 == 'dbn']

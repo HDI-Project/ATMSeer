@@ -16,13 +16,41 @@ const d3 = require("d3");
 
 export default class HyperParameters extends React.Component<IProps, {}>{
     render() {
-        let { classifiers, selectedMethod, compareK } = this.props
+        let { classifiers, selectedMethod, compareK,alreadySelectedRange } = this.props
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
+        
         if (comparedMethods.length==1){
             selectedMethod = comparedMethods[0]
         }
         classifiers = classifiers.filter(d=>d.method==selectedMethod)
+        function judgeSelect(d:IClassifierInfo){
+            let hpaSelect : boolean = true;
+            if(alreadySelectedRange){
+                let filterkeys = Object.keys(alreadySelectedRange);
+                if(filterkeys.length>0){
+                    filterkeys.forEach((name:string,index:number)=>{
+                        if(hpaSelect){
+                            // Avoid endless comparison
+                            if(d.hyperparameters[name]){
+                                let data = d.hyperparameters[name];
+                                if(alreadySelectedRange[name]["range"]&&alreadySelectedRange[name]["range"].length==2){
+                                    let hpamin = alreadySelectedRange[name]["range"][0];
+                                    let hpamax = alreadySelectedRange[name]["range"][1];
+
+                                    if(data<hpamin||data>hpamax){
+                                        hpaSelect = false;
+                                    }
+                                }
+                            }else{
+                                hpaSelect = false;
+                            }
+                        }
+                    });
+                }else{hpaSelect=true;}
+            }else{hpaSelect = true;}
+            return hpaSelect; 
+        }
         if (classifiers.length>0) {
             let HyperparameterList: any[] = [];
             let idx = 0
@@ -55,7 +83,18 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                     })
                 }
             })
+            let selectedClassifier : IClassifierInfo[] =[];
+           
+            if(compareK>0){
+                selectedClassifier = comparedCls.filter(d=>{
+                    return judgeSelect(d);
+                })
+            }else{
+                selectedClassifier = classifiers.filter(d=>{
+                    return judgeSelect(d);
+                })
 
+            }
             let box = {
                 width: 200,
                 height: 100,
@@ -70,7 +109,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                         idx={i}
                         box={box}
                         selectedMethod={selectedMethod}
-                        comparedCls={comparedCls}
+                        comparedCls={selectedClassifier}
                         onSelectedChange={this.props.onSelectedChange}
                         alreadySelectedRange={this.props.alreadySelectedRange[hp.name]?this.props.alreadySelectedRange[hp.name]:{}}
                         valueType={hp.valueType}
@@ -127,11 +166,11 @@ class HyperParameter extends React.Component<HyProps, {}>{
         let g = d3.select("#" + this.TAG + this.props.idx)
         let {comparedCls} = this.props
         g.selectAll(`circle.dot`)
-            .attr('opacity', 1)
-        if(comparedCls.length>0){
-            g.selectAll(`circle.dot`)
             .attr('opacity', 0.2)
-        }
+        //if(comparedCls.length>0){
+        //    g.selectAll(`circle.dot`)
+        //    .attr('opacity', 0.2)
+        //}
         comparedCls.forEach(d=>{
             g.select(`#_${d.id}`)
             .attr('opacity', 1)
@@ -148,11 +187,11 @@ class HyperParameter extends React.Component<HyProps, {}>{
 
         let {comparedCls} = this.props
         g.selectAll(`circle.dot`)
-            .attr('opacity', 1)
-        if(comparedCls.length>0){
-            g.selectAll(`circle.dot`)
             .attr('opacity', 0.2)
-        }
+        //if(comparedCls.length>0){
+        //    g.selectAll(`circle.dot`)
+        //    .attr('opacity', 0.2)
+        //}
         comparedCls.forEach(d=>{
             g.select(`#_${d.id}`)
             .attr('opacity', 1)

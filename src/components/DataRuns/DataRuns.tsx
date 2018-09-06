@@ -8,7 +8,7 @@ import {parseDatarun} from "helper";
 import {IDatarun} from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
-import {getClassifierSummary, getClassifiers,getHyperpartitions,IRecommendationResult, IClassifierInfo,IHyperpartitionInfo, getRecommendation} from 'service/dataService';
+import {getClassifierSummary, getClassifiers,getHyperpartitions,IRecommendationResult, IClassifierInfo,IHyperpartitionInfo, getRecommendation, IClickEvent} from 'service/dataService';
 
 //components
 // import MethodsLineChart from './MethodsLineChart';
@@ -35,6 +35,7 @@ export interface IProps{
     datasetID: number | null;
     compareK: number
     setDatarunID: (id: number) => void;
+    postClickEvent :(e:IClickEvent)=>void;
 }
 export interface IState{
     runCSV:string,
@@ -217,6 +218,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             compareK={compareK}
             datarunID={datarunID}
             recommendationResult={this.state.recommendationResult}
+            postClickEvent={this.props.postClickEvent}
             />
 
         </div>)

@@ -551,9 +551,12 @@ def post_click_event():
     """
     A click event is a json file.
     includes 
-    type
-    description
-    time
+    name:
+    clickevent:
+    [{  type
+        description
+        time
+    }]
     ip
     """
     filename = './atm/clickevent.json'
