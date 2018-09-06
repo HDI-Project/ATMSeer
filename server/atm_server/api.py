@@ -579,5 +579,5 @@ def getRecommendation(dataset_id):
     rec = Recommender(current_app.config['DATASET_META_DIR'])
     result = rec.predict_dataset(dataset_path,dataset_id)
     if len(result)>=3:
-        result = result[0:2]
+        result = result[0:3]
     return jsonify({'result':result})
