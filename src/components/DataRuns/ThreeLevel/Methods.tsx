@@ -245,7 +245,7 @@ export default class methods extends React.Component<IProps, IState>{
                             height={this.methodBoxAttr.height}
                             fill="white" strokeWidth={2} stroke="#E0D6D4" />
                         {flowerlist.map((d:number)=>{
-                            return <image key={name+"_flower_"+d} xlinkHref="small_hint.png" x={this.methodBoxAttr.width-15*d} y={0} width={15} height={15}/>}
+                            return <image key={name+"_flower_"+d} opacity={0.5} xlinkHref="small_hint.png" x={this.methodBoxAttr.width-15*d} y={0} width={15} height={15}/>}
                             )}
                         <text
                             x={this.methodBoxAttr.width}
@@ -456,6 +456,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             svg.append('image')
                 .attr('width',15)
                 .attr('height',15)
+                .attr('opacity',0.5)
                 .attr('xlink:href',"small_hint.png")
                 .attr('x',width-15*i)
                 .attr('y',0);
