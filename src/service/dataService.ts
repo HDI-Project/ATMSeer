@@ -387,3 +387,43 @@ export async function getDatarunConfigs(datarun_id : number): Promise<IConfigsIn
     }
     throw res;
 }
+/*
+Post Click Event
+type: method, compare, classifier
+description: {
+    action: "selected"
+    "unselected"
+    id: classifier id
+    name: [method name]
+}
+time: time
+*/
+export interface IClickEvent {
+    type:string,
+    description:any,
+    time:string
+}
+export interface IClickBundleEvent{
+    name:string,
+    clickevent:IClickEvent
+}
+export async function postBundleClickEvent(log:IClickBundleEvent):Promise<ICommonResponse>{
+    const headers = {'Content-Type': 'application/json'};
+    const res = await axiosInstance.post(`/postClickEvent`, log, {headers});
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
+
+export interface IRecommendationResult {
+    result : string[];
+}
+export async function getRecommendation(dataset_id : number): Promise<IRecommendationResult> {
+    const url = `/getRecommendation/${dataset_id}`;
+    const res = await axiosInstance.get(url);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw res;
+}
