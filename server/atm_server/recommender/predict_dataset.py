@@ -50,7 +50,7 @@ class Recommender:
         X = X.values
         y = y.values
 
-        categoricals = [~np.isfinite(X[0,j]) for j in range(num_col-1)]
+        categoricals = [type(X[0,j]) is str for j in range(num_col-1)]
         result = metafeatures.calculate_all_metafeatures(X,y,categoricals,dataset_name,self.features)
         result_array = []
         result_array.append(dataset_name)
