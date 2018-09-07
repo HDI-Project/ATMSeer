@@ -1,4 +1,5 @@
 import atm_server.recommender.metafeatures as metafeatures
+import atm_server.recommender.encoder as encoder
 import pandas as pd
 import math
 import numpy as np
@@ -37,20 +38,22 @@ class Recommender:
         # Read Train Dataset
         dataset_train_path = path_to_dataset
         dataset = pd.read_csv(dataset_train_path)
-        
-        # Dataset Feature Title
-        dataset_feature = dataset.columns.values
-        dataset_feature = dataset_feature.tolist()
-        dataset_feature.remove('class')
-
-
         num_col = dataset.shape[1]
-        X = dataset[dataset_feature]
-        y = dataset[['class']]
-        X = X.values
-        y = y.values
 
-        categoricals = [~np.isfinite(X[0,j]) for j in range(num_col-1)]
+        # Dataset Feature Title
+        #dataset_feature = dataset.columns.values
+        #dataset_feature = dataset_feature.tolist()
+        #dataset_feature.remove('class')
+
+        encode = encoder.DataEncoder()
+        X,y = encode.fit_transform(dataset)
+        #X = dataset[dataset_feature]
+        #y = dataset[['class']]
+        #X = X.values
+        #y = y.values
+
+        #categoricals = [type(X[0,j]) is str for j in range(num_col-1)]
+        categoricals = [False] * (num_col-1)
         result = metafeatures.calculate_all_metafeatures(X,y,categoricals,dataset_name,self.features)
         result_array = []
         result_array.append(dataset_name)
