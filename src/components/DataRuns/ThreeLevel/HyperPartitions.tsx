@@ -111,7 +111,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     }
                     
                 }
-                if (lastposy > window.innerHeight * 0.8) {
+                if (lastposy > window.innerHeight * 0.74) {
                     lastposx = lastposx + width * 1.5;
                     lastposy = height + (
                         hpsInfo[i].method == selectedMethod?

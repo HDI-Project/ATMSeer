@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal, Button, Input,Alert  } from 'antd';
-
+import {USER_STUDY} from 'Const';
 export interface UploadModalProps {
   setUserName : (e:string)=>void
 }
@@ -17,7 +17,7 @@ export default class UploadModal extends React.Component<UploadModalProps, Uploa
     super(props);
      this.state = {
         loading: false,
-        visible: true,
+        visible: USER_STUDY,
         alertvisible:false,
         name:""
     }
