@@ -23,27 +23,3 @@
     margin: 5px;
     float: left;
 }
-
-div.tooltip {
-    position: absolute;
-    text-align: left;
-    color: aliceblue;
-    width: 180px;
-    height: 80px;
-    padding: 10px;
-    font: 12px sans-serif;
-    background: rgba(0, 0, 0, 0.671);
-    border: 10px;
-    border-radius: 5px;
-    pointer-events: none;
-  }
-  .link {
-    fill: none;
-    stroke-width: 1.5px;
-  }
-  .bottomright {
-    position: absolute;
-    bottom: 80px;
-    right: 30px;
-    font-size: 18px;
-}

@@ -19,7 +19,7 @@ import OverallHistogram from "./OverallHistogram";
 // import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
-import ThreeLevelBase from "./ThreeLevelBase";
+import InputForm from "./InputForm";
 import AskModal from "./AskModal";
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
@@ -269,7 +269,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             {/* <MethodsLineChart height={85} datarun={datarun} hyperpartitions={this.state.hyperpartitions}
             datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
             datarunID={this.props.datarunID}/> */}
-            <ThreeLevelBase
+            <InputForm
             height={85}
             datarun={datarun}
             hyperpartitions={hyperpartitions}
