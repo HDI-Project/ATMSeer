@@ -39,3 +39,11 @@
   display: block;
   position:absolute; top:0; left:0; right:0; bottom:0
 }
+
+.ant-tabs-tabpane{
+    height: 100% !important;
+}
+.ant-tabs-content{
+    height: 100% !important;
+}
+

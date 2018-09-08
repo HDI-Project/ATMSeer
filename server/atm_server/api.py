@@ -544,3 +544,44 @@ def post_update_datarun_config(datarun_id):
                     raise ApiError(e, 400)
 
     return jsonify({'success': True})
+
+
+@api.route('/postClickEvent', methods=['POST'])
+def post_click_event():
+    """
+    A click event is a json file.
+    includes
+    name:
+    clickevent:
+    [{  type
+        description
+        time
+    }]
+    ip
+    """
+    filename = './atm/clickevent.json'
+    if not os.path.exists(filename):
+        with open(filename, 'w') as f:
+            json.dump([], f)
+    configs = []
+    with open(filename, 'r') as f:
+        configs = json.load(f)
+    click_event_json = request.get_json()
+    click_event_json["ip"]=request.remote_addr
+    configs.append(click_event_json)
+    with open(filename, 'w') as f:
+        json.dump(configs, f)
+    return jsonify({'success': True})
+
+
+@api.route('/getRecommendation/<int:dataset_id>', methods=['GET'])
+def getRecommendation(dataset_id):
+    """Get Recommendation"""
+
+    train = request.args.get('train', True, type=bool)
+    dataset_path = fetch_dataset_path(dataset_id, train)
+    rec = Recommender(current_app.config['DATASET_META_DIR'])
+    result = rec.predict_dataset(dataset_path,dataset_id)
+    if len(result)>=3:
+        result = result[0:3]
+    return jsonify({'result':result})

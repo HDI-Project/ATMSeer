@@ -1,4 +1,4 @@
-budget: 100
+budget: 1000
 budget_type: classifier
 class_column: class
 data_description: Example dataset description

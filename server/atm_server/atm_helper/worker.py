@@ -220,6 +220,7 @@ def start_worker(datarun_id):
 
 
 def stop_worker(datarun_id):
+
     # TODO: maybe there is a better way to solve the problem
     # where the cache has been set stop, then the real pid will be lost.
     # How can I find whether the real pid is alive?
@@ -240,8 +241,9 @@ def stop_worker(datarun_id):
     #             time.sleep(0.9)
     #         else:
     #             return True
-        # cache.delete(key)
-        # return True
+
+    # cache.delete(key)
+    # return True
     # logger.warning("Cannot find corresponding process for datarun %d" % datarun_id)
     start_time = time.time()
     key = datarun_id2key(datarun_id)

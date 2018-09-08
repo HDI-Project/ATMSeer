@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Collapse, Tag, Progress, InputNumber, Switch, Icon } from 'antd';
+import { Collapse, Tag, InputNumber, Switch, Icon } from 'antd';
 import { IDatarunStatusTypes } from 'types';
-import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun } from 'service/dataService';
+import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IClickEvent } from 'service/dataService';
 // import { IHyperpartitionInfo, getHyperpartitions}  from 'service/dataService';
 import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
@@ -11,7 +11,6 @@ import { getColor } from 'helper';
 const Panel = Collapse.Panel;
 
 // const TOP_K = 10;
-
 function isFloat(n: number): boolean {
     return n % 1 !== 0;
 }
@@ -82,6 +81,7 @@ export interface LeaderBoardProps {
     datarunStatus: IDatarunStatusTypes;
     setDatarunStatus: (status: IDatarunStatusTypes) => void;
     setTopK: (topk:number)=>void;
+    postClickEvent:(e:IClickEvent)=>void;
 }
 
 export interface LeaderBoardState {
@@ -131,7 +131,6 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             //                    hyperpartitions.map(d=>d.hyperpartition_string)
             //                 )
             //             )
-
             //            this.setState({ hyperpartitionStrings, hyperpartitions });
             //        }
             //     else
@@ -164,6 +163,32 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             this.startOrStopUpdateCycle();
         }
     }
+    activeKey:string[] = [];
+    onCollapseChange = (key:string[])=>{
+        let d1 = this.activeKey.length;
+        let d2 = key.length;
+        let intersectkey = this.activeKey.filter((d:string)=>key.indexOf(d)>-1);
+        let changedKey = Array.from(new Set(this.activeKey.concat(key))).filter((d:string)=>intersectkey.indexOf(d)<0);
+        let action = "changed";
+        if(d1>d2){
+            action="close";
+        }else if(d1<d2){
+            action="open";
+        }else{
+            action="changed";
+        }
+        this.activeKey = key;
+        let eventlog:IClickEvent = {
+            type:"leaderboard_classifier",
+            description:{
+                action:action,
+                changed_classifier_id:changedKey,
+                open_classifier_id:key
+            },
+            time:new Date().toString()
+        }
+        this.props.postClickEvent(eventlog);
+    }
     public componentWillUnmount() {
         window.clearInterval(this.intervalID)
     }
@@ -171,14 +196,14 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
 
         const { summary, datarunInfo, topK} = this.state
         const best = summary ? summary.topClassifiers[0] : undefined;
-        let methods_num = summary?Object.keys(summary.nTriedByMethod).length:0
+        /*let methods_num = summary?Object.keys(summary.nTriedByMethod).length:0
         let hp_num = summary?summary.triedHyperpartition.length:0
         const progressAlgorithm = (percent:number)=>{
             return `${methods_num}/14`
         }
         const progressHyperpartiton = (percent:number)=>{
             return `${hp_num}/172`
-        }
+        }*/
 
         return summary ? (
             <div >
@@ -203,7 +228,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <br/>
                         <b>Total classifiers</b>: {summary.nTried}
                         <br/>
-                        <b>Algorithm Coverage</b>:{' '}
+                        {/*<b>Algorithm Coverage</b>:{' '}
                         <Progress
                         type="circle"
                         percent={100*methods_num/14}
@@ -219,9 +244,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         format={progressHyperpartiton}
                         width={40}
                         strokeWidth={10}
-                        />
-
-
+                        />*/}
                     </div>
                     {/* <div>
                         <LineChart scores={scores} hyperpartitions={hyperpartitions} topK={TOP_K}/>
@@ -237,8 +260,6 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             onChange={this.changeTopK}
                             style={{width: '50px'}}
                         />
-
-
                         Classifiers
                         {/* <Button
                             type="primary"
@@ -261,7 +282,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                     </h4>
                     <hr />
                     <div style={{height:"calc(94vh - 410px)", overflowY:"scroll"}}>
-                    <Collapse bordered={false}>
+                    <Collapse bordered={false} onChange={this.onCollapseChange}>
                         {summary.topClassifiers.slice(0, topK).map(c => (
                             <Panel key={String(c.id)} header={<MethodHeader {...c} />}>
                                 <HyperParams {...c.hyperparameters} />
