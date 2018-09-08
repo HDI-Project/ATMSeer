@@ -14,6 +14,7 @@
     /* height: ${100/methods.length}% */
     height: 100%;
     padding: 2px 5px;
+    overflow-y: scroll;
 }
 
 .unusedMethod{

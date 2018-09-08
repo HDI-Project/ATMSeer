@@ -1,13 +1,21 @@
-import { } from 'antd';
+import {Checkbox,InputNumber,Button,message } from 'antd';
 import * as React from 'react';
 import * as methodsDef from "../../assets/methodsDef.json";
-import { IMethod, IDatarun, IClassifier } from "types";
-import { getColor } from 'helper';
+import {  IDatarun } from "types";
+import {  } from 'helper';
 import "./InputForm.css"
-import ReactEcharts from "echarts-for-react";
-import { IHyperpartitionInfo, IClassifierInfo,  
+//import ReactEcharts from "echarts-for-react";
+import { IHyperpartitionInfo, IClassifierInfo,  IConfigsInfo,IUpdateDatarunConfig,   getDatarunConfigs,updateDatarunConfigs,ICommonResponse,
+
  IClickEvent,IRecommendationResult} from 'service/dataService';
 export interface IState {
+    selectedMethod:string,
+    configsBudget: number,
+    configsMethod : string[],
+    loading: boolean,
+    methodSelected:any,
+    hyperparametersRangeAlreadySelected:any,
+    hyperpartitionsAlreadySelected:number[]
 }
 export interface IProps {
     height: number,
@@ -22,283 +30,379 @@ export interface IProps {
     postClickEvent:(e:IClickEvent)=>void;
 }
 export default class Methods extends React.Component<IProps, IState>{
+    index = 0
+    constructor(props: IProps){
+        super(props)
+        this.state={
+            selectedMethod: '',
+            configsBudget: 100,
+            configsMethod: [],
+            loading: false,
+            methodSelected:{},
+            hyperparametersRangeAlreadySelected:{},
+            hyperpartitionsAlreadySelected:[]
 
+        }
+    }
+
+    componentWillReceiveProps(nextProps : IProps) {
+        if(this.state.loading==false){
+            let {hyperpartitions} = nextProps;
+            let methodhistogram:any ={};
+            let methodSelected:any={};
+            let mode = 1;
+            let hyperpartitionsAlreadySelected:number[] = [];
+            if(mode==0){
+                hyperpartitionsAlreadySelected = hyperpartitions.map((d:any)=>{
+                    return d.id;
+                });
+            }else if(mode==1){
+                hyperpartitionsAlreadySelected = hyperpartitions.filter((d:any)=>d.status!="errored").map((d:any)=>{
+                    return d.id;
+                });
+            }
+            
+            Object.keys(methodsDef).forEach((d:string)=>{
+                if(!methodhistogram[d]){
+                    methodhistogram[d]={total:0,enable:0};
+                }
+            });
+            hyperpartitions.forEach((d:any)=>{
+                if(!methodhistogram[d.method]){
+                    methodhistogram[d.method]={total:0,enable:0};
+                    console.log("unknown method : "+d.method);
+                }
+                if(!(d.status=="errored")){
+                    methodhistogram[d.method].total++;
+                    methodhistogram[d.method].enable++;
+                }else{
+                    methodhistogram[d.method].total++;
+                }
+                
+            });
+            Object.keys(methodhistogram).forEach((d:string)=>{
+                // 0 -> simple selection:
+                // 1 -> complex selection:
+                if(mode==0){
+                    if(methodhistogram[d].total==0){
+                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
+                    }else{
+                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
+                    }
+                }else if(mode==1){
+                    if(methodhistogram[d].total==0){
+                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
+                    }else if(methodhistogram[d].enable==0){
+                        methodSelected[d] = {checked:false,disabled:false,indeterminate:false};
+                    }else if(methodhistogram[d].total == methodhistogram[d].enable){
+                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
+                    }else{
+                        methodSelected[d] = {checked:false,disabled:false,indeterminate:true};
+                    }
+                }
+            });
+            let selectedMethod = this.state.selectedMethod;
+            //if(this.props.datarunID!=nextProps.datarunID){
+            //    selectedMethod = "";
+            //}
+            this.setState({
+                methodSelected:methodSelected,
+                hyperpartitionsAlreadySelected:hyperpartitionsAlreadySelected,
+                selectedMethod:selectedMethod
+            });
+            //this.getCurrentConfigs();
+        }
+    }
+    onBudgetChange = (budget : any) =>{
+
+        this.setState({configsBudget:budget});
+    }
+    fetchHpId = (method:string)=>{
+        let hp = this.props.hyperpartitions;
+        return hp.filter((d:any)=>d.method==method).map((d:any)=>d.id);
+    }
+    onMethodsCheckBoxChange=(e : any)=>{
+        let checked = e.target.checked;
+        let value = e.target.value;
+        let methodSelected = this.state.methodSelected;
+        let configsHyperpartitions :number[] = this.state.hyperpartitionsAlreadySelected;
+        console.log("onMethodsCheckBoxChange")
+        if(checked==false){
+            //un selected
+            let configsMethod : string[] = this.state.configsMethod;
+            let index = configsMethod.indexOf(value);
+            if(index>-1){
+                configsMethod.splice(index, 1);
+            }
+
+
+            methodSelected[value].checked=false;
+            methodSelected[value].indeterminate=false;
+            methodSelected[value].disabled=false;
+            let hpid = this.fetchHpId(value);
+            configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
+            
+            this.setState({
+                hyperpartitionsAlreadySelected:configsHyperpartitions,
+                methodSelected:methodSelected,
+                configsMethod:configsMethod
+                
+            });
+
+        }else{
+            let configsMethod : string[] = this.state.configsMethod;
+            configsMethod.push(value);
+            methodSelected[value].checked=true;
+            methodSelected[value].indeterminate=false;
+            methodSelected[value].disabled=false;
+            let hpid = this.fetchHpId(value);
+            configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
+            this.setState({
+                hyperpartitionsAlreadySelected:configsHyperpartitions,
+                methodSelected:methodSelected,
+                configsMethod:configsMethod
+                
+            });
+
+
+        }
+    }
+    onHyperpartitionCheckBoxChange=(e:any)=>{
+        let id : number = e.target.value;
+        let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
+        let value = id;
+        if(checked==false){
+            // un selected
+            let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
+            let index = configsHyperpartitions.indexOf(value);
+            if(index>-1){
+                configsHyperpartitions.splice(index, 1);
+                let hp :any= this.props.hyperpartitions.filter((d:any)=>d.id==value);
+                let method = hp[0].method;
+                let hpid = this.fetchHpId(method);
+                let judgeSet = hpid.filter((d:any)=>configsHyperpartitions.indexOf(d)>-1);
+                let methodSelected = this.state.methodSelected;
+                let configsMethod : string[] = this.state.configsMethod;
+
+                if(judgeSet.length>0){
+                    // Fetch method intersect hpid 
+                    // method unselected
+                    methodSelected[method].checked=false;
+                    methodSelected[method].indeterminate=true;
+                }else{
+                    methodSelected[method].checked=false;
+                    methodSelected[method].indeterminate=false;
+                    let index = configsMethod.indexOf(method);
+                    if(index>-1){
+                        configsMethod.splice(index, 1);
+                    }
+                }
+                this.setState({
+                    hyperpartitionsAlreadySelected:configsHyperpartitions,
+                    methodSelected:methodSelected,
+                    configsMethod:configsMethod
+
+                });
+
+            }
+        }else{
+            let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
+            configsHyperpartitions.push(value);
+            let hp :any= this.props.hyperpartitions.filter((d:any)=>d.id==value);
+            let method = hp[0].method;
+            let hpid = this.fetchHpId(method);
+            let judgeSet = Array.from(new Set(configsHyperpartitions.concat(hpid)));
+            let methodSelected = this.state.methodSelected;
+            let configsMethod : string[] = this.state.configsMethod;
+            configsMethod = Array.from(new Set(configsMethod.concat([method])));
+
+            if(judgeSet.length==configsHyperpartitions.length){
+                //selected
+                methodSelected[method].checked=true;
+                methodSelected[method].indeterminate=false;              
+            }else{
+                methodSelected[method].checked=false;
+                methodSelected[method].indeterminate=true;
+            }
+
+            this.setState({
+                hyperpartitionsAlreadySelected:configsHyperpartitions,
+                methodSelected:methodSelected,
+                configsMethod:configsMethod
+            });
+
+
+        }
+    }
+    updateCurrentDataRun = () => {
+        // get configs from server ;
+        // submit configs in this view
+        // switch to the new datarun.
+        let methods = this.state.configsMethod;
+        let budget = this.state.configsBudget;
+        if(this.props.datarunID!=null){
+            let promise: Promise<IConfigsInfo>;
+            let datarunID : number= this.props.datarunID?this.props.datarunID:0;
+            promise = getDatarunConfigs(datarunID);
+            promise
+                .then(configs => {
+                    configs.methods = methods;
+                    configs.budget = budget;
+                    this.setState({ loading: true });
+
+                    let submitconfigs : IUpdateDatarunConfig = {};
+                    submitconfigs.configs = configs;
+                    submitconfigs.method_configs = this.state.hyperparametersRangeAlreadySelected;
+                    if(this.state.hyperpartitionsAlreadySelected.length>0){
+                        submitconfigs.hyperpartitions = this.state.hyperpartitionsAlreadySelected;
+                    }
+                    let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
+                    //const promise = this.props.onSubmit(this.state.configs);
+                    console.log("update data run in methods view");
+                    console.log(configs);
+                    promise.then(status => {
+                        if(status.success == true){
+                            message.success("Update Configs Successfully.");
+                        }else{
+                            message.error("Update Configs Failed.");
+                        }
+                        this.setState({ loading: false });
+                    }).catch(error=>{
+                        console.log(error);
+                        message.error("Update Configs Failed.");
+                        this.setState({ loading: false});
+
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+                }
+       }
+
+       onBrushSelected = (methodname:string, hpaName: string,hpatype:string,range:number[])=>{
+        let {hyperparametersRangeAlreadySelected} = this.state;
+        let update : boolean = false;
+        if(hpatype=="int"){
+            range[0]=Math.floor(range[0]);
+            range[1]=Math.ceil(range[1]);
+        }
+        if(!hyperparametersRangeAlreadySelected[methodname]){
+           hyperparametersRangeAlreadySelected[methodname]={};
+        }
+        if(hyperparametersRangeAlreadySelected[methodname][hpaName]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"]){
+           if(hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][0]==range[0]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][1]==range[1]){
+               // nothing
+           }else{
+               update = true;
+           }
+        }else{
+            if(range.length>0){
+                update = true;
+
+           }
+        }
+        if(update){
+           hyperparametersRangeAlreadySelected[methodname][hpaName]={"type":hpatype,"range":range};
+           console.log(hyperparametersRangeAlreadySelected);
+           this.setState({
+               hyperparametersRangeAlreadySelected : hyperparametersRangeAlreadySelected
+           })
+        }
+
+     }
     public render() {
-        // const methodLen = Object.keys(methodsDef).length
-        let { datarun, height } = this.props
-        let usedMethods: string[] = Object.keys(datarun)
-        // const usedMethods = ['SVM', 'RF', 'DT', 'MLP',,'GP', 'LR', 'KNN'] // the used methodsDef should be obtained by requesting server the config file
-        const unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
+        let {  height } = this.props
+        const method_options =  Object.keys(methodsDef).map(
+            (key : string)=>{
+                return {label: methodsDef[key].fullname, value: key, ...this.state.methodSelected[key]}
+            }
+        );
+        const hyperpartitions_options = this.props.hyperpartitions.map((d:any)=>{
+            let selected="";
+            if(this.state.hyperpartitionsAlreadySelected.indexOf(d.id)>-1){
+                selected="checked";
+            }
+            return {label:d.hyperpartition_string,value:d.id,checked:selected}
+        })
+        let settingheight = 80;
         return <div className="methods" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
-            {usedMethods.map((name: string, i: number) => {
-                const methodDef = methodsDef[name]
-                return <div key={name + '_used'} className="usedMethodContainer"
-                    style={{ height: `35%`, width: '33%' }}>
-                    <div className="method">
-                        <Method methodDef={methodDef} classifiers={datarun[name]} />
+        <div key={'0_used'} className={"usedMethodContainer"}
+                         style={{ height: `20%`, width: '100%' }}>
+                        <div>
+                        <h2> Setting Panel : You can update current datarun config in this panel.</h2>
+                        <br />
+                        <h4 style={{display: "inline"}}>Budget :</h4>
+                        <InputNumber min={1} value={this.state.configsBudget} onChange={this.onBudgetChange} />
+                        
+                        <Button loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update</Button>
+                                    
+                    </div>
+                    </div>
+                   
+                    <div key={'1_used'} className="usedMethodContainer"
+                         style={{ height: `${settingheight}%`, width: '33%' }}>
+                        <div className="method">
+                        <h4 style={{textAlign: "center"}}> Methods </h4>
+               
+                        <div>
+                            {method_options.map((d:any)=>{
+                                return <div key={"div_checkbox_"+d.value}> <Checkbox
+                                key={"_checkbox_"+d.value}
+                                checked={d.checked}
+                                disabled={d.disabled}
+                                indeterminate={d.indeterminate}
+                                value={d.value}
+                                onChange={this.onMethodsCheckBoxChange}
+                                >
+                                {d.label}
+                                </Checkbox><br /></div>
+                            })
+                        
+                            }
+                            {/*<CheckboxGroup options={method_options}  />*/}
+                        </div>
+                    </div>
+                    </div>
+                    <div key={'2_used'} className="usedMethodContainer"
+                         style={{ height: `${settingheight}%`, width: '33%' }}>
+                        <div className="method">
+                        <h4 style={{textAlign: "center"}}> Hyperpartitions </h4>
+                
+                            <div>
+                            {hyperpartitions_options.map((d:any)=>{
+                                    return  (<div key={"div_checkbox_"+d.value}><Checkbox
+                                    key={"_checkbox_"+d.value}
+                                    checked={d.checked}
+                                    disabled={d.disabled}
+                                    indeterminate={d.indeterminate}
+                                    value={d.value}
+                                    onChange={this.onHyperpartitionCheckBoxChange}
+                                >
+                                    {d.label}
+                                </Checkbox><br /></div>)
+                                })
+                        
+                                }
+                            </div>
+                            <br />
+                    </div>
+                    </div>
+                    <div key={'3_used'} className="usedMethodContainer"
+                         style={{ height: `${settingheight}%`, width: '33%' }}>
+                        <div className="method">
+                        <h4 style={{textAlign: "center"}}> Hyperparameters </h4>
+               
+                            <div style={{display: "inline"}}>
+                            Budget :
+                            <InputNumber min={1} value={this.state.configsBudget} onChange={this.onBudgetChange} />
+                            ~
+                            <InputNumber min={1} value={this.state.configsBudget} onChange={this.onBudgetChange} />
+                            </div>
+                    </div>
                     </div>
                 </div>
-            })}
 
-            {unusedMethods.map((name: string) => (<div key={name + '_unused'} className='unusedMethod'>{methodsDef[name]['fullname']}</div>))}
-        </div>
 
     }
 }
-
-class Method extends React.Component<{ methodDef: IMethod, classifiers: IClassifier[] }, {}>{
-    getOption() {
-        const { methodDef, classifiers } = this.props
-
-        // pepare data for parallel coordinates
-        let parallelAxis: any[] = []
-        let idx = 0
-        methodDef.root_hyperparameters.forEach((p: string) => {
-            let parameter = methodDef['hyperparameters'][p]
-            if (parameter['values']) { //category axis
-                parallelAxis.push({ dim: idx, name: p, type: 'category', data: parameter['values'] })
-            } else if (parameter['range']) {//value axis
-                if (parameter['range'].length > 1) { //range in the form of [min, max]
-                    parallelAxis.push({ dim: idx, name: p, type: 'value', min: parameter['range'][0], max: parameter['range'][1] })
-                } else { // range in the form of [max]
-                    parallelAxis.push({ dim: idx, name: p, type: 'value', min: 0, max: parameter['range'][0] })
-                }
-
-            } else if (parameter['type'] == 'list') { // the hidden layer sizes in MLP
-                for (let hidden_l = 0; hidden_l < parameter['list_length'].length; hidden_l++) {
-
-                    parallelAxis.push({
-                        dim: idx + hidden_l, name: `${p}[${hidden_l}]`, type: 'value',
-                        min: 0,
-                        max: parameter['element']['range'][1]
-                    })
-                }
-                idx = idx + parameter['list_length'].length - 1
-                // parallelAxis.push({
-                //     dim: idx, name:p, type:'value'
-                // })
-
-            } else {
-                parallelAxis.push({
-                    dim: idx, name: p, type: 'value'
-                })
-            }
-        })
-        //performance as a value axis
-        parallelAxis.push({
-            dim: parallelAxis.length,
-            name: 'performance',
-            type: 'value',
-            min: 0,
-            max: 1
-        })
-        //remove axes that only have one value
-        parallelAxis = parallelAxis.filter(axis => {
-            if (axis.type == 'value') {
-                return true
-            } else {
-                return axis.data.length > 1
-            }
-        })
-        //re organize the dim index after filtering and inserting
-        parallelAxis.forEach((p, idx: number) => {
-            p['dim'] = idx,
-                p['nameRotate'] = 45
-            p['axisLabel'] = { rotate: 45 }
-            p['gridIndex'] = 0
-        })
-        let data: any[] = []
-        classifiers.forEach(((classifier: IClassifier, idx: number) => {
-
-            let par_dict = {}
-            let parameters = classifier['parameters'].split('; ')
-            parameters = parameters.map((p: string) => {
-                let [k, v] = p.split(' = ')
-                return par_dict[k] = v
-            })
-            // for the hidden layer sizes in MLP
-
-            if (par_dict['len(hidden_layer_sizes)']) {
-                for (let i = parseInt(par_dict['len(hidden_layer_sizes)']); i < 3; i++) {
-                    par_dict[`hidden_layer_sizes[${i}]`] = 0
-                }
-            }
-
-            // add perforamce
-            par_dict['performance'] = parseFloat(classifier['performance'].split(' +- '))
-            let attrs = parallelAxis.map(p => {
-
-                let value = par_dict[p.name]
-                if (p.type == 'value') {
-                    return parseFloat(value)
-                } else {
-                    return value
-                }
-            })
-            data.push(attrs)
-        }
-        ))
-
-        // prepare data for performance histogram
-        const step = 0.05
-        let histogramData: number[] = []
-        for (let i = 0; i < 1 / step; i++) {
-            histogramData.push(0)
-        }
-        classifiers.forEach(classifier => {
-            let performance = parseFloat(classifier['performance'].split(' +- ')[0])
-            let rangeIdx = Math.floor(performance / step)
-            histogramData[rangeIdx] = histogramData[rangeIdx] + 1
-        })
-        // normalize to 0-1
-        let max = Math.max(...histogramData)
-        histogramData = histogramData.map(d => d / max)
-
-        let yAxisData: string[] = []
-        for (let i = 0; i < 1 / step; i++) {
-            yAxisData.push(`${(i * step).toFixed(2)}-${((i + 1) * step).toFixed(2)}`)
-        }
-        let barSeries = {
-            name: methodDef.name,
-            type: 'bar',
-            coordinateSystem: 'cartesian2d',
-            xAxisIndex: 0,
-            yAxisIndex: 0,
-            data: histogramData,
-            itemStyle: {
-                color: getColor(methodDef.name),
-                opacity: 0.6,
-            },
-            tooltip: {
-                formatter: (params: Object | any[], ticket: string) => {
-                    return `${params['seriesName']} between ${params['name']}: ${params['data'] * max}`
-                }
-            }
-        }
-
-        // construct echarts option
-        const option = {
-            title: {
-                text: `${methodDef.fullname}: {term|${classifiers.length}}`,
-                left: '0.5%',
-                top: '0.5%',
-                textStyle: {
-                    fontSize: 15,
-                    rich: {
-                        term: {
-                            borderColor: "black",
-                            borderWidth: 1,
-                            borderRadius: 15,
-                            padding: 5
-                        }
-                    }
-                }
-
-            },
-            tooltip: {},
-            grid: [
-                // this grid for the performance histogram
-                {
-                    id: 0,
-                    left: '80%',
-                    right: '2%',
-                    top: '35%',
-                    bottom: '5%',
-                }
-            ],
-            // axis for parallel coordinates
-            parallelAxis,
-            parallel: {
-                gridIndex: 0,
-                bottom: '5%',
-                left: '5%',
-                top: '35%',
-                right: '20%',
-                // height: '31%',
-                // width: '55%',
-                parallelAxisDefault: {
-                    type: 'value',
-                    name: 'performance',
-                    nameLocation: 'end',
-                    nameGap: 10,
-                    splitNumber: 3,
-                    nameTextStyle: {
-                        fontSize: 14
-                    },
-                    axisLine: {
-                        lineStyle: {
-                            color: '#555'
-                        }
-                    },
-                    axisTick: {
-                        lineStyle: {
-                            color: '#555'
-                        }
-                    },
-                    splitLine: {
-                        show: false
-                    },
-                    axisLabel: {
-                        textStyle: {
-                            color: '#555'
-                        }
-                    }
-                }
-            },
-            // axes for performance histogram
-            xAxis: {
-                type: 'value',
-                gridIndex: 0,
-                id: 0,
-                show: false,
-                axisLabel: {
-                    show: false
-                }
-            },
-            yAxis: {
-                type: 'category',
-                id: 0,
-                gridIndex: 0,
-                data: yAxisData,
-                show: false,
-                axisLabel: {
-                    show: false
-                }
-            },
-            series: [
-                {
-                    name: 'parallel',
-                    type: 'parallel',
-                    smooth: true,
-                    inactiveOpacity: 0,
-                    activeOpacity: 1,
-                    tooltip: {},
-                    lineStyle: {
-                        normal: {
-                            width: 1,
-                            opacity: 1,
-                            color: getColor(methodDef.name)
-                        }
-                    },
-                    data,
-                },
-                barSeries
-                // {
-                //     name: 'bar',
-                //     type: 'bar',
-                //     data: [120, 200, 150, 80, 70, 110, 130]
-                // }
-            ],
-
-        }
-        return option
-    }
-    render() {
-        return <ReactEcharts
-            option={this.getOption()}
-            style={{ height: `100%`, width: '100%' }}
-        />
-    }
-}
-
-
