@@ -332,10 +332,14 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     }
                 }
             });
-            
+            let selectedMethod = this.state.selectedMethod;
+            //if(this.props.datarunID!=nextProps.datarunID){
+            //    selectedMethod = "";
+            //}
             this.setState({
                 methodSelected:methodSelected,
-                hyperpartitionsAlreadySelected:hyperpartitionsAlreadySelected
+                hyperpartitionsAlreadySelected:hyperpartitionsAlreadySelected,
+                selectedMethod:selectedMethod
             });
             //this.getCurrentConfigs();
         }
