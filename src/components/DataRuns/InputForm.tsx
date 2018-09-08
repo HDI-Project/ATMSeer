@@ -15,7 +15,8 @@ export interface IState {
     loading: boolean,
     methodSelected:any,
     hyperparametersRangeAlreadySelected:any,
-    hyperpartitionsAlreadySelected:number[]
+    hyperpartitionsAlreadySelected:number[],
+    hyperparametersList:any[]
 }
 export interface IProps {
     height: number,
@@ -40,7 +41,8 @@ export default class Methods extends React.Component<IProps, IState>{
             loading: false,
             methodSelected:{},
             hyperparametersRangeAlreadySelected:{},
-            hyperpartitionsAlreadySelected:[]
+            hyperpartitionsAlreadySelected:[],
+            hyperparametersList:[]
 
         }
     }
@@ -105,10 +107,51 @@ export default class Methods extends React.Component<IProps, IState>{
             //if(this.props.datarunID!=nextProps.datarunID){
             //    selectedMethod = "";
             //}
+
+
+            let HyperparameterList: any[] = [];
+            let idx = 0
+        
+            Object.keys(methodsDef).forEach((selectedMethod:string)=>{
+                let methodDef = methodsDef[selectedMethod];
+                methodDef.root_hyperparameters.forEach((p: string) => {
+                    let parameter = methodDef['hyperparameters'][p]
+                    if (parameter['values']) { //category axis
+                    } else if (parameter['range']) {//value axis
+                        if (parameter['range'].length > 1) { //range in the form of [min, max]
+                            HyperparameterList.push({ dim: idx, name: p, type: 'value', min: parameter['range'][0],
+                             max: parameter['range'][1], valueType: parameter['type'],method:selectedMethod})
+                        } else { // range in the form of [max]
+                            HyperparameterList.push({ dim: idx, name: p, type: 'value', min: 0, max: parameter['range'][0], valueType: parameter['type'] ,method:selectedMethod
+                         })
+                        }
+        
+                    } else if (parameter['type'] == 'list') { // the hidden layer sizes in MLP
+                        for (let hidden_l = 0; hidden_l < parameter['list_length'].length; hidden_l++) {
+        
+                            HyperparameterList.push({
+                                dim: idx + hidden_l, name: `${p}[${hidden_l}]`, type: 'value',
+                                min: 0,
+                                max: parameter['element']['range'][1],
+                                valueType: parameter['type'],
+                                method:selectedMethod 
+                            })
+                        }
+                        idx = idx + parameter['list_length'].length - 1
+        
+                    } else {
+                        HyperparameterList.push({
+                            dim: idx, name: p, type: 'value', valueType: parameter['type'],method:selectedMethod 
+                        })
+                    }
+                })
+            })
+            
             this.setState({
                 methodSelected:methodSelected,
                 hyperpartitionsAlreadySelected:hyperpartitionsAlreadySelected,
-                selectedMethod:selectedMethod
+                selectedMethod:selectedMethod,
+                hyperparametersList:HyperparameterList
             });
             //this.getCurrentConfigs();
         }
@@ -278,8 +321,40 @@ export default class Methods extends React.Component<IProps, IState>{
                     console.log(error);
                 });
                 }
+       };
+       fetchHyRange = (method:string,name:string)=>{
+            let {hyperparametersRangeAlreadySelected} = this.state;
+            if(hyperparametersRangeAlreadySelected[method]){
+                if(hyperparametersRangeAlreadySelected[method][name]){
+                    if(hyperparametersRangeAlreadySelected[method][name]["range"]){
+                        return hyperparametersRangeAlreadySelected[method][name]["range"];
+                    }
+                }
+            }
+            return [];
        }
-
+       fetchRange = (method:string,name:string):any[]=>{
+            
+            let range:any[] = this.fetchHyRange(method,name);
+            if(range.length==0){
+                this.state.hyperparametersList.forEach((d:any)=>{
+                    if(d.method==method&&d.name==name){
+                        range=[d.min,d.max];
+                    }
+                })
+            }
+            return range;
+       }
+       onInputNumberChange = (methodname:string,name:string,valueType:string,value:number,type:number)=>{
+          let range:any[] = this.fetchRange(methodname,name);
+          console.log("fetch range");
+          console.log(range);
+           if(range.length==2){
+               let newrange : any[] = [range[0],range[1]];
+               newrange[type]=value;
+               this.onBrushSelected(methodname,name,valueType,newrange);
+           }
+       }
        onBrushSelected = (methodname:string, hpaName: string,hpatype:string,range:number[])=>{
         let {hyperparametersRangeAlreadySelected} = this.state;
         let update : boolean = false;
@@ -311,6 +386,8 @@ export default class Methods extends React.Component<IProps, IState>{
         }
 
      }
+
+    
     public render() {
         let {  height } = this.props
         const method_options =  Object.keys(methodsDef).map(
@@ -325,6 +402,48 @@ export default class Methods extends React.Component<IProps, IState>{
             }
             return {label:d.hyperpartition_string,value:d.id,checked:selected}
         })
+        let generateHp = ()=>{
+           
+            let displayarrary :any = this.state.hyperparametersList.map((d:any)=>{
+                let thistype = this;
+                function handleMinChange(num:number){
+                    thistype.onInputNumberChange(d.method,d.name,d.valueType,num,0);
+                }
+                function handleMaxChange(num:number){
+                    thistype.onInputNumberChange(d.method,d.name,d.valueType,num,1);
+                }
+                let range = this.fetchHyRange(d.method,d.name);
+                let minvalue = d.min;
+                let maxvalue = d.max;
+                if(range.length==2){
+                    minvalue = range[0];
+                    maxvalue = range[1];
+                }
+                return <div key={"hyperparameter_div"+d.method+"-"+d.name} style={{display: "inline"}}>
+                {d.method+"-"+d.name} :
+                <InputNumber min={d.min} max={d.max} value={minvalue} 
+                onChange={handleMinChange}/>
+                ~
+                <InputNumber min={d.min} max={d.max} value={maxvalue} 
+                onChange={handleMaxChange}/>
+                <br />
+                </div>
+            })
+            return displayarrary;
+
+        }
+      
+
+
+
+
+
+
+
+
+
+
+
         let settingheight = 80;
         return <div className="methods" style={{height: height+'%', borderTop: ".6px solid rgba(0,0,0, 0.4)"}}>
         <div key={'0_used'} className={"usedMethodContainer"}
@@ -392,13 +511,9 @@ export default class Methods extends React.Component<IProps, IState>{
                          style={{ height: `${settingheight}%`, width: '33%' }}>
                         <div className="method">
                         <h4 style={{textAlign: "center"}}> Hyperparameters </h4>
-               
-                            <div style={{display: "inline"}}>
-                            Budget :
-                            <InputNumber min={1} value={this.state.configsBudget} onChange={this.onBudgetChange} />
-                            ~
-                            <InputNumber min={1} value={this.state.configsBudget} onChange={this.onBudgetChange} />
-                            </div>
+                       
+                        {generateHp()}
+                     
                     </div>
                     </div>
                 </div>
