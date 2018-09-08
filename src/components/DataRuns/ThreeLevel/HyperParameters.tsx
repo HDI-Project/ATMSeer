@@ -19,7 +19,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
         let { classifiers, selectedMethod, compareK,alreadySelectedRange } = this.props
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
-        
+
         if (comparedMethods.length==1){
             selectedMethod = comparedMethods[0]
         }
@@ -49,7 +49,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                     });
                 }else{hpaSelect=true;}
             }else{hpaSelect = true;}
-            return hpaSelect; 
+            return hpaSelect;
         }
         if (classifiers.length>0) {
             let HyperparameterList: any[] = [];
@@ -84,7 +84,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                 }
             })
             let selectedClassifier : IClassifierInfo[] =[];
-           
+
             if(compareK>0){
                 selectedClassifier = comparedCls.filter(d=>{
                     return judgeSelect(d);
@@ -214,7 +214,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
         }
         let yArea = d3.scaleLinear().range([height/4, 0]);
         x.domain([hp.min, hp.max]);
-        y.domain([0, 1]);
+        y.domain(d3.extent(classifiers, (cls:IClassifierInfo)=>cls.cv_metric));
 
         // calculate the area chart
         const num_step = 20

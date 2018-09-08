@@ -21,6 +21,7 @@ import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
 import InputForm from "./InputForm";
 import AskModal from "./AskModal";
+import {USER_STUDY} from 'Const';
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
 //     // timeout: 1000,
@@ -93,24 +94,26 @@ export default class DataRuns extends React.Component<IProps, IState>{
             let recommendationResult = await getRecommendation(datasetID);
             let askvisible = this.state.askvisible;
             let run_threshold = this.state.run_threshold;
-            if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
-                if(classifiers.length>=run_threshold){
-                    askvisible = true;
-                    if(this.props.datarunID!==null){
-                        let promise = stopDatarun(this.props.datarunID);
-                        promise
-                        .then(datarun => {
-                            // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
-                            this.props.setDatarunStatus(datarun.status);
-                        })
-                        .catch(error => {
-                            console.log(error);
-                        });
+            if(USER_STUDY){
+                if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
+                    if(classifiers.length>=run_threshold){
+                        askvisible = true;
+                        if(this.props.datarunID!==null){
+                            let promise = stopDatarun(this.props.datarunID);
+                            promise
+                            .then(datarun => {
+                                // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
+                                this.props.setDatarunStatus(datarun.status);
+                            })
+                            .catch(error => {
+                                console.log(error);
+                            });
+                        }
                     }
-                }
-            }else{
-                if(askvisible==false){
-                    run_threshold = classifiers.length+50;
+                }else{
+                    if(askvisible==false){
+                        run_threshold = classifiers.length+50;
+                    }
                 }
             }
             this.setState({runCSV:runCSV, 

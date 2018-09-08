@@ -929,7 +929,12 @@ def calculate_all_metafeatures(X, y, categorical, dataset_name,
     visited = set()
     to_visit = deque()
     to_visit.extend(metafeatures)
-
+    print("X")
+    print(X)
+    print("y")
+    print(y)
+    print("categoricals")
+    print(categorical)
     X_transformed = None
     y_transformed = None
 

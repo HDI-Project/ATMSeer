@@ -27,10 +27,39 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         width: 160
     }
     numPerRow = 14
+    index= 0;
+    lastArray:Array<any>= [];
     public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any) {
             console.log("rerender hyperpartitions");
+            /*if(this.index>=1){
+                console.log("end");
+                return;
+            }else{
+                this.index++;
+            }*/
             // let num_all_hp = hpsInfo.length
-            hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0)
+            hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0);
+            if(this.lastArray == null){
+                this.lastArray = hpsInfo;
+            }else{
+                let count = 0;
+                hpsInfo.forEach(hp=>{
+                    let length = -1;
+                    this.lastArray.forEach(d=>{
+                        if(d.id == hp.id){
+                            length = d.sortedCls.length;
+                        }
+                    })
+                    if(length!=-1&&length != hp.sortedCls.length){
+                        count = count +1;
+                        console.log(hp.id+" "+hp.sortedCls.length);
+                    }
+                })
+                this.lastArray = hpsInfo;
+                console.log("count:"+count);
+            }
+            //console.log(hpsInfo);
+            //console.log(selectedMethod);
             let { height, width, gap } = this.hyperpartitionBox
 
             // let g = d3.select('.HyperPartitions')
@@ -59,7 +88,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             let maxhorizontalnum = 10;
 
             let pos = [[lastposx, lastposy]]
-
+            let bundleData : any[]= [];
             for (let i = 0; i < hpsInfo.length; i++) {
                 let currentPos = [0, 0]
                 if (hpsInfo[i].method == selectedMethod) {
@@ -82,7 +111,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     }
                     
                 }
-                if (lastposy > window.innerHeight * 0.8) {
+                if (lastposy > window.innerHeight * 0.74) {
                     lastposx = lastposx + width * 1.5;
                     lastposy = height + (
                         hpsInfo[i].method == selectedMethod?
@@ -92,51 +121,36 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     currentPos = [lastposx, lastposy]
                 }
                 pos.push(currentPos)
+                bundleData.push({
+                    ...hpsInfo[i],
+                    pos:currentPos
+                })
             }
 
             //enter
+            let strokeWidth = 1
+
             let hps = d3
                 .select('g.HyperPartitions')
                 .selectAll(`g.hpGroup`)
-                .data(hpsInfo)
-            let hpGroup = hps
+                .data(bundleData,function(d:any){
+                    return d.id;
+                })
+                console.log(hps);
+                console.log(hps.enter().size());
+                console.log(hps.size());
+                console.log(hps.exit().size());
+            //--------------Enter Phase-------------------//
+            let hpGroupEnter = hps
                 .enter()
                 .append("g")
                 .attr('class', 'hpGroup')
                 .attr("transform",
                     (d: any, i: number) => {
-                        return `translate(${pos[i + 1][0]},${pos[i + 1][1]})`
+                        return `translate(${d.pos[0]},${d.pos[1]})`
                     }
-                )
-
-            hps.filter((d: any) => d.method == selectedMethod)
-                .selectAll('.hpBar')
-                .data((d: any) => d.sortedCls)
-                .enter().append("rect")
-                .attr("class", "hpBar")
-                .attr('id', (d:any)=>`_${d.id}`)
-                .style('fill', function (d: any) {
-                    return getColor(selectedMethod)
-                })
-                .attr("x", (d: any, i: number) => x(0))
-                .attr("y", (d: any) => height )
-                .attr("width", 0)
-                .attr("height", 0)
-                .transition(trans)
-                .attr("x", (d: any, i: number) => x(i))
-                .attr("y", (d: any) => y(d.cv_metric) - height)
-                .attr("width", x.bandwidth())
-                .attr("height", (d: any) => (height - y(d.cv_metric)))
-
-
-            // hpGroup.append('g')
-            // .attr('transform', (d:any)=>`translate(${width*d.scores.length/maxLen}, 0)`)
-            // .attr('class', 'axis')
-            // .call(d3.axisRight(y))
-
-            let strokeWidth = 1
-
-            hpGroup.append('rect')
+                );          
+            hpGroupEnter.append('rect')
                 .attr('class', "out_hyperPartition")
                 .attr('height', (d: any) => d.method == selectedMethod ? (height + 2 * strokeWidth) : gap)
                 .attr('y', (d: any) => d.method == selectedMethod ? (-strokeWidth - height) : (gap))
@@ -144,20 +158,16 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('width', (d: any) => d.method == selectedMethod ? (width + 2 * strokeWidth) : gap)
                 .style('fill', (d: any) => d.method == selectedMethod ? 'none' : getColor(d.method))
                 .style('stroke', 'gray')
-                .style('stroke-width', strokeWidth)
-
-
-
-            // hpGroup.append('rect')
-            // .attr('class', "bg_hyperPartition")
-            // .attr('height', height)
-            // .attr('y', height)
-            // .attr('width', (d:any)=>width*d.scores.length/maxLen )
-            // .style('fill', (d:any)=>getColor(d.method))
-            // .style('stroke', 'white')
-            // .style('stroke-width', 2)
-
-            let textEnter = hps.filter((d: any) => d.method == selectedMethod)
+                .style('stroke-width', strokeWidth);
+            //ENTER + UPDATE
+            //TEXT ENTER
+            let textData = hpGroupEnter.merge(hps).filter((d: any) => d.method == selectedMethod)
+            .selectAll('g.caption')
+            .data((d:any)=>[d],(d:any)=>{
+                d.id
+            });
+            let textEnter = textData
+                    .enter()
                     .append('g')
                     .attr('class', 'caption')
             textEnter.append('text')
@@ -185,7 +195,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     return  `<div class="RadioBox"
                         style='text-overflow: ellipsis;
                         width: ${width}px;
-                        height: ${height-1}px;
+                        height: ${height}px;
                         overflow:hidden;
                         white-space:nowrap';
                         padding: 0px;
@@ -196,7 +206,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 
             textEnter.append('g')
                 .attr('class', 'hp_name')
-                .attr('transform', `translate(${0}, ${1})`)
+                .attr('transform', `translate(${0}, ${0})`)
                 .append('foreignObject')
                 .attr('width', width)
                 .attr('height', height)
@@ -221,17 +231,18 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                        
                         </foreignObject>
                     )*/
-            //update
+            //UPDATE
             hps.transition(trans)
                 .attr("transform",
                     (d: any, i: number) => {
-                        return `translate(${pos[i + 1][0]},${pos[i + 1][1]})`
+                        return `translate(${d.pos[0]},${d.pos[1]})`
 
                 })
 
 
-
-            hps.filter((d: any) => d.method != selectedMethod)
+            //HPGROUP UPDATE
+            //CLASSIFIER REMOVE
+            hpGroupEnter.merge(hps).filter((d: any) => d.method != selectedMethod)
                 .selectAll('.hpBar')
                 .transition(trans)
                 .attr('width', 0)
@@ -239,11 +250,17 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('x', x(0))
                 .attr('y', height)
                 .remove()
-
-            hps.filter((d: any) => d.method == selectedMethod)
+            // ENTER + UPDATE 
+            let classifierSelect = hpGroupEnter.merge(hps).filter((d: any) => d.method == selectedMethod)
                 .selectAll('.hpBar')
-                .data((d: any) => d.sortedCls)
-                .enter().append("rect")
+                .data((d: any) => {
+                    return d.sortedCls
+                },function(d:any){
+                    return "cls"+d.id;
+                });
+                
+                //CLASSIFIER ENTER
+                classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")
                 .attr('id', (d:any)=>`_${d.id}`)
                 .style('fill', function (d: any) {
@@ -258,7 +275,13 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr("y", (d: any) => y(d.cv_metric) - height)
                 .attr("width", x.bandwidth())
                 .attr("height", (d: any) => (height - y(d.cv_metric)))
-
+                //CLASSIFIER UPDATE
+                classifierSelect.transition(trans)
+                .attr("x", (d: any, i: number) => x(i))
+                .attr("y", (d: any) => y(d.cv_metric) - height)
+                .attr("width", x.bandwidth())
+                .attr("height", (d: any) => (height - y(d.cv_metric)))
+            //UPDATE
             hps.selectAll('.out_hyperPartition')
                 .transition(trans)
                 .attr('height', (d: any) => d.method == selectedMethod ? (height + 2 * strokeWidth) : gap)
@@ -268,11 +291,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .style('fill', (d: any) => d.method == selectedMethod ? 'none' : getColor(d.method))
                 .style('stroke', 'gray')
                 .style('stroke-width', strokeWidth)
-
-            let textUpdate = hps.filter((d: any) => d.method == selectedMethod)
-                .selectAll('g.caption')
-                .data((d:any)=>[d])
-
+            //ENTER + UPDATE
+            //TEXT UPDATE
+            let textUpdate = textData;
             textUpdate.exit()
                 .transition(trans)
                 .attr('opacity', 1e-6)
@@ -281,7 +302,11 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             textUpdate.selectAll('text.num_cls')
                 .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
                 .attr('y', -1)
-                .text((d: any) => d.sortedCls.length)
+                .text((d: any) => {
+                    //console.log(d.id+":"+d.sortedCls.length);
+                    return d.sortedCls.length
+                }
+                )
                 .attr('text-anchor', 'start')
             textUpdate.selectAll('text.best_score')
                 // .attr('x', (d:any)=>width*d.scores.length/maxLen)
@@ -375,12 +400,13 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         }
 
         if (this.props != nextProps || this.props.hyperpartitions.length == 0) { //update
+            d3.selectAll(`.caption`).remove()
             this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
         }
-        if(this.props.datarunID!=nextProps.datarunID){//remove and redraw
-            d3.select(`.HyperPartitions`).selectAll('*').remove()
-            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
-        }
+        //if(this.props.datarunID!=nextProps.datarunID){//remove and redraw
+            //d3.select(`.HyperPartitions`).selectAll('*').remove()
+        //    this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
+        //}
         //
 
         if (comparedMethods.length>=1){
