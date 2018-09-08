@@ -148,7 +148,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 if (lastposy > nowProps.height) {
                     lastposx = lastposx + width * 1.5;
                     nowcol ++;
-                    if(lastposx + width>nowProps.width && exceedcol==-1){
+                    if(lastposx + width*1.5>nowProps.width && exceedcol==-1){
                         exceedcol = nowcol;
                     }
                     
