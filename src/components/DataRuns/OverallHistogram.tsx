@@ -16,7 +16,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
     constructor(props:IProps){
         super(props)
         this.state={
-            step :0.05, 
+            step :0.05,
             yAxis:'absolute' //'absolute' or 'relative
         }
     }
@@ -67,7 +67,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
                 left: '5%',
                 right: '5%',
                 top: '25%',
-                bottom: '15%',
+                bottom: '25%',
             },
             series:{
                     type: 'bar',
@@ -84,7 +84,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
         return option
     }
     public render(){
-        return <ReactEcharts 
+        return <ReactEcharts
         option = { this.getOption() }
         style={{height: `100%`, width: `${this.props.width}%`}}
         />

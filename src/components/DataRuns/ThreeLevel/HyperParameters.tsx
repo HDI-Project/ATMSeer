@@ -333,7 +333,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
         // Add the Y Axis
         svg.append("g")
             .attr('class', 'yAxis')
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y).ticks(5));
 
         // text label for the y axis
         svg.append("text")
