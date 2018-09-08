@@ -30,7 +30,7 @@ export interface IState {
 
 export default class methods extends React.Component<IProps, IState>{
     public gap = 20
-    width = (this.props.width - 6*this.gap)/2
+    width = (this.props.width - 8*this.gap)/2>20?(this.props.width - 8*this.gap)/2:20;
     // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
     public methodBoxAttr = {
         // width : 70,
@@ -281,6 +281,12 @@ export interface LineChartProps {
 class LineChart extends React.Component<LineChartProps, {}>{
     TAG = "LineChart_";
     componentDidMount() {
+        this.renderD3();
+    }
+    componentDidUpdate(){
+        let g = d3.select("#" +this.TAG + this.props.name)
+
+        g.selectAll('*').remove()
         this.renderD3();
     }
     renderD3() {

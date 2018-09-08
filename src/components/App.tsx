@@ -7,7 +7,7 @@ import DataRuns from './DataRuns';
 import SidePanel from './SidePanel';
 import { IDatarunStatusTypes } from 'types';
 import { getDatarun,IClickEvent,postBundleClickEvent,IClickBundleEvent } from 'service/dataService';
-import { UPDATE_INTERVAL_MS } from 'Const';
+import { UPDATE_INTERVAL_MS,USER_STUDY } from 'Const';
 import UploadModal from './UploadModal'
 
 
@@ -91,11 +91,13 @@ class App extends React.Component<{}, IState> {
     }
     postClickEvent = (log:IClickEvent)=>{
         //this.clickevent.push(log);
-        let bundlelog : IClickBundleEvent= {
-            name:this.user_name,
-            clickevent:log
+        if(USER_STUDY){
+            let bundlelog : IClickBundleEvent= {
+                name:this.user_name,
+                clickevent:log
+            }
+            postBundleClickEvent(bundlelog);
         }
-        postBundleClickEvent(bundlelog);
     }
     componentDidUpdate(prevProps: {}, prevState: IState) {
         if (prevState.datarunID !== this.state.datarunID) {
