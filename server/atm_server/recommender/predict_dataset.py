@@ -51,11 +51,8 @@ class Recommender:
         #y = dataset[['class']]
         #X = X.values
         #y = y.values
-
-
         #categoricals = [type(X[0,j]) is str for j in range(num_col-1)]
-        categoricals = [False] * (num_col-1)
-
+        categoricals = [False] * (X.shape[1])
         result = metafeatures.calculate_all_metafeatures(X,y,categoricals,dataset_name,self.features)
         result_array = []
         result_array.append(dataset_name)
