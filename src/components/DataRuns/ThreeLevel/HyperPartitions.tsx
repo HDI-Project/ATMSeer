@@ -66,6 +66,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 this.index++;
             }*/
             // let num_all_hp = hpsInfo.length
+            
             hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0);
             if(this.lastArray == null){
                 this.lastArray = hpsInfo;
@@ -110,8 +111,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             // x.domain([0,10])
             y.domain([0, 1]);
             //let hiddencol = this.props.hiddencol;
-            console.log("hiddencol");
-            console.log(hiddencol);
+
             let exceedcol = -1;
             let maxcol = 0;
             let nowcol = 0;
@@ -168,22 +168,36 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 })
             }
             maxcol = nowcol+1;
+            console.log("maxcol exceedcol");
+            console.log(maxcol);
+            console.log(exceedcol)
             if(exceedcol==-1){
-                hiddencol = 0;
-                if(this.state.hiddencol != hiddencol){
+                let newhiddencol = 0;
+                if(newhiddencol != hiddencol || this.state.visible!=false){
                     this.setState({
                         hiddencol:0,
+                        visible:false
                     })
                 }
-                
+                hiddencol = newhiddencol;
             }else{
                 if(hiddencol>maxcol-exceedcol){
-                    hiddencol = maxcol-exceedcol;
-                    if(this.state.hiddencol != hiddencol){
+                    let newhiddencol = maxcol-exceedcol;
+                    if(newhiddencol != hiddencol || this.state.visible != true){
 
                         this.setState({
-                            hiddencol:hiddencol,
+                            hiddencol:newhiddencol,
+                            visible:true
                         })
+                    }
+                    hiddencol = newhiddencol;
+                }else{
+                    if(this.state.visible != true){
+                        this.setState(
+                            {
+                                visible:true
+                            }
+                        )
                     }
                 }
             }
@@ -192,12 +206,14 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             }else{
                 exceedcol=maxcol+1;
             }
+            console.log("hiddencol");
+            console.log(hiddencol);
             bundleData.forEach((d:any)=>{
                 if(d.col<hiddencol){
                     d.pos[0]=d.pos[0]-gap-width*0.5-width*1.5*(hiddencol);
                 }else{
                     if(d.col>=exceedcol){
-                        d.pos[0]=nowProps.width+width*1.5*(d.col-exceedcol);
+                        d.pos[0]=d.pos[0]-width*1.5*(d.col)+nowProps.width+width*1.5*(d.col-exceedcol);
                      }else{
                         d.pos[0]=d.pos[0]-width*1.5*(hiddencol);
                      }
@@ -511,8 +527,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         //         d=>d.hyperpartition_string.length*fontSize
         //     )
         // )
+        console.log("render hiddencol");
+        console.log(this.state.hiddencol);
         let generateButton = () =>{
-            
+            if(this.state.visible){
             return (<foreignObject x={this.props.width/2} y={this.props.height+20} width={100} height={30}>
                 <div>
                <Button type="primary" onClick={this.onLeftHp}>
@@ -523,6 +541,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
               </Button>
               </div></foreignObject>
               )
+            }else{
+                return <g />
+            }
             
         }
         return (<g>{generateButton()}
