@@ -3,6 +3,7 @@ import { IHyperpartitionInfo, IClassifierInfo } from "service/dataService"
 import { getColor } from "helper";
 //import {Checkbox} from "antd";
 import "./HyperPartitions.css";
+import {Button,Icon} from 'antd';
 
 // import { IDatarun } from "types";
 const d3 = require("d3");
@@ -14,13 +15,22 @@ export interface IProps {
     classifiers: IClassifierInfo[],
     compareK: number,
     hyperpartitionsSelected:number[],
-    onHpsCheckBoxChange: (e:any)=>void
+    onHpsCheckBoxChange: (e:any)=>void,
+    width:number,
+    height:number,
+    hiddencol:number,
+    
 
 }
 export interface IState {
-
+    hiddencol:number
+    visible:boolean
 }
 export default class HyperPartitions extends React.Component<IProps, IState>{
+    state={
+        hiddencol:0,
+        visible:false
+    }
     public hyperpartitionBox = {
         height: 20,
         gap: 8,
@@ -29,7 +39,25 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
     numPerRow = 14
     index= 0;
     lastArray:Array<any>= [];
-    public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any) {
+    onLeftHp = () =>{
+        let hiddencol = this.state.hiddencol;
+        if(hiddencol<0){
+            hiddencol = 0;
+        }else if(hiddencol>0){
+            hiddencol=hiddencol-1;
+        }
+        this.setState({
+            hiddencol:hiddencol
+        })
+    }
+    onRightHp = () =>{
+        let hiddencol = this.state.hiddencol;
+        hiddencol=hiddencol+1;
+        this.setState({
+            hiddencol:hiddencol
+        })
+    }
+    public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any,hiddencol:number,nowProps:IProps) {
             console.log("rerender hyperpartitions");
             /*if(this.index>=1){
                 console.log("end");
@@ -81,8 +109,14 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             x.domain(Array.from(Array(maxLen).keys()))
             // x.domain([0,10])
             y.domain([0, 1]);
-
-            let lastposx = gap+0.5*width;
+            //let hiddencol = this.props.hiddencol;
+            console.log("hiddencol");
+            console.log(hiddencol);
+            let exceedcol = -1;
+            let maxcol = 0;
+            let nowcol = 0;
+            let lastposx = gap+width*0.5;
+            
             let lastposy = height;
             let horizontalnum = 0;
             let maxhorizontalnum = 10;
@@ -111,8 +145,14 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     }
                     
                 }
-                if (lastposy > window.innerHeight * 0.74) {
+                if (lastposy > nowProps.height) {
                     lastposx = lastposx + width * 1.5;
+                    nowcol ++;
+                    if(lastposx + width>nowProps.width && exceedcol==-1){
+                        exceedcol = nowcol;
+                    }
+                    
+                    
                     lastposy = height + (
                         hpsInfo[i].method == selectedMethod?
                         (2 * height + gap)
@@ -123,10 +163,47 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 pos.push(currentPos)
                 bundleData.push({
                     ...hpsInfo[i],
-                    pos:currentPos
+                    pos:currentPos,
+                    col:nowcol
                 })
             }
+            maxcol = nowcol+1;
+            if(exceedcol==-1){
+                hiddencol = 0;
+                if(this.state.hiddencol != hiddencol){
+                    this.setState({
+                        hiddencol:0,
+                    })
+                }
+                
+            }else{
+                if(hiddencol>maxcol-exceedcol){
+                    hiddencol = maxcol-exceedcol;
+                    if(this.state.hiddencol != hiddencol){
 
+                        this.setState({
+                            hiddencol:hiddencol,
+                        })
+                    }
+                }
+            }
+            if(exceedcol!=-1){
+                exceedcol=hiddencol+exceedcol;
+            }else{
+                exceedcol=maxcol+1;
+            }
+            bundleData.forEach((d:any)=>{
+                if(d.col<hiddencol){
+                    d.pos[0]=d.pos[0]-gap-width*0.5-width*1.5*(hiddencol);
+                }else{
+                    if(d.col>=exceedcol){
+                        d.pos[0]=nowProps.width+width*1.5*(d.col-exceedcol);
+                     }else{
+                        d.pos[0]=d.pos[0]-width*1.5*(hiddencol);
+                     }
+                    
+                }
+            })
             //enter
             let strokeWidth = 1
 
@@ -214,11 +291,11 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('class',  'div_caption')
                 .html(generateText)
                 .on("click",(d:any)=>{
-                    this.props.onHpsCheckBoxChange(d.id);
+                    nowProps.onHpsCheckBoxChange(d.id);
                 })
                 
 
-          
+                
                 /*
             return (<foreignObject 
                         key={name+"_text_"+i} 
@@ -376,7 +453,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             selectedMethod = comparedMethods[0]
         }
         if(hpsInfo.length>0){
-            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
+            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected,this.state.hiddencol,this.props)
         }
 
         if (comparedMethods.length>=1){
@@ -391,6 +468,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         }
     }
     shouldComponentUpdate(nextProps: IProps, nextStates: IState) {
+
         let { maxLen, hpsInfo, selectedMethod } = this.sortHpByperformance(nextProps)
         let { compareK, classifiers,hyperpartitionsSelected} = nextProps
         let comparedCls = classifiers.slice(0, compareK)
@@ -399,9 +477,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             selectedMethod = comparedMethods[0]
         }
 
-        if (this.props != nextProps || this.props.hyperpartitions.length == 0) { //update
+        if (this.props != nextProps || this.props.hyperpartitions.length == 0 || nextStates.hiddencol != this.state.hiddencol) { //update
             d3.selectAll(`.caption`).remove()
-            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
+            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected,nextStates.hiddencol,nextProps)
         }
         //if(this.props.datarunID!=nextProps.datarunID){//remove and redraw
             //d3.select(`.HyperPartitions`).selectAll('*').remove()
@@ -421,9 +499,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             })
         }
 
-        return false
+        return true
     }
-    // componentWillUpdate(){
+    //componentWillUpdate(){
     //     this.renderD3()
     // }
     render() {
@@ -433,7 +511,22 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         //         d=>d.hyperpartition_string.length*fontSize
         //     )
         // )
-        return <g className={`HyperPartitions`} />
+        let generateButton = () =>{
+            
+            return (<foreignObject x={this.props.width/2} y={this.props.height+20} width={100} height={30}>
+                <div>
+               <Button type="primary" onClick={this.onLeftHp}>
+                <Icon type="left" />
+              </Button>
+              <Button type="primary" onClick={this.onRightHp}>
+                <Icon type="right" />
+              </Button>
+              </div></foreignObject>
+              )
+            
+        }
+        return (<g>{generateButton()}
+        <g className={`HyperPartitions`}/></g>)
     }
 }
 

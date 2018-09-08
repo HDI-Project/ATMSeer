@@ -19,7 +19,7 @@ export interface IProps {
     classifiers: IClassifierInfo[],
     compareK: number,
     recommendationResult:IRecommendationResult,
-    postClickEvent:(e:IClickEvent)=>void;
+    postClickEvent:(e:IClickEvent)=>void
 }
 
 export interface IState {
@@ -29,7 +29,8 @@ export interface IState {
     loading: boolean,
     methodSelected:any,
     hyperparametersRangeAlreadySelected:any,
-    hyperpartitionsAlreadySelected:number[]
+    hyperpartitionsAlreadySelected:number[],
+    hiddencol:number
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
@@ -44,7 +45,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             loading: false,
             methodSelected:{},
             hyperparametersRangeAlreadySelected:{},
-            hyperpartitionsAlreadySelected:[]
+            hyperpartitionsAlreadySelected:[],
+            hiddencol:0
 
         }
     }
@@ -344,6 +346,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             //this.getCurrentConfigs();
         }
     }
+    
     render(){
         let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
         classifiers = classifiers.sort(
@@ -357,9 +360,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             )
         let svgWidth = window.innerWidth*5/6,
         width1 = svgWidth*3/13,
-        width2 = svgWidth*1/2,
-        width3 = svgWidth*1/6,
+        width2 = svgWidth*1.1/2,
+        width3 = svgWidth*1/7,
         headerHeight = 10
+        let svgHeight = window.innerHeight * 0.74;
+
         console.log("three level render");
         console.log(this.state.hyperpartitionsAlreadySelected);
         return <div
@@ -396,13 +401,20 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 recommendationResult={this.props.recommendationResult}
             />
             </g>
-            <g transform={`translate(${width1}, ${headerHeight})`}>
+            <defs>  
+            <clipPath id="mask_hyperpartitions">
+            <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
+            </clipPath>
+            </defs>
+            <g transform={`translate(${width1}, ${headerHeight})`} clip-path={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
+            
             <text
                 textAnchor="middle"
                 x={width2/2}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperPartitions of {selectedMethod}</text>
+            
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
                 // datarun={datarun}
@@ -411,14 +423,17 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 classifiers={classifiers}
                 compareK={compareK}
                 hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
-
+                width={width2}
+                height={svgHeight}
+                hiddencol={this.state.hiddencol}
                 onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
                 />
+                
             </g>
             <g transform={`translate(${width1+width2}, ${headerHeight})`}>
             <text
-                textAnchor="end"
-                x={width3}
+                textAnchor="middle"
+                x={width3/2}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of {selectedMethod}</text>

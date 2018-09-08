@@ -30,7 +30,7 @@ export interface IState {
 
 export default class methods extends React.Component<IProps, IState>{
     public gap = 20
-    width = (this.props.width - 8*this.gap)/2>20?(this.props.width - 8*this.gap)/2:20;
+    width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
     // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
     public methodBoxAttr = {
         // width : 70,
@@ -38,7 +38,7 @@ export default class methods extends React.Component<IProps, IState>{
         width: this.width,
         gap: this.gap,
         x: 2*this.gap,
-        y: 2 * this.gap,
+        y: 2*this.gap,
         checkboxY: 2,
         checkboxWidth: 75,
         checkboxHeight: 30
