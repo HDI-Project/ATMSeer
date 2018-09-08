@@ -157,6 +157,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
     AskModalCallBack = (mode:number)=>{
         // mode = 0      continue_running
         // mode = 1      stop_running
+
         let {run_threshold,classifiers} = this.state;
         run_threshold = classifiers.length + 50;
 
@@ -168,6 +169,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 .then(datarun => {
                     // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
                     this.props.setDatarunStatus(datarun.status);
+
                 })
                 .catch(error => {
                     console.log(error);
@@ -290,3 +292,4 @@ export default class DataRuns extends React.Component<IProps, IState>{
 
     }
 }
+

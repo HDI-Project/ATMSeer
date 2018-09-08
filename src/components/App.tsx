@@ -142,6 +142,7 @@ class App extends React.Component<{}, IState> {
                             </div>
                         </Col>
                         {/* <Col span={6} className="col">
+
             </Col> */}
                     </Row>
                 </Content>

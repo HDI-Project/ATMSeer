@@ -11,6 +11,7 @@ import { getColor } from 'helper';
 const Panel = Collapse.Panel;
 
 // const TOP_K = 10;
+
 function isFloat(n: number): boolean {
     return n % 1 !== 0;
 }
@@ -131,6 +132,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             //                    hyperpartitions.map(d=>d.hyperpartition_string)
             //                 )
             //             )
+
             //            this.setState({ hyperpartitionStrings, hyperpartitions });
             //        }
             //     else
@@ -218,7 +220,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             style={{
                                 backgroundColor: getColor(best?best.method:''),
                                 borderRadius:'4px',
-                                padding:'2px',
+                                padding:'2px', 
                                 marginLeft: "2px",
                                 color: 'white'
                             }}
@@ -245,6 +247,8 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         width={40}
                         strokeWidth={10}
                         />*/}
+
+
                     </div>
                     {/* <div>
                         <LineChart scores={scores} hyperpartitions={hyperpartitions} topK={TOP_K}/>
@@ -260,6 +264,8 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             onChange={this.changeTopK}
                             style={{width: '50px'}}
                         />
+
+
                         Classifiers
                         {/* <Button
                             type="primary"

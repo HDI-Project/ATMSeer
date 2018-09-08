@@ -2,7 +2,7 @@ import * as React from "react";
 import Methods from './Methods';
 import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
-import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
+import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, 
     getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
@@ -153,12 +153,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             methodSelected[value].disabled=false;
             let hpid = this.fetchHpId(value);
             configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-
+            
             this.setState({
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
                 methodSelected:methodSelected,
                 configsMethod:configsMethod
-
+                
             });
 
         }else{
@@ -173,7 +173,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
                 methodSelected:methodSelected,
                 configsMethod:configsMethod
-
+                
             });
 
 
@@ -196,7 +196,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 let configsMethod : string[] = this.state.configsMethod;
 
                 if(judgeSet.length>0){
-                    // Fetch method intersect hpid
+                    // Fetch method intersect hpid 
                     // method unselected
                     methodSelected[method].checked=false;
                     methodSelected[method].indeterminate=true;
@@ -230,7 +230,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             if(judgeSet.length==configsHyperpartitions.length){
                 //selected
                 methodSelected[method].checked=true;
-                methodSelected[method].indeterminate=false;
+                methodSelected[method].indeterminate=false;              
             }else{
                 methodSelected[method].checked=false;
                 methodSelected[method].indeterminate=true;
@@ -292,7 +292,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     return d.id;
                 });
             }
-
+            
             Object.keys(methodsDef).forEach((d:string)=>{
                 if(!methodhistogram[d]){
                     methodhistogram[d]={total:0,enable:0};
@@ -309,7 +309,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 }else{
                     methodhistogram[d.method].total++;
                 }
-
+                
             });
             Object.keys(methodhistogram).forEach((d:string)=>{
                 // 0 -> simple selection:
@@ -422,9 +422,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of {selectedMethod}</text>
-            <HyperParameters
-                classifiers={classifiers}
-                selectedMethod={selectedMethod}
+            <HyperParameters 
+                classifiers={classifiers} 
+                selectedMethod={selectedMethod} 
                 compareK={compareK}
                 alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
                 onSelectedChange={this.onBrushSelected}

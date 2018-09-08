@@ -13,6 +13,7 @@ export interface IProps {
 
 const d3 = require("d3");
 // Get Datasets
+
 export default class HyperParameters extends React.Component<IProps, {}>{
     render() {
         let { classifiers, selectedMethod, compareK,alreadySelectedRange } = this.props
@@ -154,6 +155,7 @@ export interface HyProps {
     hintRange:number[],
     onSelectedChange:(method:string,name:string,range:number[])=>void,
     valueType:string
+
 }
  */
 
@@ -230,6 +232,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
         areaData.unshift(areaData[0])
 
         //draw
+
         let svg = d3.select("#" + this.TAG + idx)
             .append('g')
             .attr('transform', `translate(${0}, ${margin + idx * (height*5/4 + margin)})`)

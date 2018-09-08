@@ -4,6 +4,7 @@ import { IDatarunStatusTypes, IClassifierStatusTypes } from 'types';
 import { IHyperParameter, IMethodType } from '../types/index';
 
 // const API = `${URL}/api`;
+
 const axiosInstance = axios.create({
     baseURL: `${URL}/api/`,
     // timeout: 1000,

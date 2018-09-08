@@ -54,7 +54,7 @@ def return_stdout_stderr(f):
     return inner
 
 
-# @return_stdout_stderr
+@return_stdout_stderr
 def work(datarun_id, args=None):
     """
     A copy of the code in atm/scripts/worker.py
@@ -62,43 +62,35 @@ def work(datarun_id, args=None):
     """
     _logger = logging.getLogger('atm_server.worker:work')
     _logger.setLevel(logging.DEBUG)
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
     fh = logging.FileHandler('logs/works.log')
     fmt = '%(asctime)-12s %(name)s - %(levelname)s  %(message)s'
     fh.setFormatter(logging.Formatter(fmt))
     _logger.addHandler(fh)
-    if args is None:
-        args = []
-    try:
-        parser = argparse.ArgumentParser(description='Add more classifiers to database')
-        add_arguments_sql(parser)
-        add_arguments_aws_s3(parser)
-        add_arguments_logging(parser)
+    parser = argparse.ArgumentParser(description='Add more classifiers to database')
+    add_arguments_sql(parser)
+    add_arguments_aws_s3(parser)
+    add_arguments_logging(parser)
 
-        # add worker-specific arguments
-        parser.add_argument('--cloud-mode', action='store_true', default=False,
-                            help='Whether to run this worker in cloud mode')
-        parser.add_argument('--time', help='Number of seconds to run worker', type=int)
-        parser.add_argument('--choose-randomly', action='store_true',
-                            help='Choose dataruns to work on randomly (default = sequential order)')
-        parser.add_argument('--no-save', dest='save_files', default=True,
-                            action='store_const', const=False,
-                            help="don't save models and metrics at all")
+    # add worker-specific arguments
+    parser.add_argument('--cloud-mode', action='store_true', default=False,
+                        help='Whether to run this worker in cloud mode')
+    parser.add_argument('--time', help='Number of seconds to run worker', type=int)
+    parser.add_argument('--choose-randomly', action='store_true',
+                        help='Choose dataruns to work on randomly (default = sequential order)')
+    parser.add_argument('--no-save', dest='save_files', default=True,
+                        action='store_const', const=False,
+                        help="don't save models and metrics at all")
 
-        # parse arguments and load configuration
-        _args = parser.parse_args(args)
+    # parse arguments and load configuration
+    _args = parser.parse_args(args)
 
-        # default logging config is different if initialized from the command line
-        if _args.log_config is None:
-            _args.log_config = os.path.join(atm.PROJECT_ROOT,
-                                            'config/templates/log-script.yaml')
+    # default logging config is different if initialized from the command line
+    if _args.log_config is None:
+        _args.log_config = os.path.join(atm.PROJECT_ROOT,
+                                        'config/templates/log-script.yaml')
 
-        sql_config, _, aws_config, log_config = load_config(**vars(_args))
-        initialize_logging(log_config)
-    except Exception as e:
-        _logger.error(e)
-        raise e
+    sql_config, _, aws_config, log_config = load_config(**vars(_args))
+    initialize_logging(log_config)
 
     # let's go
     _logger.warning('Worker started!')
@@ -194,7 +186,7 @@ def start_worker(datarun_id):
     :param datarun_id: the id of the datarun
     :return: Return a handle of the process
     """
-    # os.setpgrp()
+    os.setpgrp()
     db = get_db()
     datarun = db.get_datarun(datarun_id)
     if datarun is None:

@@ -30,11 +30,11 @@ export interface IState {
 
 export default class methods extends React.Component<IProps, IState>{
     public gap = 20
-    width = (this.props.width - 8*this.gap)/2>20?(this.props.width - 8*this.gap)/2:20;
+    width = (this.props.width - 4*this.gap)/2>20?(this.props.width - 4*this.gap)/2:20;
     // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
     public methodBoxAttr = {
         // width : 70,
-        height: this.width * 0.7,
+        height: this.width * 0.6,
         width: this.width,
         gap: this.gap,
         x: 2*this.gap,
@@ -401,12 +401,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
         // .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
         // .curve(d3.curveMonotoneX) // apply smoothing to the line
 
+
         // function generateArray(index: number) {
         //     let data: any[] = [];
         //     data.push({ x: 0, y: index * step });
         //     data.push({ x: totallen, y: index * step });
         //     return data;
         // }
+
         // var straightline = d3.line()
         //     .x(function (d: any, i: any) { return xScale(d.x); }) // set the x values for the line generator
         //     .y(function (d: any, i: any) { return yScale(d.y); }) // set the y values for the line generator
@@ -469,6 +471,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
         // svg.append("g")
         //     .attr("transform", "translate(0," + height + ")")
         //     .call(d3.axisBottom(xScale));
+
         // Add the Y Axis
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
@@ -491,6 +494,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         const { methodDef, classifiers,totallen,selected } = this.props;
 //         let step = 0.1;
 //         let data:number[] = [];
+
 //         for (let i =0; i<=1/step; i++){
 //             data.push(0)
 //         }
@@ -522,6 +526,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         for (let i =0; i<=1/step; i++){
 //             yAxisData.push(`${(i*step).toFixed(2)}`)
 //         }
+
 //         // g
 //         // Set the dimensions of the canvas / graph
 //         //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
@@ -529,15 +534,18 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //             width = this.props.width - margin.left - margin.right,
 //             height = this.props.height - margin.top - margin.bottom,
 //             top_margin = {top:this.props.y,left:this.props.x};
+
 //         // Set the ranges
 //         let	xScale = d3.scaleLinear().range([0, width]);
 //         let	yScale = d3.scaleLinear().range([height, 0]);
+
 
 //         xScale.domain([0, totallen]);
 //         yScale.domain([0, 1]);
 //         //Create SVG element
 //         let tooltip = d3.select("#tooltip");
 //         //let top_methods = d3.select("#methodstop");
+
 //         if(tooltip.empty()){
 //             tooltip = d3.select("body").append("div")
 //             .attr("class", "tooltip")
@@ -550,12 +558,15 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
 //         // .on("click",()=>{onClick(this.props.name)})
 //         .on("mousemove", function(d:any) {
+
 //             tooltip.transition()
 //               .duration(100)
 //               .style("left", (d3.event.pageX) + "px")
 //               .style("top", (d3.event.pageY - 28) + "px");
 //               tooltip.style("opacity", 0.7).html(methodDef.fullname+"<br/>"+"best performance:"+bestperformance.toFixed(2) + "<br/>" + "trial number:"+total)
+
 //             })
+
 //           .on("mouseout", function(d:any) {
 //             tooltip
 //               .style("opacity", 0);
@@ -571,21 +582,26 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         ;
 //         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
 //         let line = d3.line()
 //         .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
 //         .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
 //         .curve(d3.curveMonotoneX) // apply smoothing to the line
+
 //         let area = d3.area()
 //         .y(function(d:any) { return yScale(d) })
 //         .x0(0)
 //         .x1(function(d:any) { return xScale(d); })
+
 //         console.info(area, line)
+
 //         function generateArray(index:number){
 //             let data:any[] = [];
 //             data.push({x:0,y:index*step});
 //             data.push({x:totallen,y:index*step});
 //             return data;
 //         }
+
 //         var straightline = d3.line()
 //             .x(function(d:any, i:any) { return xScale(d.x); }) // set the x values for the line generator
 //             .y(function(d:any,i:any) { return yScale(d.y); }) // set the y values for the line generator
@@ -612,11 +628,13 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //             .attr("stroke",getColor(methodDef.name))
 //             .attr("stroke-width",2)
 //             .attr("d", line);
+
 //         // svg.append("path")
 //         //     .datum(data)
 //         //     .attr("class", "line")
 //         //     .attr("fill",getColor(methodDef.name))
 //         //     .attr("d", area);
+
 //         svg.append("text")
 //             .attr("class", "hp_name")
 //             .attr('x', width)

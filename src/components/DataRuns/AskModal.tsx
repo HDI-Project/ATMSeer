@@ -35,10 +35,10 @@ showModal =() => {
     visible: true
   });
  }
-
+ 
   handleOk = () => {
     // Submit
-
+    
     this.props.AskModalCallBack(0);
     //this.setState({ visible:false});
   }
@@ -73,3 +73,4 @@ showModal =() => {
     );
   }
 }
+
