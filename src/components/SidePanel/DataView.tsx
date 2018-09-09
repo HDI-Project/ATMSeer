@@ -7,7 +7,7 @@ import "./DataView.css";
 
 export interface IProps{
     // setDatarunID: (id:number)=>void
-    datarunID: number | null,
+    datasetID: number | null,
 }
 
 export interface IState {
@@ -35,8 +35,8 @@ export default class DataView extends React.Component<IProps, IState>{
         };
     }
     public async getData() {
-        if (this.props.datarunID) {
-            const datum = await getDatasetCSV(this.props.datarunID);
+        if (this.props.datasetID) {
+            const datum = await getDatasetCSV(this.props.datasetID);
             // const res = await axios.get('../../viz/dataset_31_credit-g.csv') // this should be changed to the server response later
             // const datum = res.data
             this.parseData(datum);
@@ -68,13 +68,13 @@ export default class DataView extends React.Component<IProps, IState>{
         });
     }
     public componentDidUpdate(prevProps: IProps, provState: IState) {
-        if (this.props.datarunID != prevProps.datarunID) {
+        if (this.props.datasetID != prevProps.datasetID) {
             this.getData();
         }
     }
-    // public componentDidMount() {
-    //     this.getData()
-    // }
+    public componentDidMount() {
+        this.getData()
+    }
 
     public render() {
 

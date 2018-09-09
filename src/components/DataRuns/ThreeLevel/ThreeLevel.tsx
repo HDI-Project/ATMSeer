@@ -2,7 +2,7 @@ import * as React from "react";
 import Methods from './Methods';
 import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
-import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo, 
+import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
     getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
@@ -155,12 +155,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             methodSelected[value].disabled=false;
             let hpid = this.fetchHpId(value);
             configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-            
+
             this.setState({
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
                 methodSelected:methodSelected,
                 configsMethod:configsMethod
-                
+
             });
 
         }else{
@@ -175,7 +175,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
                 methodSelected:methodSelected,
                 configsMethod:configsMethod
-                
+
             });
 
 
@@ -198,7 +198,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 let configsMethod : string[] = this.state.configsMethod;
 
                 if(judgeSet.length>0){
-                    // Fetch method intersect hpid 
+                    // Fetch method intersect hpid
                     // method unselected
                     methodSelected[method].checked=false;
                     methodSelected[method].indeterminate=true;
@@ -232,7 +232,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             if(judgeSet.length==configsHyperpartitions.length){
                 //selected
                 methodSelected[method].checked=true;
-                methodSelected[method].indeterminate=false;              
+                methodSelected[method].indeterminate=false;
             }else{
                 methodSelected[method].checked=false;
                 methodSelected[method].indeterminate=true;
@@ -294,7 +294,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     return d.id;
                 });
             }
-            
+
             Object.keys(methodsDef).forEach((d:string)=>{
                 if(!methodhistogram[d]){
                     methodhistogram[d]={total:0,enable:0};
@@ -311,7 +311,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 }else{
                     methodhistogram[d.method].total++;
                 }
-                
+
             });
             Object.keys(methodhistogram).forEach((d:string)=>{
                 // 0 -> simple selection:
@@ -408,20 +408,19 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 recommendationResult={this.props.recommendationResult}
             />
             </g>
-            <defs>  
+            <defs>
             <clipPath id="mask_hyperpartitions">
             <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
             </clipPath>
             </defs>
-            <g transform={`translate(${width1}, ${headerHeight})`} clipPath={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
-            
+            <g transform={`translate(${width1}, ${headerHeight})`} clip-path={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
             <text
                 textAnchor="middle"
                 x={width2/2}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperPartitions of {selectedMethod}</text>
-            
+
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
                 // datarun={datarun}
@@ -436,7 +435,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 onMouseOverClassifier={this.onMouseOverClassifier}
                 mouseOverClassifier={this.state.mouseOverClassifier}
                 />
-                
+
             </g>
             <defs>  
             <clipPath id="mask_hyperparameters">
@@ -450,9 +449,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of {selectedMethod}</text>
-            <HyperParameters 
-                classifiers={classifiers} 
-                selectedMethod={selectedMethod} 
+            <HyperParameters
+                classifiers={classifiers}
+                selectedMethod={selectedMethod}
                 compareK={compareK}
                 alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
                 onSelectedChange={this.onBrushSelected}
@@ -462,11 +461,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </g>
             </svg>
 
-            <div style={{position: "absolute",bottom:"3px",right:"3px"}}>
-                <h4>Budget</h4>
+
+            <div style={{position: "absolute",bottom:"10px",left:"10px"}}>
+                <span>Budget</span>
                 <InputNumber min={1} value={this.state.configsBudget} style={{ width: "80px" }} onChange={this.onBudgetChange} />
-                <br /><Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update</Button>
-                <br /></div>
+                <Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update Config</Button>
+                </div>
             </div>
     }
 }

@@ -83,7 +83,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
         let { classifiers, selectedMethod, compareK,alreadySelectedRange } = nextProps
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
-
+        
         if (comparedMethods.length==1){
             selectedMethod = comparedMethods[0]
         }
@@ -147,6 +147,13 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                     })
                 }
             })
+            let margin = 40,
+                height = ((nextProps.height-40)/(HyperparameterList.length)-margin)*4/5;
+                this.box = {
+                    width: 200,
+                    height: height>100?100:height,
+                    margin
+                }
             let selectedClassifier : IClassifierInfo[] =[];
 
             if(compareK>0){
@@ -215,10 +222,10 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                 if(visible){
                     return (<foreignObject x={box.width/2-50} y={this.props.height+20} width={100} height={35}>
                         <div>
-                    <Button onClick={this.onUpClick}>
+                    <Button type="default" size="small" onClick={this.onUpClick}>
                         <Icon type="up" />
                     </Button>
-                    <Button onClick={this.onDownClick} >
+                    <Button type="default" size="small" onClick={this.onDownClick} >
                         <Icon type="down"/>
                     </Button>
                     </div></foreignObject>

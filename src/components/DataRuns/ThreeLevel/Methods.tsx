@@ -30,11 +30,11 @@ export interface IState {
 
 export default class methods extends React.Component<IProps, IState>{
     public gap = 20
-    width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
+    width = (this.props.width - 4*this.gap)/2>20?(this.props.width - 4*this.gap)/2:20;
     // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
     public methodBoxAttr = {
         // width : 70,
-        height: this.width * 0.7,
+        height: this.width * 0.6,
         width: this.width,
         gap: this.gap,
         x: 2*this.gap,
@@ -164,20 +164,20 @@ export default class methods extends React.Component<IProps, IState>{
                                 disabled = methodSelected[name].disabled;
                             }
 
-                            return (<foreignObject 
-                                        key={name+"_text_"+i} 
+                            return (<foreignObject
+                                        key={name+"_text_"+i}
                                         x={ this.methodBoxAttr.x +
-                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)}
                                         y={this.methodBoxAttr.y +
-                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
-                                        width={this.methodBoxAttr.checkboxWidth} 
+                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap}
+                                        width={this.methodBoxAttr.checkboxWidth}
                                         height={this.methodBoxAttr.checkboxHeight}>
-                                       <Checkbox  
-                                        key={name+"_checkbox_"+(i)} 
-                                        checked={checked} 
+                                       <Checkbox
+                                        key={name+"_checkbox_"+(i)}
+                                        checked={checked}
                                         indeterminate={indeterminate}
                                         disabled={disabled}
-                                        value={name} 
+                                        value={name}
                                         onChange={this.props.onMethodsCheckBoxChange} >
                                         {name}
                                         </Checkbox>
@@ -488,7 +488,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
             .call(d3.axisLeft(yScale).ticks(0, 1, 0.2))
-        
+
     }
     render() {
         const { name } = this.props;
