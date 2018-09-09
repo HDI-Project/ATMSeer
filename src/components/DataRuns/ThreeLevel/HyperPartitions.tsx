@@ -407,7 +407,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     tooltip
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
-                    tooltip.style("opacity", 0.7).html(d.cv_metric.toFixed(2))
+                    tooltip.style("opacity", 0.7).html(d.cv_metric.toFixed(3))
 
                 })
                 .on("mouseout",(d:any)=>{
@@ -608,7 +608,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         console.log(this.state.hiddencol);
         let generateButton = () =>{
             if(this.state.visible){
-            return (<foreignObject x={this.props.width/2} y={this.props.height+20} width={100} height={30}>
+            return (<foreignObject x={this.props.width/2-50} y={this.props.height+20} width={100} height={35}>
                 <div>
                <Button onClick={this.onLeftHp}>
                 <Icon type="left" />

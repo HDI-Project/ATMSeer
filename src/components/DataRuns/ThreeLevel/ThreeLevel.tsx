@@ -367,7 +367,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let svgWidth = window.innerWidth*5/6,
         width1 = svgWidth*3/13,
         width2 = svgWidth*1.1/2,
-        width3 = svgWidth*1/7,
+       // width3 = svgWidth*1/7,
+       width3 = 220,
         headerHeight = 10
         let svgHeight = window.innerHeight * 0.74;
 
@@ -412,7 +413,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
             </clipPath>
             </defs>
-            <g transform={`translate(${width1}, ${headerHeight})`} clip-path={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
+            <g transform={`translate(${width1}, ${headerHeight})`} clipPath={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
             
             <text
                 textAnchor="middle"
@@ -439,10 +440,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </g>
             <defs>  
             <clipPath id="mask_hyperparameters">
-            <rect x={-60} y={-10} width={width3+70} height={svgHeight+100}/>
+            <rect x={-60} y={-10} width={width3+100} height={svgHeight+100}/>
             </clipPath>
             </defs>
-            <g transform={`translate(${width1+width2}, ${headerHeight})`}  clip-path={"url(#mask_hyperparameters)"}>
+            <g transform={`translate(${width1+width2}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
             <text
                 textAnchor="middle"
                 x={width3/2}
@@ -461,9 +462,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </g>
             </svg>
 
-            <div style={{position: "absolute",bottom:"10px",right:"10px"}}>
+            <div style={{position: "absolute",bottom:"3px",right:"3px"}}>
                 <h4>Budget</h4>
-                <InputNumber min={1} value={this.state.configsBudget} style={{ width: "130px" }} onChange={this.onBudgetChange} />
+                <InputNumber min={1} value={this.state.configsBudget} style={{ width: "80px" }} onChange={this.onBudgetChange} />
                 <br /><Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update</Button>
                 <br /></div>
             </div>
