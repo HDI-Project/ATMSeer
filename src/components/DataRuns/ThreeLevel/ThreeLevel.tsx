@@ -366,7 +366,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             )
         let svgWidth = window.innerWidth*5/6,
         width1 = svgWidth*3/13,
-        width2 = svgWidth*1.1/2,
+        width2 = svgWidth*1.05/2,
        // width3 = svgWidth*1/7,
        width3 = 220,
         headerHeight = 10
@@ -455,7 +455,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </g>
             <defs>  
             <clipPath id="mask_hyperparameters">
-            <rect x={-60} y={-10} width={width3+100} height={svgHeight+100}/>
+            <rect x={-60} y={-10} width={width3+200} height={svgHeight+100}/>
             </clipPath>
             </defs>
             <g transform={`translate(${width1+width2}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
@@ -466,7 +466,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of</text>
              {generateTag({
-                x:width3/3 + 85,
+                x:width3/3 + 89,
                 y:-6,
                 width:100,
                 height:30

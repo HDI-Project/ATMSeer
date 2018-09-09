@@ -3,7 +3,7 @@ import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
-import { Checkbox } from 'antd';
+import { Checkbox,Tag } from 'antd';
 import "./Methods.css";
 //import * as hint from "assets/small_hint.png"
 const d3 = require("d3");
@@ -30,18 +30,19 @@ export interface IState {
 
 export default class methods extends React.Component<IProps, IState>{
     public gap = 20
-    width = (this.props.width - 4*this.gap)/2>20?(this.props.width - 4*this.gap)/2:20;
+    width = (this.props.width - 2*this.gap)/2>20?(this.props.width - 2*this.gap)/2:20;
     // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
     public methodBoxAttr = {
         // width : 70,
-        height: this.width * 0.6,
+        height: this.width * 0.4,
         width: this.width,
         gap: this.gap,
-        x: 2*this.gap,
-        y: 2*this.gap,
+        x: this.gap,
+        y: this.gap,
         checkboxY: 2,
         checkboxWidth: 75,
-        checkboxHeight: 30
+        checkboxHeight: 30,
+        yextragap:16
     }
     public getbestperformance(list: IClassifier[]) {
         if (list.length > 0) {
@@ -108,14 +109,15 @@ export default class methods extends React.Component<IProps, IState>{
         // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
         this.methodBoxAttr = {
             // width : 70,
-            height: this.width * 0.7,
+            height: this.width * 0.6,
             width: this.width,
             gap: this.gap,
             x: 2*this.gap,
             y: 2*this.gap,
             checkboxY: 2,
-            checkboxWidth: 75,
-            checkboxHeight: 30
+            checkboxWidth: 100,
+            checkboxHeight: 30,
+            yextragap:13
         }
 
 
@@ -148,6 +150,7 @@ export default class methods extends React.Component<IProps, IState>{
         //         maxnum=num;
         //     }
         // });
+       
         return <g className="methods" >
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                             /*let checked = false;
@@ -169,7 +172,7 @@ export default class methods extends React.Component<IProps, IState>{
                                         x={ this.methodBoxAttr.x +
                                             Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)}
                                         y={this.methodBoxAttr.y +
-                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap}
+                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) - this.methodBoxAttr.gap}
                                         width={this.methodBoxAttr.checkboxWidth}
                                         height={this.methodBoxAttr.checkboxHeight}>
                                        <Checkbox
@@ -179,7 +182,7 @@ export default class methods extends React.Component<IProps, IState>{
                                         disabled={disabled}
                                         value={name}
                                         onChange={this.props.onMethodsCheckBoxChange} >
-                                        {name}
+                                        <Tag color={getColor(name)}>{name}</Tag>
                                         </Checkbox>
                                         </foreignObject>
                                   )
@@ -210,7 +213,7 @@ export default class methods extends React.Component<IProps, IState>{
                             }
                             y={
                                 this.methodBoxAttr.y +
-                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
                             }
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
@@ -247,7 +250,7 @@ export default class methods extends React.Component<IProps, IState>{
                             },
                     ${
                             this.methodBoxAttr.y +
-                            (index % 7)  * (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                            (index % 7)  * (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
                             }
                 )`}
                     >

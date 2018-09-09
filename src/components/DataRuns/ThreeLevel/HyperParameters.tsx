@@ -484,9 +484,9 @@ class HyperParameter extends React.Component<HyProps, {}>{
         // x axis lable;
         svg.append("text")
             .attr("transform",
-                "translate(" + (width) + " ," +
-                (height*5/4 + margin*0.75) + ")")
-            .style("text-anchor", "end")
+                "translate(" + (width + 10) + " ," +
+                (height*5/4) + ")")
+            .style("text-anchor", "start")
             .text(hp.name);
 
         // Add the Y Axis
