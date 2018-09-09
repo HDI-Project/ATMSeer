@@ -8,7 +8,8 @@ export interface IProps {
     selectedMethod: string,
     compareK:number,
     onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
-    alreadySelectedRange:any
+    alreadySelectedRange:any,
+    mouseOverClassifier:number
 }
 
 const d3 = require("d3");
@@ -113,6 +114,7 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                         onSelectedChange={this.props.onSelectedChange}
                         alreadySelectedRange={this.props.alreadySelectedRange[hp.name]?this.props.alreadySelectedRange[hp.name]:{}}
                         valueType={hp.valueType}
+                        mouseOverClassifier={this.props.mouseOverClassifier}
                         />
                 })}
             </g>
@@ -137,7 +139,8 @@ export interface HyProps {
         margin: number
     },
     onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
-    alreadySelectedRange:any
+    alreadySelectedRange:any,
+    mouseOverClassifier:number
 }
 /**
  * export interface DetailChartProps{
@@ -164,17 +167,22 @@ class HyperParameter extends React.Component<HyProps, {}>{
     componentDidMount() {
         this.renderD3();
         let g = d3.select("#" + this.TAG + this.props.idx)
-        let {comparedCls} = this.props
+        let {comparedCls,mouseOverClassifier} = this.props
         g.selectAll(`circle.dot`)
             .attr('opacity', 0.2)
         //if(comparedCls.length>0){
         //    g.selectAll(`circle.dot`)
         //    .attr('opacity', 0.2)
         //}
-        comparedCls.forEach(d=>{
-            g.select(`#_${d.id}`)
-            .attr('opacity', 1)
-        })
+        if(mouseOverClassifier==-1){
+            comparedCls.forEach(d=>{
+                g.select(`#_${d.id}`)
+                .attr('opacity', 1)
+            })
+        }else{
+            g.select(`#_${mouseOverClassifier}`)
+            .attr('opacity',1);
+        }
     }
     // componentWillUnmount() {
     //     // d3.select("#" + this.TAG + this.props.idx).remove()
@@ -185,17 +193,22 @@ class HyperParameter extends React.Component<HyProps, {}>{
         g.selectAll('*').remove()
         this.renderD3()
 
-        let {comparedCls} = this.props
+        let {comparedCls,mouseOverClassifier} = this.props
         g.selectAll(`circle.dot`)
             .attr('opacity', 0.2)
         //if(comparedCls.length>0){
         //    g.selectAll(`circle.dot`)
         //    .attr('opacity', 0.2)
         //}
-        comparedCls.forEach(d=>{
-            g.select(`#_${d.id}`)
-            .attr('opacity', 1)
-        })
+        if(mouseOverClassifier==-1){
+            comparedCls.forEach(d=>{
+                g.select(`#_${d.id}`)
+                .attr('opacity', 1)
+            })
+        }else{
+            g.select(`#_${mouseOverClassifier}`)
+            .attr('opacity',1);
+        }
 
     }
     renderD3() {

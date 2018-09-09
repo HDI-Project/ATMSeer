@@ -30,7 +30,7 @@ export interface IState {
     methodSelected:any,
     hyperparametersRangeAlreadySelected:any,
     hyperpartitionsAlreadySelected:number[],
-    hiddencol:number
+    mouseOverClassifier:number
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
@@ -46,7 +46,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             methodSelected:{},
             hyperparametersRangeAlreadySelected:{},
             hyperpartitionsAlreadySelected:[],
-            hiddencol:0
+            mouseOverClassifier:-1
 
         }
     }
@@ -346,7 +346,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             //this.getCurrentConfigs();
         }
     }
-    
+    onMouseOverClassifier = (classifierid:number)=>{
+        this.setState({
+            mouseOverClassifier:classifierid
+        })
+    }
     render(){
         let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
         classifiers = classifiers.sort(
@@ -425,8 +429,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
                 width={width2}
                 height={svgHeight}
-                hiddencol={this.state.hiddencol}
                 onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
+                onMouseOverClassifier={this.onMouseOverClassifier}
+                mouseOverClassifier={this.state.mouseOverClassifier}
                 />
                 
             </g>
@@ -443,6 +448,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 compareK={compareK}
                 alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
                 onSelectedChange={this.onBrushSelected}
+                mouseOverClassifier={this.state.mouseOverClassifier}
                 />
             </g>
             </svg>

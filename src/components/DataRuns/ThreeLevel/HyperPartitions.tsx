@@ -18,8 +18,8 @@ export interface IProps {
     onHpsCheckBoxChange: (e:any)=>void,
     width:number,
     height:number,
-    hiddencol:number,
-    
+    onMouseOverClassifier:(e:number)=>void,
+    mouseOverClassifier:number
 
 }
 export interface IState {
@@ -57,7 +57,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             hiddencol:hiddencol
         })
     }
-    public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any,hiddencol:number,nowProps:IProps) {
+    public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any,hiddencol:number,comparedCls:any,nowProps:IProps) {
             console.log("rerender hyperpartitions");
             /*if(this.index>=1){
                 console.log("end");
@@ -352,6 +352,34 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     return "cls"+d.id;
                 });
                 
+                let selectOpacity = (d:any)=>{
+                    
+                    if(nowProps.mouseOverClassifier==d.id){
+                        return 1;
+                    }else{
+                        if(nowProps.mouseOverClassifier==-1){
+                            if(comparedCls.length>0){
+                                let flag = false;
+                                comparedCls.forEach((cls:any)=>{
+                                    if(cls.id == d.id){
+                                        flag = true;
+                                    }
+                                })                               
+                                if(flag){
+                                    return 1;
+                                }else{
+                                    return 0.2;
+                                }
+                            }else{
+                                return 1;
+                            }
+                        }
+                        else{
+                            return 0.2;
+                        }
+                    }
+                    
+                }
                 //CLASSIFIER ENTER
                 classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")
@@ -359,21 +387,33 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .style('fill', function (d: any) {
                     return getColor(selectedMethod)
                 })
+                .attr('opacity',selectOpacity)
+                .on("mouseover",(d:any)=>{
+                    nowProps.onMouseOverClassifier(d.id);
+                })
+                .on("mouseout",(d:any)=>{
+                    nowProps.onMouseOverClassifier(-1);
+                    
+                })
                 .attr("x", (d: any, i: number) => x(0))
                 .attr("y", (d: any) => height )
                 .attr("width", 0)
                 .attr("height", 0)
+                
                 .transition(trans)
                 .attr("x", (d: any, i: number) => x(i))
                 .attr("y", (d: any) => y(d.cv_metric) - height)
                 .attr("width", x.bandwidth())
                 .attr("height", (d: any) => (height - y(d.cv_metric)))
+                .attr('opacity',selectOpacity)
                 //CLASSIFIER UPDATE
                 classifierSelect.transition(trans)
                 .attr("x", (d: any, i: number) => x(i))
                 .attr("y", (d: any) => y(d.cv_metric) - height)
                 .attr("width", x.bandwidth())
                 .attr("height", (d: any) => (height - y(d.cv_metric)))
+                .attr('opacity',selectOpacity)
+                classifierSelect.exit().remove();
             //UPDATE
             hps.selectAll('.out_hyperPartition')
                 .transition(trans)
@@ -469,19 +509,27 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             selectedMethod = comparedMethods[0]
         }
         if(hpsInfo.length>0){
-            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected,this.state.hiddencol,this.props)
+            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected,this.state.hiddencol,comparedCls,this.props)
         }
-
-        if (comparedMethods.length>=1){
+        /*
+        if (comparedMethods.length>=1|| mouseOverClassifier!=-1){
             let g = d3.select('g.HyperPartitions')
             g.selectAll('rect.hpBar')
             .attr('opacity', 0.2)
-
-            comparedCls.forEach(cls=>{
-                g.select(`rect#_${cls.id}`)
-                .attr('opacity', 1)
-            })
-        }
+            if(mouseOverClassifier==-1 && comparedMethods.length>=1){
+                comparedCls.forEach(cls=>{
+                    g.select(`rect#_${cls.id}`)
+                    .attr('opacity', 1)
+                })
+            }else if(mouseOverClassifier!=-1){
+                g.select(`rect#_${mouseOverClassifier}`)
+                    .attr('opacity', 1)
+            }
+        }else{
+            let g = d3.select('g.HyperPartitions')
+            g.selectAll('rect.hpBar')
+            .attr('opacity', 1)
+        }*/
     }
     shouldComponentUpdate(nextProps: IProps, nextStates: IState) {
 
@@ -495,25 +543,34 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
         if (this.props != nextProps || this.props.hyperpartitions.length == 0 || nextStates.hiddencol != this.state.hiddencol) { //update
             d3.selectAll(`.caption`).remove()
-            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected,nextStates.hiddencol,nextProps)
+            this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected,nextStates.hiddencol,comparedCls,nextProps)
         }
         //if(this.props.datarunID!=nextProps.datarunID){//remove and redraw
             //d3.select(`.HyperPartitions`).selectAll('*').remove()
         //    this.renderD3(hpsInfo, maxLen, selectedMethod,hyperpartitionsSelected)
         //}
         //
-
-        if (comparedMethods.length>=1){
+        /*
+        if (comparedMethods.length>=1 || mouseOverClassifier!=-1){
             let g = d3.selectAll('g.hpGroup')
             console.info('d3, compare, hyperpartition', comparedMethods, comparedCls)
             g.selectAll('rect.hpBar')
             .attr('opacity', 0.2)
 
-            comparedCls.forEach(cls=>{
-                g.select(`rect#_${cls.id}`)
-                .attr('opacity', 1)
-            })
-        }
+            if(mouseOverClassifier==-1){
+                comparedCls.forEach(cls=>{
+                    g.select(`rect#_${cls.id}`)
+                    .attr('opacity', 1)
+                })
+            }else{
+                g.select(`rect#_${mouseOverClassifier}`)
+                    .attr('opacity', 1)
+            }
+        }else{
+            let g = d3.select('g.HyperPartitions')
+            g.selectAll('rect.hpBar')
+            .attr('opacity', 1)
+        }*/
 
         return true
     }
