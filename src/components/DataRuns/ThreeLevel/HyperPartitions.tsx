@@ -380,6 +380,20 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     }
                     
                 }
+
+                //Create SVG element
+                let tooltip = d3.select("#tooltip");
+                //let top_methods = d3.select("#methodstop");
+
+                if(tooltip.empty()){
+                    tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .attr("id","tooltip")
+                    .style("opacity", 0)
+                    .style("left",  "0px")
+                    .style("top",  "0px");;
+                }
+
                 //CLASSIFIER ENTER
                 classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")
@@ -390,10 +404,16 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('opacity',selectOpacity)
                 .on("mouseover",(d:any)=>{
                     nowProps.onMouseOverClassifier(d.id);
+                    tooltip
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                    tooltip.style("opacity", 0.7).html(d.cv_metric.toFixed(2))
+
                 })
                 .on("mouseout",(d:any)=>{
                     nowProps.onMouseOverClassifier(-1);
-                    
+                    tooltip
+                    .style("opacity", 0);
                 })
                 .attr("x", (d: any, i: number) => x(0))
                 .attr("y", (d: any) => height )
@@ -590,10 +610,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             if(this.state.visible){
             return (<foreignObject x={this.props.width/2} y={this.props.height+20} width={100} height={30}>
                 <div>
-               <Button type="primary" onClick={this.onLeftHp}>
+               <Button onClick={this.onLeftHp}>
                 <Icon type="left" />
               </Button>
-              <Button type="primary" onClick={this.onRightHp}>
+              <Button onClick={this.onRightHp}>
                 <Icon type="right" />
               </Button>
               </div></foreignObject>
