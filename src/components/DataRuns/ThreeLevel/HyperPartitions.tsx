@@ -23,13 +23,17 @@ export interface IProps {
 
 }
 export interface IState {
-    hiddencol:number
-    visible:boolean
+    hiddencol:number,
+    visible:boolean,
+    leftdisabled:boolean,
+    rightdisabled:boolean
 }
 export default class HyperPartitions extends React.Component<IProps, IState>{
     state={
         hiddencol:0,
-        visible:false
+        visible:false,
+        leftdisabled:false,
+        rightdisabled:false
     }
     public hyperpartitionBox = {
         height: 20,
@@ -181,21 +185,25 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 }
                 hiddencol = newhiddencol;
             }else{
-                if(hiddencol>maxcol-exceedcol){
+                if(hiddencol>=maxcol-exceedcol){
                     let newhiddencol = maxcol-exceedcol;
-                    if(newhiddencol != hiddencol || this.state.visible != true){
+                    if(newhiddencol != hiddencol || this.state.visible != true || this.state.rightdisabled!=true){
 
                         this.setState({
                             hiddencol:newhiddencol,
-                            visible:true
+                            visible:true,
+                            rightdisabled:true
                         })
                     }
                     hiddencol = newhiddencol;
                 }else{
-                    if(this.state.visible != true){
+                    let leftdisabled = hiddencol<=0;
+                    if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled != false){
                         this.setState(
                             {
-                                visible:true
+                                visible:true,
+                                leftdisabled:leftdisabled,
+                                rightdisabled:false
                             }
                         )
                     }
@@ -612,10 +620,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             return (<foreignObject x={this.props.width/2-50} y={this.props.height+20} width={100} height={35}>
                 <div>
 
-               <Button type="default" size="small" onClick={this.onLeftHp}>
+               <Button type="default" size="small" onClick={this.onLeftHp} disabled={this.state.leftdisabled}>
                 <Icon type="left" />
               </Button>
-              <Button type="default" size="small" onClick={this.onRightHp}>
+              <Button type="default" size="small" onClick={this.onRightHp} disabled={this.state.rightdisabled}>
                 <Icon type="right" />
               </Button>
               </div></foreignObject>
