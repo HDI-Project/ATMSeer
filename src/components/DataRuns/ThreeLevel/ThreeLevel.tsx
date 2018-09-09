@@ -7,8 +7,8 @@ import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
-import {Button, InputNumber, message} from 'antd';
-
+import {Button, InputNumber, message,Tag} from 'antd';
+import { getColor } from 'helper';
 export interface IProps {
     height: number,
     datarun: IDatarun,
@@ -371,7 +371,17 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
        width3 = 220,
         headerHeight = 10
         let svgHeight = window.innerHeight * 0.74;
-
+        let generateTag = (box:any,name:string)=>{
+            if(name!=""){
+                let width = box.width;
+                let height = box.height;
+                let x = box.x;
+                let y = box.y;
+                return  <foreignObject x={x} y={y} width={width} height={height}><Tag color={getColor(name)}>{name}</Tag></foreignObject>
+            }else{
+                return <g />
+            }
+        }
         console.log("three level render");
         console.log(this.state.hyperpartitionsAlreadySelected);
         return <div
@@ -416,11 +426,17 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <g transform={`translate(${width1}, ${headerHeight})`} clip-path={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
             <text
                 textAnchor="middle"
-                x={width2/2}
+                x={width2/3}
                 y={10}
-                style={{ font: "bold 16px sans-serif" }}
-            >HyperPartitions of {selectedMethod}</text>
+                style={{ font: "bold 16px sans-serif" , display:"inline" }}
+            >HyperPartitions of </text>
+            {generateTag({
+                x:width2/3 + 80,
+                y:-6,
+                width:100,
+                height:30
 
+            },selectedMethod)}
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
                 // datarun={datarun}
@@ -445,10 +461,17 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <g transform={`translate(${width1+width2}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
             <text
                 textAnchor="middle"
-                x={width3/2}
+                x={width3/3}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
-            >HyperParameters of {selectedMethod}</text>
+            >HyperParameters of</text>
+             {generateTag({
+                x:width3/3 + 85,
+                y:-6,
+                width:100,
+                height:30
+
+            },selectedMethod)}
             <HyperParameters
                 classifiers={classifiers}
                 selectedMethod={selectedMethod}
