@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@types/echarts": "0.0.13",
-    "antd": "^3.5.4",
+    "antd": "3.5.4",
     "axios": "^0.18.0",
     "d3": "^5.6.0",
     "echarts": "^4.1.0",
