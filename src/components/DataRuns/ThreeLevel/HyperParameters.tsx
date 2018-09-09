@@ -2,6 +2,7 @@ import * as React from "react";
 import { IClassifierInfo } from "service/dataService"
 import { getColor } from 'helper';
 import * as methodsDef from "assets/methodsDef.json";
+import {Icon,Button} from 'antd'
 
 export interface IProps {
     classifiers: IClassifierInfo[],
@@ -9,13 +10,20 @@ export interface IProps {
     compareK:number,
     onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
     alreadySelectedRange:any,
-    mouseOverClassifier:number
+    mouseOverClassifier:number,
+    height:number
 }
 
 const d3 = require("d3");
 // Get Datasets
 
 export default class HyperParameters extends React.Component<IProps, {}>{
+    onUpClick = ()=>{
+
+    }
+    onDownClick = () =>{
+
+    }
     render() {
         let { classifiers, selectedMethod, compareK,alreadySelectedRange } = this.props
         let comparedCls = classifiers.slice(0, compareK)
@@ -101,7 +109,24 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                 height: 100,
                 margin: 40
             }
-            return <g className="hyperParameters">
+            let generateButton = () =>{
+                return (<foreignObject x={box.width/2-50} y={this.props.height+35} width={100} height={35}>
+                    <div>
+                   <Button >
+                    <Icon type="up" />
+                  </Button>
+                  <Button >
+                    <Icon type="down" />
+                  </Button>
+                  </div></foreignObject>
+                  )
+                }
+                
+            
+            return <g>
+               
+                
+                <g className="hyperParameters">
                 {HyperparameterList.map((hp, i) => {
                     return <HyperParameter
                         key={hp}
@@ -117,6 +142,8 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                         mouseOverClassifier={this.props.mouseOverClassifier}
                         />
                 })}
+            </g>
+            {generateButton()} 
             </g>
         } else {
             return <g />

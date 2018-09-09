@@ -347,9 +347,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         }
     }
     onMouseOverClassifier = (classifierid:number)=>{
-        this.setState({
-            mouseOverClassifier:classifierid
-        })
+        if(this.state.mouseOverClassifier!=classifierid){
+            this.setState({
+                mouseOverClassifier:classifierid
+            })
+        }
     }
     render(){
         let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
@@ -435,7 +437,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 />
                 
             </g>
-            <g transform={`translate(${width1+width2}, ${headerHeight})`}>
+            <defs>  
+            <clipPath id="mask_hyperparameters">
+            <rect x={-60} y={-10} width={width3+70} height={svgHeight+100}/>
+            </clipPath>
+            </defs>
+            <g transform={`translate(${width1+width2}, ${headerHeight})`}  clip-path={"url(#mask_hyperparameters)"}>
             <text
                 textAnchor="middle"
                 x={width3/2}
@@ -449,6 +456,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
                 onSelectedChange={this.onBrushSelected}
                 mouseOverClassifier={this.state.mouseOverClassifier}
+                height={svgHeight}
                 />
             </g>
             </svg>
