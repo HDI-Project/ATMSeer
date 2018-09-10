@@ -7,8 +7,8 @@ import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
-import {Button, InputNumber, message} from 'antd';
-
+import {Button, InputNumber, message,Tag} from 'antd';
+import { getColor } from 'helper';
 export interface IProps {
     height: number,
     datarun: IDatarun,
@@ -347,9 +347,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         }
     }
     onMouseOverClassifier = (classifierid:number)=>{
-        this.setState({
-            mouseOverClassifier:classifierid
-        })
+        if(this.state.mouseOverClassifier!=classifierid){
+            this.setState({
+                mouseOverClassifier:classifierid
+            })
+        }
     }
     render(){
         let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
@@ -364,11 +366,22 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             )
         let svgWidth = window.innerWidth*5/6,
         width1 = svgWidth*3/13,
-        width2 = svgWidth*1.1/2,
-        width3 = svgWidth*1/7,
+        width2 = svgWidth*1.05/2,
+       // width3 = svgWidth*1/7,
+       width3 = 220,
         headerHeight = 10
         let svgHeight = window.innerHeight * 0.74;
-
+        let generateTag = (box:any,name:string)=>{
+            if(name!=""){
+                let width = box.width;
+                let height = box.height;
+                let x = box.x;
+                let y = box.y;
+                return  <foreignObject x={x} y={y} width={width} height={height}><Tag color={getColor(name)}>{name}</Tag></foreignObject>
+            }else{
+                return <g />
+            }
+        }
         console.log("three level render");
         console.log(this.state.hyperpartitionsAlreadySelected);
         return <div
@@ -411,14 +424,19 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </clipPath>
             </defs>
             <g transform={`translate(${width1}, ${headerHeight})`} clip-path={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
-
             <text
                 textAnchor="middle"
-                x={width2/2}
+                x={width2/3}
                 y={10}
-                style={{ font: "bold 16px sans-serif" }}
-            >HyperPartitions of {selectedMethod}</text>
+                style={{ font: "bold 16px sans-serif" , display:"inline" }}
+            >HyperPartitions of </text>
+            {generateTag({
+                x:width2/3 + 80,
+                y:-6,
+                width:100,
+                height:30
 
+            },selectedMethod)}
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
                 // datarun={datarun}
@@ -435,13 +453,25 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 />
 
             </g>
-            <g transform={`translate(${width1+width2}, ${headerHeight})`}>
+            <defs>  
+            <clipPath id="mask_hyperparameters">
+            <rect x={-60} y={-10} width={width3+200} height={svgHeight+100}/>
+            </clipPath>
+            </defs>
+            <g transform={`translate(${width1+width2}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
             <text
                 textAnchor="middle"
-                x={width3/2}
+                x={width3/3}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
-            >HyperParameters of {selectedMethod}</text>
+            >HyperParameters of</text>
+             {generateTag({
+                x:width3/3 + 89,
+                y:-6,
+                width:100,
+                height:30
+
+            },selectedMethod)}
             <HyperParameters
                 classifiers={classifiers}
                 selectedMethod={selectedMethod}
@@ -449,9 +479,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
                 onSelectedChange={this.onBrushSelected}
                 mouseOverClassifier={this.state.mouseOverClassifier}
+                height={svgHeight}
                 />
             </g>
             </svg>
+
 
             <div style={{position: "absolute",bottom:"10px",left:"10px"}}>
                 <span>Budget</span>

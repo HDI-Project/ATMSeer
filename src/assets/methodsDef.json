@@ -93,7 +93,7 @@
                 "values": [-1]
             }
         },
-        "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_split", "min_samples_leaf", "n_estimators", "n_jobs"],
+        "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_leaf", "n_estimators", "n_jobs"],
         "conditional_hyperparameters": {}
     },
     "et":{

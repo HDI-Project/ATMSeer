@@ -2,6 +2,7 @@ import * as React from "react";
 import { IClassifierInfo } from "service/dataService"
 import { getColor } from 'helper';
 import * as methodsDef from "assets/methodsDef.json";
+import {Icon,Button} from 'antd'
 
 export interface IProps {
     classifiers: IClassifierInfo[],
@@ -9,18 +10,80 @@ export interface IProps {
     compareK:number,
     onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
     alreadySelectedRange:any,
-    mouseOverClassifier:number
+    mouseOverClassifier:number,
+    height:number
+}
+export interface HyperParameterInfo{
+    dim:number,
+    name:string,
+    type:string,
+    min:number,
+    max:number,
+    valueType:string
+}
+export interface IState {
+    hiddenrow:number,
+    HyperparameterList:HyperParameterInfo[],
+    selectedClassifier:any,
+    selectedMethod:string,
+    classifiers:any,
+    mode:number,
+    visible:boolean
 }
 
 const d3 = require("d3");
 // Get Datasets
 
-export default class HyperParameters extends React.Component<IProps, {}>{
-    render() {
-        let { classifiers, selectedMethod, compareK,alreadySelectedRange } = this.props
+export default class HyperParameters extends React.Component<IProps, IState>{
+    index = 0;
+    state={
+        hiddenrow:0,
+        HyperparameterList:[],
+        selectedClassifier:[],
+        selectedMethod:"",
+        classifiers:[],
+        mode:0,
+        visible:false
+    }
+    box = {
+        width: 200,
+        height: 100,
+        margin: 40
+    }
+    calculateExceedRow = () =>{
+        let box = this.box;
+        let exceedRow = Math.floor((this.props.height - box.margin) /  (box.height*5/4 + box.margin)) + 0;
+        if(exceedRow<=0){
+            exceedRow = 0;
+        }           
+        return exceedRow;
+    }
+    onUpClick = ()=>{
+        let {hiddenrow} = this.state;
+        if(hiddenrow>0){
+            hiddenrow = hiddenrow -1;
+            console.log("change")
+        console.log(hiddenrow);
+            this.setState({
+                hiddenrow:hiddenrow
+            })
+        }
+    }
+    onDownClick = () =>{
+        let {hiddenrow} = this.state;
+        hiddenrow = hiddenrow + 1;
+        console.log("change")
+        console.log(hiddenrow);
+        this.setState({
+            hiddenrow:hiddenrow
+        })
+    }
+    shouldComponentUpdate(nextProps:IProps,nextStates:IState){
+       
+        let { classifiers, selectedMethod, compareK,alreadySelectedRange } = nextProps
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
-
+        
         if (comparedMethods.length==1){
             selectedMethod = comparedMethods[0]
         }
@@ -84,6 +147,13 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                     })
                 }
             })
+            let margin = 40,
+                height = ((nextProps.height-40)/(HyperparameterList.length)-margin)*4/5;
+                this.box = {
+                    width: 200,
+                    height: height>100?100:height,
+                    margin
+                }
             let selectedClassifier : IClassifierInfo[] =[];
 
             if(compareK>0){
@@ -96,29 +166,102 @@ export default class HyperParameters extends React.Component<IProps, {}>{
                 })
 
             }
-            let margin = 40,
-            height = ((window.innerHeight*0.96*0.85-40)/(HyperparameterList.length)-margin)*4/5,
-            box = {
-                width: 200,
-                height: height>100?100:height,
-                margin,
+            
+            // button visible checked
+            let box = this.box;
+            let exceedRow = Math.floor((nextProps.height - box.margin) /  (box.height*5/4 + box.margin)) + 0;
+            if(exceedRow<=0){
+                exceedRow = 0;
+            }           
+            let maxRow = HyperparameterList.length;
+            let gap = Math.max(0,maxRow-exceedRow);
+            let newhiddenrow = Math.min(gap,nextStates.hiddenrow);
+            console.log(maxRow,exceedRow,newhiddenrow);
+
+            let visible = nextStates.visible;
+            if(gap>0){
+                visible=true;
+            }else{
+                visible=false;
             }
-            return <g className="hyperParameters">
-                {HyperparameterList.map((hp, i) => {
-                    return <HyperParameter
-                        key={hp}
-                        classifiers={classifiers}
-                        hp={hp}
-                        idx={i}
-                        box={box}
-                        selectedMethod={selectedMethod}
-                        comparedCls={selectedClassifier}
-                        onSelectedChange={this.props.onSelectedChange}
-                        alreadySelectedRange={this.props.alreadySelectedRange[hp.name]?this.props.alreadySelectedRange[hp.name]:{}}
-                        valueType={hp.valueType}
-                        mouseOverClassifier={this.props.mouseOverClassifier}
-                        />
+            
+            if(this.props!=nextProps || newhiddenrow!=nextStates.hiddenrow || visible!=nextStates.visible){
+                this.setState({
+                    selectedClassifier:selectedClassifier,
+                    HyperparameterList:HyperparameterList,
+                    selectedMethod:selectedMethod,
+                    classifiers:classifiers,
+                    mode:1,
+                    hiddenrow:newhiddenrow,
+                    visible:visible,
+                    
+
+                })
+            }
+            
+        }else{
+            if(this.props!=nextProps){
+                this.setState({
+                    mode:0,
+                    visible:false,
+                    hiddenrow:0
+                })
+            }
+        }
+        
+        return true;
+        
+    }
+    render() {
+            let {selectedClassifier,HyperparameterList,classifiers,selectedMethod,mode,visible} = this.state;
+
+            let box = this.box;
+            
+
+            let generateButton = () =>{
+                if(visible){
+                    return (<foreignObject x={box.width/2-50} y={this.props.height+20} width={100} height={35}>
+                        <div>
+                    <Button type="default" size="small" onClick={this.onUpClick}>
+                        <Icon type="up" />
+                    </Button>
+                    <Button type="default" size="small" onClick={this.onDownClick} >
+                        <Icon type="down"/>
+                    </Button>
+                    </div></foreignObject>
+                    )
+                }else{
+                    return <g />;
+                }
+            }
+        let exceedRow = this.calculateExceedRow();
+        exceedRow=exceedRow+this.state.hiddenrow;
+        if(mode==1){ 
+            return <g>
+                <g className="hyperParameters">
+                {HyperparameterList.map((hp:HyperParameterInfo, i) => {
+                    if(i>=exceedRow||i<this.state.hiddenrow){
+                        return <g key={selectedMethod+"_"+hp.name+"_g"+(++this.index)}/>
+                    }else{
+                        return <HyperParameter
+                            key={selectedMethod+"_"+hp.name+"_hp"+(++this.index)}
+                            classifiers={classifiers}
+                            hp={hp}
+                            idx={i-this.state.hiddenrow}
+                            hiddenrow={this.state.hiddenrow}
+                            
+                            box={box}
+                            selectedMethod={selectedMethod}
+                            comparedCls={selectedClassifier}
+                            onSelectedChange={this.props.onSelectedChange}
+                            alreadySelectedRange={this.props.alreadySelectedRange[hp.name]?this.props.alreadySelectedRange[hp.name]:{}}
+                            valueType={hp.valueType}
+                            mouseOverClassifier={this.props.mouseOverClassifier}
+                            />
+                    }
                 })}
+            </g>
+            {generateButton()} 
             </g>
         } else {
             return <g />
@@ -142,7 +285,8 @@ export interface HyProps {
     },
     onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
     alreadySelectedRange:any,
-    mouseOverClassifier:number
+    mouseOverClassifier:number,
+    hiddenrow:number
 }
 /**
  * export interface DetailChartProps{
@@ -340,9 +484,9 @@ class HyperParameter extends React.Component<HyProps, {}>{
         // x axis lable;
         svg.append("text")
             .attr("transform",
-                "translate(" + (width) + " ," +
-                (height*5/4 + margin*0.75) + ")")
-            .style("text-anchor", "end")
+                "translate(" + (width + 10) + " ," +
+                (height*5/4) + ")")
+            .style("text-anchor", "start")
             .text(hp.name);
 
         // Add the Y Axis
