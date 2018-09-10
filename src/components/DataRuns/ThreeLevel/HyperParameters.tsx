@@ -48,7 +48,8 @@ export default class HyperParameters extends React.Component<IProps, IState>{
     box = {
         width: 200,
         height: 100,
-        margin: 40
+        margin: 50,
+        yextragap:8
     }
     calculateExceedRow = () =>{
         let box = this.box;
@@ -148,11 +149,13 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                 }
             })
             let margin = 40,
-                height = ((nextProps.height-40)/(HyperparameterList.length)-margin)*4/5;
+                yextragap = 30,
+                height = ((nextProps.height-margin)/(HyperparameterList.length)-margin-yextragap)*4/5;
                 this.box = {
                     width: 200,
                     height: height>100?100:height,
-                    margin
+                    margin,
+                    yextragap
                 }
             let selectedClassifier : IClassifierInfo[] =[];
 
@@ -281,7 +284,8 @@ export interface HyProps {
     box: {
         width: number,
         height: number,
-        margin: number
+        margin: number,
+        yextragap : number
     },
     onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
     alreadySelectedRange:any,
@@ -365,7 +369,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
         })
         let methodColor = getColor(selectedMethod)
 
-        let { width, height, margin } = box
+        let { width, height, margin, yextragap} = box
         let x = d3.scaleLinear().range([0, width])
         let y = d3.scaleLinear().range([height, 0]);
         if(valueType=="float_exp"){
@@ -394,7 +398,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
 
         let svg = d3.select("#" + this.TAG + idx)
             .append('g')
-            .attr('transform', `translate(${0}, ${margin + idx * (height*5/4 + margin)})`)
+            .attr('transform', `translate(${0}, ${margin + idx * (height*5/4 + margin + yextragap)})`)
 
 
 
@@ -482,13 +486,18 @@ class HyperParameter extends React.Component<HyProps, {}>{
             .call(d3.axisBottom(x).ticks(0));
 
         // x axis lable;
-        svg.append("text")
+       /* svg.append("text")
             .attr("transform",
                 "translate(" + (width + 10) + " ," +
                 (height*5/4) + ")")
             .style("text-anchor", "start")
+            .text(hp.name);*/
+        svg.append("text")
+            .attr("transform",
+                "translate(" + (width) + " ," +
+                (height*5/4 + margin*0.75) + ")")
+            .style("text-anchor", "end")
             .text(hp.name);
-
         // Add the Y Axis
         svg.append("g")
             .attr('class', 'yAxis')

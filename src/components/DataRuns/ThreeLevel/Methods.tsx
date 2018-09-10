@@ -3,7 +3,7 @@ import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
-import { Checkbox,Tag } from 'antd';
+import { Checkbox,Tooltip } from 'antd';
 import "./Methods.css";
 //import * as hint from "assets/small_hint.png"
 const d3 = require("d3");
@@ -175,6 +175,7 @@ export default class methods extends React.Component<IProps, IState>{
                                             (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) - this.methodBoxAttr.gap}
                                         width={this.methodBoxAttr.checkboxWidth}
                                         height={this.methodBoxAttr.checkboxHeight}>
+                                        <Tooltip title={methodsDef[name].fullname}>
                                        <Checkbox
                                         key={name+"_checkbox_"+(i)}
                                         checked={checked}
@@ -182,8 +183,12 @@ export default class methods extends React.Component<IProps, IState>{
                                         disabled={disabled}
                                         value={name}
                                         onChange={this.props.onMethodsCheckBoxChange} >
-                                        <Tag color={getColor(name)}>{name}</Tag>
+                                        {/*<Tag color={getColor(name)}>{name}</Tag>*/}
+                                        
+                                            <span>{name}</span>
+                                       
                                         </Checkbox>
+                                         </Tooltip>
                                         </foreignObject>
                                   )
                     })}

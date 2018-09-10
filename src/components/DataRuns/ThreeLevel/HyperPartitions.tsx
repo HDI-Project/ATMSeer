@@ -413,6 +413,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .on("mouseover",(d:any)=>{
                     nowProps.onMouseOverClassifier(d.id);
                     tooltip
+                    .style("width","40px")
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
                     tooltip.style("opacity", 0.7).html(d.cv_metric.toFixed(3))
