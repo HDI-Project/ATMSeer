@@ -8,7 +8,7 @@ import {parseDatarun} from "helper";
 import {IDatarun} from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
-import {getClassifierSummary, getClassifiers,getHyperpartitions,IRecommendationResult, 
+import {getClassifierSummary, getClassifiers,getHyperpartitions,IRecommendationResult,
     IClassifierInfo,IHyperpartitionInfo, getRecommendation, IClickEvent, stopDatarun} from 'service/dataService';
 
 //components
@@ -116,8 +116,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     }
                 }
             }
-            this.setState({runCSV:runCSV, 
-                classifiers:classifiers, 
+            this.setState({runCSV:runCSV,
+                classifiers:classifiers,
                 hyperpartitions:hyperpartitions,
                 recommendationResult:recommendationResult,
                 run_threshold:run_threshold,
@@ -169,7 +169,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 .then(datarun => {
                     // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
                     this.props.setDatarunStatus(datarun.status);
-                    
+
                 })
                 .catch(error => {
                     console.log(error);
@@ -181,7 +181,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             run_threshold:run_threshold
         })
     }
-    
+
     public render(){
         let {runCSV, hyperpartitions, classifiers} = this.state
         let {datasetID, datarunID, compareK} = this.props
@@ -225,7 +225,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             return (
         <div style={{height: '100%'}}>
 
-            <div className="runTracker" style={{height: '15%', display: "flex"}}>
+            <div className="runTracker" style={{height: '12%', display: "flex"}}>
                 {/* <Histogram datarun={datarun} width={40}/> */}
                 <AskModal AskModalCallBack={this.AskModalCallBack} visible={this.state.askvisible}/>
                 <Tabs
@@ -239,16 +239,16 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     </TabPane>
                     <TabPane tab="Performance" key="2">
                     <Row style={{ "height": "100%" }}>
-                    <Col span={18}>
+                    <Col span={18} style={{height: "100%"}}>
                     <OverallHistogram datarun={datarun} width={100}/>
                     </Col>
-                    <Col span={6}>
+                    <Col span={6} style={{padding: "10px"}}>
                     <b>Algorithm Coverage</b>:{' '}
                         <Progress
                         type="circle"
                         percent={100*methods_num/14}
                         format={progressAlgorithm}
-                        width={40}
+                        width={30}
                         strokeWidth={10}
                         />
                         <br/>
@@ -257,7 +257,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                         type="circle"
                         percent={100*hp_num/172}
                         format={progressHyperpartiton}
-                        width={40}
+                        width={30}
                         strokeWidth={10}
                         />
                     </Col>
@@ -273,7 +273,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
             datarunID={this.props.datarunID}/> */}
             <ThreeLevel
-            height={85}
+            height={88}
             datarun={datarun}
             hyperpartitions={hyperpartitions}
             classifiers={classifiers}
