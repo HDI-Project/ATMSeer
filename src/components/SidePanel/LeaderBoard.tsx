@@ -197,7 +197,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
     public render() {
 
         const { summary, datarunInfo, topK} = this.state
-        const best = summary ? summary.topClassifiers[0] : undefined;
+        // const best = summary ? summary.topClassifiers[0] : undefined;
         /*let methods_num = summary?Object.keys(summary.nTriedByMethod).length:0
         let hp_num = summary?summary.triedHyperpartition.length:0
         const progressAlgorithm = (percent:number)=>{
@@ -214,8 +214,8 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                     {/* <hr /> */}
                     <div>
                         <b>Metric</b>: {datarunInfo && datarunInfo.metric}
-                        <br/>
-                        <b>Best classifier</b>:
+                        {/* <br/> */}
+                        {/* <b>Best classifier</b>:
                         <span
                             style={{
                                 backgroundColor: getColor(best?best.method:''),
@@ -227,9 +227,9 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             >
                             {best && `${best.method}-${best.id}`}
                         </span>
-                        <br/>
-                        <b>Total classifiers</b>: {summary.nTried}
-                        <br/>
+                        <br/> */}
+                        {/* <b>Total classifiers</b>: {summary.nTried}
+                        <br/> */}
                         {/*<b>Algorithm Coverage</b>:{' '}
                         <Progress
                         type="circle"
