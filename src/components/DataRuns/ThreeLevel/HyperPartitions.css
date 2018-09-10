@@ -1,1 +1,24 @@
 .RadioBox input{vertical-align:middle; margin-bottom:2px; *margin-bottom:2px;}
+
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    color: aliceblue;
+    height: 20px;
+    padding: 3px;
+    font: 12px sans-serif;
+    background: rgba(0, 0, 0, 0.671);
+    border: 5px;
+    border-radius: 3px;
+    pointer-events: none;
+  }
+  .link {
+    fill: none;
+    stroke-width: 1.5px;
+  }
+  .bottomright {
+    position: absolute;
+    bottom: 80px;
+    right: 30px;
+    font-size: 18px;
+}

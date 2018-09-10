@@ -31,3 +31,12 @@ Then start the atm server by: `python server/atm_server/server.py`
 The routes (API) are defined in `server/atm_server/api.py`
 
 ## Front
+
+
+# Build
+
+## Build and Deploy with Docker
+
+Run `scripts/build_with_docker.sh` to build the docker image
+
+Run `scripts/start_docker.sh` to start the app

@@ -23,13 +23,17 @@ export interface IProps {
 
 }
 export interface IState {
-    hiddencol:number
-    visible:boolean
+    hiddencol:number,
+    visible:boolean,
+    leftdisabled:boolean,
+    rightdisabled:boolean
 }
 export default class HyperPartitions extends React.Component<IProps, IState>{
     state={
         hiddencol:0,
-        visible:false
+        visible:false,
+        leftdisabled:false,
+        rightdisabled:false
     }
     public hyperpartitionBox = {
         height: 20,
@@ -66,7 +70,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 this.index++;
             }*/
             // let num_all_hp = hpsInfo.length
-            
+
             hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0);
             if(this.lastArray == null){
                 this.lastArray = hpsInfo;
@@ -116,7 +120,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             let maxcol = 0;
             let nowcol = 0;
             let lastposx = gap+width*0.5;
-            
+
             let lastposy = height;
             let horizontalnum = 0;
             let maxhorizontalnum = 10;
@@ -130,7 +134,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     lastposy = lastposy + (2 * height + gap);
                     currentPos = [lastposx, lastposy]
                     horizontalnum = 0;
-                } else { 
+                } else {
                     if(horizontalnum == 0){
                         lastposy = lastposy + (2*gap);
                     }
@@ -143,7 +147,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                         currentPos = [lastposx, lastposy]
                         horizontalnum = 1;
                     }
-                    
+
                 }
                 if (lastposy > nowProps.height) {
                     lastposx = lastposx + width * 1.5;
@@ -151,8 +155,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     if(lastposx + width*1.5>nowProps.width && exceedcol==-1){
                         exceedcol = nowcol;
                     }
-                    
-                    
+
+
                     lastposy = height + (
                         hpsInfo[i].method == selectedMethod?
                         (2 * height + gap)
@@ -181,21 +185,25 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 }
                 hiddencol = newhiddencol;
             }else{
-                if(hiddencol>maxcol-exceedcol){
+                if(hiddencol>=maxcol-exceedcol){
                     let newhiddencol = maxcol-exceedcol;
-                    if(newhiddencol != hiddencol || this.state.visible != true){
+                    if(newhiddencol != hiddencol || this.state.visible != true || this.state.rightdisabled!=true){
 
                         this.setState({
                             hiddencol:newhiddencol,
-                            visible:true
+                            visible:true,
+                            rightdisabled:true
                         })
                     }
                     hiddencol = newhiddencol;
                 }else{
-                    if(this.state.visible != true){
+                    let leftdisabled = hiddencol<=0;
+                    if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled != false){
                         this.setState(
                             {
-                                visible:true
+                                visible:true,
+                                leftdisabled:leftdisabled,
+                                rightdisabled:false
                             }
                         )
                     }
@@ -217,7 +225,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                      }else{
                         d.pos[0]=d.pos[0]-width*1.5*(hiddencol);
                      }
-                    
+
                 }
             })
             //enter
@@ -242,7 +250,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     (d: any, i: number) => {
                         return `translate(${d.pos[0]},${d.pos[1]})`
                     }
-                );          
+                );
             hpGroupEnter.append('rect')
                 .attr('class', "out_hyperPartition")
                 .attr('height', (d: any) => d.method == selectedMethod ? (height + 2 * strokeWidth) : gap)
@@ -278,13 +286,13 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('y', 0)
                 .attr('text-anchor', 'end')
                 .text((d: any) => d.bestScore >= 0 ? d.bestScore.toFixed(3) : '')
-            
+
                 let generateText = (d:any)=>{
                     let selected="";
                     if(hyperpartitionsSelected.indexOf(d.id)>-1){
                         selected="checked";
                     }
-                   
+
                     return  `<div class="RadioBox"
                         style='text-overflow: ellipsis;
                         width: ${width}px;
@@ -296,7 +304,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     <input type="radio" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
                     </div>`
                 };
-                
+
             textEnter.append('g')
                 .attr('class', 'hp_name')
                 .attr('transform', `translate(${0}, ${0})`)
@@ -309,19 +317,19 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .on("click",(d:any)=>{
                     nowProps.onHpsCheckBoxChange(d.id);
                 })
-                
 
-                
+
+
                 /*
-            return (<foreignObject 
-                        key={name+"_text_"+i} 
+            return (<foreignObject
+                        key={name+"_text_"+i}
                         x={ this.methodBoxAttr.x +
-                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)}
                         y={this.methodBoxAttr.y +
-                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
-                        width={this.methodBoxAttr.checkboxWidth} 
+                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap}
+                        width={this.methodBoxAttr.checkboxWidth}
                         height={this.methodBoxAttr.checkboxHeight}>
-                       
+
                         </foreignObject>
                     )*/
             //UPDATE
@@ -343,7 +351,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('x', x(0))
                 .attr('y', height)
                 .remove()
-            // ENTER + UPDATE 
+            // ENTER + UPDATE
             let classifierSelect = hpGroupEnter.merge(hps).filter((d: any) => d.method == selectedMethod)
                 .selectAll('.hpBar')
                 .data((d: any) => {
@@ -351,9 +359,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 },function(d:any){
                     return "cls"+d.id;
                 });
-                
+
                 let selectOpacity = (d:any)=>{
-                    
+
                     if(nowProps.mouseOverClassifier==d.id){
                         return 1;
                     }else{
@@ -364,7 +372,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                                     if(cls.id == d.id){
                                         flag = true;
                                     }
-                                })                               
+                                })
                                 if(flag){
                                     return 1;
                                 }else{
@@ -378,8 +386,22 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                             return 0.2;
                         }
                     }
-                    
+
                 }
+
+                //Create SVG element
+                let tooltip = d3.select("#tooltip");
+                //let top_methods = d3.select("#methodstop");
+
+                if(tooltip.empty()){
+                    tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .attr("id","tooltip")
+                    .style("opacity", 0)
+                    .style("left",  "0px")
+                    .style("top",  "0px");;
+                }
+
                 //CLASSIFIER ENTER
                 classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")
@@ -390,16 +412,24 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .attr('opacity',selectOpacity)
                 .on("mouseover",(d:any)=>{
                     nowProps.onMouseOverClassifier(d.id);
+                    tooltip
+                    .style("width","40px")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                    tooltip.style("opacity", 0.7).html(d.cv_metric.toFixed(3))
+
                 })
                 .on("mouseout",(d:any)=>{
                     nowProps.onMouseOverClassifier(-1);
-                    
+                    tooltip
+                    .style("opacity", 0);
+
                 })
                 .attr("x", (d: any, i: number) => x(0))
                 .attr("y", (d: any) => height )
                 .attr("width", 0)
                 .attr("height", 0)
-                
+
                 .transition(trans)
                 .attr("x", (d: any, i: number) => x(i))
                 .attr("y", (d: any) => y(d.cv_metric) - height)
@@ -588,12 +618,13 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         console.log(this.state.hiddencol);
         let generateButton = () =>{
             if(this.state.visible){
-            return (<foreignObject x={this.props.width/2} y={this.props.height+20} width={100} height={30}>
+            return (<foreignObject x={this.props.width/2-50} y={this.props.height+20} width={100} height={35}>
                 <div>
-               <Button type="primary" onClick={this.onLeftHp}>
+
+               <Button type="default" size="small" onClick={this.onLeftHp} disabled={this.state.leftdisabled}>
                 <Icon type="left" />
               </Button>
-              <Button type="primary" onClick={this.onRightHp}>
+              <Button type="default" size="small" onClick={this.onRightHp} disabled={this.state.rightdisabled}>
                 <Icon type="right" />
               </Button>
               </div></foreignObject>
@@ -601,7 +632,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             }else{
                 return <g />
             }
-            
+
         }
         return (<g>{generateButton()}
         <g className={`HyperPartitions`}/></g>)

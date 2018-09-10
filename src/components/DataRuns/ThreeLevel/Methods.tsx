@@ -3,7 +3,7 @@ import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
-import { Checkbox } from 'antd';
+import { Checkbox,Tooltip } from 'antd';
 import "./Methods.css";
 //import * as hint from "assets/small_hint.png"
 const d3 = require("d3");
@@ -30,18 +30,19 @@ export interface IState {
 
 export default class methods extends React.Component<IProps, IState>{
     public gap = 20
-    width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
+    width = (this.props.width - 2*this.gap)/2>20?(this.props.width - 2*this.gap)/2:20;
     // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
     public methodBoxAttr = {
         // width : 70,
-        height: this.width * 0.7,
+        height: this.width * 0.4,
         width: this.width,
         gap: this.gap,
-        x: 2*this.gap,
-        y: 2*this.gap,
+        x: this.gap,
+        y: this.gap,
         checkboxY: 2,
         checkboxWidth: 75,
-        checkboxHeight: 30
+        checkboxHeight: 30,
+        yextragap:16
     }
     public getbestperformance(list: IClassifier[]) {
         if (list.length > 0) {
@@ -108,14 +109,15 @@ export default class methods extends React.Component<IProps, IState>{
         // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
         this.methodBoxAttr = {
             // width : 70,
-            height: this.width * 0.7,
+            height: this.width * 0.6,
             width: this.width,
             gap: this.gap,
             x: 2*this.gap,
             y: 2*this.gap,
             checkboxY: 2,
-            checkboxWidth: 75,
-            checkboxHeight: 30
+            checkboxWidth: 100,
+            checkboxHeight: 30,
+            yextragap:13
         }
 
 
@@ -148,6 +150,7 @@ export default class methods extends React.Component<IProps, IState>{
         //         maxnum=num;
         //     }
         // });
+       
         return <g className="methods" >
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                             /*let checked = false;
@@ -164,23 +167,28 @@ export default class methods extends React.Component<IProps, IState>{
                                 disabled = methodSelected[name].disabled;
                             }
 
-                            return (<foreignObject 
-                                        key={name+"_text_"+i} 
+                            return (<foreignObject
+                                        key={name+"_text_"+i}
                                         x={ this.methodBoxAttr.x +
-                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)} 
+                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)}
                                         y={this.methodBoxAttr.y +
-                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap) - this.methodBoxAttr.gap} 
-                                        width={this.methodBoxAttr.checkboxWidth} 
+                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) - this.methodBoxAttr.gap}
+                                        width={this.methodBoxAttr.checkboxWidth}
                                         height={this.methodBoxAttr.checkboxHeight}>
-                                       <Checkbox  
-                                        key={name+"_checkbox_"+(i)} 
-                                        checked={checked} 
+                                        <Tooltip title={methodsDef[name].fullname}>
+                                       <Checkbox
+                                        key={name+"_checkbox_"+(i)}
+                                        checked={checked}
                                         indeterminate={indeterminate}
                                         disabled={disabled}
-                                        value={name} 
+                                        value={name}
                                         onChange={this.props.onMethodsCheckBoxChange} >
-                                        {name}
+                                        {/*<Tag color={getColor(name)}>{name}</Tag>*/}
+                                        
+                                            <span>{name}</span>
+                                       
                                         </Checkbox>
+                                         </Tooltip>
                                         </foreignObject>
                                   )
                     })}
@@ -210,7 +218,7 @@ export default class methods extends React.Component<IProps, IState>{
                             }
                             y={
                                 this.methodBoxAttr.y +
-                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
                             }
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
@@ -247,7 +255,7 @@ export default class methods extends React.Component<IProps, IState>{
                             },
                     ${
                             this.methodBoxAttr.y +
-                            (index % 7)  * (this.methodBoxAttr.height + this.methodBoxAttr.gap)
+                            (index % 7)  * (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
                             }
                 )`}
                     >
@@ -358,6 +366,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
 
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
+        console.log(data.map((d, i) => i/10))
         //Create SVG element
        // let tooltip = d3.select("#tooltip");
         //let top_methods = d3.select("#methodstop");
@@ -487,8 +496,11 @@ class LineChart extends React.Component<LineChartProps, {}>{
         // Add the Y Axis
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale).ticks(0, 1, 0.2))
-        
+            .call(d3.axisLeft(yScale).tickValues([0.1,0.3,0.5,0.7,0.9]).tickFormat(function (d:any) {
+                    
+                        return d;}))
+                    
+
     }
     render() {
         const { name } = this.props;
