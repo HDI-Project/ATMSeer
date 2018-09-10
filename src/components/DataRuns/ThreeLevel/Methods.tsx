@@ -366,6 +366,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
 
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
+        console.log(data.map((d, i) => i/10))
         //Create SVG element
        // let tooltip = d3.select("#tooltip");
         //let top_methods = d3.select("#methodstop");
@@ -495,7 +496,10 @@ class LineChart extends React.Component<LineChartProps, {}>{
         // Add the Y Axis
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale).ticks(0, 1, 0.2))
+            .call(d3.axisLeft(yScale).tickValues([0.1,0.3,0.5,0.7,0.9]).tickFormat(function (d:any) {
+                    
+                        return d;}))
+                    
 
     }
     render() {
