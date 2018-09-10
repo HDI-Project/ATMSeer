@@ -4,7 +4,7 @@ import * as React from "react";
 import {Tabs,Row,Col,Progress} from 'antd';
 
 //
-import {parseDatarun} from "helper";
+import {parseDatarun, getColor} from "helper";
 import {IDatarun} from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
@@ -185,6 +185,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
     public render(){
         let {runCSV, hyperpartitions, classifiers} = this.state
         let {datasetID, datarunID, compareK} = this.props
+        let bestCls = classifiers.sort((a, b) => -a.cv_metric + b.cv_metric)[0]
+
         hyperpartitions = hyperpartitions.filter(d=>d.datarun_id==this.props.datarunID)
         // const {classifiers} = this.state
         let datarun:IDatarun = parseDatarun(runCSV)
@@ -243,21 +245,36 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     <OverallHistogram datarun={datarun} width={100}/>
                     </Col>
                     <Col span={6} style={{padding: "10px"}}>
-                    <b>Algorithm Coverage</b>:{' '}
+                    <b>Total  classifiers</b>: {classifiers.length}
+                    <br/>
+                    <b>Best classifier</b>:
+                        <span
+                            style={{
+                                backgroundColor: getColor(bestCls.method),
+                                borderRadius:'4px',
+                                padding:'2px',
+                                marginLeft: "2px",
+                                color: 'white'
+                            }}
+                            >
+                            {`${bestCls.method}-${bestCls.id}`}
+                        </span>
+                          {` ${bestCls.cv_metric.toFixed(3)}±${bestCls.cv_metric_std.toFixed(3)}`}
+                    <br/>
+                    <b>Algorithm </b>:{' '}
                         <Progress
                         type="circle"
                         percent={100*methods_num/14}
                         format={progressAlgorithm}
-                        width={30}
+                        width={40}
                         strokeWidth={10}
                         />
-                        <br/>
-                        <b>Hyperpartitions Coverage</b>:{' '}
+                        <b>{' '} Hyperpartitions</b>:{' '}
                         <Progress
                         type="circle"
                         percent={100*hp_num/172}
                         format={progressHyperpartiton}
-                        width={30}
+                        width={40}
                         strokeWidth={10}
                         />
                     </Col>
