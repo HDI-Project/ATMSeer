@@ -180,6 +180,19 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
 
         }
+        let action="selected";
+        if(checked==false){
+            action="unselected";
+        }
+        let eventlog:IClickEvent = {
+            type:"methodcheckbox",
+            description:{
+                action:action,
+                methodname:value
+            },
+            time:new Date().toString()
+        }
+        this.props.postClickEvent(eventlog);
     }
     onHyperpartitionCheckBoxChange=(id : number)=>{
         let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
@@ -246,6 +259,19 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
 
         }
+        let action="selected";
+        if(checked==false){
+            action="unselected";
+        }
+        let eventlog:IClickEvent = {
+            type:"hyperpartitioncheckbox",
+            description:{
+                action:action,
+                hpid:value
+            },
+            time:new Date().toString()
+        }
+        this.props.postClickEvent(eventlog);
     }
     onBrushSelected = (methodname:string, hpaName: string,hpatype:string,range:number[])=>{
         let {hyperparametersRangeAlreadySelected} = this.state;
@@ -270,11 +296,26 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
            }
         }
         if(update){
+            
            hyperparametersRangeAlreadySelected[methodname][hpaName]={"type":hpatype,"range":range};
            console.log(hyperparametersRangeAlreadySelected);
            this.setState({
                hyperparametersRangeAlreadySelected : hyperparametersRangeAlreadySelected
-           })
+           });
+           let action="updated";
+           
+            let eventlog:IClickEvent = {
+                type:"hyperparametersRange",
+                description:{
+                    action:action,
+                    range:range,
+                    type:hpatype,
+                    hyname:hpaName,
+                    methodname:methodname
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
         }
 
      }
@@ -348,6 +389,19 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     }
     onMouseOverClassifier = (classifierid:number)=>{
         if(this.state.mouseOverClassifier!=classifierid){
+            if(classifierid!=-1){
+                let action="mouseover";
+            
+                let eventlog:IClickEvent = {
+                    type:"classifier",
+                    description:{
+                        action:action,
+                        classifierid:classifierid
+                    },
+                    time:new Date().toString()
+                }
+                this.props.postClickEvent(eventlog);
+            }
             this.setState({
                 mouseOverClassifier:classifierid
             })
