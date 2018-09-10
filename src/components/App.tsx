@@ -94,6 +94,8 @@ class App extends React.Component<{}, IState> {
         if(USER_STUDY){
             let bundlelog : IClickBundleEvent= {
                 name:this.user_name,
+                datasetID:this.state.datasetID?this.state.datasetID:-1,
+                datarunID:this.state.datarunID?this.state.datarunID:-1,
                 clickevent:log
             }
             postBundleClickEvent(bundlelog);

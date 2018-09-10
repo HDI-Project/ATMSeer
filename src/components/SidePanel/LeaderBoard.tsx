@@ -220,7 +220,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             style={{
                                 backgroundColor: getColor(best?best.method:''),
                                 borderRadius:'4px',
-                                padding:'2px', 
+                                padding:'2px',
                                 marginLeft: "2px",
                                 color: 'white'
                             }}
@@ -259,7 +259,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                     <h4>Top
                         <InputNumber
                             min={1}
-                            max={10}
+                            max={20}
                             defaultValue={topK}
                             onChange={this.changeTopK}
                             style={{width: '50px'}}
