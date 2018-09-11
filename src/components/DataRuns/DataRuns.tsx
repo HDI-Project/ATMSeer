@@ -1,10 +1,10 @@
 // library
 // import axios from "axios";
 import * as React from "react";
-import { Tabs, Row, Col, Progress } from 'antd';
+//import { Tabs, Row, Col, Progress } from 'antd';
 
 //
-import { parseDatarun, getColor } from "helper";
+import { parseDatarun } from "helper";
 import { IDatarun } from 'types';
 // import {URL} from '../../Const';
 //import {getClassifierSummary} from 'service/dataService';
@@ -17,7 +17,7 @@ import {
 // import MethodsLineChart from './MethodsLineChart';
 //import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
-import OverallHistogram from "./OverallHistogram";
+//import OverallHistogram from "./OverallHistogram";
 // import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
@@ -31,7 +31,7 @@ import { USER_STUDY } from 'Const';
 //         'Access-Control-Allow-Origin': '*',
 // }
 //   });
-const TabPane = Tabs.TabPane
+//const TabPane = Tabs.TabPane
 
 
 export interface IProps {
@@ -188,14 +188,14 @@ export default class DataRuns extends React.Component<IProps, IState>{
     public render() {
         let { runCSV, hyperpartitions, classifiers } = this.state
         let { datasetID, datarunID, compareK } = this.props
-        let bestCls = classifiers.sort((a, b) => -a.cv_metric + b.cv_metric)[0]
+       // let bestCls = classifiers.sort((a, b) => -a.cv_metric + b.cv_metric)[0]
 
         hyperpartitions = hyperpartitions.filter(d => d.datarun_id == this.props.datarunID)
         // const {classifiers} = this.state
         let datarun: IDatarun = parseDatarun(runCSV)
         //console.log(runCSV);
         //console.log(datarun);
-        function computeDatarunSummary(classifiers: IClassifierInfo[]): IDatarunSummary {
+        /*function computeDatarunSummary(classifiers: IClassifierInfo[]): IDatarunSummary {
             // This need to fix to support other metric?
             classifiers = [...classifiers];
             classifiers.sort((a, b) => -a.cv_metric + b.cv_metric);
@@ -221,7 +221,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         }
         const progressHyperpartiton = (percent: number) => {
             return `${hp_num}/172`
-        }
+        }*/
 
 
 
@@ -233,7 +233,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     <div className="runTracker" style={{ height: '12%', display: "flex" }}>
                         {/* <Histogram datarun={datarun} width={40}/> */}
                         <AskModal AskModalCallBack={this.AskModalCallBack} visible={this.state.askvisible} />
-                        <Row style={{ "height": "100%", width: "100%" }}>
+                         <BarChart run={runCSV} width={100} />
+                      {/*  <Row style={{ "height": "100%", width: "100%" }}>
                             <Col span={18} style={{ height: "100%" }}>
                                 <Tabs
                                     defaultActiveKey="1"
@@ -284,8 +285,9 @@ export default class DataRuns extends React.Component<IProps, IState>{
                                     strokeWidth={10}
                                 />
                                 </div>
+                                
                             </Col>
-                        </Row>
+                        </Row>*/}
                     </div>
                     {/* <div style={{height: "80%", overflowY: "scroll"}}>
                 <HyperPartitions classifiers={classifiers} />

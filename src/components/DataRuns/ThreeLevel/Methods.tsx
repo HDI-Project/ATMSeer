@@ -3,7 +3,7 @@ import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
-import { Checkbox,Tooltip } from 'antd';
+import { Checkbox,Tooltip,Progress } from 'antd';
 import "./Methods.css";
 //import * as hint from "assets/small_hint.png"
 const d3 = require("d3");
@@ -170,7 +170,7 @@ export default class methods extends React.Component<IProps, IState>{
                             return (<foreignObject
                                         key={name+"_text_"+i}
                                         x={ this.methodBoxAttr.x +
-                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)}
+                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap) - 15}
                                         y={this.methodBoxAttr.y +
                                             (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) - this.methodBoxAttr.gap}
                                         width={this.methodBoxAttr.checkboxWidth}
@@ -202,13 +202,26 @@ export default class methods extends React.Component<IProps, IState>{
                     if(index>=0&&index<=2){
                         flower = 3-index;
                     }
+                    let filterclassifier = classifiers.filter((d:any)=>d.method==name);
+                    let filterhyperpartitions = hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name);
+                    let usedHpID = Array.from(new Set(filterclassifier.map(d=>d.hyperpartition_id)));
+                    //let usedhpidlen = usedHpID.length;
+                    let filterhyperpartitionslen = filterhyperpartitions.length;
+                    if(filterhyperpartitionslen==0){
+                        filterhyperpartitionslen=1;
+                    }
+                     const progressHyperpartiton = (percent:number)=>{
+                        return `${usedHpID.length}/${filterhyperpartitions.length}`
+                    }
+
                     // if (testin > -1) {
                     //     selected = true;
                     // }
                     //const classifier_num = datarun[name].length;
                     //const top_width = classifier_num*6+60;
                     // this.index++;
-                    return (
+                    return (<g key={name + "_g_linechart_" + i}>
+                        
                         <LineChart key={name + "_used_" + i}
                             // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
                             // y={this.methodBoxAttr.y}
@@ -223,14 +236,34 @@ export default class methods extends React.Component<IProps, IState>{
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
                             methodDef={methodDef}
-                            classifiers={classifiers.filter((d:any)=>d.method==name)}
+                            classifiers={filterclassifier}
                             name={name}
                             totallen={maxnum}
                             onClick={this.props.onSelectMethod}
                             selected={selected}
-                            hyperpartitoins = {hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name)}
+                            hyperpartitoins = {filterhyperpartitions}
                             flower={flower}
-                        />)
+                        />
+                        <foreignObject key={name + "_progressbar_" + i} x={
+                                this.methodBoxAttr.x +
+                                Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap) + this.methodBoxAttr.width-20
+                            }
+                            y={
+                                this.methodBoxAttr.y +
+                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) + this.methodBoxAttr.height-20
+                            } width={40} height={40}
+                            >
+                        <Progress
+                        type="circle"
+                        percent={100*usedHpID.length/filterhyperpartitionslen}
+                        format={progressHyperpartiton}
+                        width={40}
+                        strokeWidth={10}
+                        />
+                        </foreignObject>
+                        
+                        
+                        </g>)
 
                 })}
             </g>
@@ -311,8 +344,8 @@ class LineChart extends React.Component<LineChartProps, {}>{
     }
     renderD3() {
         // Get Datasets
-        const { methodDef, classifiers, totallen, selected, hyperpartitoins } = this.props;
-        let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)))
+        const { methodDef, classifiers, totallen, selected } = this.props;
+       // let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)))
         let step = 0.1;
         let data: number[] = [];
 
@@ -465,20 +498,21 @@ class LineChart extends React.Component<LineChartProps, {}>{
         svg.append("text")
             .attr("class", "method_name")
             .attr('x', width)
-            .attr('y', height-12)
+        //    .attr('y', height-12)
+            .attr('y',-3)
             .attr('text-anchor', "end")
-            .text(`${this.props.name}: ${classifiers.length}`)
-        svg.append("text")
+            .text(`${classifiers.length} / ${bestperformance.toFixed(3)}`)
+       /* svg.append("text")
             .attr("class", "best_score")
             .attr('x', width)
             .attr('y', height )
             .attr('text-anchor', "end")
-            .text(`best: ${bestperformance.toFixed(3)}`)
-        svg.append('text')
+            .text(`best: ${bestperformance.toFixed(3)}`)*/
+        /*svg.append('text')
             .attr('class', 'hps')
             .attr("transform", `translate(${width+margin.left},${height/2}) rotate(${90})`)
             .attr('text-anchor', 'middle')
-            .text(`hp:${usedHpID.length}/${hyperpartitoins.length}`)
+            .text(`hp:${usedHpID.length}/${hyperpartitoins.length}`)*/
         for(let i = 1;i<=this.props.flower;i++){
             svg.append('image')
                 .attr('width',15)

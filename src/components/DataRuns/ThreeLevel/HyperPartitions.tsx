@@ -185,29 +185,27 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 }
                 hiddencol = newhiddencol;
             }else{
-                if(hiddencol>=maxcol-exceedcol){
-                    let newhiddencol = maxcol-exceedcol;
-                    if(newhiddencol != hiddencol || this.state.visible != true || this.state.rightdisabled!=true){
-
-                        this.setState({
-                            hiddencol:newhiddencol,
-                            visible:true,
-                            rightdisabled:true
-                        })
-                    }
-                    hiddencol = newhiddencol;
-                }else{
-                    let leftdisabled = hiddencol<=0;
-                    if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled != false){
-                        this.setState(
-                            {
-                                visible:true,
-                                leftdisabled:leftdisabled,
-                                rightdisabled:false
-                            }
-                        )
-                    }
+                let leftdisabled = hiddencol<=0;
+                let rightdisabled = hiddencol>=maxcol-exceedcol;
+                let newhiddencol = hiddencol;
+                if(newhiddencol<=0){
+                    newhiddencol=0;
                 }
+                if(newhiddencol>=maxcol-exceedcol){
+                    newhiddencol=maxcol-exceedcol;
+                }
+                if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled!=rightdisabled || this.state.hiddencol!=newhiddencol){
+                    this.setState(
+                        {
+                            visible:true,
+                            leftdisabled:leftdisabled,
+                            rightdisabled:rightdisabled,
+                            hiddencol:newhiddencol
+                        }
+                    )
+                }
+                hiddencol = newhiddencol;
+                
             }
             if(exceedcol!=-1){
                 exceedcol=hiddencol+exceedcol;
