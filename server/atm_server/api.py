@@ -18,7 +18,7 @@ from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
     fetch_classifiers, fetch_hyperpartitions
 from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun, \
-    create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
+    maybe_create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
     load_datarun_config_dict
 from recommender.predict_dataset import Recommender
 
@@ -345,7 +345,7 @@ def post_new_datarun(dataset_id):
     upload_run_conf.dataset_id = dataset_id
     db = get_db()
     datarun_id = new_datarun(db, upload_run_conf, run_per_partition)
-    create_datarun_configs(datarun_id)
+    maybe_create_datarun_configs(datarun_id)
     return jsonify({'success': True, 'id': datarun_id})
 
 
@@ -550,7 +550,7 @@ def post_update_datarun_config(datarun_id):
 def post_click_event():
     """
     A click event is a json file.
-    includes 
+    includes
     name:
     clickevent:
     [{  type
