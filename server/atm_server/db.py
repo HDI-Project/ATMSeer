@@ -40,8 +40,8 @@ def get_db():
         db = Database(sql_conf.dialect, sql_conf.database, sql_conf.username,
                         sql_conf.password, sql_conf.host, sql_conf.port,
                         sql_conf.query)
-        db.session = db.get_session()
         check_db_mappers(db)
+        db.session = db.get_session()
         g.db = db
     return g.db
 

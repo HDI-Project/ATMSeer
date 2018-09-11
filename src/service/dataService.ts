@@ -405,7 +405,9 @@ export interface IClickEvent {
 }
 export interface IClickBundleEvent{
     name:string,
-    clickevent:IClickEvent
+    clickevent:IClickEvent,
+    datasetID:number,
+    datarunID:number
 }
 export async function postBundleClickEvent(log:IClickBundleEvent):Promise<ICommonResponse>{
     const headers = {'Content-Type': 'application/json'};
