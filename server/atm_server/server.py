@@ -81,6 +81,9 @@ def start_server():
 
     _args = parser.parse_args()
 
+    if _args.debug:
+        os.environ['FLASK_ENV'] = 'development'
+
     app = create_app(vars(_args))
 
     app.run(
