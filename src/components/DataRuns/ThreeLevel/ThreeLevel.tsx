@@ -7,7 +7,7 @@ import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
-import {Button, InputNumber, message,Tag} from 'antd';
+import {Button, InputNumber, message} from 'antd';
 import { getColor } from 'helper';
 export interface IProps {
     height: number,
@@ -425,19 +425,30 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
        width3 = 220,
         headerHeight = 10
         let svgHeight = window.innerHeight * 0.74;
+        // let generateTag = (box:any,name:string)=>{
+        //     if(name!=""){
+        //         let width = box.width;
+        //         let height = box.height;
+        //         let x = box.x;
+        //         let y = box.y;
+        //         return  <foreignObject x={x} y={y} width={width} height={height}><Tag color={getColor(name)}>{name}</Tag></foreignObject>
+        //     }else{
+        //         return <g />
+        //     }
+        // }
         let generateTag = (box:any,name:string)=>{
-            if(name!=""){
-                let width = box.width;
-                let height = box.height;
-                let x = box.x;
-                let y = box.y;
-                return  <foreignObject x={x} y={y} width={width} height={height}><Tag color={getColor(name)}>{name}</Tag></foreignObject>
-            }else{
-                return <g />
+                if(name!=""){
+                    let {width, height, x, y}  = box;
+                    return  <g className="tag" transform={`translate(${x},${y})`}>
+                        <rect width={width} height={height} style={{fill:getColor(name)}} rx={5} ry={5}/>
+                        <text y={height-5} x={width/2} textAnchor="middle" style={{fill: "white"}}>{name}</text>
+                    </g>
+                }else{
+                    return <g className="tag"/>
+                }
             }
-        }
-        console.log("three level render");
-        console.log(this.state.hyperpartitionsAlreadySelected);
+        // console.log("three level render");
+        // console.log(this.state.hyperpartitionsAlreadySelected);
         return <div
             style={{
                 height: `${this.props.height}%`,
@@ -487,8 +498,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             {generateTag({
                 x:width2/3 + 80,
                 y:-6,
-                width:100,
-                height:30
+                width:40,
+                height:20
 
             },selectedMethod)}
                 <HyperPartitions
@@ -507,7 +518,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 />
 
             </g>
-            <defs>  
+            <defs>
             <clipPath id="mask_hyperparameters">
             <rect x={-60} y={-10} width={width3+200} height={svgHeight+100}/>
             </clipPath>
@@ -522,8 +533,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
              {generateTag({
                 x:width3/3 + 89,
                 y:-6,
-                width:100,
-                height:30
+                width:40,
+                height:20
 
             },selectedMethod)}
             <HyperParameters

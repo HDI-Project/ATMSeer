@@ -294,7 +294,7 @@
                 "values": [true]
             }
         },
-        "root_hyperparameters": ["n_neighbors", "weights", "algorithm", "metric", "_scale"],
+        "root_hyperparameters": ["n_neighbors", "weights", "algorithm", "metric", "_scale", "leaf_size"],
         "conditional_hyperparameters": {
             "metric": {
                 "minkowski": ["p"]
