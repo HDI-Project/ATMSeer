@@ -150,7 +150,7 @@ export default class methods extends React.Component<IProps, IState>{
         //         maxnum=num;
         //     }
         // });
-       
+
         return <g className="methods" >
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                             /*let checked = false;
@@ -175,7 +175,7 @@ export default class methods extends React.Component<IProps, IState>{
                                             (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) - this.methodBoxAttr.gap}
                                         width={this.methodBoxAttr.checkboxWidth}
                                         height={this.methodBoxAttr.checkboxHeight}>
-                                        <Tooltip title={methodsDef[name].fullname}>
+
                                        <Checkbox
                                         key={name+"_checkbox_"+(i)}
                                         checked={checked}
@@ -184,11 +184,11 @@ export default class methods extends React.Component<IProps, IState>{
                                         value={name}
                                         onChange={this.props.onMethodsCheckBoxChange} >
                                         {/*<Tag color={getColor(name)}>{name}</Tag>*/}
-                                        
+                                        <Tooltip title={methodsDef[name].fullname}>
                                             <span>{name}</span>
-                                       
+                                            </Tooltip>
                                         </Checkbox>
-                                         </Tooltip>
+
                                         </foreignObject>
                                   )
                     })}
@@ -497,9 +497,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
             .call(d3.axisLeft(yScale).tickValues([0.1,0.3,0.5,0.7,0.9]).tickFormat(function (d:any) {
-                    
+
                         return d;}))
-                    
+
 
     }
     render() {
