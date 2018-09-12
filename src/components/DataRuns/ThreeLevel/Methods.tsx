@@ -399,7 +399,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
 
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
-        console.log(data.map((d, i) => i/10))
+        //console.log(data.map((d, i) => i/10))
         //Create SVG element
        // let tooltip = d3.select("#tooltip");
         //let top_methods = d3.select("#methodstop");
