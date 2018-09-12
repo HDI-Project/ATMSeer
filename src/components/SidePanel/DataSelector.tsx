@@ -43,7 +43,9 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
 
     public async getDatasets() {
         const datasets = await getDatasets();
-        this.setState({ datasets });
+        if(datasets){
+            this.setState({ datasets });
+        }
     }
 
     public async getDataruns(datasetID: number, datarunID:number = -1) {

@@ -133,6 +133,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 });
                 }
        }
+
+
+       
     fetchHpId = (method:string)=>{
         let hp = this.props.hyperpartitions;
         return hp.filter((d:any)=>d.method==method).map((d:any)=>d.id);
@@ -143,59 +146,61 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let methodSelected = this.state.methodSelected;
         let configsHyperpartitions :number[] = this.state.hyperpartitionsAlreadySelected;
         console.log("onMethodsCheckBoxChange")
-        if(checked==false){
-            //un selected
-            let configsMethod : string[] = this.state.configsMethod;
-            let index = configsMethod.indexOf(value);
-            if(index>-1){
-                configsMethod.splice(index, 1);
+        if(methodSelected[value]){
+            if(checked==false){
+                //un selected
+                let configsMethod : string[] = this.state.configsMethod;
+                let index = configsMethod.indexOf(value);
+                if(index>-1){
+                    configsMethod.splice(index, 1);
+                }
+
+
+                methodSelected[value].checked=false;
+                methodSelected[value].indeterminate=false;
+                methodSelected[value].disabled=false;
+                let hpid = this.fetchHpId(value);
+                configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
+                
+                this.setState({
+                    hyperpartitionsAlreadySelected:configsHyperpartitions,
+                    methodSelected:methodSelected,
+                    configsMethod:configsMethod
+
+                });
+
+            }else{
+                let configsMethod : string[] = this.state.configsMethod;
+                configsMethod.push(value);
+                methodSelected[value].checked=true;
+                methodSelected[value].indeterminate=false;
+                methodSelected[value].disabled=false;
+                let hpid = this.fetchHpId(value);
+                configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
+                this.setState({
+                    hyperpartitionsAlreadySelected:configsHyperpartitions,
+                    methodSelected:methodSelected,
+                    configsMethod:configsMethod
+
+                });
+
+
             }
-
-
-            methodSelected[value].checked=false;
-            methodSelected[value].indeterminate=false;
-            methodSelected[value].disabled=false;
-            let hpid = this.fetchHpId(value);
-            configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-            
-            this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
-
-            });
-
-        }else{
-            let configsMethod : string[] = this.state.configsMethod;
-            configsMethod.push(value);
-            methodSelected[value].checked=true;
-            methodSelected[value].indeterminate=false;
-            methodSelected[value].disabled=false;
-            let hpid = this.fetchHpId(value);
-            configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
-            this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
-
-            });
-
-
+            let action="selected";
+            if(checked==false){
+                action="unselected";
+            }
+            let eventlog:IClickEvent = {
+                type:"methodcheckbox",
+                description:{
+                    action:action,
+                    methodname:value
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.updateCurrentDataRun();
         }
-        let action="selected";
-        if(checked==false){
-            action="unselected";
-        }
-        let eventlog:IClickEvent = {
-            type:"methodcheckbox",
-            description:{
-                action:action,
-                methodname:value
-            },
-            time:new Date().toString()
-        }
-        this.props.postClickEvent(eventlog);
-        this.updateCurrentDataRun();
     }
     onHyperpartitionCheckBoxChange=(id : number)=>{
         let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
@@ -416,10 +421,26 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         console.log("onMethodButtonClick");
         let {displaymode} = this.state;
         if(displaymode==0){
+            let eventlog:IClickEvent = {
+                type:"hyperpartitionsView",
+                description:{
+                    action:"more",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
             this.setState({
                 displaymode:1
             });
         }else{
+            let eventlog:IClickEvent = {
+                type:"hyperpartitionsView",
+                description:{
+                    action:"hide",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
             this.setState({
                 displaymode:0
             });
@@ -429,10 +450,26 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         console.log("onHyperpartitionButtonClick");
         let {displaymode} = this.state;
         if(displaymode==1){
+            let eventlog:IClickEvent = {
+                type:"hyperparametersView",
+                description:{
+                    action:"more",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
             this.setState({
                 displaymode:2
             });
         }else{
+            let eventlog:IClickEvent = {
+                type:"hyperparametersView",
+                description:{
+                    action:"hide",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
             this.setState({
                 displaymode:1
             });

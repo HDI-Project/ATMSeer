@@ -71,7 +71,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             }*/
             // let num_all_hp = hpsInfo.length
 
-            hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0);
+            hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0).filter(d=>d.method==selectedMethod);
             if(this.lastArray == null){
                 this.lastArray = hpsInfo;
             }else{
@@ -302,6 +302,18 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     <input type="radio" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
                     </div>`
                 };
+                 //Create SVG element
+                let tooltip = d3.select("#tooltip");
+                //let top_methods = d3.select("#methodstop");
+
+                if(tooltip.empty()){
+                    tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .attr("id","tooltip")
+                    .style("opacity", 0)
+                    .style("left",  "0px")
+                    .style("top",  "0px");;
+                }
 
             textEnter.append('g')
                 .attr('class', 'hp_name')
@@ -314,6 +326,19 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .html(generateText)
                 .on("click",(d:any)=>{
                     nowProps.onHpsCheckBoxChange(d.id);
+                }).on("mouseover",(d:any)=>{
+                    let length = d.hyperpartition_string.length * 6.5 + 15;
+                    tooltip
+                    .style("width",length+"px")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                    tooltip.style("opacity", 0.7).html(d.hyperpartition_string)
+
+                })
+                .on("mouseout",(d:any)=>{
+                    tooltip
+                    .style("opacity", 0);
+
                 })
 
 
@@ -387,19 +412,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
                 }
 
-                //Create SVG element
-                let tooltip = d3.select("#tooltip");
-                //let top_methods = d3.select("#methodstop");
-
-                if(tooltip.empty()){
-                    tooltip = d3.select("body").append("div")
-                    .attr("class", "tooltip")
-                    .attr("id","tooltip")
-                    .style("opacity", 0)
-                    .style("left",  "0px")
-                    .style("top",  "0px");;
-                }
-
+               
                 //CLASSIFIER ENTER
                 classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")

@@ -43,7 +43,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
         const option = {
             title:{
                 text:"performance histogram",
-                 fontSize: '0.8vh',
+                 fontSize: '0.5vh',
                 top: 0,
             },
             yAxis: {

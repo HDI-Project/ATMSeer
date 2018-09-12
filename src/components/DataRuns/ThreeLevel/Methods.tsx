@@ -42,7 +42,7 @@ export default class methods extends React.Component<IProps, IState>{
         checkboxY: 2,
         checkboxWidth: 75,
         checkboxHeight: 30,
-        yextragap:16
+        yextragap:20
     }
     public getbestperformance(list: IClassifier[]) {
         if (list.length > 0) {
@@ -117,7 +117,7 @@ export default class methods extends React.Component<IProps, IState>{
             checkboxY: 2,
             checkboxWidth: 100,
             checkboxHeight: 30,
-            yextragap:13
+            yextragap:20
         }
 
 
@@ -300,13 +300,13 @@ export default class methods extends React.Component<IProps, IState>{
                         {flowerlist.map((d:number)=>{
                             return <image key={name+"_flower_"+d} opacity={0.5} xlinkHref="small_hint.png" x={this.methodBoxAttr.width-15*d} y={0} width={15} height={15}/>}
                             )}
-                        <text
+                        {/*<text
                             x={this.methodBoxAttr.width}
                             y={this.methodBoxAttr.height}
                             textAnchor="end"
                         >
                             {name}
-                        </text>
+                        </text>*/}
                     </g>)
                 })
             } </g>
@@ -495,13 +495,47 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("width", (d: any) => xScale(d))
             .attr("height", yScale.bandwidth())
 
-        svg.append("text")
+     let text1 = svg.append("text")
             .attr("class", "method_name")
             .attr('x', width)
         //    .attr('y', height-12)
             .attr('y',-3)
             .attr('text-anchor', "end")
-            .text(`${classifiers.length} / ${bestperformance.toFixed(3)}`)
+        //    .attr('filter',"url(#solid)")
+            .text(`${bestperformance.toFixed(3)}`)
+
+
+    let text2=svg.append("text")
+            .attr("class", "method_name")
+            .attr('x', width-50)
+        //    .attr('y', height-12)
+            .attr('y',-3)
+            .attr('text-anchor', "end")
+        //    .attr('filter',"url(#solid)")
+            .text(`${classifiers.length}`)
+
+    var bbox1 = text1.node().getBBox();
+
+    svg.append("rect")
+    .attr("x", bbox1.x)
+    .attr("y", bbox1.y)
+    .attr("width", bbox1.width)
+    .attr("height", bbox1.height)
+    .style("fill", "#ccc")
+    .style("fill-opacity", ".0")
+    .style("stroke", "#666")
+    .style("stroke-width", "1.5px");
+    var bbox2 = text2.node().getBBox();
+
+    svg.append("rect")
+    .attr("x", bbox2.x)
+    .attr("y", bbox2.y)
+    .attr("width", bbox2.width)
+    .attr("height", bbox2.height)
+    .style("fill", "#ccc")
+    .style("fill-opacity", ".0")
+    .style("stroke", "#666")
+    .style("stroke-width", "1.5px");
        /* svg.append("text")
             .attr("class", "best_score")
             .attr('x', width)
@@ -538,7 +572,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
     }
     render() {
         const { name } = this.props;
-        return <g id={this.TAG + name} className='algorithm'/>
+        return <g> {/*<defs>
+                <filter x="0" y="0" width="1" height="1" id="solid">
+                <feFlood flood-color="gray"/>
+                <feComposite in="SourceGraphic" operator="xor"/>
+                </filter>
+            </defs>*/}<g id={this.TAG + name} className='algorithm'/>
+                   
+        </g>
     }
 }
 
