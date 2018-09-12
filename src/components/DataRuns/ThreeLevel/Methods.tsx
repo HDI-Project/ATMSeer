@@ -3,7 +3,7 @@ import { IClassifier, IMethod,  } from "types";
 import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
-import { Checkbox,Tooltip } from 'antd';
+import { Checkbox,Tooltip,Progress } from 'antd';
 import "./Methods.css";
 //import * as hint from "assets/small_hint.png"
 const d3 = require("d3");
@@ -42,7 +42,7 @@ export default class methods extends React.Component<IProps, IState>{
         checkboxY: 2,
         checkboxWidth: 75,
         checkboxHeight: 30,
-        yextragap:16
+        yextragap:20
     }
     public getbestperformance(list: IClassifier[]) {
         if (list.length > 0) {
@@ -117,7 +117,7 @@ export default class methods extends React.Component<IProps, IState>{
             checkboxY: 2,
             checkboxWidth: 100,
             checkboxHeight: 30,
-            yextragap:13
+            yextragap:20
         }
 
 
@@ -170,7 +170,7 @@ export default class methods extends React.Component<IProps, IState>{
                             return (<foreignObject
                                         key={name+"_text_"+i}
                                         x={ this.methodBoxAttr.x +
-                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)}
+                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap) - 15}
                                         y={this.methodBoxAttr.y +
                                             (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) - this.methodBoxAttr.gap}
                                         width={this.methodBoxAttr.checkboxWidth}
@@ -202,13 +202,26 @@ export default class methods extends React.Component<IProps, IState>{
                     if(index>=0&&index<=2){
                         flower = 3-index;
                     }
+                    let filterclassifier = classifiers.filter((d:any)=>d.method==name);
+                    let filterhyperpartitions = hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name);
+                    let usedHpID = Array.from(new Set(filterclassifier.map(d=>d.hyperpartition_id)));
+                    //let usedhpidlen = usedHpID.length;
+                    let filterhyperpartitionslen = filterhyperpartitions.length;
+                    if(filterhyperpartitionslen==0){
+                        filterhyperpartitionslen=1;
+                    }
+                     const progressHyperpartiton = (percent:number)=>{
+                        return `${usedHpID.length}/${filterhyperpartitions.length}`
+                    }
+
                     // if (testin > -1) {
                     //     selected = true;
                     // }
                     //const classifier_num = datarun[name].length;
                     //const top_width = classifier_num*6+60;
                     // this.index++;
-                    return (
+                    return (<g key={name + "_g_linechart_" + i}>
+                        
                         <LineChart key={name + "_used_" + i}
                             // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
                             // y={this.methodBoxAttr.y}
@@ -223,14 +236,34 @@ export default class methods extends React.Component<IProps, IState>{
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
                             methodDef={methodDef}
-                            classifiers={classifiers.filter((d:any)=>d.method==name)}
+                            classifiers={filterclassifier}
                             name={name}
                             totallen={maxnum}
                             onClick={this.props.onSelectMethod}
                             selected={selected}
-                            hyperpartitoins = {hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name)}
+                            hyperpartitoins = {filterhyperpartitions}
                             flower={flower}
-                        />)
+                        />
+                        <foreignObject key={name + "_progressbar_" + i} x={
+                                this.methodBoxAttr.x +
+                                Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap) + this.methodBoxAttr.width-20
+                            }
+                            y={
+                                this.methodBoxAttr.y +
+                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) + this.methodBoxAttr.height-20
+                            } width={40} height={40}
+                            >
+                        <Progress
+                        type="circle"
+                        percent={100*usedHpID.length/filterhyperpartitionslen}
+                        format={progressHyperpartiton}
+                        width={40}
+                        strokeWidth={10}
+                        />
+                        </foreignObject>
+                        
+                        
+                        </g>)
 
                 })}
             </g>
@@ -267,13 +300,13 @@ export default class methods extends React.Component<IProps, IState>{
                         {flowerlist.map((d:number)=>{
                             return <image key={name+"_flower_"+d} opacity={0.5} xlinkHref="small_hint.png" x={this.methodBoxAttr.width-15*d} y={0} width={15} height={15}/>}
                             )}
-                        <text
+                        {/*<text
                             x={this.methodBoxAttr.width}
                             y={this.methodBoxAttr.height}
                             textAnchor="end"
                         >
                             {name}
-                        </text>
+                        </text>*/}
                     </g>)
                 })
             } </g>
@@ -311,8 +344,8 @@ class LineChart extends React.Component<LineChartProps, {}>{
     }
     renderD3() {
         // Get Datasets
-        const { methodDef, classifiers, totallen, selected, hyperpartitoins } = this.props;
-        let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)))
+        const { methodDef, classifiers, totallen, selected } = this.props;
+       // let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)))
         let step = 0.1;
         let data: number[] = [];
 
@@ -462,23 +495,58 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("width", (d: any) => xScale(d))
             .attr("height", yScale.bandwidth())
 
-        svg.append("text")
+     let text1 = svg.append("text")
             .attr("class", "method_name")
             .attr('x', width)
-            .attr('y', height-12)
+        //    .attr('y', height-12)
+            .attr('y',-3)
             .attr('text-anchor', "end")
-            .text(`${this.props.name}: ${classifiers.length}`)
-        svg.append("text")
+        //    .attr('filter',"url(#solid)")
+            .text(`${bestperformance.toFixed(3)}`)
+
+
+    let text2=svg.append("text")
+            .attr("class", "method_name")
+            .attr('x', width-50)
+        //    .attr('y', height-12)
+            .attr('y',-3)
+            .attr('text-anchor', "end")
+        //    .attr('filter',"url(#solid)")
+            .text(`${classifiers.length}`)
+
+    var bbox1 = text1.node().getBBox();
+
+    svg.append("rect")
+    .attr("x", bbox1.x)
+    .attr("y", bbox1.y)
+    .attr("width", bbox1.width)
+    .attr("height", bbox1.height)
+    .style("fill", "#ccc")
+    .style("fill-opacity", ".0")
+    .style("stroke", "#666")
+    .style("stroke-width", "1.5px");
+    var bbox2 = text2.node().getBBox();
+
+    svg.append("rect")
+    .attr("x", bbox2.x)
+    .attr("y", bbox2.y)
+    .attr("width", bbox2.width)
+    .attr("height", bbox2.height)
+    .style("fill", "#ccc")
+    .style("fill-opacity", ".0")
+    .style("stroke", "#666")
+    .style("stroke-width", "1.5px");
+       /* svg.append("text")
             .attr("class", "best_score")
             .attr('x', width)
             .attr('y', height )
             .attr('text-anchor', "end")
-            .text(`best: ${bestperformance.toFixed(3)}`)
-        svg.append('text')
+            .text(`best: ${bestperformance.toFixed(3)}`)*/
+        /*svg.append('text')
             .attr('class', 'hps')
             .attr("transform", `translate(${width+margin.left},${height/2}) rotate(${90})`)
             .attr('text-anchor', 'middle')
-            .text(`hp:${usedHpID.length}/${hyperpartitoins.length}`)
+            .text(`hp:${usedHpID.length}/${hyperpartitoins.length}`)*/
         for(let i = 1;i<=this.props.flower;i++){
             svg.append('image')
                 .attr('width',15)
@@ -504,7 +572,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
     }
     render() {
         const { name } = this.props;
-        return <g id={this.TAG + name} className='algorithm'/>
+        return <g> {/*<defs>
+                <filter x="0" y="0" width="1" height="1" id="solid">
+                <feFlood flood-color="gray"/>
+                <feComposite in="SourceGraphic" operator="xor"/>
+                </filter>
+            </defs>*/}<g id={this.TAG + name} className='algorithm'/>
+                   
+        </g>
     }
 }
 
