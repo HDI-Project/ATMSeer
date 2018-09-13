@@ -40,7 +40,7 @@ export function computeDatarunSummary(classifiers: IClassifierInfo[]): IDatarunS
         topClassifiers: classifiers,
         nTriedByMethod,
         triedHyperpartition,
-    
+
     };
 }
 
@@ -217,7 +217,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                     {/* <hr /> */}
                     <div style={{height:"100%"}}>
                         <b>Metric</b>: {datarunInfo && datarunInfo.metric}
-                         <br/> 
+                         <br/>
                          <b>Best classifier</b>:
                         <span
                             style={{
@@ -231,9 +231,9 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             {best && `${best.method}-${best.id}`}
                         </span>
                         {best && ` ${best.cv_metric.toFixed(3)}±${best.cv_metric_std.toFixed(3)}`}
-                        <br/> 
+                        <br/>
                          <b>Total classifiers</b>: {summary.nTried}
-                        <br/> 
+                        <br/>
                         <b>Algorithm Coverage</b>:{' '}
                         <Progress
                         type="circle"
@@ -251,6 +251,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         width={40}
                         strokeWidth={10}
                         />
+                        <hr style={{marginTop: '6px'}}/>
                         <OverallHistogram classifiers={summary.topClassifiers} width={100} />
                     </div>
                     {/* <div>
@@ -265,7 +266,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             max={20}
                             defaultValue={topK}
                             onChange={this.changeTopK}
-                            style={{width: '50px'}}
+                            style={{width: '50px', margin: '0 4px'}}
                         />
 
 
@@ -280,6 +281,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             onClick={()=>this.props.setTopK(topK)}
                         /> */}
                         <span style={{float:'right'}} >
+                        Focus:
                         <Switch
                             checkedChildren={<Icon type="bars" />}
                             unCheckedChildren={<Icon type="bars" />}
@@ -299,7 +301,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         ))}
                     </Collapse>
                     </div>
-               </div> 
+               </div>
             </div>
         ) : (
             <div>Please select a datarun.</div>
