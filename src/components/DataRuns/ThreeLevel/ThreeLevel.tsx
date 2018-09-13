@@ -547,7 +547,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
             </clipPath>
             </defs>
-            <g transform={`translate(${width1+gapbetween}, ${headerHeight})`} clip-path={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
+            <g transform={`translate(${width1+gapbetween}, ${headerHeight})`} clipPath={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
             <text
                 textAnchor="middle"
                 x={width2/3}
