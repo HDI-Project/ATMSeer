@@ -487,26 +487,13 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 (name: string) => usedMethods.indexOf(name) < 0
             )
         let svgWidth = window.innerWidth*5/6,
-        width1 = svgWidth,
-        //gapbetween = 70,
-        width2 = svgWidth,
+        width1 = svgWidth*3/13,
+        gapbetween = 70,
+        width2 = svgWidth*0.8/2,
        // width3 = svgWidth*1/7,
-       width3 = svgWidth,
+       width3 = 220,
         headerHeight = 10
         let svgHeight = window.innerHeight * 0.74;
-        let method_height = svgHeight;
-        if(displaymode==0){
-            method_height = svgHeight;
-        }else if(displaymode==1){
-            method_height = svgHeight/2;
-        }else if(displaymode==2){
-            method_height = svgHeight*1.3/3;
-        }
-        let hpheight = svgHeight/2;
-        if(displaymode==2){
-            hpheight = svgHeight*0.7/3;
-        }
-        let hyheight = svgHeight/3;
         // let generateTag = (box:any,name:string)=>{
         //     if(name!=""){
         //         let width = box.width;
@@ -535,15 +522,14 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             // mode any other value  nothing
             if(mode==0){
                  return <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
-                 
                 <Button type="default" onClick={eventCallback} size="small">
-                   <Icon type="arrow-down" /> More<Icon type="arrow-down" />
+                    More<Icon type="double-right" />
                 </Button>
                 </foreignObject>
             }else if(mode==1){
                 return  <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
                 <Button type="default" onClick={eventCallback} size="small">
-                   <Icon type="arrow-up" /> Hide <Icon type="arrow-up" />
+                   <Icon type="double-left" /> Hide
                 </Button>
                 </foreignObject>
             }else{
@@ -558,18 +544,18 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             buttonMode;
             return  (<g><defs>
             <clipPath id="mask_hyperpartitions">
-            <rect x={0} y={-10} width={width2-60} height={hpheight} />
+            <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
             </clipPath>
             </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height})`} clipPath={"url(#mask_hyperpartitions)"} width={width2} height={hpheight}>
+            <g transform={`translate(${width1+gapbetween}, ${headerHeight})`} clipPath={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
             <text
                 textAnchor="middle"
-                x={width2/2-35}
+                x={width2/3}
                 y={10}
                 style={{ font: "bold 16px sans-serif" , display:"inline" }}
             >HyperPartitions of </text>
             {generateTag({
-                x:width2/2 + 80 - 35,
+                x:width2/3 + 80,
                 y:-6,
                 width:40,
                 height:20
@@ -584,7 +570,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 compareK={compareK}
                 hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
                 width={width2}
-                height={hpheight}
+                height={svgHeight}
                 onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
                 onMouseOverClassifier={this.onMouseOverClassifier}
                 mouseOverClassifier={this.state.mouseOverClassifier}
@@ -593,8 +579,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             
             </g>
             {generateButton({
-                    x:width2/2-75,
-                    y:method_height+hpheight,
+                    x:width1+width2+gapbetween-60,
+                    y:svgHeight/2+headerHeight,
                     width:150,
                     height:35
                 },buttonMode,this.onHyperpartitionButtonClick)}</g>)
@@ -603,18 +589,18 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             
             return <g><defs>
             <clipPath id="mask_hyperparameters">
-            <rect x={0} y={-10} width={width3+200} height={hyheight+100}/>
+            <rect x={-60} y={-10} width={width3+200} height={svgHeight+100}/>
             </clipPath>
             </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height+hpheight+35})`} clipPath={"url(#mask_hyperparameters)"}>
+            <g transform={`translate(${width1+width2+2*gapbetween+60}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
             <text
                 textAnchor="middle"
-                x={width3/2-35}
+                x={width3/3}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of</text>
              {generateTag({
-                x:width3/2 + 89-35,
+                x:width3/3 + 89,
                 y:-6,
                 width:40,
                 height:20
@@ -627,8 +613,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
                 onSelectedChange={this.onBrushSelected}
                 mouseOverClassifier={this.state.mouseOverClassifier}
-                height={hyheight}
-                width={width3}
+                height={svgHeight}
                 />
                
             </g></g>
@@ -656,15 +641,13 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <g transform={`translate(${0}, ${headerHeight})`}>
             <text
                 textAnchor="middle"
-                x={width1/2-35}
+                x={width1/2}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >Algorithms</text>
             <Methods
                 classifiers={classifiers}
                 width = {width1}
-                height = {method_height}
-                displaymode = {displaymode}
                 onSelectMethod={this.onSelectMethod}
                 selectedMethod = {this.state.selectedMethod}
                 usedMethods = {usedMethods}
@@ -682,8 +665,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 </Button>
                 </foreignObject>*/}
              {generateButton({
-                    x:width1/2-75,
-                    y:method_height-35,
+                    x:width1,
+                    y:svgHeight/2,
                     width:150,
                     height:35
                 },methodbuttonMode,this.onMethodButtonClick)}

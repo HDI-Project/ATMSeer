@@ -89,46 +89,66 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             x.domain(Array.from(Array(maxLen).keys()))
             y.domain([0, 1]);
 
-            let exceedrow = -1;
-            let maxrow = 0;
-            let nowrow = 0;
+            let exceedcol = -1;
+            let maxcol = 0;
+            let nowcol = 0;
             let lastposx = gap+width*0.5;
 
-            let lastposy = 2*height+gap;
-            //let verticalnum = 0;
-            //let maxverticalnum = 10;
+            let lastposy = height;
+            let horizontalnum = 0;
+            let maxhorizontalnum = 10;
 
             let pos = [[lastposx, lastposy]]
             let bundleData : any[]= [];
             for (let i = 0; i < hpsInfo.length; i++) {
                 let currentPos = [0, 0]
-                //next pos x not changed, y changed
-                if(i!=0)lastposx = lastposx + width * 1.5;
-                currentPos = [lastposx, lastposy];
-                
-                
-                
-                if (lastposx+ width * 1.5 > nowProps.width) {
+                if (hpsInfo[i].method == selectedMethod) {
+                    //next pos x not changed, y changed
                     lastposy = lastposy + (2 * height + gap);
-                    nowrow ++;
-                    if(lastposy + (2 * height + gap)>nowProps.height && exceedrow==-1){
-                        exceedrow = nowrow;
+                    currentPos = [lastposx, lastposy]
+                    horizontalnum = 0;
+                } else {
+                    if(horizontalnum == 0){
+                        lastposy = lastposy + (2*gap);
                     }
-                    lastposx = gap+width*0.5;
+                    if(horizontalnum<maxhorizontalnum){
+                         //next pos x changed, y not changed
+                        currentPos = [lastposx + (2*gap*horizontalnum), lastposy]
+                        horizontalnum++;
+                    }else{
+                        lastposy = lastposy + (2*gap);
+                        currentPos = [lastposx, lastposy]
+                        horizontalnum = 1;
+                    }
+
+                }
+                if (lastposy > nowProps.height) {
+                    lastposx = lastposx + width * 1.5;
+                    nowcol ++;
+                    if(lastposx + width*1.5>nowProps.width && exceedcol==-1){
+                        exceedcol = nowcol;
+                    }
+
+
+                    lastposy = height + (
+                        hpsInfo[i].method == selectedMethod?
+                        (2 * height + gap)
+                        :(2*gap)
+                    );
                     currentPos = [lastposx, lastposy]
                 }
                 pos.push(currentPos)
                 bundleData.push({
                     ...hpsInfo[i],
                     pos:currentPos,
-                    col:nowrow
+                    col:nowcol
                 })
             }
-            maxrow = nowrow+1;
+            maxcol = nowcol+1;
             //console.log("maxcol exceedcol");
             //console.log(maxcol);
             //console.log(exceedcol)
-            if(exceedrow==-1){
+            if(exceedcol==-1){
                 let newhiddencol = 0;
                 if(newhiddencol != hiddencol || this.state.visible!=false){
                     this.setState({
@@ -139,13 +159,13 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 hiddencol = newhiddencol;
             }else{
                 let leftdisabled = hiddencol<=0;
-                let rightdisabled = hiddencol>=maxrow-exceedrow;
+                let rightdisabled = hiddencol>=maxcol-exceedcol;
                 let newhiddencol = hiddencol;
                 if(newhiddencol<=0){
                     newhiddencol=0;
                 }
-                if(newhiddencol>=maxrow-exceedrow){
-                    newhiddencol=maxrow-exceedrow;
+                if(newhiddencol>=maxcol-exceedcol){
+                    newhiddencol=maxcol-exceedcol;
                 }
                 if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled!=rightdisabled || this.state.hiddencol!=newhiddencol){
                     this.setState(
@@ -160,21 +180,21 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 hiddencol = newhiddencol;
                 
             }
-            if(exceedrow!=-1){
-                exceedrow=hiddencol+exceedrow;
+            if(exceedcol!=-1){
+                exceedcol=hiddencol+exceedcol;
             }else{
-                exceedrow=maxrow+1;
+                exceedcol=maxcol+1;
             }
             //console.log("hiddencol");
            // console.log(hiddencol);
             bundleData.forEach((d:any)=>{
                 if(d.col<hiddencol){
-                    d.pos[1]=d.pos[1]-2*height-gap-(2 * height + gap)*(hiddencol);
+                    d.pos[0]=d.pos[0]-gap-width*0.5-width*1.5*(hiddencol);
                 }else{
-                    if(d.col>=exceedrow){
-                        d.pos[1]=d.pos[1]-(2 * height + gap)*(d.col)+nowProps.height+(2 * height + gap)*(d.col-exceedrow);
+                    if(d.col>=exceedcol){
+                        d.pos[0]=d.pos[0]-width*1.5*(d.col)+nowProps.width+width*1.5*(d.col-exceedcol);
                      }else{
-                        d.pos[1]=d.pos[1]-(2 * height + gap)*(hiddencol);
+                        d.pos[0]=d.pos[0]-width*1.5*(hiddencol);
                      }
 
                 }
@@ -582,7 +602,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         //console.log(this.state.hiddencol);
         let generateButton = () =>{
             if(this.state.visible){
-            return (<foreignObject x={this.props.width/2-50} y={this.props.height-35} width={100} height={35}>
+            return (<foreignObject x={this.props.width/2-50} y={this.props.height+20} width={100} height={35}>
                 <div>
 
                <Button type="default" size="small" onClick={this.onLeftHp} disabled={this.state.leftdisabled}>
