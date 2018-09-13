@@ -42,7 +42,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
         selectedClassifier:[],
         selectedMethod:"",
         classifiers:[],
-        mode:0,
+        mode:1,
         visible:false
     }
     box = {
@@ -79,8 +79,10 @@ export default class HyperParameters extends React.Component<IProps, IState>{
             hiddenrow:hiddenrow
         })
     }
-    shouldComponentUpdate(nextProps:IProps,nextStates:IState){
-       
+    componentDidMount(){
+        this.prepareData(this.props,this.state);
+    }
+    prepareData(nextProps:IProps,nextStates:IState){
         let { classifiers, selectedMethod, compareK,alreadySelectedRange } = nextProps
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
@@ -188,7 +190,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                 visible=false;
             }
             
-            if(this.props!=nextProps || newhiddenrow!=nextStates.hiddenrow || visible!=nextStates.visible){
+            if(this.props!=nextProps || newhiddenrow!=nextStates.hiddenrow || visible!=nextStates.visible || this.state.HyperparameterList.length!=HyperparameterList.length){
                 this.setState({
                     selectedClassifier:selectedClassifier,
                     HyperparameterList:HyperparameterList,
@@ -205,12 +207,16 @@ export default class HyperParameters extends React.Component<IProps, IState>{
         }else{
             if(this.props!=nextProps){
                 this.setState({
-                    mode:0,
+                    mode:1,
                     visible:false,
                     hiddenrow:0
                 })
             }
         }
+    }
+    shouldComponentUpdate(nextProps:IProps,nextStates:IState){
+        this.prepareData(nextProps,nextStates);
+       
         
         return true;
         
@@ -240,6 +246,8 @@ export default class HyperParameters extends React.Component<IProps, IState>{
         let exceedRow = this.calculateExceedRow();
         exceedRow=exceedRow+this.state.hiddenrow;
         if(mode==1){ 
+            console.log("render hyperparameters")
+            console.log(HyperparameterList.length)
             return <g>
                 <g className="hyperParameters">
                 {HyperparameterList.map((hp:HyperParameterInfo, i) => {
@@ -412,7 +420,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
 
 
         // area performance gradient
-        svg.append("linearGradient")
+        /*svg.append("linearGradient")
             .attr("id", `area-gradient-${hp.name}`)
             .attr("gradientUnits", "userSpaceOnUse")
             .attr("x1", 0).attr("y1", 0)
@@ -422,7 +430,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
             .enter().append("stop")
             .attr("offset", (d: any, i: number) => i / num_step)
             .attr("stop-color", methodColor)
-            .attr('stop-opacity', (d: number[]) => (d.reduce((m, n) => m + n, 0) || 0) / d.length)
+            .attr('stop-opacity', (d: number[]) => (d.reduce((m, n) => m + n, 0) || 0) / d.length)*/
 
         //area chart
         svg.append('g')
@@ -433,8 +441,8 @@ class HyperParameter extends React.Component<HyProps, {}>{
             .append('path')
             .attr('class', 'area')
             .attr('d', area)
-            .style('fill', `url(#area-gradient-${hp.name})`)
-
+           // .style('fill', `url(#area-gradient-${hp.name})`)
+           .style('fill',methodColor)
         // brush
         function brushended() {
             if (!d3.event.sourceEvent) return; // Only transition after input.

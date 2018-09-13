@@ -71,35 +71,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             }*/
             // let num_all_hp = hpsInfo.length
 
-            hpsInfo = hpsInfo.filter(d => d.sortedCls.length > 0);
-            if(this.lastArray == null){
-                this.lastArray = hpsInfo;
-            }else{
-                let count = 0;
-                hpsInfo.forEach(hp=>{
-                    let length = -1;
-                    this.lastArray.forEach(d=>{
-                        if(d.id == hp.id){
-                            length = d.sortedCls.length;
-                        }
-                    })
-                    if(length!=-1&&length != hp.sortedCls.length){
-                        count = count +1;
-                        console.log(hp.id+" "+hp.sortedCls.length);
-                    }
-                })
-                this.lastArray = hpsInfo;
-                console.log("count:"+count);
-            }
-            //console.log(hpsInfo);
-            //console.log(selectedMethod);
+            hpsInfo = hpsInfo.filter(d=>d.method==selectedMethod).filter(d => d.sortedCls.length > 0);
+            console.log("len",hpsInfo.length);
+            
             let { height, width, gap } = this.hyperpartitionBox
-
-            // let g = d3.select('.HyperPartitions')
-            //     .append('g')
-            //     .attr('class', `HyperPartitions_${selectedMethod}`)
-            // // let x = d3.scaleLinear()
-            // //         .rangeRound([0, width]);
 
             let trans = d3.transition()
                     .duration(1000)
@@ -112,9 +87,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             let y = d3.scaleLinear()
                 .rangeRound([height, 0]);
             x.domain(Array.from(Array(maxLen).keys()))
-            // x.domain([0,10])
             y.domain([0, 1]);
-            //let hiddencol = this.props.hiddencol;
 
             let exceedcol = -1;
             let maxcol = 0;
@@ -172,9 +145,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 })
             }
             maxcol = nowcol+1;
-            console.log("maxcol exceedcol");
-            console.log(maxcol);
-            console.log(exceedcol)
+            //console.log("maxcol exceedcol");
+            //console.log(maxcol);
+            //console.log(exceedcol)
             if(exceedcol==-1){
                 let newhiddencol = 0;
                 if(newhiddencol != hiddencol || this.state.visible!=false){
@@ -185,37 +158,35 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 }
                 hiddencol = newhiddencol;
             }else{
-                if(hiddencol>=maxcol-exceedcol){
-                    let newhiddencol = maxcol-exceedcol;
-                    if(newhiddencol != hiddencol || this.state.visible != true || this.state.rightdisabled!=true){
-
-                        this.setState({
-                            hiddencol:newhiddencol,
-                            visible:true,
-                            rightdisabled:true
-                        })
-                    }
-                    hiddencol = newhiddencol;
-                }else{
-                    let leftdisabled = hiddencol<=0;
-                    if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled != false){
-                        this.setState(
-                            {
-                                visible:true,
-                                leftdisabled:leftdisabled,
-                                rightdisabled:false
-                            }
-                        )
-                    }
+                let leftdisabled = hiddencol<=0;
+                let rightdisabled = hiddencol>=maxcol-exceedcol;
+                let newhiddencol = hiddencol;
+                if(newhiddencol<=0){
+                    newhiddencol=0;
                 }
+                if(newhiddencol>=maxcol-exceedcol){
+                    newhiddencol=maxcol-exceedcol;
+                }
+                if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled!=rightdisabled || this.state.hiddencol!=newhiddencol){
+                    this.setState(
+                        {
+                            visible:true,
+                            leftdisabled:leftdisabled,
+                            rightdisabled:rightdisabled,
+                            hiddencol:newhiddencol
+                        }
+                    )
+                }
+                hiddencol = newhiddencol;
+                
             }
             if(exceedcol!=-1){
                 exceedcol=hiddencol+exceedcol;
             }else{
                 exceedcol=maxcol+1;
             }
-            console.log("hiddencol");
-            console.log(hiddencol);
+            //console.log("hiddencol");
+           // console.log(hiddencol);
             bundleData.forEach((d:any)=>{
                 if(d.col<hiddencol){
                     d.pos[0]=d.pos[0]-gap-width*0.5-width*1.5*(hiddencol);
@@ -304,6 +275,18 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     <input type="radio" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
                     </div>`
                 };
+                 //Create SVG element
+                let tooltip = d3.select("#tooltip");
+                //let top_methods = d3.select("#methodstop");
+
+                if(tooltip.empty()){
+                    tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .attr("id","tooltip")
+                    .style("opacity", 0)
+                    .style("left",  "0px")
+                    .style("top",  "0px");;
+                }
 
             textEnter.append('g')
                 .attr('class', 'hp_name')
@@ -316,6 +299,19 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .html(generateText)
                 .on("click",(d:any)=>{
                     nowProps.onHpsCheckBoxChange(d.id);
+                }).on("mouseover",(d:any)=>{
+                    let length = d.hyperpartition_string.length * 6.5 + 15;
+                    tooltip
+                    .style("width",length+"px")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                    tooltip.style("opacity", 0.7).html(d.hyperpartition_string)
+
+                })
+                .on("mouseout",(d:any)=>{
+                    tooltip
+                    .style("opacity", 0);
+
                 })
 
 
@@ -389,19 +385,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
                 }
 
-                //Create SVG element
-                let tooltip = d3.select("#tooltip");
-                //let top_methods = d3.select("#methodstop");
-
-                if(tooltip.empty()){
-                    tooltip = d3.select("body").append("div")
-                    .attr("class", "tooltip")
-                    .attr("id","tooltip")
-                    .style("opacity", 0)
-                    .style("left",  "0px")
-                    .style("top",  "0px");;
-                }
-
+               
                 //CLASSIFIER ENTER
                 classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")
@@ -495,8 +479,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
             // exit()
             hps.exit()
-            .transition(trans)
-            .attr('opacity', 1e-6)
+            //.transition(trans)
+            //.attr('opacity', 1e-6)
             .remove()
 
 
@@ -614,8 +598,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         //         d=>d.hyperpartition_string.length*fontSize
         //     )
         // )
-        console.log("render hiddencol");
-        console.log(this.state.hiddencol);
+        //console.log("render hiddencol");
+        //console.log(this.state.hiddencol);
         let generateButton = () =>{
             if(this.state.visible){
             return (<foreignObject x={this.props.width/2-50} y={this.props.height+20} width={100} height={35}>

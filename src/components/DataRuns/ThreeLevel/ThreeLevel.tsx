@@ -7,7 +7,7 @@ import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
-import {Button, InputNumber, message} from 'antd';
+import {Button,  message, Icon} from 'antd';
 import { getColor } from 'helper';
 export interface IProps {
     height: number,
@@ -30,7 +30,8 @@ export interface IState {
     methodSelected:any,
     hyperparametersRangeAlreadySelected:any,
     hyperpartitionsAlreadySelected:number[],
-    mouseOverClassifier:number
+    mouseOverClassifier:number,
+    displaymode:number
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
@@ -46,7 +47,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             methodSelected:{},
             hyperparametersRangeAlreadySelected:{},
             hyperpartitionsAlreadySelected:[],
-            mouseOverClassifier:-1
+            mouseOverClassifier:-1,
+            displaymode:0
 
         }
     }
@@ -91,7 +93,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         // submit configs in this view
         // switch to the new datarun.
         let methods = this.state.configsMethod;
-        let budget = this.state.configsBudget;
+        //let budget = this.state.configsBudget;
         if(this.props.datarunID!=null){
             let promise: Promise<IConfigsInfo>;
             let datarunID : number= this.props.datarunID?this.props.datarunID:0;
@@ -99,7 +101,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             promise
                 .then(configs => {
                     configs.methods = methods;
-                    configs.budget = budget;
+                    //configs.budget = budget;
                     this.setState({ loading: true });
 
                     let submitconfigs : IUpdateDatarunConfig = {};
@@ -131,6 +133,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 });
                 }
        }
+
+
+       
     fetchHpId = (method:string)=>{
         let hp = this.props.hyperpartitions;
         return hp.filter((d:any)=>d.method==method).map((d:any)=>d.id);
@@ -141,58 +146,61 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let methodSelected = this.state.methodSelected;
         let configsHyperpartitions :number[] = this.state.hyperpartitionsAlreadySelected;
         console.log("onMethodsCheckBoxChange")
-        if(checked==false){
-            //un selected
-            let configsMethod : string[] = this.state.configsMethod;
-            let index = configsMethod.indexOf(value);
-            if(index>-1){
-                configsMethod.splice(index, 1);
+        if(methodSelected[value]){
+            if(checked==false){
+                //un selected
+                let configsMethod : string[] = this.state.configsMethod;
+                let index = configsMethod.indexOf(value);
+                if(index>-1){
+                    configsMethod.splice(index, 1);
+                }
+
+
+                methodSelected[value].checked=false;
+                methodSelected[value].indeterminate=false;
+                methodSelected[value].disabled=false;
+                let hpid = this.fetchHpId(value);
+                configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
+                
+                this.setState({
+                    hyperpartitionsAlreadySelected:configsHyperpartitions,
+                    methodSelected:methodSelected,
+                    configsMethod:configsMethod
+
+                });
+
+            }else{
+                let configsMethod : string[] = this.state.configsMethod;
+                configsMethod.push(value);
+                methodSelected[value].checked=true;
+                methodSelected[value].indeterminate=false;
+                methodSelected[value].disabled=false;
+                let hpid = this.fetchHpId(value);
+                configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
+                this.setState({
+                    hyperpartitionsAlreadySelected:configsHyperpartitions,
+                    methodSelected:methodSelected,
+                    configsMethod:configsMethod
+
+                });
+
+
             }
-
-
-            methodSelected[value].checked=false;
-            methodSelected[value].indeterminate=false;
-            methodSelected[value].disabled=false;
-            let hpid = this.fetchHpId(value);
-            configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-
-            this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
-
-            });
-
-        }else{
-            let configsMethod : string[] = this.state.configsMethod;
-            configsMethod.push(value);
-            methodSelected[value].checked=true;
-            methodSelected[value].indeterminate=false;
-            methodSelected[value].disabled=false;
-            let hpid = this.fetchHpId(value);
-            configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
-            this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
-
-            });
-
-
+            let action="selected";
+            if(checked==false){
+                action="unselected";
+            }
+            let eventlog:IClickEvent = {
+                type:"methodcheckbox",
+                description:{
+                    action:action,
+                    methodname:value
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.updateCurrentDataRun();
         }
-        let action="selected";
-        if(checked==false){
-            action="unselected";
-        }
-        let eventlog:IClickEvent = {
-            type:"methodcheckbox",
-            description:{
-                action:action,
-                methodname:value
-            },
-            time:new Date().toString()
-        }
-        this.props.postClickEvent(eventlog);
     }
     onHyperpartitionCheckBoxChange=(id : number)=>{
         let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
@@ -272,6 +280,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             time:new Date().toString()
         }
         this.props.postClickEvent(eventlog);
+        this.updateCurrentDataRun();
     }
     onBrushSelected = (methodname:string, hpaName: string,hpatype:string,range:number[])=>{
         let {hyperparametersRangeAlreadySelected} = this.state;
@@ -316,8 +325,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 time:new Date().toString()
             }
             this.props.postClickEvent(eventlog);
+            this.updateCurrentDataRun();
         }
-
+        
      }
      componentWillReceiveProps(nextProps : IProps) {
         if(this.state.loading==false){
@@ -407,12 +417,70 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             })
         }
     }
+    onMethodButtonClick = () =>{
+        console.log("onMethodButtonClick");
+        let {displaymode} = this.state;
+        if(displaymode==0){
+            let eventlog:IClickEvent = {
+                type:"hyperpartitionsView",
+                description:{
+                    action:"more",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode:1
+            });
+        }else{
+            let eventlog:IClickEvent = {
+                type:"hyperpartitionsView",
+                description:{
+                    action:"hide",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode:0
+            });
+        }
+    }
+    onHyperpartitionButtonClick = () =>{
+        console.log("onHyperpartitionButtonClick");
+        let {displaymode} = this.state;
+        if(displaymode==1){
+            let eventlog:IClickEvent = {
+                type:"hyperparametersView",
+                description:{
+                    action:"more",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode:2
+            });
+        }else{
+            let eventlog:IClickEvent = {
+                type:"hyperparametersView",
+                description:{
+                    action:"hide",
+                },
+                time:new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode:1
+            });
+        }
+    }
     render(){
         let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
         classifiers = classifiers.sort(
             (a,b)=>b.cv_metric-a.cv_metric
         ) // best performance in the front
-        let {selectedMethod} = this.state
+        let {selectedMethod,displaymode} = this.state
         let usedMethods: string[] = Object.keys(datarun);
         let unusedMethods = Object.keys(methodsDef)
             .filter(
@@ -420,7 +488,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             )
         let svgWidth = window.innerWidth*5/6,
         width1 = svgWidth*3/13,
-        width2 = svgWidth*1.05/2,
+        gapbetween = 70,
+        width2 = svgWidth*0.8/2,
        // width3 = svgWidth*1/7,
        width3 = 220,
         headerHeight = 10
@@ -446,6 +515,112 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 }else{
                     return <g className="tag"/>
                 }
+            }
+       let generateButton = (box:any,mode:number,eventCallback:()=>void) =>{
+            // mode == 0   show me more
+            // mode == 1   hide
+            // mode any other value  nothing
+            if(mode==0){
+                 return <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
+                <Button type="default" onClick={eventCallback} size="small">
+                    More<Icon type="double-right" />
+                </Button>
+                </foreignObject>
+            }else if(mode==1){
+                return  <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
+                <Button type="default" onClick={eventCallback} size="small">
+                   <Icon type="double-left" /> Hide
+                </Button>
+                </foreignObject>
+            }else{
+               return  <g />
+            }
+        }
+        let generateHyperpartition = () => {
+            let buttonMode = 0;
+            if(displaymode==2){
+                buttonMode = 1;
+            }
+            buttonMode;
+            return  (<g><defs>
+            <clipPath id="mask_hyperpartitions">
+            <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
+            </clipPath>
+            </defs>
+            <g transform={`translate(${width1+gapbetween}, ${headerHeight})`} clipPath={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
+            <text
+                textAnchor="middle"
+                x={width2/3}
+                y={10}
+                style={{ font: "bold 16px sans-serif" , display:"inline" }}
+            >HyperPartitions of </text>
+            {generateTag({
+                x:width2/3 + 80,
+                y:-6,
+                width:40,
+                height:20
+
+            },selectedMethod)}
+                <HyperPartitions
+                hyperpartitions={hyperpartitions}
+                // datarun={datarun}
+                datarunID={datarunID}
+                selectedMethod={selectedMethod}
+                classifiers={classifiers}
+                compareK={compareK}
+                hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
+                width={width2}
+                height={svgHeight}
+                onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
+                onMouseOverClassifier={this.onMouseOverClassifier}
+                mouseOverClassifier={this.state.mouseOverClassifier}
+                />
+                
+            
+            </g>
+            {generateButton({
+                    x:width1+width2+gapbetween-60,
+                    y:svgHeight/2+headerHeight,
+                    width:150,
+                    height:35
+                },buttonMode,this.onHyperpartitionButtonClick)}</g>)
+        }
+        let generateHyperparameter = () => {
+            
+            return <g><defs>
+            <clipPath id="mask_hyperparameters">
+            <rect x={-60} y={-10} width={width3+200} height={svgHeight+100}/>
+            </clipPath>
+            </defs>
+            <g transform={`translate(${width1+width2+2*gapbetween+60}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
+            <text
+                textAnchor="middle"
+                x={width3/3}
+                y={10}
+                style={{ font: "bold 16px sans-serif" }}
+            >HyperParameters of</text>
+             {generateTag({
+                x:width3/3 + 89,
+                y:-6,
+                width:40,
+                height:20
+
+            },selectedMethod)}
+            <HyperParameters
+                classifiers={classifiers}
+                selectedMethod={selectedMethod}
+                compareK={compareK}
+                alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
+                onSelectedChange={this.onBrushSelected}
+                mouseOverClassifier={this.state.mouseOverClassifier}
+                height={svgHeight}
+                />
+               
+            </g></g>
+        }
+         let methodbuttonMode = 0;
+            if(displaymode!=0){
+                methodbuttonMode = 1;
             }
         // console.log("three level render");
         // console.log(this.state.hyperpartitionsAlreadySelected);
@@ -482,79 +657,30 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 compareK={compareK}
                 recommendationResult={this.props.recommendationResult}
             />
+            { /*<foreignObject x={width1-30} y={svgHeight/2} width={150} height={35}> 
+                <Button type="primary" onClick={this.onMethodButtonClick}>
+                    Show me more<Icon type="right" />
+                </Button>
+                </foreignObject>*/}
+             {generateButton({
+                    x:width1,
+                    y:svgHeight/2,
+                    width:150,
+                    height:35
+                },methodbuttonMode,this.onMethodButtonClick)}
             </g>
-            <defs>
-            <clipPath id="mask_hyperpartitions">
-            <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
-            </clipPath>
-            </defs>
-            <g transform={`translate(${width1}, ${headerHeight})`} clip-path={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
-            <text
-                textAnchor="middle"
-                x={width2/3}
-                y={10}
-                style={{ font: "bold 16px sans-serif" , display:"inline" }}
-            >HyperPartitions of </text>
-            {generateTag({
-                x:width2/3 + 80,
-                y:-6,
-                width:40,
-                height:20
-
-            },selectedMethod)}
-                <HyperPartitions
-                hyperpartitions={hyperpartitions}
-                // datarun={datarun}
-                datarunID={datarunID}
-                selectedMethod={selectedMethod}
-                classifiers={classifiers}
-                compareK={compareK}
-                hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
-                width={width2}
-                height={svgHeight}
-                onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
-                onMouseOverClassifier={this.onMouseOverClassifier}
-                mouseOverClassifier={this.state.mouseOverClassifier}
-                />
-
-            </g>
-            <defs>
-            <clipPath id="mask_hyperparameters">
-            <rect x={-60} y={-10} width={width3+200} height={svgHeight+100}/>
-            </clipPath>
-            </defs>
-            <g transform={`translate(${width1+width2}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
-            <text
-                textAnchor="middle"
-                x={width3/3}
-                y={10}
-                style={{ font: "bold 16px sans-serif" }}
-            >HyperParameters of</text>
-             {generateTag({
-                x:width3/3 + 89,
-                y:-6,
-                width:40,
-                height:20
-
-            },selectedMethod)}
-            <HyperParameters
-                classifiers={classifiers}
-                selectedMethod={selectedMethod}
-                compareK={compareK}
-                alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
-                onSelectedChange={this.onBrushSelected}
-                mouseOverClassifier={this.state.mouseOverClassifier}
-                height={svgHeight}
-                />
-            </g>
+            {displaymode==1 || displaymode==2?generateHyperpartition():<g />}
+            {displaymode==2 ? generateHyperparameter():<g />}
+           
+            
             </svg>
 
 
-            <div style={{position: "absolute",bottom:"10px",left:"10px"}}>
+           {/* <div style={{position: "absolute",bottom:"10px",left:"10px"}}>
                 <span>Budget</span>
                 <InputNumber min={1} value={this.state.configsBudget} style={{ width: "80px" }} onChange={this.onBudgetChange} />
                 <Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update Config</Button>
-                </div>
+                </div>*/}
             </div>
     }
 }
