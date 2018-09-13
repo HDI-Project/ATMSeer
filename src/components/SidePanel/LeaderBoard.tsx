@@ -118,6 +118,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             //console.log('classifiers', classifiers);
             this.setState({ summary: computeDatarunSummary(classifiers) });
         });
+        
         // getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => {
