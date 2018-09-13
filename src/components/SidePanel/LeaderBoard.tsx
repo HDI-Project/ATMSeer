@@ -234,23 +234,39 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <br/> 
                          <b>Total classifiers</b>: {summary.nTried}
                         <br/> 
-                        <b>Algorithm Coverage</b>:{' '}
+                        <div style={{width:"80px",float:"left"}}>
+                        <b>Algorithm </b>:{' '}
+                        </div>
+                        {/*<div className="progress round-conner">
+                            <div className="curRate round-conner">{progressAlgorithm(0)}</div>
+                        </div>*/}
+                        
+                        <div style={{width:"110px",float:"left"}}>
                         <Progress
-                        type="circle"
                         percent={100*methods_num/14}
                         format={progressAlgorithm}
                         width={40}
                         strokeWidth={10}
                         />
-                        <br/>
-                        <b>Hyperpartitions Coverage</b>:{' '}
+                        </div>
+                        <br />
+                        <div style={{width:"125px",float:"left"}}>
+                        <b>Hyperpartitions </b>:{' '}
+                        </div>
+                        {/*<div>
+                        <div className="lb-classifier" style={{ width:100 }}>none</div>
+                        <span>{progressHyperpartiton(0)}</span>
+                        </div>*/}
+                        <div style={{width:"120px",float:"left"}}>
                         <Progress
-                        type="circle"
                         percent={100*hp_num/172}
                         format={progressHyperpartiton}
                         width={40}
                         strokeWidth={10}
                         />
+                        </div>
+                        <br />
+                        <b>Performance : </b>
                         <OverallHistogram classifiers={summary.topClassifiers} width={100} />
                     </div>
                     {/* <div>

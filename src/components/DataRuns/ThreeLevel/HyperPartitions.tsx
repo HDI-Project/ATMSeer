@@ -410,7 +410,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
                 })
                 .attr("x", (d: any, i: number) => x(0))
-                .attr("y", (d: any) => height )
+                .attr("y", (d: any) => 0 )
                 .attr("width", 0)
                 .attr("height", 0)
 

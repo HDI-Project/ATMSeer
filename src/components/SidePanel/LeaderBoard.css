@@ -12,6 +12,34 @@
     left: 100px;
     top: 12px;
 }
+.lb-bar {
+    background-color: #dddddd;
+    color:  #dddddd;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.lb-bar-text {
+    background-color: transparent;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.progress {
+  width: 30px;
+  background: #ddd;
+}
+.curRate {
+  width: 75%;
+  background: #f30;
+}
+.round-conner {
+  height: 20px;
+  border-radius: 2px;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 0px;

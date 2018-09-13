@@ -22,3 +22,7 @@ div.tooltip {
     right: 30px;
     font-size: 18px;
 }
+
+.ant-progress-inner{
+  background-color: #cecdcd
+}

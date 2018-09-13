@@ -619,8 +619,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </g></g>
         }
          let methodbuttonMode = 0;
-            if(displaymode!=0){
+            if(displaymode==1){
                 methodbuttonMode = 1;
+            }else if(displaymode==2){
+                methodbuttonMode = -1;
             }
         // console.log("three level render");
         // console.log(this.state.hyperpartitionsAlreadySelected);
