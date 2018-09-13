@@ -69,7 +69,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             recommendationResult: {
                 result: []
             },
-            run_threshold: 50,
+            run_threshold: 20,
             askvisible: false
         }
     }
@@ -114,7 +114,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     }
                 } else {
                     if (askvisible == false) {
-                        run_threshold = classifiers.length + 50;
+                        run_threshold = classifiers.length + 20;
                     }
                 }
             }
@@ -162,7 +162,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         // mode = 1      stop_running
 
         let { run_threshold, classifiers } = this.state;
-        run_threshold = classifiers.length + 50;
+        run_threshold = classifiers.length + 20;
 
         if (mode == 0) {
             /*
