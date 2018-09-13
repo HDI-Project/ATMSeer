@@ -63,7 +63,8 @@ def add_arguments_server(parser):
     # API flags
     parser.add_argument('--host', default='0.0.0.0', help='Port in which to run the API')
     parser.add_argument('--port', default=7777, help='Port in which to run the API')
-    parser.add_argument('--debug', default=True, help='If true, run Flask in debug mode')
+    parser.add_argument('--debug', action="store_const", default=False, const=True,
+                        help='If true, run Flask in debug mode')
 
 
 def start_server():
@@ -77,6 +78,9 @@ def start_server():
     add_arguments_server(parser)
 
     _args = parser.parse_args()
+
+    if _args.debug:
+        os.environ['FLASK_ENV'] = 'development'
 
     app = create_app(vars(_args))
 
