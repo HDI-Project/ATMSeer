@@ -167,19 +167,19 @@ export default class methods extends React.Component<IProps, IState>{
             }
         }else if(displaymode==2){
             let refwidth = 1600;
-            let refheight = 232;
-            let oneboxwidth:number = 220/refwidth*width;
-            let oneboxgap :number = 30/220*oneboxwidth;
+            //let refheight = 232;
+            let oneboxwidth:number = 215/refwidth*width;
+            let oneboxgap :number = 25/215*oneboxwidth;
             let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-            let oneboxheight :number = 110/refheight*height;
-            let oneboxygap :number = 0/110*oneboxheight;
+            let oneboxheight :number = 160/348*height;
+            let oneboxygap :number = 0;
             let oneboxinnerheight:number = oneboxheight - 2*oneboxgap - oneboxygap;
             this.methodBoxAttr = {
                 // width : 70,
                 height: oneboxinnerheight  ,
                 width: oneboxinnerwidth ,
                 gap: oneboxgap,
-                x: 40/40*oneboxgap,
+                x: 40/25*oneboxgap,
                 y: 50/25*oneboxgap,
                 checkboxY: 2,
                 checkboxWidth: 100,
@@ -575,44 +575,44 @@ class LineChart extends React.Component<LineChartProps, {}>{
 
      let text1 = svg.append("text")
             .attr("class", "method_name")
-            .attr('x', width)
+            .attr('x', width-2.5)
         //    .attr('y', height-12)
             .attr('y',-3)
             .attr('text-anchor', "end")
         //    .attr('filter',"url(#solid)")
-            .text(`${bestperformance.toFixed(3)}`)
+            .text(`${" "+bestperformance.toFixed(3)+" "} `)
 
 
     let text2=svg.append("text")
             .attr("class", "method_name")
-            .attr('x', width-50)
+            .attr('x', width-55)
         //    .attr('y', height-12)
             .attr('y',-3)
             .attr('text-anchor', "end")
         //    .attr('filter',"url(#solid)")
-            .text(`${classifiers.length}`)
+            .text(`${" "+classifiers.length+" "}`)
 
     var bbox1 = text1.node().getBBox();
 
     svg.append("rect")
-    .attr("x", bbox1.x)
+    .attr("x", bbox1.x-2.5)
     .attr("y", bbox1.y)
-    .attr("width", bbox1.width)
+    .attr("width", bbox1.width+5)
     .attr("height", bbox1.height)
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
-    .style("stroke", "#666")
+    .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
     .style("stroke-width", "1.5px");
     var bbox2 = text2.node().getBBox();
 
     svg.append("rect")
-    .attr("x", bbox2.x)
+    .attr("x", bbox2.x-2.5)
     .attr("y", bbox2.y)
-    .attr("width", bbox2.width)
+    .attr("width", bbox2.width+5)
     .attr("height", bbox2.height)
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
-    .style("stroke", "#666")
+    .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
     .style("stroke-width", "1.5px");
        /* svg.append("text")
             .attr("class", "best_score")
