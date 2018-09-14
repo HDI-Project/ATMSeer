@@ -547,7 +547,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             if(mode==0){
                 return (<g>
                     <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
-                    stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} onClick={eventCallback} style={{cursor:"pointer"}}/>
+                    stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} style={{cursor:"pointer"}}/>
                     <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
                     <Icon type="right" />
                     </foreignObject>
@@ -556,7 +556,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             }else if(mode==1){
                 return (<g>
                 <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
-                stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} onClick={eventCallback} style={{cursor:"pointer"}}/>
+                stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} style={{cursor:"pointer"}}/>
                 <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
                 <Icon type="down" />
                 </foreignObject>
@@ -595,7 +595,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let generateHyperpartitionText = () =>{
             return (
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight})`} width={width2} height={hpheight}>
+            <g transform={`translate(${0}, ${method_height+headerHeight})`} width={width2} height={hpheight} onClick={this.onMethodButtonClick}>
             {generateRect({
                 x:10,
                 y:-9,
@@ -630,6 +630,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </clipPath>
             </defs>
             <g transform={`translate(${0}, ${headerHeight+method_height})`}  width={width2} height={hpheight}>
+            <g onClick={this.onMethodButtonClick}>
             {generateRect({
                 x:10,
                 y:-9,
@@ -649,6 +650,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 height:20
 
             },selectedMethod)}
+            </g>
             <g clipPath={"url(#mask_hyperpartitions)"}>
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
@@ -677,7 +679,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let generateHyperparameterText = () =>{
             return (
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight})`} width={width2} height={hpheight}>
+            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight})`} width={width2} height={hpheight} onClick={this.onHyperpartitionButtonClick}>
             {generateRect({
                 x:10,
                 y:-9,
@@ -708,6 +710,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             </clipPath>
             </defs>
             <g transform={`translate(${0}, ${headerHeight+method_height+hpheight+35})`} clipPath={"url(#mask_hyperparameters)"}>
+            <g onClick={this.onHyperpartitionButtonClick}>
             {generateRect({
                 x:10,
                 y:-9,
@@ -727,6 +730,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 height:20
 
             },selectedMethod)}
+            </g>
             <HyperParameters
                 classifiers={classifiers}
                 selectedMethod={selectedMethod}
