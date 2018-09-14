@@ -41,11 +41,11 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
             xAxisData.push(`${(i*step).toFixed(2)}`)
         }
         const option = {
-            title:{
-                text:"performance histogram",
-                 fontSize: '0.5vh',
-                top: 0,
-            },
+           // title:{
+           //     text:"performance histogram",
+           //      fontSize: '0.5vh',
+           //     top: 0,
+           // },
             yAxis: {
                 type: 'category',
                 data: xAxisData,
@@ -56,16 +56,24 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
                     rotate: 0,
                     interval:1,
                     fontSize: 10,
-                }
+                },
+                name: 'F_score',
+               nameLocation :'middle',
+               nameGap : '35'
+
             },
             xAxis: {
-                type: 'value'
+                type: 'value',
+                name: 'Number of classifiers',
+                nameLocation :'middle',
+                nameGap : '30'
             },
             grid: {
-                left: '10%',
-                height: '50%',
-                top: '25%',
-                bottom: '30%'
+                left: '15%',
+                height: '55%',
+                top: '10%',
+                bottom: '25%',
+
             },
             series:{
                     type: 'bar',
@@ -74,7 +82,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
                     barCategoryGap: "5%",
                     data,
                     itemStyle:{
-                        color:"#F7CEA7",
+                        color:"#2491FC",
                         opacity: 1
                     },
             },
@@ -84,7 +92,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
     public render(){
         return <ReactEcharts
         option = { this.getOption() }
-        style={{ height: `250px`, width: `${this.props.width}%`}}
+        style={{ height: `150px`, width: `${this.props.width}%`}}
         />
     }
 }
