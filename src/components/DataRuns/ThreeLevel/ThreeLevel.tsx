@@ -7,7 +7,7 @@ import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
-import { message} from 'antd';
+import { message,Icon} from 'antd';
 import { getColor } from 'helper';
 export interface IProps {
     height: number,
@@ -514,6 +514,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             hpheight = svgHeight*0.7/3;
         }
         let hyheight = svgHeight/3;
+
+        let textleft = 40;
+        let hptableft = 145;
+        let hytableft = 156;
         // let generateTag = (box:any,name:string)=>{
         //     if(name!=""){
         //         let width = box.width;
@@ -537,10 +541,29 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 }
             }
         let generateRect = (box:any,mode:number,eventCallback:()=>void) => {
-            return (
-            <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} 
-            stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} onClick={eventCallback} style={{cursor:"pointer"}}/>
-            )
+            // mode == 0   show me more
+            // mode == 1   hide
+            // mode any other value  nothing
+            if(mode==0){
+                return (<g>
+                    <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
+                    stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} onClick={eventCallback} style={{cursor:"pointer"}}/>
+                    <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
+                    <Icon type="right" />
+                    </foreignObject>
+                    </g>
+                    )
+            }else if(mode==1){
+                return (<g>
+                <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
+                stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} onClick={eventCallback} style={{cursor:"pointer"}}/>
+                <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
+                <Icon type="down" />
+                </foreignObject>
+                </g>)
+            }else{
+                return <g />
+            }
         }
        /*let generateButton = (box:any,mode:number,eventCallback:()=>void) =>{
             // mode == 0   show me more
@@ -580,13 +603,13 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 height:28
             },0,this.onMethodButtonClick)}            
             <text
-                textAnchor="middle"
-                x={width2/2-35}
+                textAnchor="start"
+                x={textleft}
                 y={10}
                 style={{ font: "bold 16px sans-serif" , display:"inline" }}
             >HyperPartitions of </text>
             {generateTag({
-                x:width2/2 + 80 - 35,
+                x:textleft + hptableft ,
                 y:-6,
                 width:40,
                 height:20
@@ -612,15 +635,15 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 y:-9,
                 width:width2-68,
                 height:28
-            },0,this.onMethodButtonClick)}
+            },1,this.onMethodButtonClick)}
             <text
-                textAnchor="middle"
-                x={width2/2-35}
+                textAnchor="start"
+                x={textleft}
                 y={10}
                 style={{ font: "bold 16px sans-serif" , display:"inline" }}
             >HyperPartitions of </text>
             {generateTag({
-                x:width2/2 + 80 - 35,
+                x:textleft+ hptableft,
                 y:-6,
                 width:40,
                 height:20
@@ -662,13 +685,13 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 height:28
             },0,this.onHyperpartitionButtonClick)}
             <text
-                textAnchor="middle"
-                x={width3/2-35}
+                textAnchor="start"
+                x={textleft}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of</text>
              {generateTag({
-                x:width3/2 + 89-35,
+                x:textleft+ hytableft,
                 y:-6,
                 width:40,
                 height:20
@@ -690,15 +713,15 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 y:-9,
                 width:width3-68,
                 height:28
-            },0,this.onHyperpartitionButtonClick)}
+            },1,this.onHyperpartitionButtonClick)}
             <text
-                textAnchor="middle"
-                x={width3/2-35}
+                textAnchor="start"
+                x={textleft}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of</text>
              {generateTag({
-                x:width3/2 + 89-35,
+                x:textleft+ hytableft,
                 y:-6,
                 width:40,
                 height:20
@@ -738,10 +761,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 y:-9,
                 width:width1-68,
                 height:28
-            },0,()=>{})}
+            },1,()=>{})}
             <text
-                textAnchor="middle"
-                x={width1/2-35}
+                textAnchor="start"
+                x={textleft}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >Algorithms</text>
