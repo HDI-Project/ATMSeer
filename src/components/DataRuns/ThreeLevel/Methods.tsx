@@ -623,14 +623,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
         //     .call(d3.axisBottom(xScale));
 
         // Add the Y Axis
-        let yAxisData = [0.05,0.25,0.45,0.65,0.85];
+        let yAxisData = [0.0,0.2,0.4,0.6,0.8];
         let yAxisNumerical = [0.0,0.2,0.4,0.6,0.8];
         if(height>90){
             yAxisData = [];
             yAxisNumerical = [];
             for(let i = 0; i<10;i++){
                 yAxisNumerical.push(i/10);
-                yAxisData.push((i*10+5)/100);
+                yAxisData.push((i*10)/100);
             }
         }
         svg.append("g")
