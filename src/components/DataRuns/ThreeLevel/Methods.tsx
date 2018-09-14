@@ -454,10 +454,10 @@ class LineChart extends React.Component<LineChartProps, {}>{
             total += d;
         });
         total;
-        let yAxisData: string[] = []
-        for (let i = 0; i <= 1 / step; i++) {
-            yAxisData.push(`${(i * step).toFixed(2)}`)
-        }
+        //let yAxisData: string[] = []
+        //for (let i = 0; i <= 1 / step; i++) {
+        //    yAxisData.push(`${(i * step).toFixed(2)}`)
+        //}
 
         // g
         // Set the dimensions of the canvas / graph
@@ -466,12 +466,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
             width = this.props.width - margin.left - margin.right,
             height = this.props.height - margin.top - margin.bottom,
             top_margin = { top: this.props.y, left: this.props.x };
-
+        console.log(height);
         // Set the ranges
         // let	xScale = d3.scaleLinear().range([0, width]);
         let yScale = d3.scaleBand()
             .rangeRound([height, 0])
             .paddingInner(0.1);
+        let	yScale2 = d3.scaleLinear().range([height, 0]);
+        yScale2.domain([0, 1]);
         let xScale = d3.scaleLinear().range([0, width]);
 
 
@@ -640,11 +642,27 @@ class LineChart extends React.Component<LineChartProps, {}>{
         //     .call(d3.axisBottom(xScale));
 
         // Add the Y Axis
+        let yAxisData = [0.0,0.2,0.4,0.6,0.8];
+        let yAxisNumerical = [0.0,0.2,0.4,0.6,0.8];
+        if(height>90){
+            yAxisData = [];
+            yAxisNumerical = [];
+            for(let i = 0; i<10;i++){
+                yAxisNumerical.push(i/10);
+                yAxisData.push((i*10)/100);
+            }
+        }
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale).tickValues([0.1,0.3,0.5,0.7,0.9]).tickFormat(function (d:any) {
+            .call(d3.axisLeft(yScale2).tickSize(0).tickPadding(9).tickValues(yAxisData).tickFormat(function (d:any,i:number) {
+                            return yAxisNumerical[i];
+                       }))
 
-                        return d;}))
+        svg.append("g")
+            .attr('transform', `translate(${-margin.left}, 0)`)
+            .call(d3.axisLeft(yScale2).tickValues([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]).tickFormat(function (d:any,i:number) {
+                            return "";
+                       }))
 
 
     }

@@ -38,7 +38,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
         let xAxisData:string[] = []
         for (let i =0; i<1/step; i++){
             //xAxisData.push(`${(i*step).toFixed(2)}-${((i+1)*step).toFixed(2)}`)
-            xAxisData.push(`${(i*step).toFixed(2)}`)
+            xAxisData.push(`${(i*step).toFixed(1)}`)
         }
         const option = {
            // title:{
