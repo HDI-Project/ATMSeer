@@ -307,7 +307,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         </span>
                     </h4>
                     <hr />
-                    <div style={{height:"calc(70vh - 410px)", overflowY:"scroll"}}>
+                    <div style={{height:"calc(80vh - 410px)", overflowY:"scroll"}}>
                     <Collapse bordered={false} onChange={this.onCollapseChange}>
                         {summary.topClassifiers.slice(0, topK).map(c => (
                             <Panel key={String(c.id)} header={<MethodHeader {...c} />}>

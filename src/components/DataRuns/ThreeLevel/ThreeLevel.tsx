@@ -572,7 +572,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let generateHyperpartitionText = () =>{
             return (
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight-35})`} width={width2} height={hpheight}>
+            <g transform={`translate(${0}, ${method_height+headerHeight})`} width={width2} height={hpheight}>
             {generateRect({
                 x:10,
                 y:-9,
@@ -603,7 +603,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             buttonMode;
             return  (<g><defs>
             <clipPath id="mask_hyperpartitions">
-            <rect x={0} y={30} width={width2} height={hpheight} />
+            <rect x={0} y={30} width={width2} height={hpheight-30} />
             </clipPath>
             </defs>
             <g transform={`translate(${0}, ${headerHeight+method_height})`}  width={width2} height={hpheight}>
@@ -654,7 +654,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let generateHyperparameterText = () =>{
             return (
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight-35})`} width={width2} height={hpheight}>
+            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight})`} width={width2} height={hpheight}>
             {generateRect({
                 x:10,
                 y:-9,
