@@ -48,6 +48,7 @@ def handle_invalid_usage(error):
 @api.errorhandler(InvalidRequestError)
 def handle_db_request_error(error):
     logging.exception(error)
+    print(error)
     response = jsonify({"error":str(error)})
     response.status_code = 500
     return response
@@ -577,7 +578,7 @@ def post_click_event():
 @api.route('/getRecommendation/<int:dataset_id>', methods=['GET'])
 def getRecommendation(dataset_id):
     """Get Recommendation"""
-    
+
     train = request.args.get('train', True, type=bool)
     dataset_path = fetch_dataset_path(dataset_id, train)
     rec = Recommender(current_app.config['DATASET_META_DIR'])
