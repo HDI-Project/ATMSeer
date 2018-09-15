@@ -7,7 +7,7 @@ import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
      updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
-import { message,Icon} from 'antd';
+import {Button,  message, Icon} from 'antd';
 import { getColor } from 'helper';
 export interface IProps {
     height: number,
@@ -64,11 +64,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             time:new Date().toString()
         }
         this.props.postClickEvent(eventlog);
-        let displaymode = this.state.displaymode;
-        if(displaymode==0){
-            displaymode=1;
-        }
-        this.setState({selectedMethod: methodName, displaymode:displaymode})
+        this.setState({selectedMethod: methodName})
     }
 
     componentDidMount(){
@@ -491,33 +487,13 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 (name: string) => usedMethods.indexOf(name) < 0
             )
         let svgWidth = window.innerWidth*5/6,
-        width1 = svgWidth,
-        //gapbetween = 70,
-        width2 = svgWidth,
+        width1 = svgWidth*3/13,
+        gapbetween = 70,
+        width2 = svgWidth*0.8/2,
        // width3 = svgWidth*1/7,
-       width3 = svgWidth,
+       width3 = 220,
         headerHeight = 10
         let svgHeight = window.innerHeight * 0.74;
-        let method_height = svgHeight;
-        if(displaymode==0){
-            method_height = svgHeight;
-        }else if(displaymode==1){
-            method_height = svgHeight/2;
-        }else if(displaymode==2){
-            method_height = svgHeight*1.3/3;
-        }
-        let hpheight = svgHeight/2;
-        if(displaymode==0){
-            hpheight = 100;
-        }
-        if(displaymode==2){
-            hpheight = svgHeight*0.7/3;
-        }
-        let hyheight = svgHeight/3;
-
-        let textleft = 40;
-        let hptableft = 145;
-        let hytableft = 156;
         // let generateTag = (box:any,name:string)=>{
         //     if(name!=""){
         //         let width = box.width;
@@ -540,83 +516,25 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     return <g className="tag"/>
                 }
             }
-        let generateRect = (box:any,mode:number,eventCallback:()=>void) => {
-            // mode == 0   show me more
-            // mode == 1   hide
-            // mode any other value  nothing
-            if(mode==0){
-                return (<g>
-                    <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
-                    stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} onClick={eventCallback} style={{cursor:"pointer"}}/>
-                    <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
-                    <Icon type="right" />
-                    </foreignObject>
-                    </g>
-                    )
-            }else if(mode==1){
-                return (<g>
-                <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
-                stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} onClick={eventCallback} style={{cursor:"pointer"}}/>
-                <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
-                <Icon type="down" />
-                </foreignObject>
-                </g>)
-            }else{
-                return <g />
-            }
-        }
-       /*let generateButton = (box:any,mode:number,eventCallback:()=>void) =>{
+       let generateButton = (box:any,mode:number,eventCallback:()=>void) =>{
             // mode == 0   show me more
             // mode == 1   hide
             // mode any other value  nothing
             if(mode==0){
                  return <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
-                 
                 <Button type="default" onClick={eventCallback} size="small">
-                   <Icon type="arrow-down" /> More<Icon type="arrow-down" />
+                    More<Icon type="double-right" />
                 </Button>
                 </foreignObject>
             }else if(mode==1){
                 return  <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
                 <Button type="default" onClick={eventCallback} size="small">
-                   <Icon type="arrow-up" /> Hide <Icon type="arrow-up" />
+                   <Icon type="double-left" /> Hide
                 </Button>
                 </foreignObject>
             }else{
                return  <g />
             }
-        }*/
-       /*  let methodbuttonMode = 0;
-            if(displaymode==1){
-                methodbuttonMode = 1;
-            }else if(displaymode==2){
-                methodbuttonMode = -1;
-            } */
-        let generateHyperpartitionText = () =>{
-            return (
-            <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight})`} width={width2} height={hpheight}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width2-68,
-                height:28
-            },0,this.onMethodButtonClick)}            
-            <text
-                textAnchor="start"
-                x={textleft}
-                y={10}
-                style={{ font: "bold 16px sans-serif" , display:"inline" }}
-            >HyperPartitions of </text>
-            {generateTag({
-                x:textleft + hptableft ,
-                y:-6,
-                width:40,
-                height:20
-
-            },selectedMethod)}
-            </g>
-            </g>)
         }
         let generateHyperpartition = () => {
             let buttonMode = 0;
@@ -626,30 +544,23 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             buttonMode;
             return  (<g><defs>
             <clipPath id="mask_hyperpartitions">
-            <rect x={0} y={30} width={width2} height={hpheight-30} />
+            <rect x={0} y={-10} width={width2-60} height={svgHeight+100} />
             </clipPath>
             </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height})`}  width={width2} height={hpheight}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width2-68,
-                height:28
-            },1,this.onMethodButtonClick)}
+            <g transform={`translate(${width1+gapbetween}, ${headerHeight})`} clipPath={"url(#mask_hyperpartitions)"} width={width2} height={svgHeight}>
             <text
-                textAnchor="start"
-                x={textleft}
+                textAnchor="middle"
+                x={width2/3}
                 y={10}
                 style={{ font: "bold 16px sans-serif" , display:"inline" }}
             >HyperPartitions of </text>
             {generateTag({
-                x:textleft+ hptableft,
+                x:width2/3 + 80,
                 y:-6,
                 width:40,
                 height:20
 
             },selectedMethod)}
-            <g clipPath={"url(#mask_hyperpartitions)"}>
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
                 // datarun={datarun}
@@ -659,69 +570,37 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 compareK={compareK}
                 hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
                 width={width2}
-                height={hpheight}
+                height={svgHeight}
                 onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
                 onMouseOverClassifier={this.onMouseOverClassifier}
                 mouseOverClassifier={this.state.mouseOverClassifier}
                 />
-                </g>
+                
             
             </g>
-            {/*generateButton({
-                    x:width2/2-75,
-                    y:method_height+hpheight,
+            {generateButton({
+                    x:width1+width2+gapbetween-60,
+                    y:svgHeight/2+headerHeight,
                     width:150,
                     height:35
-                },buttonMode,this.onHyperpartitionButtonClick)*/}</g>)
-        }
-        let generateHyperparameterText = () =>{
-            return (
-            <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight})`} width={width2} height={hpheight}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width3-68,
-                height:28
-            },0,this.onHyperpartitionButtonClick)}
-            <text
-                textAnchor="start"
-                x={textleft}
-                y={10}
-                style={{ font: "bold 16px sans-serif" }}
-            >HyperParameters of</text>
-             {generateTag({
-                x:textleft+ hytableft,
-                y:-6,
-                width:40,
-                height:20
-
-            },selectedMethod)}
-            </g>
-            </g>)
+                },buttonMode,this.onHyperpartitionButtonClick)}</g>)
         }
         let generateHyperparameter = () => {
             
             return <g><defs>
             <clipPath id="mask_hyperparameters">
-            <rect x={0} y={-10} width={width3+200} height={hyheight+100}/>
+            <rect x={-60} y={-10} width={width3+200} height={svgHeight+100}/>
             </clipPath>
             </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height+hpheight+35})`} clipPath={"url(#mask_hyperparameters)"}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width3-68,
-                height:28
-            },1,this.onHyperpartitionButtonClick)}
+            <g transform={`translate(${width1+width2+2*gapbetween+60}, ${headerHeight})`} clipPath={"url(#mask_hyperparameters)"}>
             <text
-                textAnchor="start"
-                x={textleft}
+                textAnchor="middle"
+                x={width3/3}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >HyperParameters of</text>
              {generateTag({
-                x:textleft+ hytableft,
+                x:width3/3 + 89,
                 y:-6,
                 width:40,
                 height:20
@@ -734,13 +613,17 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
                 onSelectedChange={this.onBrushSelected}
                 mouseOverClassifier={this.state.mouseOverClassifier}
-                height={hyheight}
-                width={width3}
+                height={svgHeight}
                 />
                
             </g></g>
         }
-        
+         let methodbuttonMode = 0;
+            if(displaymode==1){
+                methodbuttonMode = 1;
+            }else if(displaymode==2){
+                methodbuttonMode = -1;
+            }
         // console.log("three level render");
         // console.log(this.state.hyperpartitionsAlreadySelected);
         return <div
@@ -756,23 +639,15 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             xmlns="http://www.w3.org/2000/svg"
             >
             <g transform={`translate(${0}, ${headerHeight})`}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width1-68,
-                height:28
-            },1,()=>{})}
             <text
-                textAnchor="start"
-                x={textleft}
+                textAnchor="middle"
+                x={width1/2}
                 y={10}
                 style={{ font: "bold 16px sans-serif" }}
             >Algorithms</text>
             <Methods
                 classifiers={classifiers}
                 width = {width1}
-                height = {method_height}
-                displaymode = {displaymode}
                 onSelectMethod={this.onSelectMethod}
                 selectedMethod = {this.state.selectedMethod}
                 usedMethods = {usedMethods}
@@ -789,15 +664,15 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     Show me more<Icon type="right" />
                 </Button>
                 </foreignObject>*/}
-             {/*generateButton({
-                    x:width1/2-75,
-                    y:method_height-35,
+             {generateButton({
+                    x:width1,
+                    y:svgHeight/2,
                     width:150,
                     height:35
-                },methodbuttonMode,this.onMethodButtonClick)*/}
+                },methodbuttonMode,this.onMethodButtonClick)}
             </g>
-            {displaymode==1 || displaymode==2?generateHyperpartition():generateHyperpartitionText()}
-            {displaymode==2 ? generateHyperparameter():displaymode==1?generateHyperparameterText():<g />}
+            {displaymode==1 || displaymode==2?generateHyperpartition():<g />}
+            {displaymode==2 ? generateHyperparameter():<g />}
            
             
             </svg>

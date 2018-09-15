@@ -54,7 +54,7 @@ def return_stdout_stderr(f):
     return inner
 
 
-@return_stdout_stderr
+# @return_stdout_stderr
 def work(datarun_id, args=None):
     """
     A copy of the code in atm/scripts/worker.py
@@ -82,6 +82,8 @@ def work(datarun_id, args=None):
                         help="don't save models and metrics at all")
 
     # parse arguments and load configuration
+    if args is None:
+        args = []
     _args = parser.parse_args(args)
 
     # default logging config is different if initialized from the command line
