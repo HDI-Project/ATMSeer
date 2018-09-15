@@ -6,7 +6,7 @@ You can see the demo in the website [http://atm.hkustvis.org](http://atm.hkustvi
 
 The screenshot of the demo is shown below 
 
-![The system overview](screenshot.png)
+![The system overview](screenshot.PNG)
 
 # Setup
 
