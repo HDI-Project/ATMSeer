@@ -9,6 +9,8 @@ class Config(object):
     ALLOWED_EXTENSIONS = set(['csv'])
     RUN_CONFIG = os.path.join(SERVER_ROOT, './config/run.yaml')
     SQL_CONFIG = os.path.join(SERVER_ROOT, './config/sql.yaml')
+    FRONT_ROOT = os.path.join(SERVER_ROOT, '../build')
+    STATIC_FOLDER = os.path.join(SERVER_ROOT, '../build/static')
 
 
 class ProductionConfig(Config):

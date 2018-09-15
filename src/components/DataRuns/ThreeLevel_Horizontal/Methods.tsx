@@ -14,8 +14,6 @@ export interface IProps {
     usedMethods: string[],
     unusedMethods: string[],
     width: number,
-    height:number,
-    displaymode:number,
     selectedMethod: string,
     hyperpartitions: IHyperpartitionInfo[],
     configsMethod : string[],
@@ -106,10 +104,10 @@ export default class methods extends React.Component<IProps, IState>{
 
     }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height} = this.props
-        //this.width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected} = this.props
+        this.width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
         // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
-        /*this.methodBoxAttr = {
+        this.methodBoxAttr = {
             // width : 70,
             height: this.width * 0.6,
             width: this.width,
@@ -120,72 +118,8 @@ export default class methods extends React.Component<IProps, IState>{
             checkboxWidth: 100,
             checkboxHeight: 30,
             yextragap:20
-        }*/
-        console.log(width);
-        console.log(height);
-        // Calculate Layout
-        let refwidth = 1600;
-        // let refheight = 714.84;
-        let oneboxwidth:number = 215/refwidth*width;
-        let oneboxgap :number = 30;
-        let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-        // let oneboxheight :number = 320/refheight*height;
-        // let oneboxygap :number = 30;
-        // if(displaymode==1){
-        //     refheight = 348;
-        //     // oneboxgap  = 25/215*oneboxwidth;
-        //     oneboxinnerwidth = oneboxwidth -2* oneboxgap;
-        //     // oneboxheight  = 160/refheight*height;
-        //     // oneboxygap  = 20/160*oneboxheight;
-
-        // }else if(displaymode==2){
-        //     //let refheight = 232;
-        //     // oneboxgap  = 25/215*oneboxwidth;
-        //     oneboxinnerwidth = oneboxwidth -2* oneboxgap;
-        //     // oneboxheight  = 160/348*height;
-        //     // oneboxygap  = 0;
-        // }
-        const x = 48;
-        const y = 60;
-        const yextragap = 20;
-        const gap = 30;
-        const yGap = gap + yextragap;
-        // const maxrow = 7;
-        let maxrow = Math.floor((width-this.methodBoxAttr.x)/(this.methodBoxAttr.width+2*this.methodBoxAttr.gap));
-        if(maxrow<=1){
-            maxrow = 1;
-        }
-        const nRows = Math.ceil((usedMethods.length + unusedMethods.length) / maxrow);
-        console.log(nRows);
-        // const oneboxheight = (height - y) / nRows - yGap;
-        let oneboxinnerheight:number = (height - y) / nRows - yGap;
-        // oneboxygap = 30;
-        this.methodBoxAttr = {
-            // width : 70,
-            height: oneboxinnerheight  ,
-            width: oneboxinnerwidth ,
-            gap,
-            x,
-            y,
-            checkboxY: 2,
-            checkboxWidth: 100,
-            checkboxHeight: 30,
-            yextragap,
         }
 
-        /**
-         * checkboxHeight: 30
-            checkboxWidth: 100
-            checkboxY: 2
-            gap: 20
-            height: 68.76923076923076
-            width: 114.61538461538461
-            x: 40
-            y: 40
-            yextragap: 20
-         *
-         */
-        console.log(this.methodBoxAttr);
 
         let performance = usedMethods.map((name: string, i: number) => {
             return {
@@ -216,12 +150,7 @@ export default class methods extends React.Component<IProps, IState>{
         //         maxnum=num;
         //     }
         // });
-        let getXcorr = (i:number) =>{
-            return  this.methodBoxAttr.x +  (i % maxrow)* (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
-        }
-        let getYcorr = (i:number) =>{
-            return this.methodBoxAttr.y + Math.floor(i / maxrow) * (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
-        }
+
         return <g className="methods" >
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                             /*let checked = false;
@@ -240,8 +169,10 @@ export default class methods extends React.Component<IProps, IState>{
 
                             return (<foreignObject
                                         key={name+"_text_"+i}
-                                        x={ getXcorr(i) - 15}
-                                        y={getYcorr(i)- 20}
+                                        x={ this.methodBoxAttr.x +
+                                            Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap) - 15}
+                                        y={this.methodBoxAttr.y +
+                                            (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) - this.methodBoxAttr.gap}
                                         width={this.methodBoxAttr.checkboxWidth}
                                         height={this.methodBoxAttr.checkboxHeight}>
 
@@ -290,12 +221,18 @@ export default class methods extends React.Component<IProps, IState>{
                     //const top_width = classifier_num*6+60;
                     // this.index++;
                     return (<g key={name + "_g_linechart_" + i}>
-
+                        
                         <LineChart key={name + "_used_" + i}
                             // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
                             // y={this.methodBoxAttr.y}
-                            x={getXcorr(i)}
-                            y={getYcorr(i)}
+                            x={
+                                this.methodBoxAttr.x +
+                                Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
+                            }
+                            y={
+                                this.methodBoxAttr.y +
+                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
+                            }
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
                             methodDef={methodDef}
@@ -308,10 +245,12 @@ export default class methods extends React.Component<IProps, IState>{
                             flower={flower}
                         />
                         <foreignObject key={name + "_progressbar_" + i} x={
-                                getXcorr(i) + this.methodBoxAttr.width-20
+                                this.methodBoxAttr.x +
+                                Math.floor(i / 7)  * (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap) + this.methodBoxAttr.width-20
                             }
                             y={
-                                getYcorr(i) + this.methodBoxAttr.height-20
+                                this.methodBoxAttr.y +
+                                (i % 7)* (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap) + this.methodBoxAttr.height-20
                             } width={40} height={40}
                             >
                         <Progress
@@ -322,8 +261,8 @@ export default class methods extends React.Component<IProps, IState>{
                         strokeWidth={10}
                         />
                         </foreignObject>
-
-
+                        
+                        
                         </g>)
 
                 })}
@@ -344,10 +283,12 @@ export default class methods extends React.Component<IProps, IState>{
                         key={name + '_unused'}
                         transform={`translate(
                     ${
-                           getXcorr(index)
+                            this.methodBoxAttr.x +
+                            Math.floor(index / 7)* (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
                             },
                     ${
-                            getYcorr(index)
+                            this.methodBoxAttr.y +
+                            (index % 7)  * (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
                             }
                 )`}
                     >
@@ -435,10 +376,10 @@ class LineChart extends React.Component<LineChartProps, {}>{
             total += d;
         });
         total;
-        //let yAxisData: string[] = []
-        //for (let i = 0; i <= 1 / step; i++) {
-        //    yAxisData.push(`${(i * step).toFixed(2)}`)
-        //}
+        let yAxisData: string[] = []
+        for (let i = 0; i <= 1 / step; i++) {
+            yAxisData.push(`${(i * step).toFixed(2)}`)
+        }
 
         // g
         // Set the dimensions of the canvas / graph
@@ -447,14 +388,12 @@ class LineChart extends React.Component<LineChartProps, {}>{
             width = this.props.width - margin.left - margin.right,
             height = this.props.height - margin.top - margin.bottom,
             top_margin = { top: this.props.y, left: this.props.x };
-        console.log(height);
+
         // Set the ranges
         // let	xScale = d3.scaleLinear().range([0, width]);
         let yScale = d3.scaleBand()
             .rangeRound([height, 0])
             .paddingInner(0.1);
-        let	yScale2 = d3.scaleLinear().range([height, 0]);
-        yScale2.domain([0, 1]);
         let xScale = d3.scaleLinear().range([0, width]);
 
 
@@ -558,44 +497,44 @@ class LineChart extends React.Component<LineChartProps, {}>{
 
      let text1 = svg.append("text")
             .attr("class", "method_name")
-            .attr('x', width-2.5)
+            .attr('x', width)
         //    .attr('y', height-12)
             .attr('y',-3)
             .attr('text-anchor', "end")
         //    .attr('filter',"url(#solid)")
-            .text(`${" "+bestperformance.toFixed(3)+" "} `)
+            .text(`${bestperformance.toFixed(3)}`)
 
 
     let text2=svg.append("text")
             .attr("class", "method_name")
-            .attr('x', width-55)
+            .attr('x', width-50)
         //    .attr('y', height-12)
             .attr('y',-3)
             .attr('text-anchor', "end")
         //    .attr('filter',"url(#solid)")
-            .text(`${" "+classifiers.length+" "}`)
+            .text(`${classifiers.length}`)
 
     var bbox1 = text1.node().getBBox();
 
     svg.append("rect")
-    .attr("x", bbox1.x-2.5)
+    .attr("x", bbox1.x)
     .attr("y", bbox1.y)
-    .attr("width", bbox1.width+5)
+    .attr("width", bbox1.width)
     .attr("height", bbox1.height)
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
-    .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
+    .style("stroke", "#666")
     .style("stroke-width", "1.5px");
     var bbox2 = text2.node().getBBox();
 
     svg.append("rect")
-    .attr("x", bbox2.x-2.5)
+    .attr("x", bbox2.x)
     .attr("y", bbox2.y)
-    .attr("width", bbox2.width+5)
+    .attr("width", bbox2.width)
     .attr("height", bbox2.height)
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
-    .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
+    .style("stroke", "#666")
     .style("stroke-width", "1.5px");
        /* svg.append("text")
             .attr("class", "best_score")
@@ -623,27 +562,11 @@ class LineChart extends React.Component<LineChartProps, {}>{
         //     .call(d3.axisBottom(xScale));
 
         // Add the Y Axis
-        let yAxisData = [0.0,0.2,0.4,0.6,0.8];
-        let yAxisNumerical = [0.0,0.2,0.4,0.6,0.8];
-        if(height>90){
-            yAxisData = [];
-            yAxisNumerical = [];
-            for(let i = 0; i<10;i++){
-                yAxisNumerical.push(i/10);
-                yAxisData.push((i*10)/100);
-            }
-        }
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale2).tickSize(0).tickPadding(9).tickValues(yAxisData).tickFormat(function (d:any,i:number) {
-                            return yAxisNumerical[i];
-                       }))
+            .call(d3.axisLeft(yScale).tickValues([0.1,0.3,0.5,0.7,0.9]).tickFormat(function (d:any) {
 
-        svg.append("g")
-            .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale2).tickValues([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]).tickFormat(function (d:any,i:number) {
-                            return "";
-                       }))
+                        return d;}))
 
 
     }
@@ -655,7 +578,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 <feComposite in="SourceGraphic" operator="xor"/>
                 </filter>
             </defs>*/}<g id={this.TAG + name} className='algorithm'/>
-
+                   
         </g>
     }
 }

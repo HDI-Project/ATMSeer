@@ -18,7 +18,7 @@ from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
     fetch_classifiers, fetch_hyperpartitions, teardown_db
 from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun, \
-    create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
+    maybe_create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
     load_datarun_config_dict
 from recommender.predict_dataset import Recommender
 
@@ -50,6 +50,7 @@ def handle_invalid_usage(error):
 @api.errorhandler(InvalidRequestError)
 def handle_db_request_error(error):
     logging.exception(error)
+    print(error)
     response = jsonify({"error":str(error)})
     response.status_code = 500
     teardown_db()
@@ -349,7 +350,7 @@ def post_new_datarun(dataset_id):
     upload_run_conf.dataset_id = dataset_id
     db = get_db()
     datarun_id = new_datarun(db, upload_run_conf, run_per_partition)
-    create_datarun_configs(datarun_id)
+    maybe_create_datarun_configs(datarun_id)
     return jsonify({'success': True, 'id': datarun_id})
 
 
@@ -554,7 +555,7 @@ def post_update_datarun_config(datarun_id):
 def post_click_event():
     """
     A click event is a json file.
-    includes 
+    includes
     name:
     clickevent:
     [{  type
@@ -581,7 +582,7 @@ def post_click_event():
 @api.route('/getRecommendation/<int:dataset_id>', methods=['GET'])
 def getRecommendation(dataset_id):
     """Get Recommendation"""
-    
+
     train = request.args.get('train', True, type=bool)
     dataset_path = fetch_dataset_path(dataset_id, train)
     rec = Recommender(current_app.config['DATASET_META_DIR'])

@@ -87,12 +87,14 @@ def get_datarun_config_path(datarun_id, method=None):
     raise ValueError('Unknown method ', method)
 
 
-def create_datarun_configs(datarun_id):
+def maybe_create_datarun_configs(datarun_id):
     config_path = get_datarun_config_path(datarun_id)
-    # Copy default configuration
-    shutil.copytree(DEFAULT_METHOD_PATH, config_path)
-    # Copy default run configuration
-    shutil.copy(current_app.config['RUN_CONFIG'], config_path)
+    if not os.path.exists(config_path):
+        # Copy default configuration
+        shutil.copytree(DEFAULT_METHOD_PATH, config_path)
+        # Copy default run configuration
+        shutil.copy(current_app.config['RUN_CONFIG'], config_path)
+
 
 def load_datarun_config_dict(datarun_id=None):
     """
@@ -109,6 +111,7 @@ def load_datarun_config_dict(datarun_id=None):
     with open(config_path) as f:
         run_args = yaml.load(f)
     return run_args
+
 
 def load_datarun_config(datarun_id=None):
     """
@@ -280,8 +283,8 @@ class datarun_config:
 
     def __enter__(self):
         self.config_path = get_datarun_config_path(self.datarun_id)
-        if not os.path.exists(self.config_path):
-            create_datarun_configs(self.datarun_id)
+        # if not os.path.exists(self.config_path):
+        maybe_create_datarun_configs(self.datarun_id)
         # Temporarily change the path
         atm.constants.METHOD_PATH = self.config_path
         return self

@@ -1,6 +1,6 @@
 
 {
-    "svm":{   
+    "svm":{
         "name": "svm",
         "class": "sklearn.svm.SVC",
         "fullname":"support vector machine",
@@ -50,7 +50,7 @@
                 "range": [50000]
             }
         },
-        "root_hyperparameters": ["C", "kernel", "probability", "shrinking", "cache_size", "class_weight", "max_iter", "_scale"],
+        "root_hyperparameters": ["gamma", "C", "kernel", "probability", "shrinking", "cache_size", "class_weight", "max_iter", "_scale"],
         "conditional_hyperparameters": {
             "kernel": {
                 "rbf": ["gamma"],
@@ -59,7 +59,7 @@
             }
         }
     },
-    "rf":{   
+    "rf":{
         "name": "rf",
         "class": "sklearn.ensemble.RandomForestClassifier",
         "fullname": "random forest",
@@ -96,7 +96,7 @@
         "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_leaf", "n_estimators", "n_jobs"],
         "conditional_hyperparameters": {}
     },
-    "et":{   
+    "et":{
         "name": "et",
         "class": "sklearn.ensemble.ExtraTreesClassifier",
         "fullname": "extreme trees",
@@ -133,7 +133,7 @@
         "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_leaf", "min_samples_leaf", "n_estimators", "n_jobs"],
         "conditional_hyperparameters": {}
     },
-    "dt":{   
+    "dt":{
         "name": "dt",
         "class": "sklearn.tree.DecisionTreeClassifier",
         "fullname": "decision tree",
@@ -162,7 +162,7 @@
         "root_hyperparameters": ["criterion", "max_features", "max_depth", "min_samples_split", "min_samples_leaf"],
         "conditional_hyperparameters": {}
     },
-    "sgd":{   
+    "sgd":{
         "name": "sgd",
         "class": "sklearn.linear_model.SGDClassifier",
         "fullname":"stochastic gradient descent",
@@ -223,7 +223,7 @@
         "root_hyperparameters": ["loss", "penalty", "alpha", "l1_ratio", "fit_intercept", "n_iter", "shuffle", "epsilon", "learning_rate", "eta0", "class_weight", "_scale_minmax", "n_jobs"],
         "conditional_hyperparameters": {}
     },
-    "pa": {   
+    "pa": {
         "name": "pa",
         "class": "sklearn.linear_model.PassiveAggressiveClassifier",
         "fullname": "passive aggressive",
@@ -260,7 +260,7 @@
         "root_hyperparameters": ["C", "fit_intercept", "n_iter", "shuffle", "loss", "_scale", "n_jobs"],
         "conditional_hyperparameters": {}
     },
-    "knn": {   
+    "knn": {
         "name": "knn",
         "class": "sklearn.neighbors.KNeighborsClassifier",
         "fullname": "k nearest neighbors",
@@ -294,7 +294,7 @@
                 "values": [true]
             }
         },
-        "root_hyperparameters": ["n_neighbors", "weights", "algorithm", "metric", "_scale"],
+        "root_hyperparameters": ["n_neighbors", "weights", "algorithm", "metric", "_scale", "leaf_size"],
         "conditional_hyperparameters": {
             "metric": {
                 "minkowski": ["p"]
@@ -305,7 +305,7 @@
             }
         }
     },
-    "logreg":{   
+    "logreg":{
         "name": "logreg",
         "class": "sklearn.linear_model.LogisticRegression",
         "fullname": "logistic regression",
@@ -346,7 +346,7 @@
             }
         }
     },
-    "gnb": {   
+    "gnb": {
         "name": "gnb",
         "class": "sklearn.naive_bayes.GaussianNB",
         "fullname": "gaussian naive bayes",
@@ -359,7 +359,7 @@
         "root_hyperparameters": ["_scale_minmax"],
         "conditional_hyperparameters": {}
     },
-    "bnb": {   
+    "bnb": {
         "name": "bnb",
         "class": "sklearn.naive_bayes.BernoulliNB",
         "fullname": "bernoulli naive bayes",
@@ -388,7 +388,7 @@
         "root_hyperparameters": ["alpha", "binarize", "fit_prior", "class_prior", "_scale"],
         "conditional_hyperparameters": {}
     },
-    "gp":{   
+    "gp":{
         "name": "gp",
         "class": "sklearn.gaussian_process.GaussianProcessClassifier",
         "fullname": "gaussian process",
@@ -423,7 +423,7 @@
             }
         }
     },
-    "mlp": {   
+    "mlp": {
         "name": "mlp",
         "class": "sklearn.neural_network.MLPClassifier",
         "fullname": "multiple layer perceptron",
@@ -473,22 +473,20 @@
                 "values": [true]
             }
         },
-        "root_hyperparameters": ["batch_size", "solver", "alpha", "activation", "hidden_layer_sizes", "_scale"],
+        "root_hyperparameters": ["batch_size", "solver", "alpha", "activation", "hidden_layer_sizes", "_scale", "learning_rate_init"],
         "conditional_hyperparameters": {
             "solver": {
                 "sgd": [
-                    "learning_rate_init", 
                     "learning_rate"
                 ],
                 "adam": [
-                    "learning_rate_init", 
-                    "beta_1", 
+                    "beta_1",
                     "beta_2"
                 ]
             }
         }
     },
-    "mnb":{   
+    "mnb":{
         "name": "mnb",
         "fullname": "multinomial naive bayes",
         "class": "sklearn.naive_bayes.MultinomialNB",
@@ -513,7 +511,7 @@
         "root_hyperparameters": ["alpha", "fit_prior", "class_prior", "_scale_minmax"],
         "conditional_hyperparameters": {}
     },
-    "ada":{   
+    "ada":{
         "name": "ada",
         "fullname": "adaboost",
         "class": "sklearn.ensemble.AdaBoostClassifier",

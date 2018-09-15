@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Collapse, Tag, InputNumber, Switch, Icon } from 'antd';
+import { Collapse, Tag, InputNumber, Switch, Icon, Progress } from 'antd';
+//import {  Tag,Progress } from 'antd';
 import { IDatarunStatusTypes } from 'types';
 import { getClassifiers, IClassifierInfo, IDatarunInfo, getDatarun, IClickEvent } from 'service/dataService';
 // import { IHyperpartitionInfo, getHyperpartitions}  from 'service/dataService';
@@ -7,7 +8,7 @@ import { UPDATE_INTERVAL_MS } from 'Const';
 import './LeaderBoard.css';
 // import LineChart from './LineChart';
 import { getColor } from 'helper';
-
+import OverallHistogram from './OverallHistogram';
 const Panel = Collapse.Panel;
 
 // const TOP_K = 10;
@@ -39,6 +40,7 @@ export function computeDatarunSummary(classifiers: IClassifierInfo[]): IDatarunS
         topClassifiers: classifiers,
         nTriedByMethod,
         triedHyperpartition,
+
     };
 }
 
@@ -113,9 +115,10 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         const { datarunID } = this.props;
         if (datarunID === null) return;
         getClassifiers(datarunID).then(classifiers => {
-            console.log('classifiers', classifiers);
+            //console.log('classifiers', classifiers);
             this.setState({ summary: computeDatarunSummary(classifiers) });
         });
+
         // getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => {
@@ -196,26 +199,27 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
     }
     public render() {
 
-        const { summary, datarunInfo, topK} = this.state
-        const best = summary ? summary.topClassifiers[0] : undefined;
-        /*let methods_num = summary?Object.keys(summary.nTriedByMethod).length:0
+        const { summary, datarunInfo, topK} = this.state;
+        topK;
+         const best = summary ? summary.topClassifiers[0] : undefined;
+        let methods_num = summary?Object.keys(summary.nTriedByMethod).length:0
         let hp_num = summary?summary.triedHyperpartition.length:0
         const progressAlgorithm = (percent:number)=>{
             return `${methods_num}/14`
         }
         const progressHyperpartiton = (percent:number)=>{
             return `${hp_num}/172`
-        }*/
+        }
 
         return summary ? (
             <div >
                 <div>
                     {/* <h4>Overview</h4> */}
                     {/* <hr /> */}
-                    <div>
+                    <div style={{height:"100%"}}>
                         <b>Metric</b>: {datarunInfo && datarunInfo.metric}
-                        <br/>
-                        <b>Best classifier</b>:
+                         <br/>
+                         <b>Best classifier</b>:
                         <span
                             style={{
                                 backgroundColor: getColor(best?best.method:''),
@@ -227,28 +231,45 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             >
                             {best && `${best.method}-${best.id}`}
                         </span>
+                        {best && ` ${best.cv_metric.toFixed(3)}±${best.cv_metric_std.toFixed(3)}`}
                         <br/>
-                        <b>Total classifiers</b>: {summary.nTried}
+                         <b>Total classifiers</b>: {summary.nTried}
                         <br/>
-                        {/*<b>Algorithm Coverage</b>:{' '}
+                        <div style={{width:"80px",float:"left"}}>
+                        <b>Algorithm </b>:{' '}
+                        </div>
+                        {/*<div className="progress round-conner">
+                            <div className="curRate round-conner">{progressAlgorithm(0)}</div>
+                        </div>*/}
+
+                        <div style={{width:"110px",float:"left"}}>
                         <Progress
-                        type="circle"
                         percent={100*methods_num/14}
                         format={progressAlgorithm}
                         width={40}
                         strokeWidth={10}
                         />
-                        <br/>
-                        <b>Hyperpartitions Coverage</b>:{' '}
+                        </div>
+                        <br />
+                        <div style={{width:"125px",float:"left"}}>
+                        <b>Hyperpartitions </b>:{' '}
+                        </div>
+                        {/*<div>
+                        <div className="lb-classifier" style={{ width:100 }}>none</div>
+                        <span>{progressHyperpartiton(0)}</span>
+                        </div>*/}
+                        <div style={{width:"120px",float:"left"}}>
                         <Progress
-                        type="circle"
                         percent={100*hp_num/172}
                         format={progressHyperpartiton}
                         width={40}
                         strokeWidth={10}
-                        />*/}
-
-
+                        />
+                        </div>
+                        <br />
+                        <hr style={{marginTop: '6px'}}/>
+                        <b>Performance : </b>
+                        <OverallHistogram classifiers={summary.topClassifiers} width={100} />
                     </div>
                     {/* <div>
                         <LineChart scores={scores} hyperpartitions={hyperpartitions} topK={TOP_K}/>
@@ -262,12 +283,12 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             max={20}
                             defaultValue={topK}
                             onChange={this.changeTopK}
-                            style={{width: '50px'}}
+                            style={{width: '50px', margin: '0 4px'}}
                         />
 
 
                         Classifiers
-                        {/* <Button
+                         {/*<Button
                             type="primary"
                             shape="circle"
                             icon="bars"
@@ -277,6 +298,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             onClick={()=>this.props.setTopK(topK)}
                         /> */}
                         <span style={{float:'right'}} >
+                        Focus:
                         <Switch
                             checkedChildren={<Icon type="bars" />}
                             unCheckedChildren={<Icon type="bars" />}
@@ -287,7 +309,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         </span>
                     </h4>
                     <hr />
-                    <div style={{height:"calc(94vh - 410px)", overflowY:"scroll"}}>
+                    <div style={{height:"calc(80vh - 410px)", overflowY:"scroll"}}>
                     <Collapse bordered={false} onChange={this.onCollapseChange}>
                         {summary.topClassifiers.slice(0, topK).map(c => (
                             <Panel key={String(c.id)} header={<MethodHeader {...c} />}>
@@ -296,7 +318,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         ))}
                     </Collapse>
                     </div>
-                </div>
+               </div>
             </div>
         ) : (
             <div>Please select a datarun.</div>
