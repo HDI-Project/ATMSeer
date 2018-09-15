@@ -3,15 +3,24 @@
     color:  #dddddd;
     position: absolute;
     left: 100px;
-    top: 12px;
+    top: 8px;
 }
 
 .lb-classifier-metric {
     background-color: transparent;
     position: absolute;
     left: 100px;
-    top: 12px;
+    top: 8px;
 }
+
+.ant-collapse-header {
+    padding: 8px 0 8px 36px !important;
+}
+
+.ant-collapse-header .arrow {
+    line-height: 40px !important;
+}
+
 .lb-bar {
     background-color: #dddddd;
     color:  #dddddd;
@@ -47,18 +56,18 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #ffffff; 
+    background: #ffffff;
     opacity:0;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #ffffff; 
+    background: #ffffff;
     opacity:0;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #ffffff; 
+    background: #ffffff;
     opacity:0;
 }

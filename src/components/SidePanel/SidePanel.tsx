@@ -38,7 +38,7 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
                     <TabPane tab="Data" key="1">
                         <DataView datasetID={this.props.datasetID} />
                     </TabPane>
-                    <TabPane tab="LeaderBoard" key="2">
+                    <TabPane tab="Overview" key="2">
                         <LeaderBoard
                             datarunID={this.props.datarunID}
                             datarunStatus={this.props.datarunStatus}

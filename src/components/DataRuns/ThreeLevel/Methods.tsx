@@ -106,7 +106,7 @@ export default class methods extends React.Component<IProps, IState>{
 
     }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height,displaymode} = this.props
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height} = this.props
         //this.width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
         // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
         /*this.methodBoxAttr = {
@@ -125,69 +125,54 @@ export default class methods extends React.Component<IProps, IState>{
         console.log(height);
         // Calculate Layout
         let refwidth = 1600;
-        let refheight = 714.84;
+        // let refheight = 714.84;
         let oneboxwidth:number = 215/refwidth*width;
-        let oneboxgap :number = 25/215*oneboxwidth;
+        let oneboxgap :number = 30;
         let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-        let oneboxheight :number = 320/refheight*height;
-        let oneboxygap :number = 120/320*oneboxheight;
-        let oneboxinnerheight:number = oneboxheight - 2*oneboxgap - oneboxygap;
+        // let oneboxheight :number = 320/refheight*height;
+        // let oneboxygap :number = 30;
+        // if(displaymode==1){
+        //     refheight = 348;
+        //     // oneboxgap  = 25/215*oneboxwidth;
+        //     oneboxinnerwidth = oneboxwidth -2* oneboxgap;
+        //     // oneboxheight  = 160/refheight*height;
+        //     // oneboxygap  = 20/160*oneboxheight;
+
+        // }else if(displaymode==2){
+        //     //let refheight = 232;
+        //     // oneboxgap  = 25/215*oneboxwidth;
+        //     oneboxinnerwidth = oneboxwidth -2* oneboxgap;
+        //     // oneboxheight  = 160/348*height;
+        //     // oneboxygap  = 0;
+        // }
+        const x = 48;
+        const y = 60;
+        const yextragap = 20;
+        const gap = 30;
+        const yGap = gap + yextragap;
+        // const maxrow = 7;
+        let maxrow = Math.floor((width-this.methodBoxAttr.x)/(this.methodBoxAttr.width+2*this.methodBoxAttr.gap));
+        if(maxrow<=1){
+            maxrow = 1;
+        }
+        const nRows = Math.ceil((usedMethods.length + unusedMethods.length) / maxrow);
+        console.log(nRows);
+        // const oneboxheight = (height - y) / nRows - yGap;
+        let oneboxinnerheight:number = (height - y) / nRows - yGap;
+        // oneboxygap = 30;
         this.methodBoxAttr = {
             // width : 70,
             height: oneboxinnerheight  ,
             width: oneboxinnerwidth ,
-            gap: oneboxgap,
-            x: 40/25*oneboxgap,
-            y: 100/25*oneboxgap,
+            gap,
+            x,
+            y,
             checkboxY: 2,
             checkboxWidth: 100,
             checkboxHeight: 30,
-            yextragap:oneboxygap
+            yextragap,
         }
-        if(displaymode==1){
-            let refwidth = 1600;
-            let refheight = 348;
-            let oneboxwidth:number = 215/refwidth*width;
-            let oneboxgap :number = 25/215*oneboxwidth;
-            let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-            let oneboxheight :number = 160/refheight*height;
-            let oneboxygap :number = 20/160*oneboxheight;
-            let oneboxinnerheight:number = oneboxheight - 2*oneboxgap - oneboxygap;
-            this.methodBoxAttr = {
-                // width : 70,
-                height: oneboxinnerheight  ,
-                width: oneboxinnerwidth ,
-                gap: oneboxgap,
-                x: 40/25*oneboxgap,
-                y: 50/25*oneboxgap,
-                checkboxY: 2,
-                checkboxWidth: 100,
-                checkboxHeight: 30,
-                yextragap:oneboxygap
-            }
-        }else if(displaymode==2){
-            let refwidth = 1600;
-            //let refheight = 232;
-            let oneboxwidth:number = 215/refwidth*width;
-            let oneboxgap :number = 25/215*oneboxwidth;
-            let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-            let oneboxheight :number = 160/348*height;
-            let oneboxygap :number = 0;
-            let oneboxinnerheight:number = oneboxheight - 2*oneboxgap - oneboxygap;
-            this.methodBoxAttr = {
-                // width : 70,
-                height: oneboxinnerheight  ,
-                width: oneboxinnerwidth ,
-                gap: oneboxgap,
-                x: 40/25*oneboxgap,
-                y: 50/25*oneboxgap,
-                checkboxY: 2,
-                checkboxWidth: 100,
-                checkboxHeight: 30,
-                yextragap:oneboxygap
-            }
-        }
-        
+
         /**
          * checkboxHeight: 30
             checkboxWidth: 100
@@ -198,7 +183,7 @@ export default class methods extends React.Component<IProps, IState>{
             x: 40
             y: 40
             yextragap: 20
-         * 
+         *
          */
         console.log(this.methodBoxAttr);
 
@@ -231,10 +216,6 @@ export default class methods extends React.Component<IProps, IState>{
         //         maxnum=num;
         //     }
         // });
-        let maxrow = Math.floor((width-this.methodBoxAttr.x)/(this.methodBoxAttr.width+2*this.methodBoxAttr.gap));
-        if(maxrow<=1){
-            maxrow = 1;
-        }
         let getXcorr = (i:number) =>{
             return  this.methodBoxAttr.x +  (i % maxrow)* (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
         }
@@ -309,7 +290,7 @@ export default class methods extends React.Component<IProps, IState>{
                     //const top_width = classifier_num*6+60;
                     // this.index++;
                     return (<g key={name + "_g_linechart_" + i}>
-                        
+
                         <LineChart key={name + "_used_" + i}
                             // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
                             // y={this.methodBoxAttr.y}
@@ -341,8 +322,8 @@ export default class methods extends React.Component<IProps, IState>{
                         strokeWidth={10}
                         />
                         </foreignObject>
-                        
-                        
+
+
                         </g>)
 
                 })}
@@ -454,10 +435,10 @@ class LineChart extends React.Component<LineChartProps, {}>{
             total += d;
         });
         total;
-        let yAxisData: string[] = []
-        for (let i = 0; i <= 1 / step; i++) {
-            yAxisData.push(`${(i * step).toFixed(2)}`)
-        }
+        //let yAxisData: string[] = []
+        //for (let i = 0; i <= 1 / step; i++) {
+        //    yAxisData.push(`${(i * step).toFixed(2)}`)
+        //}
 
         // g
         // Set the dimensions of the canvas / graph
@@ -466,12 +447,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
             width = this.props.width - margin.left - margin.right,
             height = this.props.height - margin.top - margin.bottom,
             top_margin = { top: this.props.y, left: this.props.x };
-
+        console.log(height);
         // Set the ranges
         // let	xScale = d3.scaleLinear().range([0, width]);
         let yScale = d3.scaleBand()
             .rangeRound([height, 0])
             .paddingInner(0.1);
+        let	yScale2 = d3.scaleLinear().range([height, 0]);
+        yScale2.domain([0, 1]);
         let xScale = d3.scaleLinear().range([0, width]);
 
 
@@ -640,11 +623,27 @@ class LineChart extends React.Component<LineChartProps, {}>{
         //     .call(d3.axisBottom(xScale));
 
         // Add the Y Axis
+        let yAxisData = [0.0,0.2,0.4,0.6,0.8];
+        let yAxisNumerical = [0.0,0.2,0.4,0.6,0.8];
+        if(height>90){
+            yAxisData = [];
+            yAxisNumerical = [];
+            for(let i = 0; i<10;i++){
+                yAxisNumerical.push(i/10);
+                yAxisData.push((i*10)/100);
+            }
+        }
         svg.append("g")
             .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale).tickValues([0.1,0.3,0.5,0.7,0.9]).tickFormat(function (d:any) {
+            .call(d3.axisLeft(yScale2).tickSize(0).tickPadding(9).tickValues(yAxisData).tickFormat(function (d:any,i:number) {
+                            return yAxisNumerical[i];
+                       }))
 
-                        return d;}))
+        svg.append("g")
+            .attr('transform', `translate(${-margin.left}, 0)`)
+            .call(d3.axisLeft(yScale2).tickValues([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]).tickFormat(function (d:any,i:number) {
+                            return "";
+                       }))
 
 
     }
@@ -656,7 +655,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 <feComposite in="SourceGraphic" operator="xor"/>
                 </filter>
             </defs>*/}<g id={this.TAG + name} className='algorithm'/>
-                   
+
         </g>
     }
 }

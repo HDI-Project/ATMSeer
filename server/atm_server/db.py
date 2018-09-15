@@ -49,9 +49,9 @@ def get_db():
 def teardown_db(e=None):
     db = g.pop('db', None)
     # Close db connection
-    if db is not None:
-        if db.session is not None:
-            db.session.close()
+    if db is not None and db.session is not None:
+        db.session.close()
+        db.session = None
 
 
 def init_app(app):

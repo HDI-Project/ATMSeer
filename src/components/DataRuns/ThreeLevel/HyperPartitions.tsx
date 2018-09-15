@@ -80,13 +80,22 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     .duration(1000)
                     .ease(d3.easeLinear);
 
-            let x = d3.scaleBand()
-                .rangeRound([0, width])
-                .paddingInner(0.05);
-
+            //let x = d3.scaleBand()
+            //    .rangeRound([0, width])
+            //    .paddingInner(0.05);
+            let x = d3.scaleLinear()
+                .rangeRound([0, width]);
             let y = d3.scaleLinear()
                 .rangeRound([height, 0]);
-            x.domain(Array.from(Array(maxLen).keys()))
+            x.domain([0,maxLen])
+            //x.domain(Array.from(Array(maxLen).keys()))
+            console.log(x(0));
+            //console.log(x.bandwidth())
+            //let xWidth = x.bandwidth();
+            let xWidth = width/maxLen-2;
+            if(xWidth<5){
+                xWidth=5;
+            }
             y.domain([0, 1]);
 
             let exceedrow = -1;
@@ -224,8 +233,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     .attr('class', 'caption')
             textEnter.append('text')
                 .attr('class', "num_cls")
-                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
-                .attr('y', -1)
+                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen)
+                .attr('y', 0)
                 .text((d: any) => d.sortedCls.length)
                 .attr('text-anchor', 'start')
 
@@ -389,22 +398,22 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     .style("opacity", 0);
 
                 })
-                .attr("x", (d: any, i: number) => x(0))
+                .attr("x", (d: any, i: number) => x(0)-x(0))
                 .attr("y", (d: any) => 0 )
                 .attr("width", 0)
                 .attr("height", 0)
 
                 .transition(trans)
-                .attr("x", (d: any, i: number) => x(i))
+                .attr("x", (d: any, i: number) => x(i)-x(0))
                 .attr("y", (d: any) => y(d.cv_metric) - height)
-                .attr("width", x.bandwidth())
+                .attr("width", xWidth)
                 .attr("height", (d: any) => (height - y(d.cv_metric)))
                 .attr('opacity',selectOpacity)
                 //CLASSIFIER UPDATE
                 classifierSelect.transition(trans)
-                .attr("x", (d: any, i: number) => x(i))
+                .attr("x", (d: any, i: number) => x(i)-x(0))
                 .attr("y", (d: any) => y(d.cv_metric) - height)
-                .attr("width", x.bandwidth())
+                .attr("width", xWidth)
                 .attr("height", (d: any) => (height - y(d.cv_metric)))
                 .attr('opacity',selectOpacity)
                 classifierSelect.exit().remove();
@@ -427,8 +436,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .remove()
 
             textUpdate.selectAll('text.num_cls')
-                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
-                .attr('y', -1)
+                .attr('x', (d: any) => width * d.sortedCls.length / maxLen)
+                .attr('y', 0)
                 .text((d: any) => {
                     //console.log(d.id+":"+d.sortedCls.length);
                     return d.sortedCls.length

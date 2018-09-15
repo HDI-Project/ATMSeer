@@ -31,3 +31,5 @@ def send_index(model):
         return send_from_directory(current_app.config['FRONT_ROOT'], 'favicon.ico')
     if model == 'index.html':
         return send_from_directory(current_app.config['FRONT_ROOT'], 'index.html')
+    if model == 'small_hint.png':
+        return send_from_directory(current_app.config['FRONT_ROOT'], 'small_hint.png')
