@@ -49,6 +49,8 @@ Or you can directly run `startserver.sh` to start the server
 
 The routes (API) are defined in `server/atm_server/api.py`
 
+You can access the `http://localhost:7779/` to see the ATMSeer.
+
 # Build
 
 ## Build and Deploy with Docker
