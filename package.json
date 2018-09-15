@@ -16,7 +16,7 @@
     "react-scripts-ts": "2.16.0"
   },
   "scripts": {
-    "start": "cross-env PORT=7779 react-scripts-ts start",
+    "start": "cross-env PORT=7777 react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
