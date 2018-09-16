@@ -68,7 +68,7 @@ npm install
 npm run start
 ```
 
-You can access the `http://localhost:7777/` to see the ATMSeer frontend.
+You can access the `http://localhost:7777/` to see the ATMSeer.
 
 # Build
 
