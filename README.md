@@ -33,7 +33,13 @@ After configuring the ATM, then go to `server/` and run `pip install -r requirem
 
 ## Production Mode
 
-To start the server in the production mode, first set `$PYTHONPATH` to include the local `atm_server` package: 
+To start the server and frontend in the production mode, first you should build the frontend by running following commands
+
+```
+npm run build
+```
+
+Then set `$PYTHONPATH` to include the local `atm_server` package: 
 ```bash
 export PYTHONPATH=$PYTHONPATH:`pwd`/server/
 ```
@@ -46,11 +52,9 @@ The routes (API) are defined in `server/atm_server/api.py`
 
 You can access the `http://localhost:7779/` to see the ATMSeer.
 
-Also you can start the server in the development mode by running following commands:
-
 ## Development Mode
 
-To start the server in the development mode, first also set `$PYTHONPATH` to include the local `atm_server` package: 
+To start the server and frontend in the development mode, first set `$PYTHONPATH` to include the local `atm_server` package: 
 ```bash
 export PYTHONPATH=$PYTHONPATH:`pwd`/server/
 ```
