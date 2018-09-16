@@ -80,75 +80,64 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     .duration(1000)
                     .ease(d3.easeLinear);
 
-            let x = d3.scaleBand()
-                .rangeRound([0, width])
-                .paddingInner(0.05);
-
+            //let x = d3.scaleBand()
+            //    .rangeRound([0, width])
+            //    .paddingInner(0.05);
+            let x = d3.scaleLinear()
+                .rangeRound([0, width]);
             let y = d3.scaleLinear()
                 .rangeRound([height, 0]);
-            x.domain(Array.from(Array(maxLen).keys()))
+            x.domain([0,maxLen])
+            //x.domain(Array.from(Array(maxLen).keys()))
+            console.log(x(0));
+            //console.log(x.bandwidth())
+            //let xWidth = x.bandwidth();
+            let xWidth = width/maxLen-2;
+            if(xWidth<5){
+                xWidth=5;
+            }
             y.domain([0, 1]);
 
-            let exceedcol = -1;
-            let maxcol = 0;
-            let nowcol = 0;
+            let exceedrow = -1;
+            let maxrow = 0;
+            let nowrow = 0;
             let lastposx = gap+width*0.5;
 
-            let lastposy = height;
-            let horizontalnum = 0;
-            let maxhorizontalnum = 10;
+            let lastposy = 3*height+gap;
+            //let verticalnum = 0;
+            //let maxverticalnum = 10;
 
             let pos = [[lastposx, lastposy]]
             let bundleData : any[]= [];
             for (let i = 0; i < hpsInfo.length; i++) {
                 let currentPos = [0, 0]
-                if (hpsInfo[i].method == selectedMethod) {
-                    //next pos x not changed, y changed
+                //next pos x not changed, y changed
+                if(i!=0)lastposx = lastposx + width * 1.5;
+                currentPos = [lastposx, lastposy];
+                
+                
+                
+                if (lastposx+ width * 1.5 > nowProps.width) {
                     lastposy = lastposy + (2 * height + gap);
-                    currentPos = [lastposx, lastposy]
-                    horizontalnum = 0;
-                } else {
-                    if(horizontalnum == 0){
-                        lastposy = lastposy + (2*gap);
+                    nowrow ++;
+                    if(lastposy + (2 * height + gap)>nowProps.height && exceedrow==-1){
+                        exceedrow = nowrow;
                     }
-                    if(horizontalnum<maxhorizontalnum){
-                         //next pos x changed, y not changed
-                        currentPos = [lastposx + (2*gap*horizontalnum), lastposy]
-                        horizontalnum++;
-                    }else{
-                        lastposy = lastposy + (2*gap);
-                        currentPos = [lastposx, lastposy]
-                        horizontalnum = 1;
-                    }
-
-                }
-                if (lastposy > nowProps.height) {
-                    lastposx = lastposx + width * 1.5;
-                    nowcol ++;
-                    if(lastposx + width*1.5>nowProps.width && exceedcol==-1){
-                        exceedcol = nowcol;
-                    }
-
-
-                    lastposy = height + (
-                        hpsInfo[i].method == selectedMethod?
-                        (2 * height + gap)
-                        :(2*gap)
-                    );
+                    lastposx = gap+width*0.5;
                     currentPos = [lastposx, lastposy]
                 }
                 pos.push(currentPos)
                 bundleData.push({
                     ...hpsInfo[i],
                     pos:currentPos,
-                    col:nowcol
+                    col:nowrow
                 })
             }
-            maxcol = nowcol+1;
+            maxrow = nowrow+1;
             //console.log("maxcol exceedcol");
             //console.log(maxcol);
             //console.log(exceedcol)
-            if(exceedcol==-1){
+            if(exceedrow==-1){
                 let newhiddencol = 0;
                 if(newhiddencol != hiddencol || this.state.visible!=false){
                     this.setState({
@@ -159,13 +148,13 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 hiddencol = newhiddencol;
             }else{
                 let leftdisabled = hiddencol<=0;
-                let rightdisabled = hiddencol>=maxcol-exceedcol;
+                let rightdisabled = hiddencol>=maxrow-exceedrow;
                 let newhiddencol = hiddencol;
                 if(newhiddencol<=0){
                     newhiddencol=0;
                 }
-                if(newhiddencol>=maxcol-exceedcol){
-                    newhiddencol=maxcol-exceedcol;
+                if(newhiddencol>=maxrow-exceedrow){
+                    newhiddencol=maxrow-exceedrow;
                 }
                 if(this.state.visible != true || this.state.leftdisabled != leftdisabled || this.state.rightdisabled!=rightdisabled || this.state.hiddencol!=newhiddencol){
                     this.setState(
@@ -180,21 +169,21 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 hiddencol = newhiddencol;
                 
             }
-            if(exceedcol!=-1){
-                exceedcol=hiddencol+exceedcol;
+            if(exceedrow!=-1){
+                exceedrow=hiddencol+exceedrow;
             }else{
-                exceedcol=maxcol+1;
+                exceedrow=maxrow+1;
             }
             //console.log("hiddencol");
            // console.log(hiddencol);
             bundleData.forEach((d:any)=>{
                 if(d.col<hiddencol){
-                    d.pos[0]=d.pos[0]-gap-width*0.5-width*1.5*(hiddencol);
+                    d.pos[1]=d.pos[1]-2*height-gap-(2 * height + gap)*(hiddencol);
                 }else{
-                    if(d.col>=exceedcol){
-                        d.pos[0]=d.pos[0]-width*1.5*(d.col)+nowProps.width+width*1.5*(d.col-exceedcol);
+                    if(d.col>=exceedrow){
+                        d.pos[1]=d.pos[1]-(2 * height + gap)*(d.col)+nowProps.height+(2 * height + gap)*(d.col-exceedrow);
                      }else{
-                        d.pos[0]=d.pos[0]-width*1.5*(hiddencol);
+                        d.pos[1]=d.pos[1]-(2 * height + gap)*(hiddencol);
                      }
 
                 }
@@ -244,8 +233,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     .attr('class', 'caption')
             textEnter.append('text')
                 .attr('class', "num_cls")
-                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
-                .attr('y', -1)
+                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen)
+                .attr('y', 0)
                 .text((d: any) => d.sortedCls.length)
                 .attr('text-anchor', 'start')
 
@@ -409,22 +398,22 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     .style("opacity", 0);
 
                 })
-                .attr("x", (d: any, i: number) => x(0))
+                .attr("x", (d: any, i: number) => x(0)-x(0))
                 .attr("y", (d: any) => 0 )
                 .attr("width", 0)
                 .attr("height", 0)
 
                 .transition(trans)
-                .attr("x", (d: any, i: number) => x(i))
+                .attr("x", (d: any, i: number) => x(i)-x(0))
                 .attr("y", (d: any) => y(d.cv_metric) - height)
-                .attr("width", x.bandwidth())
+                .attr("width", xWidth)
                 .attr("height", (d: any) => (height - y(d.cv_metric)))
                 .attr('opacity',selectOpacity)
                 //CLASSIFIER UPDATE
                 classifierSelect.transition(trans)
-                .attr("x", (d: any, i: number) => x(i))
+                .attr("x", (d: any, i: number) => x(i)-x(0))
                 .attr("y", (d: any) => y(d.cv_metric) - height)
-                .attr("width", x.bandwidth())
+                .attr("width", xWidth)
                 .attr("height", (d: any) => (height - y(d.cv_metric)))
                 .attr('opacity',selectOpacity)
                 classifierSelect.exit().remove();
@@ -447,8 +436,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .remove()
 
             textUpdate.selectAll('text.num_cls')
-                .attr('x', (d: any) => 1+width * d.sortedCls.length / maxLen - 2)
-                .attr('y', -1)
+                .attr('x', (d: any) => width * d.sortedCls.length / maxLen)
+                .attr('y', 0)
                 .text((d: any) => {
                     //console.log(d.id+":"+d.sortedCls.length);
                     return d.sortedCls.length
@@ -602,14 +591,14 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         //console.log(this.state.hiddencol);
         let generateButton = () =>{
             if(this.state.visible){
-            return (<foreignObject x={this.props.width/2-50} y={this.props.height+20} width={100} height={35}>
+            return (<foreignObject x={this.props.width-60-35} y={this.props.height/2-35} width={35} height={70}>
                 <div>
 
                <Button type="default" size="small" onClick={this.onLeftHp} disabled={this.state.leftdisabled}>
-                <Icon type="left" />
+                <Icon type="up" />
               </Button>
               <Button type="default" size="small" onClick={this.onRightHp} disabled={this.state.rightdisabled}>
-                <Icon type="right" />
+                <Icon type="down" />
               </Button>
               </div></foreignObject>
               )

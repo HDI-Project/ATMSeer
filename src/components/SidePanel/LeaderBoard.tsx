@@ -40,7 +40,7 @@ export function computeDatarunSummary(classifiers: IClassifierInfo[]): IDatarunS
         topClassifiers: classifiers,
         nTriedByMethod,
         triedHyperpartition,
-    
+
     };
 }
 
@@ -118,7 +118,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             //console.log('classifiers', classifiers);
             this.setState({ summary: computeDatarunSummary(classifiers) });
         });
-        
+
         // getDatarunStepsScores(datarunID).then(scores => this.setState({scores}))
         if (updateDatarunInfo) {
             getDatarun(datarunID).then(datarunInfo => {
@@ -218,7 +218,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                     {/* <hr /> */}
                     <div style={{height:"100%"}}>
                         <b>Metric</b>: {datarunInfo && datarunInfo.metric}
-                         <br/> 
+                         <br/>
                          <b>Best classifier</b>:
                         <span
                             style={{
@@ -232,16 +232,16 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             {best && `${best.method}-${best.id}`}
                         </span>
                         {best && ` ${best.cv_metric.toFixed(3)}±${best.cv_metric_std.toFixed(3)}`}
-                        <br/> 
+                        <br/>
                          <b>Total classifiers</b>: {summary.nTried}
-                        <br/> 
+                        <br/>
                         <div style={{width:"80px",float:"left"}}>
                         <b>Algorithm </b>:{' '}
                         </div>
                         {/*<div className="progress round-conner">
                             <div className="curRate round-conner">{progressAlgorithm(0)}</div>
                         </div>*/}
-                        
+
                         <div style={{width:"110px",float:"left"}}>
                         <Progress
                         percent={100*methods_num/14}
@@ -267,6 +267,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         />
                         </div>
                         <br />
+                        <hr style={{marginTop: '6px'}}/>
                         <b>Performance : </b>
                         <OverallHistogram classifiers={summary.topClassifiers} width={100} />
                     </div>
@@ -282,7 +283,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             max={20}
                             defaultValue={topK}
                             onChange={this.changeTopK}
-                            style={{width: '50px'}}
+                            style={{width: '50px', margin: '0 4px'}}
                         />
 
 
@@ -297,6 +298,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             onClick={()=>this.props.setTopK(topK)}
                         /> */}
                         <span style={{float:'right'}} >
+                        Focus:
                         <Switch
                             checkedChildren={<Icon type="bars" />}
                             unCheckedChildren={<Icon type="bars" />}
@@ -307,7 +309,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         </span>
                     </h4>
                     <hr />
-                    <div style={{height:"calc(70vh - 410px)", overflowY:"scroll"}}>
+                    <div style={{height:"calc(80vh - 410px)", overflowY:"scroll"}}>
                     <Collapse bordered={false} onChange={this.onCollapseChange}>
                         {summary.topClassifiers.slice(0, topK).map(c => (
                             <Panel key={String(c.id)} header={<MethodHeader {...c} />}>
@@ -316,7 +318,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         ))}
                     </Collapse>
                     </div>
-               </div> 
+               </div>
             </div>
         ) : (
             <div>Please select a datarun.</div>

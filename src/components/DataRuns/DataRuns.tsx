@@ -23,7 +23,7 @@ import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
 import ThreeLevel from "./ThreeLevel";
 import AskModal from "./AskModal";
-import { USER_STUDY } from 'Const';
+import { USER_STUDY,THRESHOLD_STEP } from 'Const';
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
 //     // timeout: 1000,
@@ -69,7 +69,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
             recommendationResult: {
                 result: []
             },
-            run_threshold: 20,
+            run_threshold: THRESHOLD_STEP,
             askvisible: false
         }
     }
@@ -114,7 +114,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     }
                 } else {
                     if (askvisible == false) {
-                        run_threshold = classifiers.length + 20;
+                        run_threshold = classifiers.length + THRESHOLD_STEP;
                     }
                 }
             }
@@ -162,7 +162,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
         // mode = 1      stop_running
 
         let { run_threshold, classifiers } = this.state;
-        run_threshold = classifiers.length + 20;
+        run_threshold = classifiers.length + THRESHOLD_STEP;
 
         if (mode == 0) {
             /*

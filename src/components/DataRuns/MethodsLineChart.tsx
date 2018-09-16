@@ -2,7 +2,7 @@ import { Button,Checkbox,message,InputNumber } from 'antd';
 import * as React from 'react';
 import * as methodsDef from "../../assets/methodsDef.json";
 import { IMethod, IDatarun, IClassifier } from "types";
-import { IConfigsInfo,INewDatarunResponse,IUpdateDatarunConfig, ICommonResponse,IHyperpartitionInfo } from '../../service/dataService';
+import { IConfigsInfo,INewDatarunResponse,IUpdateDatarunConfig, ICommonResponse,IHyperpartitionInfo,IClassifierInfo,IRecommendationResult,IClickEvent } from '../../service/dataService';
 import { getConfigs,getDatarunConfigs,postNewDatarun,updateDatarunConfigs} from '../../service/dataService';
 //import { IDatarun } from "types";
 //import { getColor ,RED,YELLOW, getGradientColor} from 'helper';
@@ -33,8 +33,13 @@ export interface IProps {
     datasetID: number | null,
     datarunID: number | null,
     setDatarunID: (id: number) => void,
-    hyperpartitions : IHyperpartitionInfo[]
+    hyperpartitions : IHyperpartitionInfo[],
+    classifiers: IClassifierInfo[],
+    compareK: number,
+    recommendationResult:IRecommendationResult,
+    postClickEvent:(e:IClickEvent)=>void
 }
+
 export interface ChartProps {
     width: number,
     height: number,

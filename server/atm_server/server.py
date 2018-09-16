@@ -14,6 +14,7 @@ from atm.config import (add_arguments_aws_s3, add_arguments_sql,
 from atm_server import SERVER_ROOT, db
 from atm_server.config import Config, ProductionConfig, DevelopmentConfig
 from atm_server.api import api
+from atm_server.atmvis import vis
 
 
 def create_app(config=None):
@@ -53,6 +54,7 @@ def create_app(config=None):
 
     db.init_app(app)
     app.register_blueprint(api, url_prefix='/api')
+    app.register_blueprint(vis, url_prefix='/')
     return app
 
 
@@ -62,7 +64,7 @@ def add_arguments_server(parser):
 
     # API flags
     parser.add_argument('--host', default='0.0.0.0', help='Port in which to run the API')
-    parser.add_argument('--port', default=7777, help='Port in which to run the API')
+    parser.add_argument('--port', default=7779, help='Port in which to run the API')
     parser.add_argument('--debug', action="store_const", default=False, const=True,
                         help='If true, run Flask in debug mode')
 

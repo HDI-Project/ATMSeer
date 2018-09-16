@@ -11,7 +11,8 @@ export interface IProps {
     onSelectedChange:(method:string,name:string,type:string,range:number[])=>void,
     alreadySelectedRange:any,
     mouseOverClassifier:number,
-    height:number
+    height:number,
+    width:number
 }
 export interface HyperParameterInfo{
     dim:number,
@@ -151,11 +152,12 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                 }
             })
             let margin = 40,
-                yextragap = 30,
-                height = ((nextProps.height-margin)/(HyperparameterList.length)-margin-yextragap)*4/5;
+                yextragap = 0,
+                width = ((nextProps.width - 120- margin) / (HyperparameterList.length) - margin)*4/5;
+                //height = ((nextProps.height-margin)/(HyperparameterList.length)-margin-yextragap)*4/5;
                 this.box = {
-                    width: 200,
-                    height: height>100?100:height,
+                    width: width>150?150:width<100?100:width,
+                    height: 100,
                     margin,
                     yextragap
                 }
@@ -223,12 +225,12 @@ export default class HyperParameters extends React.Component<IProps, IState>{
     }
     render() {
             let {selectedClassifier,HyperparameterList,classifiers,selectedMethod,mode,visible} = this.state;
-
+            visible;
             let box = this.box;
             
 
             let generateButton = () =>{
-                if(visible){
+                if(false){
                     return (<foreignObject x={box.width/2-50} y={this.props.height+20} width={100} height={35}>
                         <div>
                     <Button type="default" size="small" onClick={this.onUpClick}>
@@ -251,14 +253,14 @@ export default class HyperParameters extends React.Component<IProps, IState>{
             return <g>
                 <g className="hyperParameters">
                 {HyperparameterList.map((hp:HyperParameterInfo, i) => {
-                    if(i>=exceedRow||i<this.state.hiddenrow){
-                        return <g key={selectedMethod+"_"+hp.name+"_g"+(++this.index)}/>
-                    }else{
+                   // if(i>=exceedRow||i<this.state.hiddenrow){
+                   //     return <g key={selectedMethod+"_"+hp.name+"_g"+(++this.index)}/>
+                   // }else{
                         return <HyperParameter
                             key={selectedMethod+"_"+hp.name+"_hp"+(++this.index)}
                             classifiers={classifiers}
                             hp={hp}
-                            idx={i-this.state.hiddenrow}
+                            idx={i}
                             hiddenrow={this.state.hiddenrow}
                             
                             box={box}
@@ -269,7 +271,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                             valueType={hp.valueType}
                             mouseOverClassifier={this.props.mouseOverClassifier}
                             />
-                    }
+                    //}
                 })}
             </g>
             {generateButton()} 
@@ -406,8 +408,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
 
         let svg = d3.select("#" + this.TAG + idx)
             .append('g')
-            .attr('transform', `translate(${0}, ${margin + idx * (height*5/4 + margin + yextragap)})`)
-
+            .attr('transform', `translate(${120+idx * (width*5/4 + margin + yextragap)}, ${margin})`)
 
 
         yArea.domain(d3.extent(areaData, (d: number[]) => d.length))
