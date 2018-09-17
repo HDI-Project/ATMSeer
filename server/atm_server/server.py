@@ -70,6 +70,7 @@ def add_arguments_server(parser):
     parser.add_argument('--reboot', action="store_const", default=False, const=True,
                         help='If true, when encountering a bug, it will shut down immediately.')
 
+
 def start_server():
 
     # ATM flags
