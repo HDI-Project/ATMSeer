@@ -67,6 +67,8 @@ def add_arguments_server(parser):
     parser.add_argument('--port', default=7779, help='Port in which to run the API')
     parser.add_argument('--debug', action="store_const", default=False, const=True,
                         help='If true, run Flask in debug mode')
+    parser.add_argument('--reboot', action="store_const", default=False, const=True,
+                        help='If true, when encountering a bug, it will shut down immediately.')
 
 
 def start_server():

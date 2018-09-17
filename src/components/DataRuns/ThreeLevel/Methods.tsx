@@ -19,10 +19,12 @@ export interface IProps {
     selectedMethod: string,
     hyperpartitions: IHyperpartitionInfo[],
     configsMethod : string[],
-    onMethodsCheckBoxChange: (e:any)=>void
+    onMethodsCheckBoxChange: (e:any)=>void,
+    onMethodsCheckBoxAllChange:(e:any)=>void,
     compareK:number,
     methodSelected:any,
-    recommendationResult:IRecommendationResult
+    recommendationResult:IRecommendationResult,
+    checkAllAttr:any
 }
 
 export interface IState {
@@ -192,7 +194,25 @@ export default class methods extends React.Component<IProps, IState>{
         let getYcorr = (i:number) =>{
             return this.methodBoxAttr.y + Math.floor(i / maxrow) * (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
         }
+        let checkAllAttr:any = this.props.checkAllAttr;
         return <g className="methods" >
+                                <foreignObject
+                                        key={name+"_text_checkall"}
+                                        x={150}
+                                        y={-7}
+                                        width={this.methodBoxAttr.checkboxWidth}
+                                        height={this.methodBoxAttr.checkboxHeight}>
+
+                                       <Checkbox
+                                        key={name+"_checkbox_all"}
+                                        checked={checkAllAttr.checked}
+                                        indeterminate={checkAllAttr.indeterminate}
+                                        disabled={checkAllAttr.disabled}
+                                        value={name}
+                                        onChange={this.props.onMethodsCheckBoxAllChange} >
+                                        Check all
+                                        </Checkbox>
+                                    </foreignObject>
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                             /*let checked = false;
                             let configsMethod : string[] = this.props.configsMethod;
@@ -418,14 +438,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
         let	yScale2 = d3.scaleLinear().range([height, 0]);
         yScale2.domain([0, 1]);
         let xScale = d3.scaleLinear().range([0, width]);
-        let trans = d3.transition()
-                            .duration(1000)
-                            .ease(d3.easeLinear);
+        //let trans = d3.transition()
+        //                    .duration(1000)
+        //                    .ease(d3.easeLinear);
 
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
         let top_svg = d3.select("#" + this.TAG + this.props.name);
-        top_svg.transition(trans).attr("width", width + margin.left + margin.right)
+        top_svg.attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")");
         top_svg.append("rect")
             .attr('class', `${this.props.name} methodRect`)
@@ -463,7 +483,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("class", "method_name")
             .attr('x', width-2.5)
         //    .attr('y', height-12)
-            .attr('y',-3)
+            .attr('y',-5)
             .attr('text-anchor', "end")
         //    .attr('filter',"url(#solid)")
             .text(`${" "+bestperformance.toFixed(3)+" "} `)
@@ -473,7 +493,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("class", "method_name")
             .attr('x', width-55)
         //    .attr('y', height-12)
-            .attr('y',-3)
+            .attr('y',-5)
             .attr('text-anchor', "end")
         //    .attr('filter',"url(#solid)")
             .text(`${" "+classifiers.length+" "}`)

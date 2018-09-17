@@ -31,7 +31,8 @@ export interface IState {
     hyperparametersRangeAlreadySelected:any,
     hyperpartitionsAlreadySelected:number[],
     mouseOverClassifier:number,
-    displaymode:number
+    displaymode:number,
+    checkAllAttr:any
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
@@ -48,7 +49,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             hyperparametersRangeAlreadySelected:{},
             hyperpartitionsAlreadySelected:[],
             mouseOverClassifier:-1,
-            displaymode:0
+            displaymode:0,
+            checkAllAttr:{
+                disabled:false,
+                checked:false,
+                indeterminate:false
+            }
 
         }
     }
@@ -144,6 +150,33 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let hp = this.props.hyperpartitions;
         return hp.filter((d:any)=>d.method==method).map((d:any)=>d.id);
     }
+    getCheckAllAttr = (hyperpartitionsAlreadySelected:number[],methodSelected:any) =>{
+        let checkAllAttr = this.state.checkAllAttr;
+        checkAllAttr.disabled = false;
+        if(hyperpartitionsAlreadySelected.length==0){
+            checkAllAttr.indeterminate = false;
+            checkAllAttr.checked = false;
+
+        }else{
+            let allflag = true;
+            Object.keys(methodSelected).forEach((e:any)=>{
+                let selectedmethod = methodSelected[e];
+                if(selectedmethod.disabled == false){
+                    if(selectedmethod.checked == false){
+                        allflag = false;
+                    }
+                }
+            })
+            if(allflag){
+                checkAllAttr.indeterminate = false;
+                checkAllAttr.checked = true;
+            }else{
+                checkAllAttr.indeterminate = true;
+                checkAllAttr.checked = false;
+            }
+        }
+        return checkAllAttr;
+    }
     onMethodsCheckBoxChange=(e : any)=>{
         let checked = e.target.checked;
         let value = e.target.value;
@@ -165,11 +198,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodSelected[value].disabled=false;
                 let hpid = this.fetchHpId(value);
                 configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-                
                 this.setState({
                     hyperpartitionsAlreadySelected:configsHyperpartitions,
                     methodSelected:methodSelected,
-                    configsMethod:configsMethod
+                    configsMethod:configsMethod,
+                    checkAllAttr:this.getCheckAllAttr(configsHyperpartitions,methodSelected)
 
                 });
 
@@ -181,10 +214,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodSelected[value].disabled=false;
                 let hpid = this.fetchHpId(value);
                 configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
+
                 this.setState({
                     hyperpartitionsAlreadySelected:configsHyperpartitions,
                     methodSelected:methodSelected,
-                    configsMethod:configsMethod
+                    configsMethod:configsMethod,
+                    checkAllAttr:this.getCheckAllAttr(configsHyperpartitions,methodSelected)
 
                 });
 
@@ -205,6 +240,72 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             this.props.postClickEvent(eventlog);
             this.updateCurrentDataRun();
         }
+    }
+    onMethodsCheckBoxAllChange=(e : any)=>{
+        let checked = e.target.checked;
+        let methodSelected = this.state.methodSelected;
+        let configsHyperpartitions :number[] = this.state.hyperpartitionsAlreadySelected;
+        console.log("onMethodsCheckBoxAllChange")
+        if(checked==false){
+            //un selected
+            Object.keys(methodSelected).forEach((value:string)=>{
+                if(!methodSelected[value].disabled){
+                    methodSelected[value].checked=false;
+                    methodSelected[value].indeterminate=false;
+                    methodSelected[value].disabled=false;
+                    configsHyperpartitions = [];
+                }
+            })
+            let configsMethod : string[] = [];
+
+            this.setState({
+                hyperpartitionsAlreadySelected:configsHyperpartitions,
+                methodSelected:methodSelected,
+                configsMethod:configsMethod,
+                checkAllAttr:this.getCheckAllAttr(configsHyperpartitions,methodSelected)
+
+
+            });
+
+        }else{
+                let configsMethod : string[]= [];
+                Object.keys(methodSelected).forEach((value:string)=>{
+                if(!methodSelected[value].disabled){
+                    methodSelected[value].checked=true;
+                    methodSelected[value].indeterminate=false;
+                    methodSelected[value].disabled=false;
+                    let hpid = this.fetchHpId(value);
+                        configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
+                        configsMethod.push(value);
+                }
+            })
+            
+            this.setState({
+                hyperpartitionsAlreadySelected:configsHyperpartitions,
+                methodSelected:methodSelected,
+                configsMethod:configsMethod,
+                checkAllAttr:this.getCheckAllAttr(configsHyperpartitions,methodSelected)
+
+
+            });
+
+
+        }
+        let action="selected";
+        if(checked==false){
+            action="unselected";
+        }
+        let eventlog:IClickEvent = {
+            type:"methodcheckboxall",
+            description:{
+                action:action
+            },
+            time:new Date().toString()
+        }
+        this.props.postClickEvent(eventlog);
+        this.updateCurrentDataRun();
+    
+
     }
     onHyperpartitionCheckBoxChange=(id : number)=>{
         let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
@@ -238,7 +339,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 this.setState({
                     hyperpartitionsAlreadySelected:configsHyperpartitions,
                     methodSelected:methodSelected,
-                    configsMethod:configsMethod
+                    configsMethod:configsMethod,
+                    checkAllAttr:this.getCheckAllAttr(configsHyperpartitions,methodSelected)
+
 
                 });
 
@@ -266,7 +369,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             this.setState({
                 hyperpartitionsAlreadySelected:configsHyperpartitions,
                 methodSelected:methodSelected,
-                configsMethod:configsMethod
+                configsMethod:configsMethod,
+                checkAllAttr:this.getCheckAllAttr(configsHyperpartitions,methodSelected)
+
             });
 
 
@@ -396,7 +501,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             this.setState({
                 methodSelected:methodSelected,
                 hyperpartitionsAlreadySelected:hyperpartitionsAlreadySelected,
-                selectedMethod:selectedMethod
+                selectedMethod:selectedMethod,
+                checkAllAttr:this.getCheckAllAttr(hyperpartitionsAlreadySelected,methodSelected)
+
             });
             //this.getCurrentConfigs();
         }
@@ -785,6 +892,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 configsMethod = {this.state.configsMethod}
                 methodSelected = {this.state.methodSelected}
                 onMethodsCheckBoxChange = {this.onMethodsCheckBoxChange}
+                onMethodsCheckBoxAllChange = {this.onMethodsCheckBoxAllChange}
+                checkAllAttr = {this.state.checkAllAttr}
                 compareK={compareK}
                 recommendationResult={this.props.recommendationResult}
             />
