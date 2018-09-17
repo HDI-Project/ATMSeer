@@ -73,7 +73,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
             hpsInfo = hpsInfo.filter(d=>d.method==selectedMethod).filter(d => d.sortedCls.length > 0);
             console.log("len",hpsInfo.length);
-            
+
             let { height, width, gap } = this.hyperpartitionBox
 
             let trans = d3.transition()
@@ -81,11 +81,11 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     .ease(d3.easeLinear);
 
             let x = d3.scaleBand()
-                .rangeRound([0, width])
+                .range([0, width])
                 .paddingInner(0.05);
 
             let y = d3.scaleLinear()
-                .rangeRound([height, 0]);
+                .range([height, 0]);
             x.domain(Array.from(Array(maxLen).keys()))
             y.domain([0, 1]);
 
@@ -178,7 +178,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     )
                 }
                 hiddencol = newhiddencol;
-                
+
             }
             if(exceedcol!=-1){
                 exceedcol=hiddencol+exceedcol;
@@ -385,7 +385,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
                 }
 
-               
+
                 //CLASSIFIER ENTER
                 classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")
