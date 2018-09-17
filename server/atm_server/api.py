@@ -1,4 +1,5 @@
 import os
+import sys
 import copy
 import logging
 import yaml
@@ -44,7 +45,7 @@ def handle_invalid_usage(error):
     response = jsonify({"error":str(error)})
     response.status_code = 500
     if current_app.config['reboot']:
-        sys.exit(0)
+        os._exit(0)
     return response
 
 @api.errorhandler(InvalidRequestError)
@@ -54,7 +55,7 @@ def handle_db_request_error(error):
     response = jsonify({"error":str(error)})
     response.status_code = 500
     if current_app.config['reboot']:
-        sys.exit(0)
+        os._exit(0)
     return response
 
 
@@ -593,7 +594,7 @@ def getRecommendation(dataset_id):
   
     
     
-
+'''
 @api.route('/refresh', methods=['GET'])
 def refresh():
     """refresh"""
@@ -607,3 +608,4 @@ def reboot():
         raise ApiError('Reboot Try', status_code=500)
     return jsonify({'result':False})
 
+'''
