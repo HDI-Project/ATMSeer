@@ -115,7 +115,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     this.setState({ loading: true });
 
                     let submitconfigs : IUpdateDatarunConfig = {};
-                    submitconfigs.configs = configs;
+                    //submitconfigs.configs = configs;
                     submitconfigs.method_configs = this.state.hyperparametersRangeAlreadySelected;
                     if(this.state.hyperpartitionsAlreadySelected.length>0){
                         submitconfigs.hyperpartitions = this.state.hyperpartitionsAlreadySelected;
