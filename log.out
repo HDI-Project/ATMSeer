@@ -1,0 +1,4193 @@
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.005060012816744981
+	batch_size = auto
+	hidden_layer_sizes[0] = 260
+	hidden_layer_sizes[1] = 94
+	learning_rate = adaptive
+	learning_rate_init = 0.7592698997635506
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.718 +- 0.239
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-ca467ca1.model
+Saving metrics in: metrics/pollution_1-ca467ca1.metric
+Saved classifier 70.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.0036751297479806007
+	batch_size = auto
+	hidden_layer_sizes[0] = 23
+	hidden_layer_sizes[1] = 205
+	learning_rate = adaptive
+	learning_rate_init = 0.7977719449845907
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.631 +- 0.307
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-d0907e92.model
+Saving metrics in: metrics/pollution_1-d0907e92.metric
+Saved classifier 71.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.0067333275021163
+	batch_size = auto
+	hidden_layer_sizes[0] = 32
+	hidden_layer_sizes[1] = 148
+	hidden_layer_sizes[2] = 276
+	learning_rate = adaptive
+	learning_rate_init = 0.8195679612088874
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.770 +- 0.197
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-2c42234d.model
+Saving metrics in: metrics/pollution_1-2c42234d.metric
+Saved classifier 72.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.00790723791170019
+	batch_size = auto
+	hidden_layer_sizes[0] = 272
+	hidden_layer_sizes[1] = 13
+	hidden_layer_sizes[2] = 281
+	learning_rate = adaptive
+	learning_rate_init = 0.4865071037056626
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.796 +- 0.280
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-8ef19fa9.model
+Saving metrics in: metrics/pollution_1-8ef19fa9.metric
+Saved classifier 73.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: using gaussian process to select parameters
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.006116915147110011
+	batch_size = auto
+	hidden_layer_sizes[0] = 10
+	hidden_layer_sizes[1] = 205
+	hidden_layer_sizes[2] = 178
+	learning_rate = adaptive
+	learning_rate_init = 0.3130095108128463
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.677 +- 0.271
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-5fec6b79.model
+Saving metrics in: metrics/pollution_1-5fec6b79.metric
+Saved classifier 74.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0019456838746580304
+	batch_size = auto
+	hidden_layer_sizes[0] = 147
+	hidden_layer_sizes[1] = 36
+	hidden_layer_sizes[2] = 237
+	learning_rate = adaptive
+	learning_rate_init = 0.7946615032223151
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-d1e263e5.model
+Saving metrics in: metrics/pollution_1-d1e263e5.metric
+Saved classifier 75.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.00017270612666722172
+	batch_size = auto
+	hidden_layer_sizes[0] = 256
+	hidden_layer_sizes[1] = 287
+	learning_rate = constant
+	learning_rate_init = 0.9664994619968635
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.324 +- 0.146
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-5ec83c5e.model
+Saving metrics in: metrics/pollution_1-5ec83c5e.metric
+Saved classifier 76.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.006508078521420741
+	batch_size = auto
+	hidden_layer_sizes[0] = 45
+	hidden_layer_sizes[1] = 149
+	learning_rate = constant
+	learning_rate_init = 0.6177109883171221
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.719 +- 0.191
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-5155b2e1.model
+Saving metrics in: metrics/pollution_1-5155b2e1.metric
+Saved classifier 77.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 79.49018332257378
+	class_weight = None
+	epsilon = 0.0011527831146579525
+	eta0 = 3.9525401882338906
+	fit_intercept = 1
+	l1_ratio = 0.6053276591848556
+	learning_rate = constant
+	loss = log
+	n_iter = 49
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.543 +- 0.544
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-9248c461.model
+Saving metrics in: metrics/pollution_1-9248c461.metric
+Saved classifier 78.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 13385.932943876094
+	class_weight = None
+	epsilon = 0.021904719398403914
+	eta0 = 0.0017411096991616442
+	fit_intercept = 1
+	l1_ratio = 0.6709846887351921
+	learning_rate = constant
+	loss = log
+	n_iter = 87
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.686 +- 0.047
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-040072b5.model
+Saving metrics in: metrics/pollution_1-040072b5.metric
+Saved classifier 79.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.001935211049157732
+	batch_size = auto
+	hidden_layer_sizes[0] = 11
+	hidden_layer_sizes[1] = 185
+	learning_rate = invscaling
+	learning_rate_init = 0.20536908940950244
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.763 +- 0.268
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-874fb9f4.model
+Saving metrics in: metrics/pollution_1-874fb9f4.metric
+Saved classifier 80.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.008594312623696409
+	batch_size = auto
+	hidden_layer_sizes[0] = 138
+	hidden_layer_sizes[1] = 214
+	learning_rate = invscaling
+	learning_rate_init = 0.8865427147127642
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.712 +- 0.076
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-1f914024.model
+Saving metrics in: metrics/pollution_1-1f914024.metric
+Saved classifier 81.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 33.45847520408087
+	class_weight = None
+	epsilon = 0.00019608714720405275
+	eta0 = 0.013608014501382864
+	fit_intercept = 0
+	l1_ratio = 0.4683829050336129
+	learning_rate = optimal
+	loss = squared_hinge
+	n_iter = 47
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.724 +- 0.397
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-17aa1d0c.model
+Saving metrics in: metrics/pollution_1-17aa1d0c.metric
+Saved classifier 82.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 8787.856777021621
+	class_weight = None
+	epsilon = 3.6648609858779624
+	eta0 = 12.029163695559411
+	fit_intercept = 1
+	l1_ratio = 0.619101057098075
+	learning_rate = optimal
+	loss = squared_hinge
+	n_iter = 97
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.533 +- 0.533
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-a46f08cd.model
+Saving metrics in: metrics/pollution_1-a46f08cd.metric
+Saved classifier 83.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+No tunables for hyperpartition 248
+Chose parameters for method "gp":
+	kernel = matern
+	nu = 0.5
+Judgment metric (f1, cv): 0.708 +- 0.505
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-3f8fa100.model
+Saving metrics in: metrics/pollution_1-3f8fa100.metric
+Saved classifier 84.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+No tunables for hyperpartition 247
+Chose parameters for method "gp":
+	kernel = rbf
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-df05f06e.model
+Saving metrics in: metrics/pollution_1-df05f06e.metric
+Saved classifier 85.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.008118912109009828
+	batch_size = auto
+	hidden_layer_sizes[0] = 262
+	learning_rate = invscaling
+	learning_rate_init = 0.8507809531979498
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.634 +- 0.200
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-2321c4d0.model
+Saving metrics in: metrics/pollution_1-2321c4d0.metric
+Saved classifier 86.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0023280290189736774
+	batch_size = auto
+	hidden_layer_sizes[0] = 83
+	learning_rate = invscaling
+	learning_rate_init = 0.08954180500436548
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.629 +- 0.217
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-edae5c48.model
+Saving metrics in: metrics/pollution_1-edae5c48.metric
+Saved classifier 87.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.003207321760626673
+	batch_size = auto
+	beta_1 = 0.8388750483633939
+	beta_2 = 0.9552146646047074
+	hidden_layer_sizes[0] = 114
+	hidden_layer_sizes[1] = 226
+	hidden_layer_sizes[2] = 113
+	learning_rate_init = 0.551149475110984
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.739 +- 0.136
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-daf3c1f2.model
+Saving metrics in: metrics/pollution_1-daf3c1f2.metric
+Saved classifier 88.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0017843473262806448
+	batch_size = auto
+	beta_1 = 0.8402575535581572
+	beta_2 = 0.8558220134798857
+	hidden_layer_sizes[0] = 230
+	hidden_layer_sizes[1] = 50
+	hidden_layer_sizes[2] = 60
+	learning_rate_init = 0.43103569944937914
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.769 +- 0.203
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-82ff4f51.model
+Saving metrics in: metrics/pollution_1-82ff4f51.metric
+Saved classifier 89.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+No tunables for hyperpartition 246
+Chose parameters for method "gp":
+	kernel = constant
+Judgment metric (f1, cv): 0.686 +- 0.047
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-0d753bbb.model
+Saving metrics in: metrics/pollution_1-0d753bbb.metric
+Saved classifier 90.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.006591414351432107
+	batch_size = auto
+	hidden_layer_sizes[0] = 25
+	hidden_layer_sizes[1] = 253
+	hidden_layer_sizes[2] = 74
+	learning_rate = invscaling
+	learning_rate_init = 0.8807246020716882
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.728 +- 0.043
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-9832f431.model
+Saving metrics in: metrics/pollution_1-9832f431.metric
+Saved classifier 91.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.002320221738846759
+	batch_size = auto
+	hidden_layer_sizes[0] = 158
+	hidden_layer_sizes[1] = 134
+	hidden_layer_sizes[2] = 96
+	learning_rate = invscaling
+	learning_rate_init = 0.15252441671275513
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.747 +- 0.054
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-c7892601.model
+Saving metrics in: metrics/pollution_1-c7892601.metric
+Saved classifier 92.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.00858417292269529
+	batch_size = auto
+	beta_1 = 0.8692003556028618
+	beta_2 = 0.9296185082496288
+	hidden_layer_sizes[0] = 116
+	hidden_layer_sizes[1] = 106
+	hidden_layer_sizes[2] = 43
+	learning_rate_init = 0.6926260723315645
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.733 +- 0.401
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-a5a17695.model
+Saving metrics in: metrics/pollution_1-a5a17695.metric
+Saved classifier 93.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.0027387192720715113
+	batch_size = auto
+	beta_1 = 0.980180208594481
+	beta_2 = 0.8170621187455049
+	hidden_layer_sizes[0] = 182
+	hidden_layer_sizes[1] = 89
+	hidden_layer_sizes[2] = 30
+	learning_rate_init = 0.669149490388486
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.616 +- 0.388
+Best so far (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-abb2f683.model
+Saving metrics in: metrics/pollution_1-abb2f683.metric
+Saved classifier 94.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.002285678162833482
+	batch_size = auto
+	hidden_layer_sizes[0] = 42
+	learning_rate = adaptive
+	learning_rate_init = 0.4144619091773041
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.887 +- 0.130
+New best score! Previous best (classifier 60): 0.821 +- 0.223
+Saving model in: models/pollution_1-608577a6.model
+Saving metrics in: metrics/pollution_1-608577a6.metric
+Saved classifier 95.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.007821220456708213
+	batch_size = auto
+	hidden_layer_sizes[0] = 293
+	learning_rate = adaptive
+	learning_rate_init = 0.7343439200163823
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.791 +- 0.329
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-aa8bda65.model
+Saving metrics in: metrics/pollution_1-aa8bda65.metric
+Saved classifier 96.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: using gaussian process to select parameters
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.006725271992969335
+	batch_size = auto
+	hidden_layer_sizes[0] = 42
+	learning_rate = adaptive
+	learning_rate_init = 0.6768318220126268
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.811 +- 0.326
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-c053177f.model
+Saving metrics in: metrics/pollution_1-c053177f.metric
+Saved classifier 97.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 1.4638975006450914
+	class_weight = None
+	epsilon = 0.0002420763570924389
+	eta0 = 0.05363854998795032
+	fit_intercept = 1
+	l1_ratio = 0.5117534727182307
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 192
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.400 +- 0.653
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-e6d384b5.model
+Saving metrics in: metrics/pollution_1-e6d384b5.metric
+Saved classifier 98.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 2132.3337859658222
+	class_weight = None
+	epsilon = 4.084625925846273
+	eta0 = 0.013540611815673913
+	fit_intercept = 0
+	l1_ratio = 0.9039186170252894
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 130
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-89eab083.model
+Saving metrics in: metrics/pollution_1-89eab083.metric
+Saved classifier 99.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.005198671967907771
+	batch_size = auto
+	beta_1 = 0.9571026313263651
+	beta_2 = 0.8689299558989511
+	hidden_layer_sizes[0] = 129
+	hidden_layer_sizes[1] = 90
+	hidden_layer_sizes[2] = 229
+	learning_rate_init = 0.4788502641805349
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.355 +- 0.582
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-bbfb5948.model
+Saving metrics in: metrics/pollution_1-bbfb5948.metric
+Saved classifier 100.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.0006999592769824876
+	batch_size = auto
+	beta_1 = 0.9366408908989868
+	beta_2 = 0.948314503766547
+	hidden_layer_sizes[0] = 180
+	hidden_layer_sizes[1] = 202
+	hidden_layer_sizes[2] = 124
+	learning_rate_init = 0.282901386815678
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.400 +- 0.653
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-5701c5d1.model
+Saving metrics in: metrics/pollution_1-5701c5d1.metric
+Saved classifier 101.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = euclidean
+	n_neighbors = 10
+	weights = distance
+Judgment metric (f1, cv): 0.691 +- 0.493
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-ee83cb8f.model
+Saving metrics in: metrics/pollution_1-ee83cb8f.metric
+Saved classifier 102.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = euclidean
+	n_neighbors = 2
+	weights = distance
+Judgment metric (f1, cv): 0.713 +- 0.237
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-94173b83.model
+Saving metrics in: metrics/pollution_1-94173b83.metric
+Saved classifier 103.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 1
+	metric = chebyshev
+	n_neighbors = 17
+	weights = distance
+Judgment metric (f1, cv): 0.662 +- 0.163
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-363ccde0.model
+Saving metrics in: metrics/pollution_1-363ccde0.metric
+Saved classifier 104.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 10
+	metric = chebyshev
+	n_neighbors = 19
+	weights = distance
+Judgment metric (f1, cv): 0.718 +- 0.099
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-237bfdf4.model
+Saving metrics in: metrics/pollution_1-237bfdf4.metric
+Saved classifier 105.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.007473541287538815
+	batch_size = auto
+	hidden_layer_sizes[0] = 57
+	learning_rate = invscaling
+	learning_rate_init = 0.6340200715078279
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.639 +- 0.661
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-cfdfd323.model
+Saving metrics in: metrics/pollution_1-cfdfd323.metric
+Saved classifier 106.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.008556929060136649
+	batch_size = auto
+	hidden_layer_sizes[0] = 183
+	learning_rate = invscaling
+	learning_rate_init = 0.5915325343771534
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.810 +- 0.239
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-f36ee928.model
+Saving metrics in: metrics/pollution_1-f36ee928.metric
+Saved classifier 107.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 47
+	metric = euclidean
+	n_neighbors = 14
+	weights = distance
+Judgment metric (f1, cv): 0.711 +- 0.321
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-4569960f.model
+Saving metrics in: metrics/pollution_1-4569960f.metric
+Saved classifier 108.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 22
+	metric = euclidean
+	n_neighbors = 2
+	weights = distance
+Judgment metric (f1, cv): 0.672 +- 0.185
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-2f26c238.model
+Saving metrics in: metrics/pollution_1-2f26c238.metric
+Saved classifier 109.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 455.12222661735717
+	class_weight = None
+	epsilon = 40.88992639141923
+	eta0 = 47974.00161986635
+	fit_intercept = 0
+	l1_ratio = 0.2108697673427965
+	learning_rate = constant
+	loss = hinge
+	n_iter = 190
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.376 +- 0.616
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-21b5d204.model
+Saving metrics in: metrics/pollution_1-21b5d204.metric
+Saved classifier 110.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.0001646574583704685
+	class_weight = None
+	epsilon = 0.009460010291807536
+	eta0 = 30062.666091546896
+	fit_intercept = 1
+	l1_ratio = 0.6389027029887061
+	learning_rate = constant
+	loss = hinge
+	n_iter = 106
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.286 +- 0.700
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-15b64d3b.model
+Saving metrics in: metrics/pollution_1-15b64d3b.metric
+Saved classifier 111.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 88.80585497211169
+	class_weight = None
+	epsilon = 52170.453923919544
+	eta0 = 4.250091179741939
+	fit_intercept = 1
+	l1_ratio = 0.1138776299592632
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 12
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.523 +- 0.525
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-a5ee736f.model
+Saving metrics in: metrics/pollution_1-a5ee736f.metric
+Saved classifier 112.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 9.424107083919032e-05
+	class_weight = None
+	epsilon = 8586.95402339051
+	eta0 = 1.4100516389413493
+	fit_intercept = 1
+	l1_ratio = 0.5650867942028815
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 197
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.755 +- 0.116
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-53742a35.model
+Saving metrics in: metrics/pollution_1-53742a35.metric
+Saved classifier 113.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0027491111073364104
+	batch_size = auto
+	hidden_layer_sizes[0] = 138
+	hidden_layer_sizes[1] = 183
+	learning_rate = adaptive
+	learning_rate_init = 0.9889775470361921
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-9e7436c9.model
+Saving metrics in: metrics/pollution_1-9e7436c9.metric
+Saved classifier 114.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.0021005374125382227
+	batch_size = auto
+	hidden_layer_sizes[0] = 229
+	hidden_layer_sizes[1] = 74
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.806 +- 0.136
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-6098e0b0.model
+Saving metrics in: metrics/pollution_1-6098e0b0.metric
+Saved classifier 115.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.005038558523664406
+	batch_size = auto
+	hidden_layer_sizes[0] = 215
+	hidden_layer_sizes[1] = 185
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.678 +- 0.174
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-bfc5fec5.model
+Saving metrics in: metrics/pollution_1-bfc5fec5.metric
+Saved classifier 116.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 6.080223995101113e-05
+	class_weight = None
+	epsilon = 0.04477688065609174
+	eta0 = 0.013654536608835383
+	fit_intercept = 1
+	l1_ratio = 0.2616481276803361
+	learning_rate = optimal
+	loss = hinge
+	n_iter = 141
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.665 +- 0.296
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-eeb02883.model
+Saving metrics in: metrics/pollution_1-eeb02883.metric
+Saved classifier 117.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.18795905041853206
+	class_weight = None
+	epsilon = 0.008560871210239148
+	eta0 = 0.26537433658668685
+	fit_intercept = 1
+	l1_ratio = 0.1388234857132712
+	learning_rate = optimal
+	loss = hinge
+	n_iter = 100
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.707 +- 0.042
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-a8758995.model
+Saving metrics in: metrics/pollution_1-a8758995.metric
+Saved classifier 118.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.007384696986964497
+	batch_size = auto
+	hidden_layer_sizes[0] = 175
+	len(hidden_layer_sizes) = 1
+	solver = lbfgs
+Judgment metric (f1, cv): 0.822 +- 0.193
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-022c5fe9.model
+Saving metrics in: metrics/pollution_1-022c5fe9.metric
+Saved classifier 119.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.002494801747144289
+	batch_size = auto
+	hidden_layer_sizes[0] = 269
+	len(hidden_layer_sizes) = 1
+	solver = lbfgs
+Judgment metric (f1, cv): 0.660 +- 0.298
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-36786bf9.model
+Saving metrics in: metrics/pollution_1-36786bf9.metric
+Saved classifier 120.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 21
+	metric = minkowski
+	n_neighbors = 5
+	p = 1
+	weights = distance
+Judgment metric (f1, cv): 0.798 +- 0.217
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-c77e82e2.model
+Saving metrics in: metrics/pollution_1-c77e82e2.metric
+Saved classifier 121.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 18
+	metric = minkowski
+	n_neighbors = 18
+	p = 2
+	weights = distance
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.723 +- 0.315
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-ad6b4976.model
+Saving metrics in: metrics/pollution_1-ad6b4976.metric
+Saved classifier 122.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.0007347553200332136
+	batch_size = auto
+	hidden_layer_sizes[0] = 189
+	hidden_layer_sizes[1] = 263
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+Judgment metric (f1, cv): 0.727 +- 0.183
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-f69dbfb4.model
+Saving metrics in: metrics/pollution_1-f69dbfb4.metric
+Saved classifier 123.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.007090101929204231
+	batch_size = auto
+	hidden_layer_sizes[0] = 169
+	hidden_layer_sizes[1] = 114
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+Judgment metric (f1, cv): 0.793 +- 0.366
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-22d67c70.model
+Saving metrics in: metrics/pollution_1-22d67c70.metric
+Saved classifier 124.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.0018926006845914622
+	batch_size = auto
+	hidden_layer_sizes[0] = 162
+	hidden_layer_sizes[1] = 147
+	hidden_layer_sizes[2] = 137
+	len(hidden_layer_sizes) = 3
+	solver = lbfgs
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.739 +- 0.328
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-beced908.model
+Saving metrics in: metrics/pollution_1-beced908.metric
+Saved classifier 125.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.008240448018881444
+	batch_size = auto
+	hidden_layer_sizes[0] = 5
+	hidden_layer_sizes[1] = 145
+	hidden_layer_sizes[2] = 294
+	len(hidden_layer_sizes) = 3
+	solver = lbfgs
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.713 +- 0.347
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-42ea5cd5.model
+Saving metrics in: metrics/pollution_1-42ea5cd5.metric
+Saved classifier 126.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.06396154455453963
+	class_weight = None
+	epsilon = 33569.638364271435
+	eta0 = 583.5522709766147
+	fit_intercept = 1
+	l1_ratio = 0.6342983810679571
+	learning_rate = optimal
+	loss = log
+	n_iter = 164
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.347 +- 0.599
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-bcc879cc.model
+Saving metrics in: metrics/pollution_1-bcc879cc.metric
+Saved classifier 127.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 34180.657982383476
+	class_weight = None
+	epsilon = 2152.417930514899
+	eta0 = 6.111730298020278
+	fit_intercept = 1
+	l1_ratio = 0.4633682392313796
+	learning_rate = optimal
+	loss = log
+	n_iter = 176
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.565 +- 0.566
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-fd920118.model
+Saving metrics in: metrics/pollution_1-fd920118.metric
+Saved classifier 128.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.003641224623994813
+	batch_size = auto
+	hidden_layer_sizes[0] = 273
+	hidden_layer_sizes[1] = 297
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.804 +- 0.166
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-3c472fc0.model
+Saving metrics in: metrics/pollution_1-3c472fc0.metric
+Saved classifier 129.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.004165453746359242
+	batch_size = auto
+	hidden_layer_sizes[0] = 209
+	hidden_layer_sizes[1] = 296
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+Judgment metric (f1, cv): 0.738 +- 0.259
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-8698c3fb.model
+Saving metrics in: metrics/pollution_1-8698c3fb.metric
+Saved classifier 130.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = minkowski
+	n_neighbors = 12
+	p = 2
+	weights = distance
+Judgment metric (f1, cv): 0.761 +- 0.347
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-c6aaa461.model
+Saving metrics in: metrics/pollution_1-c6aaa461.metric
+Saved classifier 131.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = minkowski
+	n_neighbors = 20
+	p = 2
+	weights = distance
+Judgment metric (f1, cv): 0.655 +- 0.168
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-aa87e1d9.model
+Saving metrics in: metrics/pollution_1-aa87e1d9.metric
+Saved classifier 132.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.006099186474372424
+	batch_size = auto
+	hidden_layer_sizes[0] = 144
+	hidden_layer_sizes[1] = 77
+	learning_rate = constant
+	learning_rate_init = 0.8425573319645139
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.709 +- 0.138
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-16dc3f5f.model
+Saving metrics in: metrics/pollution_1-16dc3f5f.metric
+Saved classifier 133.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.0021583697318253965
+	batch_size = auto
+	hidden_layer_sizes[0] = 219
+	hidden_layer_sizes[1] = 62
+	learning_rate = constant
+	learning_rate_init = 0.7158305934495857
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "gp":
+	alpha = 0.34772719630175486
+	kernel = rational_quadratic
+	length_scale = 0.8669207774238813
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Judgment metric (f1, cv): 0.042 +- 0.069
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-21fd8feb.model
+Saving metrics in: metrics/blood-21fd8feb.metric
+Saved classifier 135.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "gp":
+	alpha = 0.38965571270017796
+	kernel = rational_quadratic
+	length_scale = 62.68924831480034
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-f0a62395.model
+Saving metrics in: metrics/blood-f0a62395.metric
+Saved classifier 136.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 15
+	metric = minkowski
+	n_neighbors = 16
+	p = 3
+	weights = distance
+Judgment metric (f1, cv): 0.439 +- 0.153
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-9d24639d.model
+Saving metrics in: metrics/blood-9d24639d.metric
+Saved classifier 137.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 42
+	metric = minkowski
+	n_neighbors = 12
+	p = 2
+	weights = distance
+Judgment metric (f1, cv): 0.404 +- 0.033
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-75aa2a7e.model
+Saving metrics in: metrics/blood-75aa2a7e.metric
+Saved classifier 138.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0002224040509134545
+	batch_size = auto
+	hidden_layer_sizes[0] = 233
+	hidden_layer_sizes[1] = 56
+	hidden_layer_sizes[2] = 258
+	learning_rate = constant
+	learning_rate_init = 0.4390525700585846
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.157 +- 0.175
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-0d1e91e1.model
+Saving metrics in: metrics/blood-0d1e91e1.metric
+Saved classifier 139.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0009194224339597554
+	batch_size = auto
+	hidden_layer_sizes[0] = 220
+	hidden_layer_sizes[1] = 117
+	hidden_layer_sizes[2] = 147
+	learning_rate = constant
+	learning_rate_init = 0.22281575789678754
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.205 +- 0.397
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-7507b9aa.model
+Saving metrics in: metrics/blood-7507b9aa.metric
+Saved classifier 140.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.002926953798407267
+	batch_size = auto
+	beta_1 = 0.8916442769466533
+	beta_2 = 0.9531273383471904
+	hidden_layer_sizes[0] = 19
+	hidden_layer_sizes[1] = 203
+	learning_rate_init = 0.704033282002381
+	len(hidden_layer_sizes) = 2
+	solver = adam
+Judgment metric (f1, cv): 0.269 +- 0.280
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-8bfdbd88.model
+Saving metrics in: metrics/blood-8bfdbd88.metric
+Saved classifier 141.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.00658579507172469
+	batch_size = auto
+	hidden_layer_sizes[0] = 179
+	hidden_layer_sizes[1] = 95
+	learning_rate = invscaling
+	learning_rate_init = 0.8348737550712825
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.380 +- 0.271
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-870a988b.model
+Saving metrics in: metrics/blood-870a988b.metric
+Saved classifier 142.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.005823363174286551
+	batch_size = auto
+	hidden_layer_sizes[0] = 6
+	hidden_layer_sizes[1] = 6
+	learning_rate = invscaling
+	learning_rate_init = 0.4682473372894642
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.296 +- 0.175
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-6cdd7974.model
+Saving metrics in: metrics/blood-6cdd7974.metric
+Saved classifier 143.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "gp":
+	kernel = exp_sine_squared
+	length_scale = 1.0843841350851788
+	periodicity = 0
+Error testing classifier: datarun=<ID = 1, dataset ID = 1, strategy = gp__bestk, budget = classifier (1000), status: running>
+Traceback (most recent call last):
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/atm-0.1.0-py3.6.egg/atm/worker.py", line 399, in run_classifier
+    model, metrics = self.test_classifier(hyperpartition.method, params)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/atm-0.1.0-py3.6.egg/atm/worker.py", line 215, in test_classifier
+    test_path=test_path)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/atm-0.1.0-py3.6.egg/atm/model.py", line 222, in train_test
+    cv_scores = self.cross_validate(X_train, y_train)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/atm-0.1.0-py3.6.egg/atm/model.py", line 145, in cross_validate
+    n_folds=self.N_FOLDS, **kwargs)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/atm-0.1.0-py3.6.egg/atm/metrics.py", line 226, in cross_validate_pipeline
+    pipeline.fit(X[train_index], y[train_index])
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scikit_learn-0.19.2-py3.6-linux-x86_64.egg/sklearn/pipeline.py", line 250, in fit
+    self._final_estimator.fit(Xt, y, **fit_params)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scikit_learn-0.19.2-py3.6-linux-x86_64.egg/sklearn/gaussian_process/gpc.py", line 613, in fit
+    self.base_estimator_.fit(X, y)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scikit_learn-0.19.2-py3.6-linux-x86_64.egg/sklearn/gaussian_process/gpc.py", line 209, in fit
+    self.kernel_.bounds)]
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scikit_learn-0.19.2-py3.6-linux-x86_64.egg/sklearn/gaussian_process/gpc.py", line 427, in _constrained_optimization
+    fmin_l_bfgs_b(obj_func, initial_theta, bounds=bounds)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scipy-1.1.0-py3.6-linux-x86_64.egg/scipy/optimize/lbfgsb.py", line 199, in fmin_l_bfgs_b
+    **opts)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scipy-1.1.0-py3.6-linux-x86_64.egg/scipy/optimize/lbfgsb.py", line 335, in _minimize_lbfgsb
+    f, g = func_and_grad(x)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scipy-1.1.0-py3.6-linux-x86_64.egg/scipy/optimize/lbfgsb.py", line 285, in func_and_grad
+    f = fun(x, *args)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scipy-1.1.0-py3.6-linux-x86_64.egg/scipy/optimize/optimize.py", line 293, in function_wrapper
+    return function(*(wrapper_args + args))
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scipy-1.1.0-py3.6-linux-x86_64.egg/scipy/optimize/optimize.py", line 63, in __call__
+    fg = self.fun(x, *args)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scikit_learn-0.19.2-py3.6-linux-x86_64.egg/sklearn/gaussian_process/gpc.py", line 201, in obj_func
+    theta, eval_gradient=True)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scikit_learn-0.19.2-py3.6-linux-x86_64.egg/sklearn/gaussian_process/gpc.py", line 345, in log_marginal_likelihood
+    self._posterior_mode(K, return_temporaries=True)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scikit_learn-0.19.2-py3.6-linux-x86_64.egg/sklearn/gaussian_process/gpc.py", line 398, in _posterior_mode
+    L = cholesky(B, lower=True)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scipy-1.1.0-py3.6-linux-x86_64.egg/scipy/linalg/decomp_cholesky.py", line 91, in cholesky
+    check_finite=check_finite)
+  File "/home/jzh/.conda/envs/ATM/lib/python3.6/site-packages/scipy-1.1.0-py3.6-linux-x86_64.egg/scipy/linalg/decomp_cholesky.py", line 40, in _cholesky
+    "definite" % info)
+numpy.linalg.linalg.LinAlgError: 63-th leading minor of the array is not positive definite
+
+Something went wrong. Sleeping 1 seconds.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 39
+	metric = manhattan
+	n_neighbors = 4
+	weights = distance
+Judgment metric (f1, cv): 0.394 +- 0.180
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-5922ff70.model
+Saving metrics in: metrics/blood-5922ff70.metric
+Saved classifier 145.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 31
+	metric = manhattan
+	n_neighbors = 6
+	weights = distance
+Judgment metric (f1, cv): 0.341 +- 0.129
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-2349a653.model
+Saving metrics in: metrics/blood-2349a653.metric
+Saved classifier 146.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = manhattan
+	n_neighbors = 16
+	weights = distance
+Judgment metric (f1, cv): 0.428 +- 0.209
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-92cb8635.model
+Saving metrics in: metrics/blood-92cb8635.metric
+Saved classifier 147.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = manhattan
+	n_neighbors = 16
+	weights = distance
+Judgment metric (f1, cv): 0.424 +- 0.129
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-92cb8635.model
+Saving metrics in: metrics/blood-92cb8635.metric
+Saved classifier 148.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 27
+	metric = minkowski
+	n_neighbors = 6
+	p = 2
+	weights = uniform
+Judgment metric (f1, cv): 0.296 +- 0.098
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-c4ecc219.model
+Saving metrics in: metrics/blood-c4ecc219.metric
+Saved classifier 149.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 42
+	metric = minkowski
+	n_neighbors = 20
+	p = 3
+	weights = uniform
+Judgment metric (f1, cv): 0.415 +- 0.073
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-9afa74e0.model
+Saving metrics in: metrics/blood-9afa74e0.metric
+Saved classifier 150.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 6.248221107662233e-05
+	class_weight = None
+	epsilon = 3.4993925561975097
+	eta0 = 1.827586556398808
+	fit_intercept = 0
+	l1_ratio = 0.9392039387263476
+	learning_rate = constant
+	loss = modified_huber
+	n_iter = 16
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.287 +- 0.486
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-e4e92fde.model
+Saving metrics in: metrics/blood-e4e92fde.metric
+Saved classifier 151.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 2.6307828343754084e-05
+	class_weight = None
+	epsilon = 0.8988113935467531
+	eta0 = 0.1304916578415276
+	fit_intercept = 1
+	l1_ratio = 0.5478339537189633
+	learning_rate = constant
+	loss = modified_huber
+	n_iter = 157
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.172 +- 0.286
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-90f8ff42.model
+Saving metrics in: metrics/blood-90f8ff42.metric
+Saved classifier 152.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.005885793778234043
+	batch_size = auto
+	beta_1 = 0.9956212070676773
+	beta_2 = 0.9151523423625273
+	hidden_layer_sizes[0] = 86
+	hidden_layer_sizes[1] = 173
+	hidden_layer_sizes[2] = 5
+	learning_rate_init = 0.43744005276510484
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-399e2a54.model
+Saving metrics in: metrics/blood-399e2a54.metric
+Saved classifier 153.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "et":
+	criterion = entropy
+	max_depth = 7
+	max_features = 0.20219536626081364
+	min_samples_leaf = 2
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-8f03a4f1.model
+Saving metrics in: metrics/blood-8f03a4f1.metric
+Saved classifier 154.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "et":
+	criterion = entropy
+	max_depth = 10
+	max_features = 0.17125367632478625
+	min_samples_leaf = 2
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.204 +- 0.173
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-ccdf15de.model
+Saving metrics in: metrics/blood-ccdf15de.metric
+Saved classifier 155.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.008605623814963858
+	batch_size = auto
+	hidden_layer_sizes[0] = 293
+	hidden_layer_sizes[1] = 61
+	hidden_layer_sizes[2] = 138
+	learning_rate = adaptive
+	learning_rate_init = 0.7541312444986031
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-42e055cb.model
+Saving metrics in: metrics/blood-42e055cb.metric
+Saved classifier 156.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.005500138575988142
+	batch_size = auto
+	hidden_layer_sizes[0] = 40
+	learning_rate = constant
+	learning_rate_init = 0.2550664959847921
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.345 +- 0.274
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-61645d59.model
+Saving metrics in: metrics/blood-61645d59.metric
+Saved classifier 157.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.0002011410324072119
+	batch_size = auto
+	hidden_layer_sizes[0] = 276
+	learning_rate = constant
+	learning_rate_init = 0.24954100257984774
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.401 +- 0.273
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-209fc485.model
+Saving metrics in: metrics/blood-209fc485.metric
+Saved classifier 158.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.005080173241484614
+	batch_size = auto
+	hidden_layer_sizes[0] = 89
+	learning_rate = constant
+	learning_rate_init = 0.6436559204240234
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.178 +- 0.262
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-339597bb.model
+Saving metrics in: metrics/blood-339597bb.metric
+Saved classifier 159.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.004576850404256598
+	batch_size = auto
+	hidden_layer_sizes[0] = 191
+	learning_rate = constant
+	learning_rate_init = 0.31788797400959823
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.079 +- 0.318
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-339e4df0.model
+Saving metrics in: metrics/blood-339e4df0.metric
+Saved classifier 160.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.006956528648351017
+	batch_size = auto
+	hidden_layer_sizes[0] = 101
+	hidden_layer_sizes[1] = 300
+	learning_rate = constant
+	learning_rate_init = 0.7855979128383368
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.355 +- 0.262
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-2ce10246.model
+Saving metrics in: metrics/blood-2ce10246.metric
+Saved classifier 161.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0016710255420450595
+	batch_size = auto
+	hidden_layer_sizes[0] = 8
+	hidden_layer_sizes[1] = 17
+	learning_rate = constant
+	learning_rate_init = 0.7551763638835868
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.281 +- 0.283
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-a4cb058b.model
+Saving metrics in: metrics/blood-a4cb058b.metric
+Saved classifier 162.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.00034987932944206606
+	batch_size = auto
+	hidden_layer_sizes[0] = 263
+	hidden_layer_sizes[1] = 288
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+Judgment metric (f1, cv): 0.347 +- 0.114
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-598e27ed.model
+Saving metrics in: metrics/blood-598e27ed.metric
+Saved classifier 163.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.001674601420980618
+	batch_size = auto
+	hidden_layer_sizes[0] = 260
+	hidden_layer_sizes[1] = 136
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+Judgment metric (f1, cv): 0.327 +- 0.171
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-1ee4013d.model
+Saving metrics in: metrics/blood-1ee4013d.metric
+Saved classifier 164.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 7
+	metric = chebyshev
+	n_neighbors = 9
+	weights = distance
+Judgment metric (f1, cv): 0.258 +- 0.068
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-60f1b118.model
+Saving metrics in: metrics/blood-60f1b118.metric
+Saved classifier 165.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 24
+	metric = chebyshev
+	n_neighbors = 13
+	weights = distance
+Judgment metric (f1, cv): 0.388 +- 0.068
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-a36016ab.model
+Saving metrics in: metrics/blood-a36016ab.metric
+Saved classifier 166.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "ada":
+	learning_rate = 2.2495627168746735
+	n_estimators = 331
+Judgment metric (f1, cv): 0.045 +- 0.119
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-8f82085d.model
+Saving metrics in: metrics/blood-8f82085d.metric
+Saved classifier 167.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "ada":
+	learning_rate = 1.5763364595762244
+	n_estimators = 59
+Judgment metric (f1, cv): 0.382 +- 0.134
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-fa9812ae.model
+Saving metrics in: metrics/blood-fa9812ae.metric
+Saved classifier 168.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = manhattan
+	n_neighbors = 14
+	weights = uniform
+Judgment metric (f1, cv): 0.347 +- 0.127
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-023b7199.model
+Saving metrics in: metrics/blood-023b7199.metric
+Saved classifier 169.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = manhattan
+	n_neighbors = 8
+	weights = uniform
+Judgment metric (f1, cv): 0.329 +- 0.284
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-687353d6.model
+Saving metrics in: metrics/blood-687353d6.metric
+Saved classifier 170.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.00839609181497254
+	batch_size = auto
+	beta_1 = 0.9595527698374057
+	beta_2 = 0.9303404882811285
+	hidden_layer_sizes[0] = 284
+	hidden_layer_sizes[1] = 188
+	hidden_layer_sizes[2] = 192
+	learning_rate_init = 0.8500643534713361
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.418 +- 0.204
+Best so far (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-d4a6f5c9.model
+Saving metrics in: metrics/blood-d4a6f5c9.metric
+Saved classifier 171.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.006376289354924593
+	batch_size = auto
+	beta_1 = 0.8645307992073742
+	beta_2 = 0.8744875400590608
+	hidden_layer_sizes[0] = 86
+	hidden_layer_sizes[1] = 178
+	hidden_layer_sizes[2] = 61
+	learning_rate_init = 0.6971126956001559
+	len(hidden_layer_sizes) = 3
+	solver = adam
+Judgment metric (f1, cv): 0.448 +- 0.106
+New best score! Previous best (classifier 66): 0.445 +- 0.131
+Saving model in: models/blood-b051b705.model
+Saving metrics in: metrics/blood-b051b705.metric
+Saved classifier 172.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.00010848549355784833
+	batch_size = auto
+	hidden_layer_sizes[0] = 290
+	hidden_layer_sizes[1] = 178
+	hidden_layer_sizes[2] = 146
+	learning_rate = constant
+	learning_rate_init = 0.20115208464706444
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.075 +- 0.300
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-fbd8878b.model
+Saving metrics in: metrics/blood-fbd8878b.metric
+Saved classifier 173.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.007786459223833645
+	batch_size = auto
+	hidden_layer_sizes[0] = 133
+	hidden_layer_sizes[1] = 299
+	hidden_layer_sizes[2] = 29
+	learning_rate = constant
+	learning_rate_init = 0.10860988234967132
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-7740c0bc.model
+Saving metrics in: metrics/blood-7740c0bc.metric
+Saved classifier 174.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 2.3299443576020544
+	class_weight = None
+	epsilon = 1456.7937884958778
+	eta0 = 669.5619256391179
+	fit_intercept = 1
+	l1_ratio = 0.8077577420022626
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 42
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-52049780.model
+Saving metrics in: metrics/blood-52049780.metric
+Saved classifier 175.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+No tunables for hyperpartition 110
+Chose parameters for method "gp":
+	kernel = matern
+	nu = 2.5
+Judgment metric (f1, cv): 0.213 +- 0.290
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-7e24a29d.model
+Saving metrics in: metrics/blood-7e24a29d.metric
+Saved classifier 176.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0020141509081646673
+	batch_size = auto
+	hidden_layer_sizes[0] = 120
+	hidden_layer_sizes[1] = 90
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+Judgment metric (f1, cv): 0.231 +- 0.187
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-9c1ebe0c.model
+Saving metrics in: metrics/blood-9c1ebe0c.metric
+Saved classifier 177.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.007074968633290806
+	batch_size = auto
+	hidden_layer_sizes[0] = 187
+	hidden_layer_sizes[1] = 286
+	len(hidden_layer_sizes) = 2
+	solver = lbfgs
+Judgment metric (f1, cv): 0.218 +- 0.062
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-c44690d2.model
+Saving metrics in: metrics/blood-c44690d2.metric
+Saved classifier 178.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.0039402082601919085
+	batch_size = auto
+	hidden_layer_sizes[0] = 48
+	hidden_layer_sizes[1] = 124
+	hidden_layer_sizes[2] = 259
+	learning_rate = adaptive
+	learning_rate_init = 0.561043713790019
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-7fa1c070.model
+Saving metrics in: metrics/blood-7fa1c070.metric
+Saved classifier 179.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.0019636979139406223
+	batch_size = auto
+	hidden_layer_sizes[0] = 130
+	learning_rate = invscaling
+	learning_rate_init = 0.5479329880243821
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.181 +- 0.444
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-3a05952c.model
+Saving metrics in: metrics/blood-3a05952c.metric
+Saved classifier 180.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.007028454782683161
+	batch_size = auto
+	hidden_layer_sizes[0] = 161
+	learning_rate = invscaling
+	learning_rate_init = 0.17354247573669612
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-c062768f.model
+Saving metrics in: metrics/blood-c062768f.metric
+Saved classifier 181.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.008520411986846272
+	batch_size = auto
+	hidden_layer_sizes[0] = 74
+	learning_rate = adaptive
+	learning_rate_init = 0.1895514167941319
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.230 +- 0.314
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-2023d3fe.model
+Saving metrics in: metrics/blood-2023d3fe.metric
+Saved classifier 182.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.006997340357729662
+	batch_size = auto
+	hidden_layer_sizes[0] = 135
+	learning_rate = adaptive
+	learning_rate_init = 0.10610512726733799
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.355 +- 0.181
+Best so far (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-69798fdc.model
+Saving metrics in: metrics/blood-69798fdc.metric
+Saved classifier 183.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 36
+	metric = euclidean
+	n_neighbors = 9
+	weights = uniform
+Judgment metric (f1, cv): 0.451 +- 0.122
+New best score! Previous best (classifier 172): 0.448 +- 0.106
+Saving model in: models/blood-48be3cbc.model
+Saving metrics in: metrics/blood-48be3cbc.metric
+Saved classifier 184.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 44
+	metric = euclidean
+	n_neighbors = 11
+	weights = uniform
+Judgment metric (f1, cv): 0.450 +- 0.172
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-9431682e.model
+Saving metrics in: metrics/blood-9431682e.metric
+Saved classifier 185.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 2159.2394479923596
+	class_weight = None
+	epsilon = 1070.4165060485636
+	eta0 = 2422.552391138413
+	fit_intercept = 1
+	l1_ratio = 0.224944695348251
+	learning_rate = constant
+	loss = modified_huber
+	n_iter = 58
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-22a4d4ee.model
+Saving metrics in: metrics/blood-22a4d4ee.metric
+Saved classifier 186.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.00023199449507005067
+	class_weight = None
+	epsilon = 0.0006215527892801569
+	eta0 = 0.07283017700153778
+	fit_intercept = 0
+	l1_ratio = 0.9012766334627277
+	learning_rate = optimal
+	loss = squared_hinge
+	n_iter = 63
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.210 +- 0.306
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-52b6d61b.model
+Saving metrics in: metrics/blood-52b6d61b.metric
+Saved classifier 187.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 3.0311389490601512
+	class_weight = None
+	epsilon = 0.005568070067529468
+	eta0 = 15.409341345947418
+	fit_intercept = 1
+	l1_ratio = 0.6569652968703168
+	learning_rate = optimal
+	loss = squared_hinge
+	n_iter = 137
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-8c081a03.model
+Saving metrics in: metrics/blood-8c081a03.metric
+Saved classifier 188.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = euclidean
+	n_neighbors = 10
+	weights = uniform
+Judgment metric (f1, cv): 0.298 +- 0.165
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-797edfbe.model
+Saving metrics in: metrics/blood-797edfbe.metric
+Saved classifier 189.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = euclidean
+	n_neighbors = 12
+	weights = uniform
+Judgment metric (f1, cv): 0.384 +- 0.289
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-e9f7492c.model
+Saving metrics in: metrics/blood-e9f7492c.metric
+Saved classifier 190.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.002045000304173314
+	batch_size = auto
+	hidden_layer_sizes[0] = 288
+	hidden_layer_sizes[1] = 125
+	learning_rate = adaptive
+	learning_rate_init = 0.035155375928678956
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.382 +- 0.255
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-1f2eb8dd.model
+Saving metrics in: metrics/blood-1f2eb8dd.metric
+Saved classifier 191.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.004791550908444695
+	batch_size = auto
+	hidden_layer_sizes[0] = 283
+	hidden_layer_sizes[1] = 252
+	learning_rate = adaptive
+	learning_rate_init = 0.18615006473099713
+	len(hidden_layer_sizes) = 2
+	solver = sgd
+Judgment metric (f1, cv): 0.339 +- 0.106
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-6a2f5649.model
+Saving metrics in: metrics/blood-6a2f5649.metric
+Saved classifier 192.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0022290630073582207
+	batch_size = auto
+	hidden_layer_sizes[0] = 47
+	learning_rate = adaptive
+	learning_rate_init = 0.15280087664496722
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.176 +- 0.193
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-11566f9c.model
+Saving metrics in: metrics/blood-11566f9c.metric
+Saved classifier 193.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.005426860656075174
+	batch_size = auto
+	hidden_layer_sizes[0] = 206
+	learning_rate = adaptive
+	learning_rate_init = 0.3377510872251637
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.192 +- 0.113
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-79b8e76f.model
+Saving metrics in: metrics/blood-79b8e76f.metric
+Saved classifier 194.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 15
+	metric = manhattan
+	n_neighbors = 6
+	weights = uniform
+Judgment metric (f1, cv): 0.403 +- 0.127
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-00d75abd.model
+Saving metrics in: metrics/blood-00d75abd.metric
+Saved classifier 195.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 29
+	metric = manhattan
+	n_neighbors = 7
+	weights = uniform
+Judgment metric (f1, cv): 0.422 +- 0.205
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-c3baca3f.model
+Saving metrics in: metrics/blood-c3baca3f.metric
+Saved classifier 196.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.005282788616908453
+	batch_size = auto
+	hidden_layer_sizes[0] = 45
+	learning_rate = invscaling
+	learning_rate_init = 0.08188893016077432
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 31
+	metric = manhattan
+	n_neighbors = 9
+	weights = distance
+Judgment metric (f1, cv): 0.320 +- 0.147
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-71c58f1e.model
+Saving metrics in: metrics/blood-71c58f1e.metric
+Saved classifier 198.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 33
+	metric = manhattan
+	n_neighbors = 3
+	weights = distance
+Judgment metric (f1, cv): 0.402 +- 0.040
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-72365f3c.model
+Saving metrics in: metrics/blood-72365f3c.metric
+Saved classifier 199.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.013275495495720952
+	class_weight = None
+	epsilon = 0.17468883615815253
+	eta0 = 0.023103819927878737
+	fit_intercept = 1
+	l1_ratio = 0.3217312599160984
+	learning_rate = constant
+	loss = squared_hinge
+	n_iter = 131
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.169 +- 0.183
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-721dd4b8.model
+Saving metrics in: metrics/blood-721dd4b8.metric
+Saved classifier 200.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 160.81970877069799
+	class_weight = None
+	epsilon = 6388.493986649226
+	eta0 = 4.329336387304736e-05
+	fit_intercept = 1
+	l1_ratio = 0.42755378390790544
+	learning_rate = constant
+	loss = squared_hinge
+	n_iter = 173
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-20c6dc7c.model
+Saving metrics in: metrics/blood-20c6dc7c.metric
+Saved classifier 201.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.0006615673006883898
+	class_weight = None
+	epsilon = 18.237880730594284
+	eta0 = 0.00024951181664315306
+	fit_intercept = 1
+	l1_ratio = 0.29875508096937764
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 31
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.310 +- 0.321
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-82666470.model
+Saving metrics in: metrics/blood-82666470.metric
+Saved classifier 202.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 265.24512514008904
+	class_weight = None
+	epsilon = 19900.46112048115
+	eta0 = 5.6427889160404715e-05
+	fit_intercept = 0
+	l1_ratio = 0.8199886296937327
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 80
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-fd0d7683.model
+Saving metrics in: metrics/blood-fd0d7683.metric
+Saved classifier 203.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 32.732278160159396
+	class_weight = None
+	epsilon = 4.499945163601359e-05
+	eta0 = 0.21287620353459943
+	fit_intercept = 1
+	l1_ratio = 0.4440760468438487
+	learning_rate = constant
+	loss = modified_huber
+	n_iter = 73
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-9ceb190c.model
+Saving metrics in: metrics/blood-9ceb190c.metric
+Saved classifier 204.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "et":
+	criterion = gini
+	max_depth = 7
+	max_features = 0.9360794645361626
+	min_samples_leaf = 2
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.248 +- 0.243
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-b3f0fb60.model
+Saving metrics in: metrics/blood-b3f0fb60.metric
+Saved classifier 205.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.00020380524586971463
+	class_weight = None
+	epsilon = 0.0009113772221266991
+	eta0 = 0.12637639316195434
+	fit_intercept = 1
+	l1_ratio = 0.527400131518763
+	learning_rate = optimal
+	loss = squared_hinge
+	n_iter = 17
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.246 +- 0.352
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-c70ccc2c.model
+Saving metrics in: metrics/blood-c70ccc2c.metric
+Saved classifier 206.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.01665606520882
+	class_weight = None
+	epsilon = 25275.639467306188
+	eta0 = 5222.220360546916
+	fit_intercept = 0
+	l1_ratio = 0.7211044515304992
+	learning_rate = optimal
+	loss = squared_hinge
+	n_iter = 50
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.089 +- 0.108
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-6d54963d.model
+Saving metrics in: metrics/blood-6d54963d.metric
+Saved classifier 207.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 4.568847792797093e-05
+	class_weight = None
+	epsilon = 390.4466912626497
+	eta0 = 3.403318340834418e-05
+	fit_intercept = 0
+	l1_ratio = 0.7767388240448174
+	learning_rate = optimal
+	loss = log
+	n_iter = 122
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.295 +- 0.101
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-21201705.model
+Saving metrics in: metrics/blood-21201705.metric
+Saved classifier 208.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "logreg":
+	C = 0.00046564149015425316
+	_scale = True
+	class_weight = balanced
+	dual = False
+	fit_intercept = True
+	penalty = l2
+	tol = 9035.47304568175
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-1ecd2d9d.model
+Saving metrics in: metrics/blood-1ecd2d9d.metric
+Saved classifier 209.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "rf":
+	criterion = entropy
+	max_depth = 2
+	max_features = 0.9873846383643972
+	min_samples_leaf = 1
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.050 +- 0.200
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-c00882f4.model
+Saving metrics in: metrics/blood-c00882f4.metric
+Saved classifier 210.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "rf":
+	criterion = entropy
+	max_depth = 10
+	max_features = 0.8308095423065721
+	min_samples_leaf = 2
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.394 +- 0.059
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-7b45dc14.model
+Saving metrics in: metrics/blood-7b45dc14.metric
+Saved classifier 211.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.003070591570028599
+	batch_size = auto
+	hidden_layer_sizes[0] = 148
+	hidden_layer_sizes[1] = 96
+	hidden_layer_sizes[2] = 200
+	learning_rate = invscaling
+	learning_rate_init = 0.2229631630013017
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-05e2833a.model
+Saving metrics in: metrics/blood-05e2833a.metric
+Saved classifier 212.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "logreg":
+	C = 0.11167679193513828
+	_scale = True
+	class_weight = balanced
+	dual = True
+	fit_intercept = True
+	penalty = l2
+	tol = 47.14695658111249
+Judgment metric (f1, cv): 0.467 +- 0.081
+New best score! Previous best (classifier 184): 0.451 +- 0.122
+Saving model in: models/blood-90e6a12c.model
+Saving metrics in: metrics/blood-90e6a12c.metric
+Saved classifier 213.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "logreg":
+	C = 0.00024315203140448847
+	_scale = True
+	class_weight = balanced
+	dual = True
+	fit_intercept = True
+	penalty = l2
+	tol = 4.472731564220162e-05
+Judgment metric (f1, cv): 0.484 +- 0.096
+New best score! Previous best (classifier 213): 0.467 +- 0.081
+Saving model in: models/blood-248b67b9.model
+Saving metrics in: metrics/blood-248b67b9.metric
+Saved classifier 214.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "svm":
+	C = 254.58475084577563
+	_scale = True
+	cache_size = 15000
+	class_weight = balanced
+	coef0 = 888
+	gamma = 128.28183185512117
+	kernel = sigmoid
+	max_iter = 50000
+	probability = True
+	shrinking = True
+Judgment metric (f1, cv): 0.306 +- 0.135
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-4157a59b.model
+Saving metrics in: metrics/blood-4157a59b.metric
+Saved classifier 215.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "svm":
+	C = 0.0018755446043401394
+	_scale = True
+	cache_size = 15000
+	class_weight = balanced
+	coef0 = -494
+	gamma = 11792.716425611778
+	kernel = sigmoid
+	max_iter = 50000
+	probability = True
+	shrinking = True
+Judgment metric (f1, cv): 0.386 +- 0.003
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-27e4ee8d.model
+Saving metrics in: metrics/blood-27e4ee8d.metric
+Saved classifier 216.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "logreg":
+	C = 0.009764870058601138
+	_scale = True
+	class_weight = balanced
+	fit_intercept = True
+	penalty = l1
+	tol = 1.7659811394473787e-05
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-555e93fb.model
+Saving metrics in: metrics/blood-555e93fb.metric
+Saved classifier 217.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0015446513492071191
+	batch_size = auto
+	hidden_layer_sizes[0] = 21
+	len(hidden_layer_sizes) = 1
+	solver = lbfgs
+Judgment metric (f1, cv): 0.166 +- 0.176
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-5b4750a8.model
+Saving metrics in: metrics/blood-5b4750a8.metric
+Saved classifier 218.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.002103338334684573
+	batch_size = auto
+	hidden_layer_sizes[0] = 289
+	len(hidden_layer_sizes) = 1
+	solver = lbfgs
+Judgment metric (f1, cv): 0.370 +- 0.216
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-10f9b2a9.model
+Saving metrics in: metrics/blood-10f9b2a9.metric
+Saved classifier 219.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 23
+	metric = euclidean
+	n_neighbors = 1
+	weights = distance
+Judgment metric (f1, cv): 0.304 +- 0.071
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-8d2d6c50.model
+Saving metrics in: metrics/blood-8d2d6c50.metric
+Saved classifier 220.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 45
+	metric = euclidean
+	n_neighbors = 16
+	weights = distance
+Judgment metric (f1, cv): 0.405 +- 0.140
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-c3bd2564.model
+Saving metrics in: metrics/blood-c3bd2564.metric
+Saved classifier 221.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 69174.27169554426
+	class_weight = None
+	epsilon = 0.13405436890028039
+	eta0 = 65.7244626259741
+	fit_intercept = 0
+	l1_ratio = 0.212865001067304
+	learning_rate = constant
+	loss = squared_hinge
+	n_iter = 80
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-4eb108e1.model
+Saving metrics in: metrics/blood-4eb108e1.metric
+Saved classifier 222.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "dt":
+	criterion = entropy
+	max_depth = 6
+	max_features = 0.11593157895701649
+	min_samples_leaf = 1
+	min_samples_split = 3
+Judgment metric (f1, cv): 0.281 +- 0.299
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-ae9f91d6.model
+Saving metrics in: metrics/blood-ae9f91d6.metric
+Saved classifier 223.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "dt":
+	criterion = entropy
+	max_depth = 7
+	max_features = 0.9970168378467839
+	min_samples_leaf = 3
+	min_samples_split = 4
+Judgment metric (f1, cv): 0.341 +- 0.090
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-8ce252c5.model
+Saving metrics in: metrics/blood-8ce252c5.metric
+Saved classifier 224.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.006035691941784327
+	batch_size = auto
+	hidden_layer_sizes[0] = 241
+	hidden_layer_sizes[1] = 81
+	hidden_layer_sizes[2] = 203
+	learning_rate = adaptive
+	learning_rate_init = 0.2965475351952393
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+No tunables for hyperpartition 114
+Chose parameters for method "gnb":
+	_scale_minmax = True
+Judgment metric (f1, cv): 0.237 +- 0.240
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-323638f8.model
+Saving metrics in: metrics/blood-323638f8.metric
+Saved classifier 226.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "svm":
+	C = 0.49191081143633986
+	_scale = True
+	cache_size = 15000
+	class_weight = balanced
+	coef0 = -795
+	degree = 5
+	gamma = 5512.790707506591
+	kernel = poly
+	max_iter = 50000
+	probability = True
+	shrinking = True
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.008017737748376635
+	batch_size = auto
+	hidden_layer_sizes[0] = 23
+	learning_rate = invscaling
+	learning_rate_init = 0.6434178988463105
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.369 +- 0.290
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-5a21cdee.model
+Saving metrics in: metrics/blood-5a21cdee.metric
+Saved classifier 228.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.000894888897703298
+	batch_size = auto
+	hidden_layer_sizes[0] = 33
+	learning_rate = invscaling
+	learning_rate_init = 0.7100706571069758
+	len(hidden_layer_sizes) = 1
+	solver = sgd
+Judgment metric (f1, cv): 0.311 +- 0.459
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-723e7364.model
+Saving metrics in: metrics/blood-723e7364.metric
+Saved classifier 229.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+No tunables for hyperpartition 108
+Chose parameters for method "gp":
+	kernel = matern
+	nu = 0.5
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "et":
+	criterion = gini
+	max_depth = 6
+	max_features = 0.9006701093864015
+	min_samples_leaf = 2
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.689 +- 0.439
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-ec0ad4c8.model
+Saving metrics in: metrics/pollution_1-ec0ad4c8.metric
+Saved classifier 231.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "et":
+	criterion = gini
+	max_depth = 9
+	max_features = 0.5303398066543049
+	min_samples_leaf = 1
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.725 +- 0.210
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-4fe65838.model
+Saving metrics in: metrics/pollution_1-4fe65838.metric
+Saved classifier 232.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 2.1039681352010686
+	class_weight = None
+	epsilon = 0.20721938928445507
+	eta0 = 0.40991789432499126
+	fit_intercept = 1
+	l1_ratio = 0.12021329591182595
+	learning_rate = constant
+	loss = log
+	n_iter = 16
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.246 +- 0.603
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-2628f5e5.model
+Saving metrics in: metrics/pollution_1-2628f5e5.metric
+Saved classifier 233.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 36.041412158818915
+	class_weight = None
+	epsilon = 0.004467793115118659
+	eta0 = 0.05848854192838011
+	fit_intercept = 1
+	l1_ratio = 0.05346138380812038
+	learning_rate = constant
+	loss = log
+	n_iter = 49
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-9a4cac8e.model
+Saving metrics in: metrics/pollution_1-9a4cac8e.metric
+Saved classifier 234.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = manhattan
+	n_neighbors = 16
+	weights = distance
+Judgment metric (f1, cv): 0.722 +- 0.431
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-92cb8635.model
+Saving metrics in: metrics/pollution_1-92cb8635.metric
+Saved classifier 235.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = manhattan
+	n_neighbors = 1
+	weights = distance
+Judgment metric (f1, cv): 0.830 +- 0.280
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-36512031.model
+Saving metrics in: metrics/pollution_1-36512031.metric
+Saved classifier 236.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 2
+	metric = chebyshev
+	n_neighbors = 19
+	weights = uniform
+Judgment metric (f1, cv): 0.634 +- 0.448
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-fcd95103.model
+Saving metrics in: metrics/pollution_1-fcd95103.metric
+Saved classifier 237.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 35
+	metric = chebyshev
+	n_neighbors = 7
+	weights = uniform
+Judgment metric (f1, cv): 0.666 +- 0.276
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-62f0c846.model
+Saving metrics in: metrics/pollution_1-62f0c846.metric
+Judgment metric (f1, cv): 0.031 +- 0.076
+Saved classifier 238.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-3f8fa100.model
+BestK: Not enough choices to do K-selection; using plain UCB1
+Saving metrics in: metrics/blood-3f8fa100.metric
+Saved classifier 230.
+GP: not enough data, falling back to uniform sampler
+Computing on datarun 1
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.008849616568334284
+	batch_size = auto
+	hidden_layer_sizes[0] = 38
+	hidden_layer_sizes[1] = 117
+	hidden_layer_sizes[2] = 297
+	learning_rate = adaptive
+	learning_rate_init = 0.9111866014883393
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.0015149728632219692
+	batch_size = auto
+	hidden_layer_sizes[0] = 187
+	hidden_layer_sizes[1] = 109
+	hidden_layer_sizes[2] = 235
+	learning_rate = constant
+	learning_rate_init = 0.21032801797908507
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.267 +- 0.653
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-aebba087.model
+Saving metrics in: metrics/pollution_1-aebba087.metric
+Saved classifier 239.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = logistic
+	alpha = 0.0014071051651016147
+	batch_size = auto
+	hidden_layer_sizes[0] = 58
+	hidden_layer_sizes[1] = 5
+	hidden_layer_sizes[2] = 30
+	learning_rate = adaptive
+	learning_rate_init = 0.5674911985266162
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.271 +- 0.151
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-c2bd00d5.model
+Saving metrics in: metrics/blood-c2bd00d5.metric
+Saved classifier 240.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = tanh
+	alpha = 0.0033515805029174597
+	batch_size = auto
+	hidden_layer_sizes[0] = 96
+	hidden_layer_sizes[1] = 37
+	hidden_layer_sizes[2] = 260
+	learning_rate = constant
+	learning_rate_init = 0.5121353092902267
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+Judgment metric (f1, cv): 0.520 +- 0.523
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-1354bcbb.model
+Saving metrics in: metrics/pollution_1-1354bcbb.metric
+Saved classifier 241.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 78828.3037670164
+	class_weight = None
+	epsilon = 0.16388071611696153
+	eta0 = 21.348411106443876
+	fit_intercept = 0
+	l1_ratio = 0.07550685928843581
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 148
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.782 +- 0.030
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-b95c207f.model
+Saving metrics in: metrics/pollution_1-b95c207f.metric
+Saved classifier 243.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.0002945703687404743
+	class_weight = None
+	epsilon = 0.07731897042764846
+	eta0 = 14277.73642696501
+	fit_intercept = 1
+	l1_ratio = 0.818607710845308
+	learning_rate = optimal
+	loss = modified_huber
+	n_iter = 155
+	n_jobs = -1
+	penalty = l2
+	shuffle = True
+Judgment metric (f1, cv): 0.775 +- 0.128
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-dc4d0644.model
+Saving metrics in: metrics/pollution_1-dc4d0644.metric
+Saved classifier 244.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "logreg":
+	C = 7.866001055347777e-05
+	_scale = True
+	class_weight = balanced
+	dual = False
+	fit_intercept = True
+	penalty = l2
+	tol = 12.041407910446045
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-bb70c67d.model
+Saving metrics in: metrics/pollution_1-bb70c67d.metric
+Saved classifier 245.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 13
+	metric = euclidean
+	n_neighbors = 6
+	weights = uniform
+Judgment metric (f1, cv): 0.602 +- 0.457
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-5c089954.model
+Saving metrics in: metrics/pollution_1-5c089954.metric
+Saved classifier 246.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 1
+	metric = euclidean
+	n_neighbors = 6
+	weights = uniform
+Judgment metric (f1, cv): 0.721 +- 0.448
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-99ff98f2.model
+Saving metrics in: metrics/pollution_1-99ff98f2.metric
+Saved classifier 247.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 32
+	metric = manhattan
+	n_neighbors = 8
+	weights = uniform
+Judgment metric (f1, cv): 0.682 +- 0.274
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-54a006d9.model
+Saving metrics in: metrics/pollution_1-54a006d9.metric
+Saved classifier 248.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 13
+	metric = manhattan
+	n_neighbors = 17
+	weights = uniform
+Judgment metric (f1, cv): 0.806 +- 0.070
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-2063aadb.model
+Saving metrics in: metrics/pollution_1-2063aadb.metric
+Saved classifier 249.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.0002856772559598114
+	class_weight = None
+	epsilon = 6.932194764144723
+	eta0 = 15595.809536735018
+	fit_intercept = 1
+	l1_ratio = 0.39924306577088753
+	learning_rate = constant
+	loss = modified_huber
+	n_iter = 181
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.689 +- 0.195
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-5f16a6bd.model
+Saving metrics in: metrics/pollution_1-5f16a6bd.metric
+Saved classifier 250.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.6081338044138667
+	class_weight = None
+	epsilon = 0.5742230676097667
+	eta0 = 66.21545349356647
+	fit_intercept = 0
+	l1_ratio = 0.9187931874883181
+	learning_rate = constant
+	loss = modified_huber
+	n_iter = 165
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.229 +- 0.451
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-4a6e2d4d.model
+Saving metrics in: metrics/blood-4a6e2d4d.metric
+Saved classifier 242.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+Judgment metric (f1, cv): 0.000 +- 0.000
+BestK: Not enough choices to do K-selection; using plain UCB1
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-321f1bc0.model
+Saving metrics in: metrics/pollution_1-321f1bc0.metric
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = minkowski
+	n_neighbors = 6
+	p = 2
+	weights = distance
+Saved classifier 251.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 50
+	metric = minkowski
+	n_neighbors = 20
+	p = 1
+	weights = uniform
+Judgment metric (f1, cv): 0.329 +- 0.090
+Best so far (classifier 214): 0.484 +- 0.096
+Judgment metric (f1, cv): 0.476 +- 0.790
+Saving model in: models/blood-a7e3df01.model
+Best so far (classifier 95): 0.887 +- 0.130
+Saving metrics in: metrics/blood-a7e3df01.metric
+Saving model in: models/pollution_1-ebabe007.model
+Saving metrics in: metrics/pollution_1-ebabe007.metric
+Saved classifier 252.
+Saved classifier 253.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Computing on datarun 1
+Tuner: <class 'btb.tuning.gp.GP'>
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 30
+	metric = minkowski
+	n_neighbors = 13
+	p = 1
+	weights = uniform
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = brute
+	metric = minkowski
+	n_neighbors = 15
+	p = 2
+	weights = distance
+Judgment metric (f1, cv): 0.819 +- 0.061
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-a3ebb318.model
+Saving metrics in: metrics/pollution_1-a3ebb318.metric
+Saved classifier 254.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 12
+	metric = euclidean
+	n_neighbors = 5
+	weights = uniform
+Judgment metric (f1, cv): 0.415 +- 0.083
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-d61681d3.model
+Saving metrics in: metrics/blood-d61681d3.metric
+Saved classifier 255.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 0.013850522736028643
+	class_weight = None
+	epsilon = 0.06594960610941539
+	eta0 = 1.439043836813546e-05
+	fit_intercept = 0
+	l1_ratio = 0.6007817222278165
+	learning_rate = constant
+	loss = log
+	n_iter = 172
+	n_jobs = -1
+	penalty = l1
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-7c29508c.model
+Saving metrics in: metrics/blood-7c29508c.metric
+Saved classifier 257.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 48
+	metric = chebyshev
+	n_neighbors = 18
+	weights = distance
+Judgment metric (f1, cv): 0.311 +- 0.117
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-9a264e47.model
+Saving metrics in: metrics/blood-9a264e47.metric
+Saved classifier 258.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 31
+	metric = chebyshev
+	n_neighbors = 3
+	weights = distance
+Judgment metric (f1, cv): 0.387 +- 0.119
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-f5f6b631.model
+Saving metrics in: metrics/blood-f5f6b631.metric
+Saved classifier 259.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "sgd":
+	_scale_minmax = True
+	alpha = 5417.459108457367
+	class_weight = None
+	epsilon = 229.1983549316624
+	eta0 = 4.1908439689318255
+	fit_intercept = 0
+	l1_ratio = 0.5819594896750623
+	learning_rate = optimal
+	loss = log
+	n_iter = 183
+	n_jobs = -1
+	penalty = elasticnet
+	shuffle = True
+Judgment metric (f1, cv): 0.000 +- 0.000
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-ebbc7241.model
+Saving metrics in: metrics/blood-ebbc7241.metric
+Saved classifier 260.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 38
+	metric = euclidean
+	n_neighbors = 16
+	weights = distance
+Judgment metric (f1, cv): 0.418 +- 0.096
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-57d9b539.model
+Saving metrics in: metrics/blood-57d9b539.metric
+Saved classifier 261.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = kd_tree
+	leaf_size = 35
+	metric = euclidean
+	n_neighbors = 2
+	weights = distance
+Judgment metric (f1, cv): 0.264 +- 0.259
+Best so far (classifier 214): 0.484 +- 0.096
+Saving model in: models/blood-a73d678e.model
+Saving metrics in: metrics/blood-a73d678e.metric
+Saved classifier 262.
+Computing on datarun 1
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = relu
+	alpha = 0.008980603250818377
+	batch_size = auto
+	hidden_layer_sizes[0] = 101
+	hidden_layer_sizes[1] = 245
+	hidden_layer_sizes[2] = 106
+	learning_rate = invscaling
+	learning_rate_init = 0.7701629266203869
+	len(hidden_layer_sizes) = 3
+	solver = sgd
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "rf":
+	criterion = gini
+	max_depth = 9
+	max_features = 0.5769183938836449
+	min_samples_leaf = 3
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.835 +- 0.207
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-8cb3687c.model
+Saving metrics in: metrics/pollution_1-8cb3687c.metric
+Saved classifier 264.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "rf":
+	criterion = gini
+	max_depth = 3
+	max_features = 0.9748059765919903
+	min_samples_leaf = 2
+	n_estimators = 100
+	n_jobs = -1
+Judgment metric (f1, cv): 0.771 +- 0.348
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-4bd730e4.model
+Saving metrics in: metrics/pollution_1-4bd730e4.metric
+Saved classifier 265.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.008635079400687501
+	batch_size = auto
+	hidden_layer_sizes[0] = 132
+	hidden_layer_sizes[1] = 74
+	hidden_layer_sizes[2] = 83
+	len(hidden_layer_sizes) = 3
+	solver = lbfgs
+Judgment metric (f1, cv): 0.573 +- 0.411
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-a1e6ac54.model
+Saving metrics in: metrics/pollution_1-a1e6ac54.metric
+Saved classifier 266.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "mlp":
+	_scale = True
+	activation = identity
+	alpha = 0.0016886970755110205
+	batch_size = auto
+	hidden_layer_sizes[0] = 185
+	hidden_layer_sizes[1] = 228
+	hidden_layer_sizes[2] = 143
+	len(hidden_layer_sizes) = 3
+	solver = lbfgs
+Judgment metric (f1, cv): 0.788 +- 0.164
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-3265f6cc.model
+Saving metrics in: metrics/pollution_1-3265f6cc.metric
+Saved classifier 267.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "svm":
+	C = 0.21268508770246997
+	_scale = True
+	cache_size = 15000
+	class_weight = balanced
+	gamma = 2.7992903334519687e-05
+	kernel = rbf
+	max_iter = 50000
+	probability = True
+	shrinking = True
+Judgment metric (f1, cv): 0.133 +- 0.533
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-bd79a3d8.model
+Saving metrics in: metrics/pollution_1-bd79a3d8.metric
+Saved classifier 268.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "svm":
+	C = 0.00013405950632160905
+	_scale = True
+	cache_size = 15000
+	class_weight = balanced
+	gamma = 835.5302201380986
+	kernel = rbf
+	max_iter = 50000
+	probability = True
+	shrinking = True
+Judgment metric (f1, cv): 0.400 +- 0.653
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-d49bca5f.model
+Saving metrics in: metrics/pollution_1-d49bca5f.metric
+Saved classifier 269.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 39
+	metric = minkowski
+	n_neighbors = 12
+	p = 2
+	weights = uniform
+Judgment metric (f1, cv): 0.636 +- 0.410
+Best so far (classifier 95): 0.887 +- 0.130
+Saving model in: models/pollution_1-b3ad57bd.model
+Saving metrics in: metrics/pollution_1-b3ad57bd.metric
+Saved classifier 270.
+Computing on datarun 2
+Selector: <class 'btb.selection.best.BestKReward'>
+Tuner: <class 'btb.tuning.gp.GP'>
+BestK: Not enough choices to do K-selection; using plain UCB1
+GP: not enough data, falling back to uniform sampler
+Chose parameters for method "knn":
+	_scale = True
+	algorithm = ball_tree
+	leaf_size = 39
+	metric = minkowski
+	n_neighbors = 12
+	p = 2
+	weights = uniform
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
