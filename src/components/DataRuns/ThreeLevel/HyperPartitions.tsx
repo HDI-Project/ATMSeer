@@ -101,8 +101,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             let exceedrow = -1;
             let maxrow = 0;
             let nowrow = 0;
-            let lastposx = gap+width*0.5;
-
+            
+            let startposx = gap+width*0.5-15;
+            let lastposx = startposx;
             let lastposy = 3*height+gap;
             //let verticalnum = 0;
             //let maxverticalnum = 10;
@@ -123,7 +124,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     if(lastposy + (2 * height + gap)>nowProps.height && exceedrow==-1){
                         exceedrow = nowrow;
                     }
-                    lastposx = gap+width*0.5;
+                    lastposx = startposx;
                     currentPos = [lastposx, lastposy]
                 }
                 pos.push(currentPos)
