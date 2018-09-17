@@ -27,18 +27,19 @@ pip install scikit_learn==0.19.2
 
 After configuring the ATM, then go to `server/` and run `pip install -r requirements.txt`
 
-The frontend runs in React. You'll need to have [npm](https://www.npmjs.com/get-npm) installed. Then, from the top level directory, run the following commands
 
-```
-npm install
-npm run build
-```
 
 # Run
 
-## Server
+## Production Mode
 
-To start the server, first set `$PYTHONPATH` to include the local `atm_server` package: 
+To start the server and frontend in the production mode, first you should build the frontend by running following commands
+
+```
+npm run build
+```
+
+Then set `$PYTHONPATH` to include the local `atm_server` package: 
 ```bash
 export PYTHONPATH=$PYTHONPATH:`pwd`/server/
 ```
@@ -50,6 +51,24 @@ Or you can directly run `startserver.sh` to start the server
 The routes (API) are defined in `server/atm_server/api.py`
 
 You can access the `http://localhost:7779/` to see the ATMSeer.
+
+## Development Mode
+
+To start the server and frontend in the development mode, first set `$PYTHONPATH` to include the local `atm_server` package: 
+```bash
+export PYTHONPATH=$PYTHONPATH:`pwd`/server/
+```
+
+Then start the atm server by: `python server/atm_server/server.py --debug`
+
+And to start the frontend development server, run the following commands
+
+```
+npm install
+npm run start
+```
+
+You can access the `http://localhost:7777/` to see the ATMSeer.
 
 # Build
 
