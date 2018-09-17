@@ -213,44 +213,7 @@ export default class methods extends React.Component<IProps, IState>{
                                         Check all
                                         </Checkbox>
                                     </foreignObject>
-                    {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
-                            /*let checked = false;
-                            let configsMethod : string[] = this.props.configsMethod;
-                            if(configsMethod.indexOf(name)>-1){
-                                    checked= true;
-                            };*/
-                            let checked = false;
-                            let indeterminate = false;
-                            let disabled = false;
-                            if(methodSelected[name]){
-                                checked = methodSelected[name].checked;
-                                indeterminate = methodSelected[name].indeterminate;
-                                disabled = methodSelected[name].disabled;
-                            }
-
-                            return (<foreignObject
-                                        key={name+"_text_"+i}
-                                        x={ getXcorr(i) - 15}
-                                        y={getYcorr(i)- 20}
-                                        width={this.methodBoxAttr.checkboxWidth}
-                                        height={this.methodBoxAttr.checkboxHeight}>
-
-                                       <Checkbox
-                                        key={name+"_checkbox_"+(i)}
-                                        checked={checked}
-                                        indeterminate={indeterminate}
-                                        disabled={disabled}
-                                        value={name}
-                                        onChange={this.props.onMethodsCheckBoxChange} >
-                                        {/*<Tag color={getColor(name)}>{name}</Tag>*/}
-                                        <Tooltip title={methodsDef[name].fullname}>
-                                            <span>{name}</span>
-                                            </Tooltip>
-                                        </Checkbox>
-
-                                        </foreignObject>
-                                  )
-                    })}
+                  
             <g className="usedMethods">
                 {sortedusedMethods.map((name: string, i: number) => {
                     const methodDef = methodsDef[name];
@@ -263,25 +226,25 @@ export default class methods extends React.Component<IProps, IState>{
                     }
                     let filterclassifier = classifiers.filter((d:any)=>d.method==name);
                     let filterhyperpartitions = hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name);
-                    let usedHpID = Array.from(new Set(filterclassifier.map(d=>d.hyperpartition_id)));
-                    //let usedhpidlen = usedHpID.length;
-                    let filterhyperpartitionslen = filterhyperpartitions.length;
-                    if(filterhyperpartitionslen==0){
-                        filterhyperpartitionslen=1;
+                    
+               
+                    let mymethodSelected = {
+                        checked : false,
+                        indeterminate : false,
+                        disabled : false
+                    };
+                    if(methodSelected[name]){
+                       mymethodSelected = methodSelected[name];
                     }
-                     const progressHyperpartiton = (percent:number)=>{
-                        return `${usedHpID.length}/${filterhyperpartitions.length}`
-                    }
-
                     // if (testin > -1) {
                     //     selected = true;
                     // }
                     //const classifier_num = datarun[name].length;
                     //const top_width = classifier_num*6+60;
                     // this.index++;
-                    return (<g key={name + "_g_linechart_" + i}>
+                    return (<g key={name + "_g_linechart_"}>
 
-                        <LineChart key={name + "_used_" + i}
+                        <LineChart key={name + "_used_"}
                             // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
                             // y={this.methodBoxAttr.y}
                             x={getXcorr(i)}
@@ -296,22 +259,12 @@ export default class methods extends React.Component<IProps, IState>{
                             selected={selected}
                             hyperpartitoins = {filterhyperpartitions}
                             flower={flower}
+                            methodBoxAttr={this.methodBoxAttr}
+                            methodSelected={mymethodSelected}
+                            onMethodsCheckBoxChange={this.props.onMethodsCheckBoxChange}
+                            mode={0}
                         />
-                        <foreignObject key={name + "_progressbar_" + i} x={
-                                getXcorr(i) + this.methodBoxAttr.width-20
-                            }
-                            y={
-                                getYcorr(i) + this.methodBoxAttr.height-20
-                            } width={40} height={40}
-                            >
-                        <Progress
-                        type="circle"
-                        percent={100*usedHpID.length/filterhyperpartitionslen}
-                        format={progressHyperpartiton}
-                        width={40}
-                        strokeWidth={10}
-                        />
-                        </foreignObject>
+                        
 
 
                         </g>)
@@ -330,33 +283,40 @@ export default class methods extends React.Component<IProps, IState>{
                     for(let i = 1;i<=flower;i++){
                         flowerlist.push(i);
                     }
-                    return (<g
-                        key={name + '_unused'}
-                        transform={`translate(
-                    ${
-                           getXcorr(index)
-                            },
-                    ${
-                            getYcorr(index)
-                            }
-                )`}
-                    >
-                        <rect
-                            strokeDasharray="5,5"
+                    let mymethodSelected = {
+                        checked : false,
+                        indeterminate : false,
+                        disabled : false
+                    };
+                    if(methodSelected[name]){
+                       mymethodSelected = methodSelected[name];
+                    }
+                     return (<g key={name + "_unused"}>
+
+                        <LineChart key={name + "_used_"}
+                            // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
+                            // y={this.methodBoxAttr.y}
+                            x={getXcorr(index)}
+                            y={getYcorr(index)}
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
-                            fill="white" strokeWidth={2} stroke="#E0D6D4" />
-                        {flowerlist.map((d:number)=>{
-                            return <image key={name+"_flower_"+d} opacity={0.5} xlinkHref="small_hint.png" x={this.methodBoxAttr.width-15*d} y={0} width={15} height={15}/>}
-                            )}
-                        {/*<text
-                            x={this.methodBoxAttr.width}
-                            y={this.methodBoxAttr.height}
-                            textAnchor="end"
-                        >
-                            {name}
-                        </text>*/}
-                    </g>)
+                            methodDef={methodsDef[name]}
+                            classifiers={[]}
+                            name={name}
+                            totallen={maxnum}
+                            onClick={this.props.onSelectMethod}
+                            hyperpartitoins = {[]}
+                            flower={flower}
+                            methodBoxAttr={this.methodBoxAttr}
+                            methodSelected={mymethodSelected}
+                            onMethodsCheckBoxChange={this.props.onMethodsCheckBoxChange}
+                            mode={1}
+                        />
+                        
+
+
+                        </g>)
+                    
                 })
             } </g>
         </g>
@@ -376,22 +336,130 @@ export interface LineChartProps {
     onClick:(a:string)=>void,
     selected?: boolean,
     hyperpartitoins: IHyperpartitionInfo[],
-    flower:number
+    flower:number,
+    methodBoxAttr:any,
+    methodSelected:any,
+    onMethodsCheckBoxChange:(e:any)=>void,
+    mode:number
+
 
 }
+/*class UnusedLineChart extends React.Component<UnusedLineChartProps,{}>{
 
+}*/
 class LineChart extends React.Component<LineChartProps, {}>{
     TAG = "LineChart_";
+    mode = 0;
     componentDidMount() {
-        this.renderD3();
+        this.mode = this.props.mode;
+        if(this.props.mode==0){
+            this.renderD3(0);
+        }else if(this.props.mode==1){
+            this.renderD3_unused(0);
+        }
     }
+    
     componentDidUpdate(){
-        let g = d3.select("#" +this.TAG + this.props.name)
-
-        g.selectAll('*').remove()
-        this.renderD3();
+        if(this.props.mode == this.mode){
+            if(this.props.mode==0){
+                this.renderD3(1);
+            }else if(this.props.mode==1){
+                this.renderD3_unused(1);
+            }
+        }else{
+            // unequal
+            if(this.props.mode==0){
+                this.renderD3(0);
+            }else if(this.props.mode==1){
+                this.renderD3_unused(0);
+            }
+        }
+        this.mode = this.props.mode;
+        
     }
-    renderD3() {
+    renderD3_unused(mode:number) {
+        // Get Datasets
+       
+        let margin = { top: 0, right: 2, bottom: 0, left: 2 },
+            width = this.props.width - margin.left - margin.right,
+            height = this.props.height - margin.top - margin.bottom,
+            top_margin = { top: this.props.y, left: this.props.x };
+        console.log(height);
+       
+        let trans = d3.transition()
+                            .duration(1000)
+                            .ease(d3.easeLinear);
+
+       
+        let top_svg = d3.select("#unused_" + this.TAG + this.props.name);
+        top_svg.attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+        
+
+        let top_checkbox = d3.select("#checkbox_"+this.props.name);
+        if(mode==1){
+            top_checkbox = top_checkbox.transition(trans);
+        }
+        top_checkbox
+        .attr("x",this.props.x-15)
+        .attr("y",this.props.y-20);
+
+        /////////////////////////////////////////////
+        // Top SVG
+        let select_top_svg = top_svg;
+        if(mode==1){
+            select_top_svg = top_svg.transition(trans);
+        }
+        select_top_svg.attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")");
+        // Rect
+        let select_top_svg_rect = top_svg.selectAll(`rect.${this.props.name}`).data([1]);
+        select_top_svg_rect.enter().append("rect").attr('class', `${this.props.name} methodRect`)
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("fill", "white")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray","5,5")
+            .attr("stroke",  "#E0D6D4");
+           
+        select_top_svg_rect.transition(trans)
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("fill", "white")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray","5,5")
+            .attr("stroke", "#E0D6D4");
+        select_top_svg_rect.exit().remove();
+        // Rect end
+
+        let imageData = [];
+        for(let i = 1;i<=this.props.flower;i++){
+            imageData.push(i);
+            
+        }
+        let image = top_svg.selectAll("image.rec_image").data(imageData);
+        
+        image.enter().append('image').attr("class","rec_image")
+                .attr('width',15)
+                .attr('height',15)
+                .attr('opacity',0.5)
+                .attr('xlink:href',"small_hint.png")
+                .attr('x',(d:number)=>width-15*d)
+                .attr('y',0);
+        image.transition(trans).attr('width',15)
+                .attr('height',15)
+                .attr('opacity',0.5)
+                .attr('xlink:href',"small_hint.png")
+                .attr('x',(d:number)=>width-15*d)
+                .attr('y',0);
+        image.exit().transition(trans).attr('opacity',1e-6).remove();
+        
+
+    }
+    renderD3(mode:number) {
         // Get Datasets
         const { methodDef, classifiers, totallen, selected } = this.props;
        // let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)))
@@ -438,17 +506,43 @@ class LineChart extends React.Component<LineChartProps, {}>{
         let	yScale2 = d3.scaleLinear().range([height, 0]);
         yScale2.domain([0, 1]);
         let xScale = d3.scaleLinear().range([0, width]);
-        //let trans = d3.transition()
-        //                    .duration(1000)
-        //                    .ease(d3.easeLinear);
+        let trans = d3.transition()
+                            .duration(1000)
+                            .ease(d3.easeLinear);
 
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
         let top_svg = d3.select("#" + this.TAG + this.props.name);
         top_svg.attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")");
-        top_svg.append("rect")
-            .attr('class', `${this.props.name} methodRect`)
+            .attr("height", height + margin.top + margin.bottom);
+        // ProgressBar Transition
+        let top_progressbar = d3.select("#progressbar_"+this.props.name);
+        if(mode==1){
+            top_progressbar = top_progressbar.transition(trans);
+        }
+        top_progressbar
+        .attr("x",this.props.x+this.props.width-20)
+        .attr("y",this.props.y+this.props.height-20);
+
+        let top_checkbox = d3.select("#checkbox_"+this.props.name);
+        if(mode==1){
+            top_checkbox = top_checkbox.transition(trans);
+        }
+        top_checkbox
+        .attr("x",this.props.x-15)
+        .attr("y",this.props.y-20);
+
+        /////////////////////////////////////////////
+        // Top SVG
+        let select_top_svg = top_svg;
+        if(mode==1){
+            select_top_svg = top_svg.transition(trans);
+        }
+        select_top_svg.attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")");
+
+        // Rect
+        let select_top_svg_rect = top_svg.selectAll(`rect.${this.props.name}`).data([1]);
+        select_top_svg_rect.enter().append("rect").attr('class', `${this.props.name} methodRect`)
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", width + margin.left + margin.right)
@@ -463,12 +557,33 @@ class LineChart extends React.Component<LineChartProps, {}>{
                     .attr('stroke', "#A4A0A0")
                     .attr("stroke-width", 3)
                 this.props.onClick(this.props.name)
-            })
+            });
+        
+        select_top_svg_rect.transition(trans)
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("fill", "white")
+            .attr("stroke-width", 2)
+            .attr("stroke", selected ? "#A4A0A0" : "#E0D6D4");
+        select_top_svg_rect.exit().remove();
+        // Rect end
 
-        let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        svg.selectAll('.method_bar')
-            .data(data)
-            .enter()
+        // Select SVG
+        let select_svg = top_svg.selectAll(`svg_${this.props.name}`).data([1]);
+        select_svg.enter().append("g").attr("class",`svg_${this.props.name}`)
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        select_svg.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        select_svg.exit().remove();
+
+
+
+        // Bar 
+        let method_bar = select_svg.enter().merge(select_svg).selectAll('.method_bar')
+            .data(data);
+
+        method_bar.enter()
             .append("rect")
             .attr("class", "method_bar")
             .style("fill", getColor(methodDef.name))
@@ -478,57 +593,112 @@ class LineChart extends React.Component<LineChartProps, {}>{
             ))
             .attr("width", (d: any) => xScale(d))
             .attr("height", yScale.bandwidth())
+        method_bar.style("fill", getColor(methodDef.name))
+            .transition(trans)
+            .attr("x", 0)
+            .attr("y", (d: any, i: number) => (
+                yScale(i/10)
+            ))
+            .attr("width", (d: any) => xScale(d))
+            .attr("height", yScale.bandwidth())
+        method_bar.exit().remove();
+        // Bar end
 
-     let text1 = svg.append("text")
-            .attr("class", "method_name")
+        // Text
+     let text1 = select_svg.enter().merge(select_svg).selectAll("text.method_name_text1").data([1]);
+            text1.enter().append("text").attr("class", "method_name_text1")
             .attr('x', width-2.5)
-        //    .attr('y', height-12)
-            .attr('y',-5)
-            .attr('text-anchor', "end")
-        //    .attr('filter',"url(#solid)")
-            .text(`${" "+bestperformance.toFixed(3)+" "} `)
+                    .attr('y',-5)
+                    .attr('text-anchor', "end")
+                    .attr("opacity",1)
+                    .text(`${" "+bestperformance.toFixed(3)+" "} `);
+            text1.text(`${" "+bestperformance.toFixed(3)+" "} `)
+                    .transition(trans)
+                    .attr('x', width-2.5)
+                    .attr('y',-5)
+                    .attr("opacity",1)
+                    .attr('text-anchor', "end")
+                    ;
+            text1.exit().remove();
+    let bbox1 = select_svg.enter().merge(select_svg).selectAll("text.method_name_text1").node().getBBox();
+    let text2 = select_svg.enter().merge(select_svg).selectAll("text.method_name_text2").data([1]);
 
-
-    let text2=svg.append("text")
-            .attr("class", "method_name")
+            text2.enter().append("text").attr("class", "method_name_text2")
             .attr('x', width-55)
-        //    .attr('y', height-12)
             .attr('y',-5)
             .attr('text-anchor', "end")
-        //    .attr('filter',"url(#solid)")
             .text(`${" "+classifiers.length+" "}`)
 
-    var bbox1 = text1.node().getBBox();
-
-    svg.append("rect")
-    .attr("x", bbox1.x-2.5)
-    .attr("y", bbox1.y)
+            text2.transition(trans).attr("class", "method_name_text2")
+            .attr('x', width-55)
+            .attr('y',-5)
+            .attr('text-anchor', "end")
+            .text(`${" "+classifiers.length+" "}`)
+            text2.exit().remove()
+    let bbox2 = select_svg.enter().merge(select_svg).selectAll("text.method_name_text2").node().getBBox();
+      
+    
+    let box1_rect = select_svg.enter().merge(select_svg).selectAll("rect.box1_rect").data([1]);
+    
+    box1_rect.enter().append("rect").attr("class","box1_rect")
+    .attr("x", width-2.5-bbox1.width-2.5)
+    .attr("y", -2-bbox1.height)
     .attr("width", bbox1.width+5)
     .attr("height", bbox1.height)
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
     .style("stroke-width", "1.5px");
-    var bbox2 = text2.node().getBBox();
-
-    svg.append("rect")
-    .attr("x", bbox2.x-2.5)
-    .attr("y", bbox2.y)
+    box1_rect.transition(trans)
+    .attr("x", width-2.5-bbox1.width-2.5)
+    .attr("y", -2-bbox1.height)
+    .attr("width", bbox1.width+5)
+    .attr("height", bbox1.height)
+    .style("fill", "#ccc")
+    .style("fill-opacity", ".0")
+    .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
+    .style("stroke-width", "1.5px");
+    let box2_rect = select_svg.enter().merge(select_svg).selectAll("rect.box2_rect").data([1]);
+      
+   box2_rect.enter().append("rect").attr("class","box2_rect")
+    .attr("x", width-55-bbox2.width-2.5)
+    .attr("y", -2-bbox2.height)
     .attr("width", bbox2.width+5)
     .attr("height", bbox2.height)
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
     .style("stroke-width", "1.5px");
+    box2_rect.transition(trans).attr("x", width-55-bbox2.width-2.5)
+    .attr("y", -2-bbox2.height)
+    .attr("width", bbox2.width+5)
+    .attr("height", bbox2.height)
+    .style("fill", "#ccc")
+    .style("fill-opacity", ".0")
+    .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
+    .style("stroke-width", "1.5px");
+    let imageData = [];
         for(let i = 1;i<=this.props.flower;i++){
-            svg.append('image')
+            imageData.push(i);
+            
+        }
+        let image = select_svg.enter().merge(select_svg).selectAll("image.rec_image").data(imageData);
+        
+        image.enter().append('image').attr("class","rec_image")
                 .attr('width',15)
                 .attr('height',15)
                 .attr('opacity',0.5)
                 .attr('xlink:href',"small_hint.png")
-                .attr('x',width-15*i)
+                .attr('x',(d:number)=>width-15*d)
                 .attr('y',0);
-        }
+        image.transition(trans).attr('width',15)
+                .attr('height',15)
+                .attr('opacity',0.5)
+                .attr('xlink:href',"small_hint.png")
+                .attr('x',(d:number)=>width-15*d)
+                .attr('y',0);
+        image.exit().transition(trans).attr('opacity',1e-6).remove();
+        
         let yAxisData = [0.0,0.2,0.4,0.6,0.8];
         let yAxisNumerical = [0.0,0.2,0.4,0.6,0.8];
         if(height>90){
@@ -539,193 +709,105 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 yAxisData.push((i*10)/100);
             }
         }
-        svg.append("g")
-            .attr('transform', `translate(${-margin.left}, 0)`)
-            .call(d3.axisLeft(yScale2).tickSize(0).tickPadding(9).tickValues(yAxisData).tickFormat(function (d:any,i:number) {
+        let select_axisText = select_svg.enter().merge(select_svg).selectAll("g.yaxisText").data([1]);
+        
+        select_axisText.enter().append("g").attr("class","yaxisText")
+        .attr('transform', `translate(${0}, 0)`)
+        .call(d3.axisLeft(yScale2).tickSize(0).tickPadding(9).tickValues(yAxisData).tickFormat(function (d:any,i:number) {
+                            return yAxisNumerical[i];
+                       }))
+        select_axisText.transition(trans).attr('transform', `translate(${0}, 0)`)
+        .call(d3.axisLeft(yScale2).tickSize(0).tickPadding(9).tickValues(yAxisData).tickFormat(function (d:any,i:number) {
                             return yAxisNumerical[i];
                        }))
 
-        svg.append("g")
-            .attr('transform', `translate(${-margin.left}, 0)`)
+        
+        let select_axisTicks = select_svg.enter().merge(select_svg).selectAll("g.yaxisTicks").data([1]);
+       
+        select_axisTicks.enter().append("g").attr("class","yaxisTicks")
+            .attr('transform', `translate(${0}, 0)`)
+            .call(d3.axisLeft(yScale2).tickValues([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]).tickFormat(function (d:any,i:number) {
+                            return "";
+                       }))
+        select_axisTicks.transition(trans).attr('transform', `translate(${0}, 0)`)
             .call(d3.axisLeft(yScale2).tickValues([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]).tickFormat(function (d:any,i:number) {
                             return "";
                        }))
 
-
     }
     render() {
-        const { name } = this.props;
-        return <g> {/*<defs>
-                <filter x="0" y="0" width="1" height="1" id="solid">
-                <feFlood flood-color="gray"/>
-                <feComposite in="SourceGraphic" operator="xor"/>
-                </filter>
-            </defs>*/}<g id={this.TAG + name} className='algorithm'/>
+        const { name,classifiers,hyperpartitoins,methodBoxAttr,methodSelected } = this.props;
 
-        </g>
+        if(this.props.mode==0){
+            let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)));
+                        //let usedhpidlen = usedHpID.length;
+                        let filterhyperpartitionslen = hyperpartitoins.length;
+                        if(filterhyperpartitionslen==0){
+                            filterhyperpartitionslen=1;
+                        }
+                        const progressHyperpartiton = (percent:number)=>{
+                            return `${usedHpID.length}/${hyperpartitoins.length}`
+                        }
+            return <g> <g id={this.TAG + name} className='algorithm'/>
+                
+                            <foreignObject key={name + "_progressbar_"} id={"progressbar_"+name}  width={40} height={40}
+                                    >
+                                <Progress
+                                type="circle"
+                                percent={100*usedHpID.length/filterhyperpartitionslen}
+                                format={progressHyperpartiton}
+                                width={40}
+                                strokeWidth={10}
+                                />
+                                </foreignObject>
+                                <foreignObject
+                                key={name+"_text_"}
+                                width={methodBoxAttr.checkboxWidth}
+                                height={methodBoxAttr.checkboxHeight}
+                                id={"checkbox_"+name}
+                                >
+
+                                <Checkbox
+                                key={name+"_checkbox_"} 
+                                checked={methodSelected.checked}
+                                indeterminate={methodSelected.indeterminate}
+                                disabled={methodSelected.disabled}
+                                value={name}
+                                onChange={this.props.onMethodsCheckBoxChange} >
+                                {/*<Tag color={getColor(name)}>{name}</Tag>*/}
+                                <Tooltip title={methodsDef[name].fullname}>
+                                    <span>{name}</span>
+                                    </Tooltip>
+                                </Checkbox>
+
+                                </foreignObject>
+            </g>
+        }else{
+                return (<g> <g id={"unused_"+this.TAG + name} className='algorithm'/>
+        
+                          
+                                <foreignObject
+                                key={name+"_text_"}
+                                width={methodBoxAttr.checkboxWidth}
+                                height={methodBoxAttr.checkboxHeight}
+                                id={"checkbox_"+name}
+                                >
+
+                                <Checkbox
+                                key={name+"_checkbox_"} 
+                                checked={methodSelected.checked}
+                                indeterminate={methodSelected.indeterminate}
+                                disabled={methodSelected.disabled}
+                                value={name}
+                                onChange={this.props.onMethodsCheckBoxChange} >
+                                {/*<Tag color={getColor(name)}>{name}</Tag>*/}
+                                <Tooltip title={methodsDef[name].fullname}>
+                                    <span>{name}</span>
+                                    </Tooltip>
+                                </Checkbox>
+
+                                </foreignObject>
+            </g>)
+        }
     }
 }
-
-// class LineChart2 extends React.Component<LineChartProps, {}>{
-//     TAG = "LineChart_";
-//     componentDidMount() {
-//         this.renderD3();
-//     }
-//     renderD3() {
-//         // Get Datasets
-//         const { methodDef, classifiers,totallen,selected } = this.props;
-//         let step = 0.1;
-//         let data:number[] = [];
-
-//         for (let i =0; i<=1/step; i++){
-//             data.push(0)
-//         }
-//         let bestperformance = 0;
-//         classifiers.forEach((classifier:IClassifier)=>{
-//             let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
-//             if(performance>bestperformance){
-//                 bestperformance=performance;
-//             }
-//             let rangeIdx = Math.floor(performance/step)
-//             data[rangeIdx] = data[rangeIdx]+1
-//         });
-//         let total = 0;
-//         let bestindex = 0;
-//         // let frequentindex = 0;
-//         // let maxfrequency = 0;
-//         data.forEach((d:any,i:any)=>{
-//             if(d>0&&i>bestindex){
-//                 bestindex=i;
-//             }
-//             // if(d>maxfrequency){
-//             //     // frequentindex=i;
-//             //     maxfrequency=d;
-//             // }
-//             total+=d;
-//         });
-//         //total;
-//         let yAxisData:string[] = []
-//         for (let i =0; i<=1/step; i++){
-//             yAxisData.push(`${(i*step).toFixed(2)}`)
-//         }
-
-//         // g
-//         // Set the dimensions of the canvas / graph
-//         //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
-//         let	margin = {top: 1, right: 1, bottom: 1, left: 1},
-//             width = this.props.width - margin.left - margin.right,
-//             height = this.props.height - margin.top - margin.bottom,
-//             top_margin = {top:this.props.y,left:this.props.x};
-
-//         // Set the ranges
-//         let	xScale = d3.scaleLinear().range([0, width]);
-//         let	yScale = d3.scaleLinear().range([height, 0]);
-
-
-//         xScale.domain([0, totallen]);
-//         yScale.domain([0, 1]);
-//         //Create SVG element
-//         let tooltip = d3.select("#tooltip");
-//         //let top_methods = d3.select("#methodstop");
-
-//         if(tooltip.empty()){
-//             tooltip = d3.select("body").append("div")
-//             .attr("class", "tooltip")
-//             .attr("id","tooltip")
-//             .style("opacity", 0)
-//             .style("left",  "0px")
-//               .style("top",  "0px");;
-//         }
-//         let top_svg = d3.select("#"+this.TAG+this.props.name).attr("width", width + margin.left + margin.right)
-//         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
-//         // .on("click",()=>{onClick(this.props.name)})
-//         .on("mousemove", function(d:any) {
-
-//             tooltip.transition()
-//               .duration(100)
-//               .style("left", (d3.event.pageX) + "px")
-//               .style("top", (d3.event.pageY - 28) + "px");
-//               tooltip.style("opacity", 0.7).html(methodDef.fullname+"<br/>"+"best performance:"+bestperformance.toFixed(2) + "<br/>" + "trial number:"+total)
-
-//             })
-
-//           .on("mouseout", function(d:any) {
-//             tooltip
-//               .style("opacity", 0);
-//             });;
-//         top_svg.append("rect")
-//         .attr("x",0)
-//         .attr("y",0)
-//         .attr("width", width + margin.left + margin.right)
-//         .attr("height",height + margin.top + margin.bottom)
-//         .attr("fill","white")
-//         .attr("stroke-width",2)
-//         .attr("stroke",selected?"#A4A0A0":"#E0D6D4")
-//         ;
-//         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-//         let line = d3.line()
-//         .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
-//         .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
-//         .curve(d3.curveMonotoneX) // apply smoothing to the line
-
-//         let area = d3.area()
-//         .y(function(d:any) { return yScale(d) })
-//         .x0(0)
-//         .x1(function(d:any) { return xScale(d); })
-
-//         console.info(area, line)
-
-//         function generateArray(index:number){
-//             let data:any[] = [];
-//             data.push({x:0,y:index*step});
-//             data.push({x:totallen,y:index*step});
-//             return data;
-//         }
-
-//         var straightline = d3.line()
-//             .x(function(d:any, i:any) { return xScale(d.x); }) // set the x values for the line generator
-//             .y(function(d:any,i:any) { return yScale(d.y); }) // set the y values for the line generator
-//         svg.append("path")
-//             .datum(generateArray(bestindex))
-//             .attr("class", "line")
-//             .attr("fill","none")
-//             .attr("stroke","#E0D6D4")
-//             .attr("stroke-width",2)
-//             .attr("stroke-dasharray","5,5")
-//             .attr("d", straightline);
-//         // svg.append("path")
-//         //     .datum(generateArray(frequentindex))
-//         //     .attr("class", "line")
-//         //     .attr("fill","none")
-//         //     .attr("stroke","#E0D6D4")
-//         //     .attr("stroke-width",2)
-//         //     .attr("stroke-dasharray","5,5")
-//         //     .attr("d", straightline);
-//         svg.append("path")
-//             .datum(data)
-//             .attr("class", "line")
-//             .attr("fill","none")
-//             .attr("stroke",getColor(methodDef.name))
-//             .attr("stroke-width",2)
-//             .attr("d", line);
-
-//         // svg.append("path")
-//         //     .datum(data)
-//         //     .attr("class", "line")
-//         //     .attr("fill",getColor(methodDef.name))
-//         //     .attr("d", area);
-
-//         svg.append("text")
-//             .attr("class", "hp_name")
-//             .attr('x', width)
-//             .attr('y', height)
-//             .attr('text-anchor', "end")
-//             .text(this.props.name)
-//       }
-//     render() {
-//         const {name}=this.props;
-//         return <g id={this.TAG+name}/>
-//     }
-// }

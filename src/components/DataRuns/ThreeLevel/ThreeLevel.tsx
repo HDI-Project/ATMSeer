@@ -866,7 +866,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             id="svgChart"
             xmlns="http://www.w3.org/2000/svg"
             >
-            <g transform={`translate(${0}, ${headerHeight})`}>
+            <g><defs>
+            <clipPath id="mask_methods">
+            <rect x={0} y={-30} width={width2} height={method_height+30} />
+            </clipPath>
+            </defs></g>
+            <g transform={`translate(${0}, ${headerHeight})`} clipPath={"url(#mask_methods)"}>
             {generateRect({
                 x:10,
                 y:-9,
