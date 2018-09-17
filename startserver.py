@@ -3,10 +3,11 @@ import time
 def killport(port):
     command='''kill -9 $(netstat -nlp | grep :'''+str(port)+''' | awk '{print $7}' | awk -F"/" '{print $1}')'''
     os.system(command)
+os.system('mkdir logs')
 os.system('chmod u+x startserver_reboot.sh')
 while True:
     print('start the system')
-    os.system('bash ./startserver_reboot.sh >> server_log.out')
+    os.system('bash ./startserver_reboot.sh >> logs/server_log.out')
     
     print('the system exit,')
     print('kill port=7779')
