@@ -1,4 +1,5 @@
 import os
+import sys
 import copy
 import logging
 import yaml
@@ -16,7 +17,7 @@ from atm.config import load_config
 from .utils import flaskJSONEnCoder
 from .error import ApiError
 from .db import fetch_entity, summarize_classifiers, fetch_dataset_path, get_db, summarize_datarun, \
-    fetch_classifiers, fetch_hyperpartitions
+    fetch_classifiers, fetch_hyperpartitions, teardown_db
 from atm_server.atm_helper import start_worker, stop_worker, work, get_datarun_steps_info, new_datarun, \
     maybe_create_datarun_configs, update_datarun_method_config, load_datarun_method_config, datarun_config, load_datarun_config,\
     load_datarun_config_dict
@@ -44,7 +45,7 @@ def handle_invalid_usage(error):
     response = jsonify({"error":str(error)})
     response.status_code = 500
     if current_app.config['reboot']:
-        sys.exit(0)
+        os._exit(0)
     return response
 
 @api.errorhandler(InvalidRequestError)
@@ -54,7 +55,7 @@ def handle_db_request_error(error):
     response = jsonify({"error":str(error)})
     response.status_code = 500
     if current_app.config['reboot']:
-        sys.exit(0)
+        os._exit(0)
     return response
 
 
@@ -590,9 +591,21 @@ def getRecommendation(dataset_id):
     if len(result)>=3:
         result = result[0:3]
     return jsonify({'result':result})
+  
+    
+    
+'''
+@api.route('/refresh', methods=['GET'])
+def refresh():
+    """refresh"""
+    teardown_db()
+    get_db()
+    return jsonify({'result':'success'})
 
 @api.route('/reboot',methods=['GET'])
 def reboot():
     if current_app.config['reboot']:
         raise ApiError('Reboot Try', status_code=500)
     return jsonify({'result':False})
+
+'''
