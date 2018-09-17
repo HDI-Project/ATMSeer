@@ -76,7 +76,12 @@ export default class methods extends React.Component<IProps, IState>{
             if (performance > bestperformance) {
                 bestperformance = performance;
             }
-            let rangeIdx = Math.floor(performance / step)
+            let rangeIdx = Math.floor(performance / step);
+            if(rangeIdx<=0){
+                rangeIdx = 0;
+            }else if(rangeIdx>=data.length){
+                rangeIdx = data.length - 1;
+            }
             data[rangeIdx] = data[rangeIdx] + 1
         });
         let maxvalue = 0;
@@ -475,7 +480,12 @@ class LineChart extends React.Component<LineChartProps, {}>{
             if (performance > bestperformance) {
                 bestperformance = performance;
             }
-            let rangeIdx = Math.floor(performance / step)
+            let rangeIdx = Math.floor(performance / step);
+            if(rangeIdx<=0){
+                rangeIdx = 0;
+            }else if(rangeIdx>=data.length){
+                rangeIdx = data.length - 1;
+            }
             data[rangeIdx] = data[rangeIdx] + 1
         });
         let total = 0;
