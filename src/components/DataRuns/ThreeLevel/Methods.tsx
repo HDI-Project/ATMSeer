@@ -629,11 +629,11 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr('text-anchor', "end")
             .text(`${" "+classifiers.length+" "}`)
 
-            text2.transition(trans).attr("class", "method_name_text2")
+            text2.text(`${" "+classifiers.length+" "}`).transition(trans).attr("class", "method_name_text2")
             .attr('x', width-55)
             .attr('y',-5)
             .attr('text-anchor', "end")
-            .text(`${" "+classifiers.length+" "}`)
+            
             text2.exit().remove()
     let bbox2 = select_svg.enter().merge(select_svg).selectAll("text.method_name_text2").node().getBBox();
       

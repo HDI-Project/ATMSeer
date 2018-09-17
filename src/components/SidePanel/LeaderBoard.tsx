@@ -267,7 +267,6 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         />
                         </div>
                         <br />
-                        <hr style={{marginTop: '6px'}}/>
                         <b>Performance : </b>
                         <OverallHistogram classifiers={summary.topClassifiers} width={100} />
                     </div>

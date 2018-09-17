@@ -12,15 +12,6 @@
     left: 100px;
     top: 8px;
 }
-
-.ant-collapse-header {
-    padding: 8px 0 8px 36px !important;
-}
-
-.ant-collapse-header .arrow {
-    line-height: 40px !important;
-}
-
 .lb-bar {
     background-color: #dddddd;
     color:  #dddddd;

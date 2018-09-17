@@ -1,6 +1,6 @@
 export const URL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:7779'
-    : location.origin;
+    : location.origin
 
 export const UPDATE_INTERVAL_MS = 5000;
 export const USER_STUDY = false;
