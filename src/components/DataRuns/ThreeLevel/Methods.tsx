@@ -106,88 +106,43 @@ export default class methods extends React.Component<IProps, IState>{
 
     }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height,displaymode} = this.props
-        //this.width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
-        // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
-        /*this.methodBoxAttr = {
-            // width : 70,
-            height: this.width * 0.6,
-            width: this.width,
-            gap: this.gap,
-            x: 2*this.gap,
-            y: 2*this.gap,
-            checkboxY: 2,
-            checkboxWidth: 100,
-            checkboxHeight: 30,
-            yextragap:20
-        }*/
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height} = this.props;
+
         console.log(width);
         console.log(height);
         // Calculate Layout
         let refwidth = 1600;
-        let refheight = 714.84;
         let oneboxwidth:number = 215/refwidth*width;
-        let oneboxgap :number = 25/215*oneboxwidth;
+        let oneboxgap :number = 30;
         let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-        let oneboxheight :number = 320/refheight*height;
-        let oneboxygap :number = 120/320*oneboxheight;
-        let oneboxinnerheight:number = oneboxheight - 2*oneboxgap - oneboxygap;
+        const x = 48;
+        const y = 60;
+        const yextragap = 20;
+        const gap = 30;
+        const yGap = gap + yextragap;
+        // const maxrow = 7;
+        let maxrow = Math.floor((width-x)/(oneboxinnerwidth+2*oneboxgap));
+        if(maxrow<=1){
+            maxrow = 1;
+        }
+        const nRows = Math.ceil((usedMethods.length + unusedMethods.length) / maxrow);
+        console.log(nRows);
+        // const oneboxheight = (height - y) / nRows - yGap;
+        let oneboxinnerheight:number = (height - y) / nRows - yGap;
+        // oneboxygap = 30;
         this.methodBoxAttr = {
             // width : 70,
             height: oneboxinnerheight  ,
             width: oneboxinnerwidth ,
-            gap: oneboxgap,
-            x: 40/25*oneboxgap,
-            y: 100/25*oneboxgap,
+            gap,
+            x,
+            y,
             checkboxY: 2,
             checkboxWidth: 100,
             checkboxHeight: 30,
-            yextragap:oneboxygap
+            yextragap,
         }
-        if(displaymode==1){
-            let refwidth = 1600;
-            let refheight = 348;
-            let oneboxwidth:number = 215/refwidth*width;
-            let oneboxgap :number = 25/215*oneboxwidth;
-            let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-            let oneboxheight :number = 160/refheight*height;
-            let oneboxygap :number = 20/160*oneboxheight;
-            let oneboxinnerheight:number = oneboxheight - 2*oneboxgap - oneboxygap;
-            this.methodBoxAttr = {
-                // width : 70,
-                height: oneboxinnerheight  ,
-                width: oneboxinnerwidth ,
-                gap: oneboxgap,
-                x: 40/25*oneboxgap,
-                y: 50/25*oneboxgap,
-                checkboxY: 2,
-                checkboxWidth: 100,
-                checkboxHeight: 30,
-                yextragap:oneboxygap
-            }
-        }else if(displaymode==2){
-            let refwidth = 1600;
-            //let refheight = 232;
-            let oneboxwidth:number = 215/refwidth*width;
-            let oneboxgap :number = 25/215*oneboxwidth;
-            let oneboxinnerwidth:number = oneboxwidth -2* oneboxgap;
-            let oneboxheight :number = 160/348*height;
-            let oneboxygap :number = 0;
-            let oneboxinnerheight:number = oneboxheight - 2*oneboxgap - oneboxygap;
-            this.methodBoxAttr = {
-                // width : 70,
-                height: oneboxinnerheight  ,
-                width: oneboxinnerwidth ,
-                gap: oneboxgap,
-                x: 40/25*oneboxgap,
-                y: 50/25*oneboxgap,
-                checkboxY: 2,
-                checkboxWidth: 100,
-                checkboxHeight: 30,
-                yextragap:oneboxygap
-            }
-        }
-        
+
         /**
          * checkboxHeight: 30
             checkboxWidth: 100
@@ -198,7 +153,7 @@ export default class methods extends React.Component<IProps, IState>{
             x: 40
             y: 40
             yextragap: 20
-         * 
+         *
          */
         console.log(this.methodBoxAttr);
 
@@ -231,10 +186,6 @@ export default class methods extends React.Component<IProps, IState>{
         //         maxnum=num;
         //     }
         // });
-        let maxrow = Math.floor((width-this.methodBoxAttr.x)/(this.methodBoxAttr.width+2*this.methodBoxAttr.gap));
-        if(maxrow<=1){
-            maxrow = 1;
-        }
         let getXcorr = (i:number) =>{
             return  this.methodBoxAttr.x +  (i % maxrow)* (this.methodBoxAttr.width + 2*this.methodBoxAttr.gap)
         }
@@ -309,7 +260,7 @@ export default class methods extends React.Component<IProps, IState>{
                     //const top_width = classifier_num*6+60;
                     // this.index++;
                     return (<g key={name + "_g_linechart_" + i}>
-                        
+
                         <LineChart key={name + "_used_" + i}
                             // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
                             // y={this.methodBoxAttr.y}
@@ -341,8 +292,8 @@ export default class methods extends React.Component<IProps, IState>{
                         strokeWidth={10}
                         />
                         </foreignObject>
-                        
-                        
+
+
                         </g>)
 
                 })}
@@ -454,14 +405,6 @@ class LineChart extends React.Component<LineChartProps, {}>{
             total += d;
         });
         total;
-        //let yAxisData: string[] = []
-        //for (let i = 0; i <= 1 / step; i++) {
-        //    yAxisData.push(`${(i * step).toFixed(2)}`)
-        //}
-
-        // g
-        // Set the dimensions of the canvas / graph
-        //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
         let margin = { top: 0, right: 2, bottom: 0, left: 2 },
             width = this.props.width - margin.left - margin.right,
             height = this.props.height - margin.top - margin.bottom,
@@ -475,40 +418,15 @@ class LineChart extends React.Component<LineChartProps, {}>{
         let	yScale2 = d3.scaleLinear().range([height, 0]);
         yScale2.domain([0, 1]);
         let xScale = d3.scaleLinear().range([0, width]);
-
+        let trans = d3.transition()
+                            .duration(1000)
+                            .ease(d3.easeLinear);
 
         xScale.domain([0, totallen]);
         yScale.domain(data.map((d, i) => i/10));
-        //console.log(data.map((d, i) => i/10))
-        //Create SVG element
-       // let tooltip = d3.select("#tooltip");
-        //let top_methods = d3.select("#methodstop");
-        /*
-        if (tooltip.empty()) {
-            tooltip = d3.select("body").append("div")
-                .attr("class", "tooltip")
-                .attr("id", "tooltip")
-                .style("opacity", 0)
-                .style("left", "0px")
-                .style("top", "0px");;
-        }*/
-        let top_svg = d3.select("#" + this.TAG + this.props.name).attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
-            // .on("click",()=>{onClick(this.props.name)})
-            .on("mousemove", function (d: any) {
-                    /*
-                tooltip.transition()
-                    .duration(100)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
-                tooltip.style("opacity", 0.7).html(methodDef.fullname + "<br/>" + "best performance:" + bestperformance.toFixed(2) + "<br/>" + "trial number:" + total)
-                    */
-            })
-
-            .on("mouseout", function (d: any) {
-               // tooltip
-               //     .style("opacity", 0);
-            });;
+        let top_svg = d3.select("#" + this.TAG + this.props.name);
+        top_svg.transition(trans).attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")");
         top_svg.append("rect")
             .attr('class', `${this.props.name} methodRect`)
             .attr("x", 0)
@@ -528,40 +446,6 @@ class LineChart extends React.Component<LineChartProps, {}>{
             })
 
         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-        // var line = d3.line()
-        // .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
-        // .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
-        // .curve(d3.curveMonotoneX) // apply smoothing to the line
-
-
-        // function generateArray(index: number) {
-        //     let data: any[] = [];
-        //     data.push({ x: 0, y: index * step });
-        //     data.push({ x: totallen, y: index * step });
-        //     return data;
-        // }
-
-        // var straightline = d3.line()
-        //     .x(function (d: any, i: any) { return xScale(d.x); }) // set the x values for the line generator
-        //     .y(function (d: any, i: any) { return yScale(d.y); }) // set the y values for the line generator
-        // svg.append("path")
-        //     .datum(generateArray(bestindex))
-        //     .attr("class", "line")
-        //     .attr("fill", "none")
-        //     .attr("stroke", "#E0D6D4")
-        //     .attr("stroke-width", 2)
-        //     .attr("stroke-dasharray", "5,5")
-        //     .attr("d", straightline);
-        // svg.append("path")
-        //     .datum(generateArray(frequentindex))
-        //     .attr("class", "line")
-        //     .attr("fill","none")
-        //     .attr("stroke","#E0D6D4")
-        //     .attr("stroke-width",2)
-        //     .attr("stroke-dasharray","5,5")
-        //     .attr("d", straightline);
         svg.selectAll('.method_bar')
             .data(data)
             .enter()
@@ -616,17 +500,6 @@ class LineChart extends React.Component<LineChartProps, {}>{
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
     .style("stroke-width", "1.5px");
-       /* svg.append("text")
-            .attr("class", "best_score")
-            .attr('x', width)
-            .attr('y', height )
-            .attr('text-anchor', "end")
-            .text(`best: ${bestperformance.toFixed(3)}`)*/
-        /*svg.append('text')
-            .attr('class', 'hps')
-            .attr("transform", `translate(${width+margin.left},${height/2}) rotate(${90})`)
-            .attr('text-anchor', 'middle')
-            .text(`hp:${usedHpID.length}/${hyperpartitoins.length}`)*/
         for(let i = 1;i<=this.props.flower;i++){
             svg.append('image')
                 .attr('width',15)
@@ -636,12 +509,6 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 .attr('x',width-15*i)
                 .attr('y',0);
         }
-        // // Add the X Axis
-        // svg.append("g")
-        //     .attr("transform", "translate(0," + height + ")")
-        //     .call(d3.axisBottom(xScale));
-
-        // Add the Y Axis
         let yAxisData = [0.0,0.2,0.4,0.6,0.8];
         let yAxisNumerical = [0.0,0.2,0.4,0.6,0.8];
         if(height>90){
@@ -674,7 +541,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 <feComposite in="SourceGraphic" operator="xor"/>
                 </filter>
             </defs>*/}<g id={this.TAG + name} className='algorithm'/>
-                   
+
         </g>
     }
 }
@@ -689,7 +556,6 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         const { methodDef, classifiers,totallen,selected } = this.props;
 //         let step = 0.1;
 //         let data:number[] = [];
-
 //         for (let i =0; i<=1/step; i++){
 //             data.push(0)
 //         }
@@ -721,7 +587,6 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         for (let i =0; i<=1/step; i++){
 //             yAxisData.push(`${(i*step).toFixed(2)}`)
 //         }
-
 //         // g
 //         // Set the dimensions of the canvas / graph
 //         //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
@@ -729,18 +594,15 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //             width = this.props.width - margin.left - margin.right,
 //             height = this.props.height - margin.top - margin.bottom,
 //             top_margin = {top:this.props.y,left:this.props.x};
-
 //         // Set the ranges
 //         let	xScale = d3.scaleLinear().range([0, width]);
 //         let	yScale = d3.scaleLinear().range([height, 0]);
-
 
 //         xScale.domain([0, totallen]);
 //         yScale.domain([0, 1]);
 //         //Create SVG element
 //         let tooltip = d3.select("#tooltip");
 //         //let top_methods = d3.select("#methodstop");
-
 //         if(tooltip.empty()){
 //             tooltip = d3.select("body").append("div")
 //             .attr("class", "tooltip")
@@ -753,15 +615,12 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
 //         // .on("click",()=>{onClick(this.props.name)})
 //         .on("mousemove", function(d:any) {
-
 //             tooltip.transition()
 //               .duration(100)
 //               .style("left", (d3.event.pageX) + "px")
 //               .style("top", (d3.event.pageY - 28) + "px");
 //               tooltip.style("opacity", 0.7).html(methodDef.fullname+"<br/>"+"best performance:"+bestperformance.toFixed(2) + "<br/>" + "trial number:"+total)
-
 //             })
-
 //           .on("mouseout", function(d:any) {
 //             tooltip
 //               .style("opacity", 0);
@@ -777,26 +636,21 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //         ;
 //         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
 //         let line = d3.line()
 //         .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
 //         .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
 //         .curve(d3.curveMonotoneX) // apply smoothing to the line
-
 //         let area = d3.area()
 //         .y(function(d:any) { return yScale(d) })
 //         .x0(0)
 //         .x1(function(d:any) { return xScale(d); })
-
 //         console.info(area, line)
-
 //         function generateArray(index:number){
 //             let data:any[] = [];
 //             data.push({x:0,y:index*step});
 //             data.push({x:totallen,y:index*step});
 //             return data;
 //         }
-
 //         var straightline = d3.line()
 //             .x(function(d:any, i:any) { return xScale(d.x); }) // set the x values for the line generator
 //             .y(function(d:any,i:any) { return yScale(d.y); }) // set the y values for the line generator
@@ -823,13 +677,11 @@ class LineChart extends React.Component<LineChartProps, {}>{
 //             .attr("stroke",getColor(methodDef.name))
 //             .attr("stroke-width",2)
 //             .attr("d", line);
-
 //         // svg.append("path")
 //         //     .datum(data)
 //         //     .attr("class", "line")
 //         //     .attr("fill",getColor(methodDef.name))
 //         //     .attr("d", area);
-
 //         svg.append("text")
 //             .attr("class", "hp_name")
 //             .attr('x', width)

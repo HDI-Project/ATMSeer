@@ -1,12 +1,16 @@
-# A GUI for the ATM framework
+# ATMSeer: Visual Exploration of Automated Machine Learning
 
-# Demo
+ATMSeer can help you monitor, analyze, and refine an AutoML process in real time.
 
-You can see the demo in the website [http://atm.hkustvis.org](http://atm.hkustvis.org)
+### Demo
 
-The screenshot of the demo is shown below
+A demo is available [here](http://atm.hkustvis.org)
+
 
 ![The system overview](screenshot.PNG)
+
+
+=========================
 
 # Download ATMSeer
 
