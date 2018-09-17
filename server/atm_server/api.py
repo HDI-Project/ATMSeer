@@ -43,8 +43,8 @@ def handle_invalid_usage(error):
     logging.exception(error)
     response = jsonify({"error":str(error)})
     response.status_code = 500
-    teardown_db()
-    get_db()
+    if current_app.config['reboot']:
+        sys.exit(0)
     return response
 
 @api.errorhandler(InvalidRequestError)
@@ -53,8 +53,8 @@ def handle_db_request_error(error):
     print(error)
     response = jsonify({"error":str(error)})
     response.status_code = 500
-    teardown_db()
-    get_db()
+    if current_app.config['reboot']:
+        sys.exit(0)
     return response
 
 
@@ -590,7 +590,7 @@ def getRecommendation(dataset_id):
     if len(result)>=3:
         result = result[0:3]
     return jsonify({'result':result})
-    
+  
     
     
 
@@ -600,3 +600,10 @@ def refresh():
     teardown_db()
     get_db()
     return jsonify({'result':'success'})
+
+@api.route('/reboot',methods=['GET'])
+def reboot():
+    if current_app.config['reboot']:
+        raise ApiError('Reboot Try', status_code=500)
+    return jsonify({'result':False})
+
