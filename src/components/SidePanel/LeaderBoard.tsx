@@ -208,7 +208,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
             return `${methods_num}/14`
         }
         const progressHyperpartiton = (percent:number)=>{
-            return `${hp_num}/172`
+            return `${hp_num}/140`
         }
 
         return summary ? (

@@ -261,7 +261,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                         white-space:nowrap';
                         padding: 0px;
                     >
-                    <input type="radio" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
+                    <input type="radio" value="${d.id}" ${selected} />
+                     <label> ${d.hyperpartition_string.replace(`${d.method}-`, '')}</label>
                     </div>`
                 };
                  //Create SVG element
