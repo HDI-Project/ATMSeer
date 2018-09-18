@@ -279,7 +279,7 @@
             },
             "leaf_size": {
                 "type": "int",
-                "range": [1, 50]
+                "range": [0, 50]
             },
             "metric": {
                 "type": "string",
