@@ -227,8 +227,16 @@ export default class HyperParameters extends React.Component<IProps, IState>{
             let {selectedClassifier,HyperparameterList,classifiers,selectedMethod,mode,visible} = this.state;
             visible;
             let box = this.box;
-            
-
+            box.height = (this.props.height - box.margin*2)*4/5;
+            if(box.height<100){
+                box.height=100;
+            }
+            if(HyperparameterList.length>0){
+                box.width = ((this.props.width)/(HyperparameterList.length+1))*4/5 - box.margin-box.yextragap;
+                if(box.width<150){
+                    box.width=150;
+                }
+            }
             let generateButton = () =>{
                 if(false){
                     return (<foreignObject x={box.width/2-50} y={this.props.height+20} width={100} height={35}>
@@ -408,7 +416,7 @@ class HyperParameter extends React.Component<HyProps, {}>{
 
         let svg = d3.select("#" + this.TAG + idx)
             .append('g')
-            .attr('transform', `translate(${120+idx * (width*5/4 + margin + yextragap)}, ${margin})`)
+            .attr('transform', `translate(${80+idx * (width*5/4 + margin + yextragap)}, ${margin})`)
 
 
         yArea.domain(d3.extent(areaData, (d: number[]) => d.length))
