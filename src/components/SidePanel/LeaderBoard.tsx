@@ -235,6 +235,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <br/>
                          <b>Total classifiers</b>: {summary.nTried}
                         <br/>
+                        <div className="coverage">
                         <div style={{width:"110px", float:"left"}}>
                         <b>Algorithm </b>:{' '}
                         </div>
@@ -268,7 +269,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <div className="lb-classifier" style={{ width:100 }}>none</div>
                         <span>{progressHyperpartiton(0)}</span>
                         </div>*/}
-
+                        </div>
                         <br />
                         <b>Performance : </b>
                         <OverallHistogram classifiers={summary.topClassifiers} width={100} />
