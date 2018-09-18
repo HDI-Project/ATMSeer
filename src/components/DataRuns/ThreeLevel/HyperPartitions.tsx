@@ -121,7 +121,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 if (lastposx+ width * 1.5 > nowProps.width) {
                     lastposy = lastposy + (2 * height + gap);
                     nowrow ++;
-                    if(lastposy + (2 * height + gap)>nowProps.height && exceedrow==-1){
+                    if(lastposy + (2 * height)>nowProps.height && exceedrow==-1){
                         exceedrow = nowrow;
                     }
                     lastposx = startposx;
@@ -593,7 +593,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         //console.log(this.state.hiddencol);
         let generateButton = () =>{
             if(this.state.visible){
-            return (<foreignObject x={this.props.width-60-35} y={this.props.height/2-35} width={35} height={70}>
+            return (<foreignObject x={this.props.width-60-35} y={this.props.height/2-20} width={35} height={70}>
                 <div>
 
                <Button type="default" size="small" onClick={this.onLeftHp} disabled={this.state.leftdisabled}>
