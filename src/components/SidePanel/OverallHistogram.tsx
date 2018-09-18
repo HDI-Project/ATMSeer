@@ -59,7 +59,7 @@ export default class OverallHistogram extends React.Component<IProps, IState>{
                 },
                 name: 'F_score',
                nameLocation :'middle',
-               nameGap : '35'
+               nameGap : '25'
 
             },
             xAxis: {

@@ -346,9 +346,9 @@ export default class methods extends React.Component<IProps, IState>{
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
                             fill="white" strokeWidth={2} stroke="#E0D6D4" />
-                        {flowerlist.map((d:number)=>{
+                        {/* {flowerlist.map((d:number)=>{
                             return <image key={name+"_flower_"+d} opacity={0.5} xlinkHref="small_hint.png" x={this.methodBoxAttr.width-15*d} y={0} width={15} height={15}/>}
-                            )}
+                            )} */}
                         {/*<text
                             x={this.methodBoxAttr.width}
                             y={this.methodBoxAttr.height}
@@ -520,15 +520,15 @@ class LineChart extends React.Component<LineChartProps, {}>{
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
     .style("stroke-width", "1.5px");
-        for(let i = 1;i<=this.props.flower;i++){
-            svg.append('image')
-                .attr('width',15)
-                .attr('height',15)
-                .attr('opacity',0.5)
-                .attr('xlink:href',"small_hint.png")
-                .attr('x',width-15*i)
-                .attr('y',0);
-        }
+        // for(let i = 1;i<=this.props.flower;i++){
+        //     svg.append('image')
+        //         .attr('width',15)
+        //         .attr('height',15)
+        //         .attr('opacity',0.5)
+        //         .attr('xlink:href',"small_hint.png")
+        //         .attr('x',width-15*i)
+        //         .attr('y',0);
+        // }
         let yAxisData = [0.0,0.2,0.4,0.6,0.8];
         let yAxisNumerical = [0.0,0.2,0.4,0.6,0.8];
         if(height>90){

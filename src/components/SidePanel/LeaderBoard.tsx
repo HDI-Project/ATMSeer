@@ -251,14 +251,14 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         />
                         </div>
                         <br />
-                        <div style={{width:"125px",float:"left"}}>
-                        <b>Hyperpartitions </b>:{' '}
+                        <div style={{width:"110px",float:"left"}}>
+                        <b>Hyperpartition</b>:{' '}
                         </div>
                         {/*<div>
                         <div className="lb-classifier" style={{ width:100 }}>none</div>
                         <span>{progressHyperpartiton(0)}</span>
                         </div>*/}
-                        <div style={{width:"120px",float:"left"}}>
+                        <div style={{width:"110px",float:"left"}}>
                         <Progress
                         percent={100*hp_num/172}
                         format={progressHyperpartiton}
