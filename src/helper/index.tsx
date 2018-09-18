@@ -305,5 +305,78 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
         axisData: axisData
     };
 };
+//data-intro={getIntro("dataview").intro} data-step={getIntro("dataview").step}
+//import {getIntro} from 'helper';
 
+const introHidden = "-1";
+introHidden;
+const introDataSelectorPanel = 2;
+const introData = {
+    // the selector in the sidepanel.
+    "dataselector_panel":{
+        intro:"You can use this panel to select which dataset or datarun show. Also you can upload datasets and configurate the settings of dataruns in this panel.",
+        step:`${1}`
+    },
+    "dataset_selector":{
+        intro:"You can select a dataset here.",
+        step:`${introDataSelectorPanel}`
+    },
+    "dataset_upload":{
+        intro:"You can upload a dataset here.",
+        step:`${introDataSelectorPanel+1}`
+    },
+    "datarun_add":{
+        intro:"You can add a new datarun here.",
+        step:`${introDataSelectorPanel+2}`
+    },
+    "datarun_selector":{
+        intro:"You can select a datarun here.",
+        step:`${introDataSelectorPanel+3}`
+    },
+    "datarun_run":{
+        intro:"You can run/stop a datarun here.",
+        step:`${introDataSelectorPanel+4}`
+    },
+    "dataview":{
+        intro:"You can see the overview of feature and the distribution of features in the specific dataset in this panel.",
+        step:"7"
+    },
+    "dataview_overview":{
+        intro:"The dataset overview is displayed here.",
+        step:"8"
+    },
+    "dataview_chart":{
+        intro:"You can see each feature distribution here.",
+        step:"9"
+    },
+    "leaderboard":{
+        intro:"You can see datarun information here, and compare the top classifiers in this panel.",
+        step:"10"
+    },
+    "leaderboard_overview":{
+        intro:"You can see some information about this datarun here.",
+        step:"11"
+    },
+    "leaderboard_topclassifer":{
+        intro:"You can compare classifiers here",
+        step:"12"
+    },
+    "leaderboard_topclassifier_number":{
+        intro:"You can input the number of classifiers listed below.",
+        step:"13"
+    },
+    "leaderboard_topclassifer_focus":{
+        intro:"You can open this button and compare models in the right panel",
+        step:"14"
+    },
+    "leaderboard_topclassifer_list":{
+        intro:"You can see the information about the top classifiers in this list",
+        step:"15"
+    }
+    
+    
+}
+export function getIntro(label:string){
+    return introData[label];
+}
 export { RED,YELLOW, getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }

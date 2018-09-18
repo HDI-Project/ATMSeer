@@ -205,7 +205,7 @@ showModal =() => {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
           footer={[
-            <Button key="back" onClick={this.handleCancel}>Return</Button>,
+            <Button key="back" onClick={this.handleCancel}>Cancel</Button>,
             <Button key="submit" type="primary" loading={loading} onClick={this.handleOk}>
               Submit
             </Button>,

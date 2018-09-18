@@ -2,6 +2,7 @@ import * as React from 'react';
 import { getDatasetCSV } from 'service/dataService';
 import FeatureChart from './FeatureChart';
 import {EChartsColor} from "helper";
+import {getIntro} from 'helper';
 
 import "./DataView.css";
 
@@ -97,13 +98,13 @@ export default class DataView extends React.Component<IProps, IState>{
                 </span>
             })
 
-            return (<div className="data-view">
-                <div>
+            return (<div className="data-view" data-intro={getIntro("dataview").intro} data-step={getIntro("dataview").step}>
+                <div data-intro={getIntro("dataview_overview").intro} data-step={getIntro("dataview_overview").step}>
                     <h4>Overview</h4>
                     <hr/>
                     <div>{features.length} features / {dataset[0].data.length} instances / {classes.length} classes {legend}</div>
                 </div>
-                <div>
+                <div data-intro={getIntro("dataview_chart").intro} data-step={getIntro("dataview_chart").step}>
                     <h4>Feature Distribution</h4>
                     <hr/>
                     <div className='features' style={{ height:'calc(94vh - 300px)' }}>

@@ -9,6 +9,7 @@ import './LeaderBoard.css';
 // import LineChart from './LineChart';
 import { getColor } from 'helper';
 import OverallHistogram from './OverallHistogram';
+import {getIntro} from 'helper';
 const Panel = Collapse.Panel;
 
 // const TOP_K = 10;
@@ -212,8 +213,8 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
         }
 
         return summary ? (
-            <div >
-                <div>
+            <div data-intro={getIntro("leaderboard").intro} data-step={getIntro("leaderboard").step}>
+                <div data-intro={getIntro("leaderboard_overview").intro} data-step={getIntro("leaderboard_overview").step}>
                     {/* <h4>Overview</h4> */}
                     {/* <hr /> */}
                     <div style={{height:"100%"}}>
@@ -278,7 +279,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <LineChart scores={scores} hyperpartitions={hyperpartitions} topK={TOP_K}/>
                     </div> */}
                 </div>
-                <div>
+                <div data-intro={getIntro("leaderboard_topclassifer").intro} data-step={getIntro("leaderboard_topclassifer").step}>
                     {/* <h4>Scores</h4> */}
                     <h4>Top
                         <InputNumber
@@ -287,6 +288,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             defaultValue={topK}
                             onChange={this.changeTopK}
                             style={{width: '50px', margin: '0 4px'}}
+                            data-intro={getIntro("leaderboard_topclassifier_number").intro} data-step={getIntro("leaderboard_topclassifier_number").step}
                         />
 
 
@@ -300,7 +302,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             // tslint:disable-next-line:jsx-no-lambda
                             onClick={()=>this.props.setTopK(topK)}
                         /> */}
-                        <span style={{float:'right'}} >
+                        <span style={{float:'right'}} data-intro={getIntro("leaderboard_topclassifer_focus").intro} data-step={getIntro("leaderboard_topclassifer_focus").step}>
                         Focus:
                         <Switch
                             checkedChildren={<Icon type="bars" />}
@@ -308,11 +310,12 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                             defaultChecked={false}
                             // tslint:disable-next-line:jsx-no-lambda
                             onChange={(checked:boolean)=>this.props.setTopK(checked?topK:0)}
+                            
                         />
                         </span>
                     </h4>
                     <hr />
-                    <div style={{height:"calc(80vh - 410px)", overflowY:"scroll"}}>
+                    <div style={{height:"calc(80vh - 410px)", overflowY:"scroll"}} data-intro={getIntro("leaderboard_topclassifer_list").intro} data-step={getIntro("leaderboard_topclassifer_list").step}>
                     <Collapse bordered={false} onChange={this.onCollapseChange}>
                         {summary.topClassifiers.slice(0, topK).map(c => (
                             <Panel key={String(c.id)} header={<MethodHeader {...c} />}>

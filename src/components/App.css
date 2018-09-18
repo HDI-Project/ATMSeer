@@ -13,6 +13,11 @@
   overflow-y: hidden;
 
 }
+.appHeadcol{
+  height: 100%;
+  overflow-y: hidden;
+
+}
 .appHeader {
   background-color: #555;
   /* font-family: Roboto, sans-serif; */

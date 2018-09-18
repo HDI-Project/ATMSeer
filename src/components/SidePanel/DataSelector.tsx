@@ -5,6 +5,7 @@ import { getDatasets, getDataruns, getDatarun, postNewDataset, startDatarun, sto
 import { IDatarunStatusTypes } from 'types/index';
 import "./DataSelector.css";
 import SettingsModal from './SettingsModal';
+import {getIntro} from 'helper';
 
 const Option = Select.Option;
 
@@ -185,7 +186,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
 
         // const settingButton = <React.Fragment><Icon type='setting' /><span>Settings</span></React.Fragment>;
         return (
-            <div className="data-selector">
+            <div className="data-selector" data-intro={getIntro("dataselector_panel").intro} data-step={getIntro("dataselector_panel").step}>
                 {/* <div>
                     <span>Settings</span>
                     <Row gutter={6}>
@@ -199,7 +200,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 <div>
                     <span>Datasets</span>
                     <Row style={{marginBottom: '6px'}} gutter={6}>
-                        <Col span={14} className="dataViewColContainer">
+                        <Col span={14} className="dataViewColContainer" data-intro={getIntro("dataset_selector").intro} data-step={getIntro("dataset_selector").step}>
                             <Select
                                 placeholder="Select a dataset"
                                 value={this.props.datasetID || undefined}
@@ -212,8 +213,9 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                                     </Option>
                                 ))}
                             </Select>
+                            
                         </Col>
-                        <Col span={10} className="dataViewColContainer">
+                        <Col span={10} className="dataViewColContainer" data-intro={getIntro("dataset_upload").intro} data-step={getIntro("dataset_upload").step}>
                             <Upload {...uploadProps} listType="text">
                                 <Button>
                                     <Icon type="upload" /> Upload
@@ -225,13 +227,13 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                 <div>
                     <span>Dataruns</span>
                     <Row gutter={6}>
-                        <Col span={3} className="dataViewColContainer">
+                        <Col span={3} className="dataViewColContainer" data-intro={getIntro("datarun_add").intro} data-step={getIntro("datarun_add").step}>
                             <SettingsModal
                                 onSubmit={this.newDatarun}
                                 buttonOptions={{icon: 'plus', shape: 'circle'}}
                             />
                         </Col>
-                        <Col span={13} className="dataViewColContainer">
+                        <Col span={13} className="dataViewColContainer" data-intro={getIntro("datarun_selector").intro} data-step={getIntro("datarun_selector").step}>
                             <Select
                                 placeholder="Select a datarun"
                                 value={this.props.datarunID || undefined}
@@ -246,13 +248,13 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
                                 ))}
                             </Select>
                         </Col>
-                        <Col span={8} className="dataViewColContainer">
+                        <Col span={8} className="dataViewColContainer" data-intro={getIntro("datarun_run").intro} data-step={getIntro("datarun_run").step}>
                             <Button
                                 onClick={this.onClickDatarun}
                                 disabled={datarunStatus === IDatarunStatusTypes.COMPLETE || this.props.datasetID === null || isProcessing}
                             >
                                 <Icon type={isProcessing ? 'loading' : (running ? 'pause' : 'caret-right')} />
-                                {running ? 'Stop' : (completed ? 'Complete' : 'Run')}
+                                {running ? 'Pause' : (completed ? 'Complete' : 'Run')}
                             </Button>
                         </Col>
                     </Row>

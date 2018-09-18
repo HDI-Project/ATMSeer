@@ -1,4 +1,4 @@
-import { Col, Layout, Row } from 'antd';
+import { Col, Layout, Row,Button } from 'antd';
 import * as React from 'react';
 import * as logo from '../assets/ATM-Logo.png';
 import './App.css';
@@ -9,15 +9,15 @@ import { IDatarunStatusTypes } from 'types';
 import { getDatarun,IClickEvent,postBundleClickEvent,IClickBundleEvent } from 'service/dataService';
 import { UPDATE_INTERVAL_MS,USER_STUDY } from 'Const';
 import UploadModal from './UploadModal'
-
-
+import {getIntro} from 'helper';
 const { Content, Header } = Layout;
-
+import 'intro.js/introjs.css';
 export interface IState {
   datarunID: number | null;
   datasetID: number | null;
   datarunStatus: IDatarunStatusTypes;
-  compareK: number // 0=> don't compare
+  compareK: number; // 0=> don't compare
+  activeKey:string
 }
 
 
@@ -38,7 +38,8 @@ class App extends React.Component<{}, IState> {
             datarunStatus: IDatarunStatusTypes.PENDING,
             datarunID: null,
             datasetID: null,
-            compareK: 0 // 0=> don't compare
+            compareK: 0, // 0=> don't compare
+            activeKey:"2"
         };
         this.intervalID = null;
     }
@@ -109,13 +110,43 @@ class App extends React.Component<{}, IState> {
             this.startOrStopUpdateCycle(this.state.datarunStatus);
         }
     }
+    componentDidMount(){
+        
+    }
+     setActiveKey = (e:string)=>{
+        this.setState({
+            activeKey : e
+        })
+    }
+    introStart = ()=>{
+        const introJs = require("intro.js");
+        let setkey = (e:string) => {
+            this.setActiveKey(e);
+        }
+        introJs().onbeforechange(function(targetElement:any) {
+            let step = targetElement.getAttribute("data-step");
+            if(step == getIntro("dataview").step){
+                setkey("1");
+                introJs().refresh();
+            }else if(step == getIntro("leaderboard").step){
+                setkey("2");
+                introJs().refresh();
+            }
+        }).start();
+    }
+   
     public render() {
         return (
             <Layout className="app" >
                 <Header className='appHeader'>
+                <Col span={23} className="appHeadcol">
                 ATMSeer
                         <img src={logo} className='appLogo' />
                         <UploadModal setUserName={this.setUserName}/>
+                        </Col>
+                        <Col span={1} className="appHeadcol">
+                        <Button shape="circle" icon="info-circle" onClick={this.introStart}/>
+                        </Col>
                 </Header>
                 <Content className='appContent' >
                     <Row style={{ "height": "100%" }}>
@@ -127,6 +158,8 @@ class App extends React.Component<{}, IState> {
                                 setDatarunStatus={this.setDatarunStatus}
                                 setTopK = {this.setTopK}
                                 postClickEvent = {this.postClickEvent}
+                                activeKey = {this.state.activeKey}
+                                setActiveKey = {this.setActiveKey}
                             />
                         </Col >
 
