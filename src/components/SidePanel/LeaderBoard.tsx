@@ -270,7 +270,7 @@ export default class LeaderBoard extends React.Component<LeaderBoardProps, Leade
                         <span>{progressHyperpartiton(0)}</span>
                         </div>*/}
                         </div>
-                        <br />
+                        <br style={{clear:"both"}}/>
                         <b>Performance : </b>
                         <OverallHistogram classifiers={summary.topClassifiers} width={100} />
                     </div>
