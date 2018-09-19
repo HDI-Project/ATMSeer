@@ -703,7 +703,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let generateHyperpartitionText = () =>{
             return (
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight})`} width={width2} height={hpheight} onClick={this.onMethodButtonClick}>
+            <g transform={`translate(${0}, ${method_height+headerHeight})`} width={width2} height={hpheight} onClick={this.onMethodButtonClick} 
+            data-intro={getIntro("datarun_hyperpartitions_text").intro} data-step={getIntro("datarun_hyperpartitions_text").step}>
             {generateRect({
                 x:10,
                 y:-9,
@@ -737,6 +738,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <rect x={0} y={30} width={width2} height={hpheight-30} />
             </clipPath>
             </defs>
+            <rect x={10} y={-10+headerHeight+method_height} width={width2-68} height={hpheight} fill={"none"} data-intro={getIntro("datarun_hyperpartitions").intro} data-step={getIntro("datarun_hyperpartitions").step}/>
             <g transform={`translate(${0}, ${headerHeight+method_height})`}  width={width2} height={hpheight}  >
             <g onClick={this.onMethodButtonClick}>
             {generateRect({
@@ -759,7 +761,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
             },selectedMethod)}
             </g>
-            <rect x={10} y={-10} width={width2-68} height={hpheight+10} fill={"none"} data-intro={getIntro("datarun_hyperpartitions").intro} data-step={getIntro("datarun_hyperpartitions").step}/>
+            
             <g clipPath={"url(#mask_hyperpartitions)"}>
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
@@ -788,7 +790,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let generateHyperparameterText = () =>{
             return (
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight})`} width={width2} height={hpheight} onClick={this.onHyperpartitionButtonClick}>
+            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight})`} width={width2} height={hpheight} onClick={this.onHyperpartitionButtonClick}
+             data-intro={getIntro("datarun_hyperparameters_text").intro} data-step={getIntro("datarun_hyperparameters_text").step}>
             {generateRect({
                 x:10,
                 y:-9,

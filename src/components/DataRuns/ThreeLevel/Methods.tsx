@@ -5,6 +5,7 @@ import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
 import { Checkbox,Tooltip,Progress } from 'antd';
 import "./Methods.css";
+import {getIntro} from 'helper';
 //import * as hint from "assets/small_hint.png"
 const d3 = require("d3");
 
@@ -146,7 +147,7 @@ export default class methods extends React.Component<IProps, IState>{
             y,
             checkboxY: 2,
             checkboxWidth: 100,
-            checkboxHeight: 30,
+            checkboxHeight: 22,
             yextragap,
         }
 
@@ -268,6 +269,7 @@ export default class methods extends React.Component<IProps, IState>{
                             methodSelected={mymethodSelected}
                             onMethodsCheckBoxChange={this.props.onMethodsCheckBoxChange}
                             mode={0}
+                            index={i}
                         />
 
 
@@ -318,6 +320,7 @@ export default class methods extends React.Component<IProps, IState>{
                             methodSelected={mymethodSelected}
                             onMethodsCheckBoxChange={this.props.onMethodsCheckBoxChange}
                             mode={1}
+                            index={index}
                         />
 
 
@@ -347,7 +350,8 @@ export interface LineChartProps {
     methodBoxAttr:any,
     methodSelected:any,
     onMethodsCheckBoxChange:(e:any)=>void,
-    mode:number
+    mode:number,
+    index:number
 
 
 }
@@ -576,6 +580,8 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("fill", "white")
             .attr("stroke-width", 2)
             .attr("stroke", selected ? "#A4A0A0" : "#E0D6D4")
+            .attr("data-intro",this.props.index==0?getIntro("datarun_algorithms_methodbar").intro:"")
+            .attr("data-step",this.props.index==0?getIntro("datarun_algorithms_methodbar").step:"-1");
             ;
 
         select_top_svg_rect.transition(trans)
@@ -585,7 +591,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("height", height + margin.top + margin.bottom)
             .attr("fill", "white")
             .attr("stroke-width", 2)
-            .attr("stroke", selected ? "#A4A0A0" : "#E0D6D4");
+            .attr("stroke", selected ? "#A4A0A0" : "#E0D6D4")
+            .attr("data-intro",this.props.index==0?getIntro("datarun_algorithms_methodbar").intro:"")
+            .attr("data-step",this.props.index==0?getIntro("datarun_algorithms_methodbar").step:"-1");
         select_top_svg_rect.exit().remove();
         // Rect end
 
@@ -668,7 +676,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
-    .style("stroke-width", "1px");
+    .style("stroke-width", "1px")
+    .attr("data-intro",this.props.index==0?getIntro("datarun_algorithms_bestscore").intro:"")
+     .attr("data-step",this.props.index==0?getIntro("datarun_algorithms_bestscore").step:"-1");
     box1_rect.transition(trans)
     .attr("x", width-2.5-bbox1.width-2.5)
     .attr("y", -1-bbox1.height)
@@ -677,7 +687,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
-    .style("stroke-width", "1px");
+    .style("stroke-width", "1px")
+    .attr("data-intro",this.props.index==0?getIntro("datarun_algorithms_bestscore").intro:"")
+     .attr("data-step",this.props.index==0?getIntro("datarun_algorithms_bestscore").step:"-1");
     let box2_rect = select_svg.enter().merge(select_svg).selectAll("rect.box2_rect").data([1]);
 
    box2_rect.enter().append("rect").attr("class","box2_rect")
@@ -688,7 +700,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
-    .style("stroke-width", "1px");
+    .style("stroke-width", "1px")
+    .attr("data-intro",this.props.index==0?getIntro("datarun_algorithms_num").intro:"")
+     .attr("data-step",this.props.index==0?getIntro("datarun_algorithms_num").step:"-1");
     box2_rect.transition(trans).attr("x", width-55-bbox2.width-2.5)
     .attr("y", -2-bbox2.height)
     .attr("width", bbox2.width+5)
@@ -696,7 +710,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
     .style("fill", "#ccc")
     .style("fill-opacity", ".0")
     .style("stroke", selected ? "#A4A0A0" : "#E0D6D4")
-    .style("stroke-width", "1px");
+    .style("stroke-width", "1px")
+    .attr("data-intro",this.props.index==0?getIntro("datarun_algorithms_num").intro:"")
+     .attr("data-step",this.props.index==0?getIntro("datarun_algorithms_num").step:"-1");
     let imageData = [];
         for(let i = 1;i<=this.props.flower;i++){
             imageData.push(i);
@@ -769,7 +785,9 @@ class LineChart extends React.Component<LineChartProps, {}>{
                             return `${usedHpID.length}/${hyperpartitoins.length}`
                         }
             return <g> <g id={this.TAG + name} className='algorithm'/>
-
+                            <rect x={this.props.x+this.props.width-20} y={this.props.y+this.props.height-20} width={40} height={40} fill={"none"} 
+                             data-intro={this.props.index==0?getIntro("datarun_algorithms_hyperpartitions").intro:""} data-step={this.props.index==0?getIntro("datarun_algorithms_hyperpartitions").step:"-1"}
+                            />
                             <foreignObject key={name + "_progressbar_"} id={"progressbar_"+name}  width={40} height={40}
                                     >
                                 <Progress
@@ -778,15 +796,20 @@ class LineChart extends React.Component<LineChartProps, {}>{
                                 format={progressHyperpartiton}
                                 width={40}
                                 strokeWidth={10}
+                              
+
                                 />
                                 </foreignObject>
+                                <rect x={this.props.x-15} y={this.props.y-20} width={methodBoxAttr.checkboxWidth} height={methodBoxAttr.checkboxHeight} fill={"none"} 
+                             data-intro={this.props.index==0?getIntro("datarun_algorithms_checkbox").intro:""} data-step={this.props.index==0?getIntro("datarun_algorithms_checkbox").step:"-1"}
+                            />
                                 <foreignObject
                                 key={name+"_text_"}
                                 width={methodBoxAttr.checkboxWidth}
                                 height={methodBoxAttr.checkboxHeight}
                                 id={"checkbox_"+name}
-                                >
-
+                                      >
+                               
                                 <Checkbox
                                 key={name+"_checkbox_"}
                                 checked={methodSelected.checked}
@@ -799,7 +822,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
                                     <span>{name}</span>
                                     </Tooltip>
                                 </Checkbox>
-
+                               
                                 </foreignObject>
             </g>
         }else{

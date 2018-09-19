@@ -307,13 +307,17 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
 };
 //data-intro={getIntro("dataview").intro} data-step={getIntro("dataview").step}
 //import {getIntro} from 'helper';
-
+//data-intro={this.props.index==0?getIntro("datarun_algorithms_hyperpartitions").intro:""} 
+//data-step={this.props.index==0?getIntro("datarun_algorithms_hyperpartitions").step:"-1"}
 const introHidden = "-1";
 introHidden;
 let introDataSelectorPanel = 2;
 let introDataViewPanel = 7;
 let introLeaderBoardPanel = 11;
 let introDatarunPanel = 18;
+let introDatarunAlgorithms = introDatarunPanel+2;
+let introDatarunHyperpartitions = introDatarunPanel+3;
+let introDatarunHyperparameters = introDatarunHyperpartitions+4;
 function constructIntroData(){
     return {
     // the selector in the sidepanel.
@@ -395,17 +399,44 @@ function constructIntroData(){
     },
     "datarun_algorithms":{
         intro:"You can explore each algorithms performance distribution here and can update current algorithms settings here.",
-        step:`${introDatarunPanel+2}`
+        step:`${introDatarunAlgorithms}`
+    },
+    "datarun_algorithms_checkbox":{
+        intro:"You can select whether this algorithm will be tried in current datarun.",
+        step:`${introDatarunAlgorithms+1}`
+    },
+     "datarun_algorithms_num":{
+        intro:"This indicates the number of classifiers of specific algorithm which has been tried.",
+        step:`${introDatarunAlgorithms+2}`
+    },
+    "datarun_algorithms_bestscore":{
+        intro:"This indicates the best score of classifiers of specific algorithm which has been tried.",
+        step:`${introDatarunAlgorithms+3}`
+    },
+    "datarun_algorithms_methodbar":{
+        intro:"This indicates the distribution of classifiers of specific algorithm performance. Moreover, when you click the algorithm box, detailed hyperpartitions and hyperparameters will be displayed below.",
+        step:`${introDatarunAlgorithms+4}`
+    },
+    "datarun_algorithms_hyperpartitions":{
+        intro:"This indicates the number of hyperpartitions which has been tried divided by total number of hyperpartitions which can be tried.",
+        step:`${introDatarunAlgorithms+5}`
     },
     "datarun_hyperpartitions":{
         intro:"You can explore each hyperpartitions performance distribution here and can update current hyperpartitions settings here.",
-        step:`${introDatarunPanel+3}`
+        step:`${introDatarunHyperpartitions}`
+    },
+    "datarun_hyperpartitions_text":{
+        intro:"You can click it, then it will show the hyperpartitions of specific algorithm.",
+        step:`${introDatarunHyperpartitions}`
     },
     "datarun_hyperparameters":{
         intro:"You can explore each hyperparameters performance distribution here and can update current hyperparamters settings here.",
-        step:`${introDatarunPanel+4}`
+        step:`${introDatarunHyperparameters}`
     },
-    
+    "datarun_hyperparameters_text":{
+        intro:"You can click it, then it will show the hyperparameters of specific algorithm.",
+        step:`${introDatarunHyperparameters}`
+    },
     
     
 }
@@ -429,6 +460,7 @@ export function selectIntroMode(mode:number){
     let numIntroDataSelectorPanel = 5;
     let numIntroDataViewPanel = 4;
     let numIntroLeaderBoardPanel = 7;
+    let numIntroDatarunAlgorithms = 6;
     if(mode==0){
          introDataSelectorPanel = 2;
          introDataViewPanel = introDataSelectorPanel+numIntroDataSelectorPanel;
@@ -445,11 +477,14 @@ export function selectIntroMode(mode:number){
          introLeaderBoardPanel = -100;
          introDatarunPanel = introDataViewPanel+numIntroDataViewPanel;
     }else if(mode==3){
-        introDataSelectorPanel = 2;
+         introDataSelectorPanel = 2;
          introDataViewPanel = -100;
          introLeaderBoardPanel = -100;
          introDatarunPanel = -100;
     }
+    introDatarunAlgorithms = introDatarunPanel+2;
+    introDatarunHyperpartitions = introDatarunAlgorithms+numIntroDatarunAlgorithms;
+    introDatarunHyperparameters = introDatarunHyperpartitions+1;
     introData = constructIntroData();
 }
 export { RED,YELLOW, getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }
