@@ -121,7 +121,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 if (lastposx+ width * 1.5 > nowProps.width) {
                     lastposy = lastposy + (2 * height + gap);
                     nowrow ++;
-                    if(lastposy + (2 * height)>nowProps.height && exceedrow==-1){
+                    if(lastposy + ( height)>nowProps.height && exceedrow==-1){
                         exceedrow = nowrow;
                     }
                     lastposx = startposx;
@@ -262,7 +262,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                         white-space:nowrap';
                         padding: 0px;
                     >
-                    <input type="radio" value="${d.id}" ${selected} />
+                    <input type="checkbox" value="${d.id}" ${selected} />
                      <label> ${d.hyperpartition_string.replace(`${d.method}-`, '')}</label>
                     </div>`
                 };

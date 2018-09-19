@@ -310,8 +310,12 @@ var prepareBoxplotData = function (rawData:any[], opt:any) {
 
 const introHidden = "-1";
 introHidden;
-const introDataSelectorPanel = 2;
-const introData = {
+let introDataSelectorPanel = 2;
+let introDataViewPanel = 7;
+let introLeaderBoardPanel = 11;
+let introDatarunPanel = 18;
+function constructIntroData(){
+    return {
     // the selector in the sidepanel.
     "dataselector_panel":{
         intro:"You can use this panel to select which dataset or datarun show. Also you can upload datasets and configurate the settings of dataruns in this panel.",
@@ -337,46 +341,115 @@ const introData = {
         intro:"You can run/stop a datarun here.",
         step:`${introDataSelectorPanel+4}`
     },
+    "sidepanel_dataview":{
+        intro:"You can switch between data and overview panel here.",
+        step:`${introDataViewPanel}`
+    },
     "dataview":{
         intro:"You can see the overview of feature and the distribution of features in the specific dataset in this panel.",
-        step:"7"
+        step:`${introDataViewPanel+1}`
     },
     "dataview_overview":{
         intro:"The dataset overview is displayed here.",
-        step:"8"
+        step:`${introDataViewPanel+2}`
     },
     "dataview_chart":{
         intro:"You can see each feature distribution here.",
-        step:"9"
+        step:`${introDataViewPanel+3}`
+    },
+    "sidepanel_leaderboard":{
+        intro:"You can switch between data and overview panel here.",
+        step:`${introLeaderBoardPanel}`
     },
     "leaderboard":{
         intro:"You can see datarun information here, and compare the top classifiers in this panel.",
-        step:"10"
+        step:`${introLeaderBoardPanel+1}`
     },
     "leaderboard_overview":{
         intro:"You can see some information about this datarun here.",
-        step:"11"
+        step:`${introLeaderBoardPanel+2}`
     },
     "leaderboard_topclassifer":{
         intro:"You can compare classifiers here",
-        step:"12"
+        step:`${introLeaderBoardPanel+3}`
     },
     "leaderboard_topclassifier_number":{
         intro:"You can input the number of classifiers listed below.",
-        step:"13"
+        step:`${introLeaderBoardPanel+4}`
     },
     "leaderboard_topclassifer_focus":{
         intro:"You can open this button and compare models in the right panel",
-        step:"14"
+        step:`${introLeaderBoardPanel+5}`
     },
     "leaderboard_topclassifer_list":{
         intro:"You can see the information about the top classifiers in this list",
-        step:"15"
-    }
+        step:`${introLeaderBoardPanel+6}`
+    },
+    "datarun_trials":{
+        intro:"You can see trial performance here.",
+        step:`${introDatarunPanel}`
+    },
+    "datarun_trials_sort":{
+        intro:"You can select whether sort the performance here.",
+        step:`${introDatarunPanel+1}`
+    },
+    "datarun_algorithms":{
+        intro:"You can explore each algorithms performance distribution here and can update current algorithms settings here.",
+        step:`${introDatarunPanel+2}`
+    },
+    "datarun_hyperpartitions":{
+        intro:"You can explore each hyperpartitions performance distribution here and can update current hyperpartitions settings here.",
+        step:`${introDatarunPanel+3}`
+    },
+    "datarun_hyperparameters":{
+        intro:"You can explore each hyperparameters performance distribution here and can update current hyperparamters settings here.",
+        step:`${introDatarunPanel+4}`
+    },
+    
     
     
 }
+}
+let introData = constructIntroData();
 export function getIntro(label:string){
-    return introData[label];
+    if(introData[label]){
+        return introData[label];
+    }else{
+        return {
+            intro:"",
+            step:"-1"
+        }
+    }
+}
+export function selectIntroMode(mode:number){
+    // mode == 0  normal
+    // mode == 1  ignore dataview
+    // mode == 2  ignore leaderboard
+    // mode == 3  ignore all
+    let numIntroDataSelectorPanel = 5;
+    let numIntroDataViewPanel = 4;
+    let numIntroLeaderBoardPanel = 7;
+    if(mode==0){
+         introDataSelectorPanel = 2;
+         introDataViewPanel = introDataSelectorPanel+numIntroDataSelectorPanel;
+         introLeaderBoardPanel = introDataViewPanel+numIntroDataViewPanel;
+         introDatarunPanel = introLeaderBoardPanel+numIntroLeaderBoardPanel;
+    }else if(mode==1){
+         introDataSelectorPanel = 2;
+         introDataViewPanel = -100;
+         introLeaderBoardPanel = introDataSelectorPanel+numIntroDataSelectorPanel;
+         introDatarunPanel = introLeaderBoardPanel+numIntroLeaderBoardPanel;
+    }else if(mode==2){
+        introDataSelectorPanel = 2;
+         introDataViewPanel = introDataSelectorPanel+numIntroDataSelectorPanel;
+         introLeaderBoardPanel = -100;
+         introDatarunPanel = introDataViewPanel+numIntroDataViewPanel;
+    }else if(mode==3){
+        introDataSelectorPanel = 2;
+         introDataViewPanel = -100;
+         introLeaderBoardPanel = -100;
+         introDatarunPanel = -100;
+    }
+    introData = constructIntroData();
 }
 export { RED,YELLOW, getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }

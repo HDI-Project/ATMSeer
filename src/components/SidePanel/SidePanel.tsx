@@ -5,7 +5,7 @@ import DataView from './DataView';
 import LeaderBoard from './LeaderBoard';
 import { IDatarunStatusTypes } from 'types';
 import { IClickEvent } from 'service/dataService';
-
+import {getIntro} from 'helper';
 const TabPane = Tabs.TabPane
 
 export interface SidePanelProps {
@@ -38,6 +38,8 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
         return (
             <div className="side-panel" style={{overflowY:"hidden"}}>
                 <DataSelector {...this.props} />
+                <div  data-intro={getIntro("sidepanel_dataview").intro} data-step={getIntro("sidepanel_dataview").step}>
+                <div  data-intro={getIntro("sidepanel_leaderboard").intro} data-step={getIntro("sidepanel_leaderboard").step}>
                 <Tabs
                     onChange={this.onChange}
                     activeKey={this.props.activeKey}
@@ -55,6 +57,8 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
                         />
                     </TabPane>
                 </Tabs>
+                </div>
+                </div>
             </div>
         );
     }

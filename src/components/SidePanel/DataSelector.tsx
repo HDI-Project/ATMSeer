@@ -54,7 +54,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         // Select the first run as default
         if (dataruns.length > 0) {
             if(datarunID == -1){
-                datarunID = dataruns[0].id;
+                datarunID = dataruns[dataruns.length -1].id;
             }
             this.onSelectDatarun(datarunID);
         }

@@ -9,6 +9,7 @@ import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
 import { message,Icon} from 'antd';
 import { getColor } from 'helper';
+import {getIntro} from 'helper';
 export interface IProps {
     height: number,
     datarun: IDatarun,
@@ -58,7 +59,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
         }
     }
-
+   
     onSelectMethod(methodName:string){
         console.info('select method', methodName);
         let eventlog:IClickEvent = {
@@ -736,7 +737,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <rect x={0} y={30} width={width2} height={hpheight-30} />
             </clipPath>
             </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height})`}  width={width2} height={hpheight}>
+            <g transform={`translate(${0}, ${headerHeight+method_height})`}  width={width2} height={hpheight}  >
             <g onClick={this.onMethodButtonClick}>
             {generateRect({
                 x:10,
@@ -758,6 +759,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
             },selectedMethod)}
             </g>
+            <rect x={10} y={-10} width={width2-68} height={hpheight+10} fill={"none"} data-intro={getIntro("datarun_hyperpartitions").intro} data-step={getIntro("datarun_hyperpartitions").step}/>
             <g clipPath={"url(#mask_hyperpartitions)"}>
                 <HyperPartitions
                 hyperpartitions={hyperpartitions}
@@ -816,7 +818,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <rect x={0} y={-10} width={width3+200} height={hyheight+100}/>
             </clipPath>
             </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height+hpheight+35})`} clipPath={"url(#mask_hyperparameters)"}>
+            <g transform={`translate(${0}, ${headerHeight+method_height+hpheight+35})`} clipPath={"url(#mask_hyperparameters)"} data-intro={getIntro("datarun_hyperparameters").intro} data-step={getIntro("datarun_hyperparameters").step}>
             <g onClick={this.onHyperpartitionButtonClick}>
             {generateRect({
                 x:10,
@@ -871,7 +873,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             <rect x={0} y={-30} width={width2} height={method_height+30} />
             </clipPath>
             </defs></g>
-            <g transform={`translate(${0}, ${headerHeight})`} clipPath={"url(#mask_methods)"}>
+            <g transform={`translate(${0}, ${headerHeight})`} clipPath={"url(#mask_methods)"} data-intro={getIntro("datarun_algorithms").intro} data-step={getIntro("datarun_algorithms").step}>
             {generateRect({
                 x:10,
                 y:-9,

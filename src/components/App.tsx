@@ -9,7 +9,7 @@ import { IDatarunStatusTypes } from 'types';
 import { getDatarun,IClickEvent,postBundleClickEvent,IClickBundleEvent } from 'service/dataService';
 import { UPDATE_INTERVAL_MS,USER_STUDY } from 'Const';
 import UploadModal from './UploadModal'
-import {getIntro} from 'helper';
+import {getIntro,selectIntroMode} from 'helper';
 const { Content, Header } = Layout;
 import 'intro.js/introjs.css';
 export interface IState {
@@ -42,12 +42,21 @@ class App extends React.Component<{}, IState> {
             activeKey:"2"
         };
         this.intervalID = null;
+        selectIntroMode(3);
+    }
+    selectIntro = (key:string = this.state.activeKey) =>{
+        if(key=="1"){
+            selectIntroMode(2);
+        }else if(key=="2"){
+            selectIntroMode(1);
+        }
     }
     public setDatarunID(id: number): void {
         console.info("set datarun id", id)
         this.setState({ datarunID: id })
     }
     public setDatasetID(datasetID: number): void {
+        this.selectIntro();
         this.setState({ datasetID });
     }
     public setDatarunStatus(datarunStatus: IDatarunStatusTypes): void {
@@ -114,6 +123,7 @@ class App extends React.Component<{}, IState> {
         
     }
      setActiveKey = (e:string)=>{
+         this.selectIntro(e);
         this.setState({
             activeKey : e
         })
@@ -123,15 +133,15 @@ class App extends React.Component<{}, IState> {
         let setkey = (e:string) => {
             this.setActiveKey(e);
         }
+        
         introJs().onbeforechange(function(targetElement:any) {
             let step = targetElement.getAttribute("data-step");
-            if(step == getIntro("dataview").step){
+            if(step == getIntro("sidepanel_dataview").step){
                 setkey("1");
-                introJs().refresh();
-            }else if(step == getIntro("leaderboard").step){
+            }else if(step == getIntro("sidepanel_leaderboard").step){
                 setkey("2");
-                introJs().refresh();
             }
+           
         }).start();
     }
    

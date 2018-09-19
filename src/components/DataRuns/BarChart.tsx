@@ -3,7 +3,7 @@ import { getColor } from "helper"
 import * as React from "react";
 import { Switch } from "antd";
 import {EChartOption} from "echarts";
-
+import {getIntro} from 'helper';
 const sortSwitchStyle = {
     position: "absolute" as "absolute",
     top: "5px",
@@ -141,7 +141,7 @@ export default class BarChart extends React.Component<IProps, IState>{
                     style={{ width: `100%`, height: '100%' }}
                     notMerge={true}
                 />
-                <div className="sortSwitch" style={sortSwitchStyle}>
+                <div className="sortSwitch" style={sortSwitchStyle} data-intro={getIntro("datarun_trials_sort").intro} data-step={getIntro("datarun_trials_sort").step}>
                     {"sorted by "}
                     <Switch checkedChildren="score" unCheckedChildren="time"
                         defaultChecked={false} onChange={this.changeSort} />

@@ -24,6 +24,7 @@ import { UPDATE_INTERVAL_MS } from "Const";
 import ThreeLevel from "./ThreeLevel";
 import AskModal from "./AskModal";
 import { USER_STUDY,THRESHOLD_STEP } from 'Const';
+import {getIntro} from 'helper';
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
 //     // timeout: 1000,
@@ -228,74 +229,15 @@ export default class DataRuns extends React.Component<IProps, IState>{
 
         if (Object.keys(datarun).length > 0) {
             return (
-                <div style={{ height: '100%' }}>
+                <div style={{ height: '100%' }} >
 
-                    <div className="runTracker" style={{ height: '12%', display: "flex" }}>
+                    <div className="runTracker" style={{ height: '12%', display: "flex" }} data-intro={getIntro("datarun_trials").intro} data-step={getIntro("datarun_trials").step}>
                         {/* <Histogram datarun={datarun} width={40}/> */}
                         <AskModal AskModalCallBack={this.AskModalCallBack} visible={this.state.askvisible} />
                          <BarChart run={runCSV} width={100} />
-                      {/*  <Row style={{ "height": "100%", width: "100%" }}>
-                            <Col span={18} style={{ height: "100%" }}>
-                                <Tabs
-                                    defaultActiveKey="1"
-                                    style={{ width: '100%' }}
-                                    tabPosition="left"
-                                >
-                                    <TabPane tab="Trials" key="1">
-                                        <BarChart run={runCSV} width={100} />
-
-                                    </TabPane>
-                                    <TabPane tab="Performance" key="2">
-                                        <OverallHistogram datarun={datarun} width={100} />
-                                    </TabPane>
-                                </Tabs>
-                            </Col>
-                            <Col span={6} style={{ padding: "10px" }}>
-                            <div>
-                                <b>Total  classifiers</b>: {classifiers.length}
-                                <br />
-                                <b>Best classifier</b>:
-                        <span
-                            style={{
-                                backgroundColor: getColor(bestCls.method),
-                                borderRadius: '4px',
-                                padding: '2px',
-                                marginLeft: "2px",
-                                color: 'white'
-                            }}
-                        >
-                            {`${bestCls.method}-${bestCls.id}`}
-                        </span>
-                        {` ${bestCls.cv_metric.toFixed(3)}±${bestCls.cv_metric_std.toFixed(3)}`}
-                        <br />
-                                <b>Algorithm </b>:{' '}
-                                <Progress
-                                    type="circle"
-                                    percent={100 * methods_num / 14}
-                                    format={progressAlgorithm}
-                                    width={40}
-                                    strokeWidth={10}
-                                />
-                                <b>{' '} Hyperpartitions</b>:{' '}
-                                <Progress
-                                    type="circle"
-                                    percent={100 * hp_num / 172}
-                                    format={progressHyperpartiton}
-                                    width={40}
-                                    strokeWidth={10}
-                                />
-                                </div>
-                                
-                            </Col>
-                        </Row>*/}
+                     
                     </div>
-                    {/* <div style={{height: "80%", overflowY: "scroll"}}>
-                <HyperPartitions classifiers={classifiers} />
-            </div> */}
-
-                    {/* <MethodsLineChart height={85} datarun={datarun} hyperpartitions={this.state.hyperpartitions}
-            datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
-            datarunID={this.props.datarunID}/> */}
+                  
                     <ThreeLevel
                         height={88}
                         datarun={datarun}

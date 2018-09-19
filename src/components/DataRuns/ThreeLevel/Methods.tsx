@@ -296,6 +296,8 @@ export default class methods extends React.Component<IProps, IState>{
                     if(methodSelected[name]){
                        mymethodSelected = methodSelected[name];
                     }
+                    let filterclassifier = classifiers.filter((d:any)=>d.method==name);
+                    let filterhyperpartitions = hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name);
                      return (<g key={name + "_unused"}>
 
                         <LineChart key={name + "_used_"}
@@ -306,11 +308,11 @@ export default class methods extends React.Component<IProps, IState>{
                             width={this.methodBoxAttr.width}
                             height={this.methodBoxAttr.height}
                             methodDef={methodsDef[name]}
-                            classifiers={[]}
+                            classifiers={filterclassifier}
                             name={name}
                             totallen={maxnum}
                             onClick={this.props.onSelectMethod}
-                            hyperpartitoins = {[]}
+                            hyperpartitoins = {filterhyperpartitions}
                             flower={flower}
                             methodBoxAttr={this.methodBoxAttr}
                             methodSelected={mymethodSelected}
@@ -400,7 +402,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
         top_svg.attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
 
-
+        // ProgressBar Transition
+        let top_progressbar = d3.select("#progressbar_"+this.props.name);
+        if(mode==1){
+            top_progressbar = top_progressbar.transition(trans);
+        }
+        top_progressbar
+        .attr("x",this.props.x+this.props.width-20)
+        .attr("y",this.props.y+this.props.height-20);
         let top_checkbox = d3.select("#checkbox_"+this.props.name);
         if(mode==1){
             top_checkbox = top_checkbox.transition(trans);
@@ -524,7 +533,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
         yScale.domain(data.map((d, i) => i/10));
         let top_svg = d3.select("#" + this.TAG + this.props.name);
         top_svg.attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
+            .attr("height", height + margin.top + margin.bottom).on('click', ()=>{
+                d3.selectAll('rect.methodRect')
+                    .attr("stroke", "#E0D6D4")
+                d3.select(`rect.${this.props.name}`)
+                    .attr('stroke', "#A4A0A0")
+                    .attr("stroke-width", 3)
+                this.props.onClick(this.props.name)
+            });
         // ProgressBar Transition
         let top_progressbar = d3.select("#progressbar_"+this.props.name);
         if(mode==1){
@@ -560,14 +576,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             .attr("fill", "white")
             .attr("stroke-width", 2)
             .attr("stroke", selected ? "#A4A0A0" : "#E0D6D4")
-            .on('click', ()=>{
-                d3.selectAll('rect.methodRect')
-                    .attr("stroke", "#E0D6D4")
-                d3.select(`rect.${this.props.name}`)
-                    .attr('stroke', "#A4A0A0")
-                    .attr("stroke-width", 3)
-                this.props.onClick(this.props.name)
-            });
+            ;
 
         select_top_svg_rect.transition(trans)
             .attr("x", 0)
@@ -794,9 +803,27 @@ class LineChart extends React.Component<LineChartProps, {}>{
                                 </foreignObject>
             </g>
         }else{
+            let usedHpID = Array.from(new Set(classifiers.map(d=>d.hyperpartition_id)));
+                        //let usedhpidlen = usedHpID.length;
+                        let filterhyperpartitionslen = hyperpartitoins.length;
+                        if(filterhyperpartitionslen==0){
+                            filterhyperpartitionslen=1;
+                        }
+                        const progressHyperpartiton = (percent:number)=>{
+                            return `${usedHpID.length}/${hyperpartitoins.length}`
+                        }
                 return (<g> <g id={"unused_"+this.TAG + name} className='algorithm'/>
 
-
+                                <foreignObject key={name + "_progressbar_"} id={"progressbar_"+name}  width={40} height={40}
+                                    >
+                                <Progress
+                                type="circle"
+                                percent={100*usedHpID.length/filterhyperpartitionslen}
+                                format={progressHyperpartiton}
+                                width={40}
+                                strokeWidth={10}
+                                />
+                                </foreignObject>
                                 <foreignObject
                                 key={name+"_text_"}
                                 width={methodBoxAttr.checkboxWidth}
