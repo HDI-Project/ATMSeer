@@ -136,7 +136,7 @@ class App extends React.Component<{}, IState> {
         let setkey = (e:string) => {
             this.setActiveKey(e);
         }
-
+        setkey("2");
         introJs().onbeforechange(function(targetElement:any) {
             let step = targetElement.getAttribute("data-step");
             if(step == getIntro("sidepanel_dataview").step){
