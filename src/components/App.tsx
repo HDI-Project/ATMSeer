@@ -1,4 +1,4 @@
-import { Col, Layout, Row, Icon } from 'antd';
+import { Col, Layout, Row} from 'antd';
 import * as React from 'react';
 import * as logo from '../assets/ATM-Logo.png';
 import './App.css';
@@ -12,6 +12,9 @@ import UploadModal from './UploadModal'
 import {getIntro,selectIntroMode} from 'helper';
 const { Content, Header } = Layout;
 import 'intro.js/introjs.css';
+import inf_icon from 'assets/info_icon.png';
+
+
 export interface IState {
   datarunID: number | null;
   datasetID: number | null;
@@ -149,15 +152,16 @@ class App extends React.Component<{}, IState> {
         return (
             <Layout className="app" >
                 <Header className='appHeader'>
-                <Col span={23} className="appHeadcol">
                 ATMSeer
-                        <img src={logo} className='appLogo' />
-                        <UploadModal setUserName={this.setUserName}/>
-                        </Col>
-                        <Col span={1} className="appHeadcol">
+                <img src={logo} className='appLogo' />
+                <UploadModal setUserName={this.setUserName}/>
+
                         {/* <Button shape="circle" icon="info-circle" onClick={this.introStart}/> */}
-                        <Icon type="info-circle" onClick={this.introStart}/>
-                        </Col>
+                        {/* <Icon type="info-circle" onClick={this.introStart}/> */}
+                <div style={{ position: "absolute", top: "0px",right: "15px"}}>
+                    <img src={inf_icon} width="35" height="35" onClick={this.introStart}/>
+                </div>
+
                 </Header>
                 <Content className='appContent' >
                     <Row style={{ "height": "100%" }}>
