@@ -1,4 +1,4 @@
-import { Col, Layout, Row,Button } from 'antd';
+import { Col, Layout, Row, Icon } from 'antd';
 import * as React from 'react';
 import * as logo from '../assets/ATM-Logo.png';
 import './App.css';
@@ -120,7 +120,7 @@ class App extends React.Component<{}, IState> {
         }
     }
     componentDidMount(){
-        
+
     }
      setActiveKey = (e:string)=>{
          this.selectIntro(e);
@@ -133,7 +133,7 @@ class App extends React.Component<{}, IState> {
         let setkey = (e:string) => {
             this.setActiveKey(e);
         }
-        
+
         introJs().onbeforechange(function(targetElement:any) {
             let step = targetElement.getAttribute("data-step");
             if(step == getIntro("sidepanel_dataview").step){
@@ -141,10 +141,10 @@ class App extends React.Component<{}, IState> {
             }else if(step == getIntro("sidepanel_leaderboard").step){
                 setkey("2");
             }
-           
+
         }).start();
     }
-   
+
     public render() {
         return (
             <Layout className="app" >
@@ -155,7 +155,8 @@ class App extends React.Component<{}, IState> {
                         <UploadModal setUserName={this.setUserName}/>
                         </Col>
                         <Col span={1} className="appHeadcol">
-                        <Button shape="circle" icon="info-circle" onClick={this.introStart}/>
+                        {/* <Button shape="circle" icon="info-circle" onClick={this.introStart}/> */}
+                        <Icon type="info-circle" onClick={this.introStart}/>
                         </Col>
                 </Header>
                 <Content className='appContent' >
