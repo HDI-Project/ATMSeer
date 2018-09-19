@@ -441,7 +441,54 @@ function constructIntroData(){
     
 }
 }
-let introData = constructIntroData();
+function constructSimple(){
+     return {
+    // the selector in the sidepanel.
+    "dataselector_panel":{
+        intro:"You can use this panel to select which dataset or datarun show. Also you can upload datasets and configurate the settings of dataruns in this panel.",
+        step:`${1}`
+    },
+    
+    "leaderboard_overview":{
+        intro:"You can see some information about this datarun here.",
+        step:`${2}`
+    },
+    "leaderboard_topclassifer":{
+        intro:"You can compare classifiers here",
+        step:`${3}`
+    },
+   
+    "datarun_trials":{
+        intro:"You can see trial performance here.",
+        step:`${4}`
+    },
+    
+    "datarun_algorithms":{
+        intro:"You can explore each algorithms performance distribution here and can update current algorithms settings here.",
+        step:`${5}`
+    },
+   
+    "datarun_hyperpartitions":{
+        intro:"You can explore each hyperpartitions performance distribution here and can update current hyperpartitions settings here.",
+        step:`${6}`
+    },
+    "datarun_hyperpartitions_text":{
+        intro:"You can click it, then it will show the hyperpartitions of specific algorithm.",
+        step:`${6}`
+    },
+    "datarun_hyperparameters":{
+        intro:"You can explore each hyperparameters performance distribution here and can update current hyperparamters settings here.",
+        step:`${7}`
+    },
+    "datarun_hyperparameters_text":{
+        intro:"You can click it, then it will show the hyperparameters of specific algorithm.",
+        step:`${7}`
+    },
+    
+    
+}   
+}
+let introData = constructSimple();
 export function getIntro(label:string){
     if(introData[label]){
         return introData[label];
@@ -485,6 +532,7 @@ export function selectIntroMode(mode:number){
     introDatarunAlgorithms = introDatarunPanel+2;
     introDatarunHyperpartitions = introDatarunAlgorithms+numIntroDatarunAlgorithms;
     introDatarunHyperparameters = introDatarunHyperpartitions+1;
-    introData = constructIntroData();
+    //introData = constructIntroData();
+    constructIntroData();
 }
 export { RED,YELLOW, getColor, EChartsColor, csv2json, parseDatarun, prepareBoxplotData }
