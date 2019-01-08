@@ -1,4 +1,4 @@
-# ATMSeer: Visual Exploration of Automated Machine Learning
+# ATMSeer: Increasing Transparency and Controllability in Automated Machine Learning
 
 ATMSeer can help you monitor, analyze, and refine an AutoML process in real time.
 
@@ -15,7 +15,7 @@ A demo is available [here](http://atm.hkustvis.org)
 # Download ATMSeer
 
 ```
-git clone https://github.com/hdi-project/ATM-Vis.git /path/to/atm
+git clone https://github.com/HDI-Project/ATMSeer.git /path/to/atm
 ```
 
 # Build a virtual enviroment
