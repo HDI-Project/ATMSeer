@@ -1,14 +1,14 @@
 # ATMSeer: Increasing Transparency and Controllability in Automated Machine Learning
 
 ATMSeer can help you monitor, analyze, and refine an AutoML process in real time.
+The paper has been published at ACM CHI 2019.   
+[PDF](https://arxiv.org/abs/1902.05009)
 
-### Demo
+=========================
 
-A demo is available [here](http://atm.hkustvis.org)
+# Video
 
-
-![The system overview](screenshot.PNG)
-
+[![ATMSEER VIDEO](https://img.youtube.com/vi/7QwN3mmiCzY/0.jpg)](http://www.youtube.com/watch?v=7QwN3mmiCzY "Video Title")
 
 =========================
 
