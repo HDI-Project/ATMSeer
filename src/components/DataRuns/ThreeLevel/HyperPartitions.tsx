@@ -62,7 +62,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         })
     }
     public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any,hiddencol:number,comparedCls:any,nowProps:IProps) {
-            console.log("rerender hyperpartitions");
+            // console.log("rerender hyperpartitions");
             /*if(this.index>=1){
                 console.log("end");
                 return;
@@ -72,8 +72,8 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
             // let num_all_hp = hpsInfo.length
 
             hpsInfo = hpsInfo.filter(d=>d.method==selectedMethod).filter(d => d.sortedCls.length > 0);
-            console.log("len",hpsInfo.length);
-            
+            // console.log("len",hpsInfo.length);
+
             let { height, width, gap } = this.hyperpartitionBox
 
             let trans = d3.transition()
@@ -105,9 +105,9 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 //next pos x not changed, y changed
                 if(i!=0)lastposx = lastposx + width * 1.5;
                 currentPos = [lastposx, lastposy];
-                
-                
-                
+
+
+
                 if (lastposx+ width * 1.5 > nowProps.width) {
                     lastposy = lastposy + (2 * height + gap);
                     nowrow ++;
@@ -158,7 +158,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                     )
                 }
                 hiddencol = newhiddencol;
-                
+
             }
             if(exceedrow!=-1){
                 exceedrow=hiddencol+exceedrow;
@@ -188,10 +188,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                 .data(bundleData,function(d:any){
                     return d.id;
                 })
-                console.log(hps);
-                console.log(hps.enter().size());
-                console.log(hps.size());
-                console.log(hps.exit().size());
+                // console.log(hps);
+                // console.log(hps.enter().size());
+                // console.log(hps.size());
+                // console.log(hps.exit().size());
             //--------------Enter Phase-------------------//
             let hpGroupEnter = hps
                 .enter()
@@ -365,7 +365,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
                 }
 
-               
+
                 //CLASSIFIER ENTER
                 classifierSelect.enter().append("rect")
                 .attr("class", "hpBar")

@@ -121,8 +121,8 @@ export default class methods extends React.Component<IProps, IState>{
             checkboxHeight: 30,
             yextragap:20
         }*/
-        console.log(width);
-        console.log(height);
+        // console.log(width);
+        // console.log(height);
         // Calculate Layout
         let refwidth = 1600;
         let refheight = 714.84;
@@ -187,7 +187,7 @@ export default class methods extends React.Component<IProps, IState>{
                 yextragap:oneboxygap
             }
         }
-        
+
         /**
          * checkboxHeight: 30
             checkboxWidth: 100
@@ -198,9 +198,9 @@ export default class methods extends React.Component<IProps, IState>{
             x: 40
             y: 40
             yextragap: 20
-         * 
+         *
          */
-        console.log(this.methodBoxAttr);
+        // console.log(this.methodBoxAttr);
 
         let performance = usedMethods.map((name: string, i: number) => {
             return {
@@ -309,7 +309,7 @@ export default class methods extends React.Component<IProps, IState>{
                     //const top_width = classifier_num*6+60;
                     // this.index++;
                     return (<g key={name + "_g_linechart_" + i}>
-                        
+
                         <LineChart key={name + "_used_" + i}
                             // x={this.methodBoxAttr.x+i*(this.methodBoxAttr.width+this.methodBoxAttr.gap)}
                             // y={this.methodBoxAttr.y}
@@ -341,8 +341,8 @@ export default class methods extends React.Component<IProps, IState>{
                         strokeWidth={10}
                         />
                         </foreignObject>
-                        
-                        
+
+
                         </g>)
 
                 })}
@@ -466,7 +466,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
             width = this.props.width - margin.left - margin.right,
             height = this.props.height - margin.top - margin.bottom,
             top_margin = { top: this.props.y, left: this.props.x };
-        console.log(height);
+        // console.log(height);
         // Set the ranges
         // let	xScale = d3.scaleLinear().range([0, width]);
         let yScale = d3.scaleBand()
@@ -674,7 +674,7 @@ class LineChart extends React.Component<LineChartProps, {}>{
                 <feComposite in="SourceGraphic" operator="xor"/>
                 </filter>
             </defs>*/}<g id={this.TAG + name} className='algorithm'/>
-                   
+
         </g>
     }
 }
