@@ -62,6 +62,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
         })
     }
     public renderD3(hpsInfo: Array<any>, maxLen: number, selectedMethod: string, hyperpartitionsSelected:any,hiddencol:number,comparedCls:any,nowProps:IProps) {
+        // console.log(hyperpartitionsSelected);
             // console.log("rerender hyperpartitions");
             /*if(this.index>=1){
                 console.log("end");
@@ -252,9 +253,10 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
                         white-space:nowrap';
                         padding: 0px;
                     >
-                    <input type="radio" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
+                    <input type="checkbox" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
                     </div>`
                 };
+                // <input type="radio" value="${d.id}" ${selected} /> <label> ${d.hyperpartition_string}</label>
                  //Create SVG element
                 let tooltip = d3.select("#tooltip");
                 //let top_methods = d3.select("#methodstop");
@@ -270,7 +272,7 @@ export default class HyperPartitions extends React.Component<IProps, IState>{
 
             textEnter.append('g')
                 .attr('class', 'hp_name')
-                .attr('transform', `translate(${0}, ${0})`)
+                .attr('transform', `translate(0, 0)`)
                 .append('foreignObject')
                 .attr('width', width)
                 .attr('height', height)

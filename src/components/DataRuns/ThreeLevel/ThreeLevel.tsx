@@ -33,8 +33,8 @@ export interface IState {
     configsMethod: string[],
     loading: boolean,
     methodSelected: any,
-    isHyperParamRangeSelected: any,
-    isHyperPartRangeSelected: number[],
+    hyperParamSelectedRange: any,
+    hyperPartSelectedRange: number[],
     mouseOverClassifier: number,
     displaymode: number,
     methodCoords: any,
@@ -45,15 +45,14 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     index = 0
     constructor(props: IProps) {
         super(props)
-        this.onSelectMethod = this.onSelectMethod.bind(this)
         this.state = {
             selectedMethod: '',
             configsBudget: 100,
             configsMethod: [],
             loading: false,
             methodSelected: {},
-            isHyperParamRangeSelected: {},
-            isHyperPartRangeSelected: [],
+            hyperParamSelectedRange: {},
+            hyperPartSelectedRange: [],
             mouseOverClassifier: -1,
             displaymode: 0,
             classifiers: [],
@@ -69,6 +68,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             }
         }
 
+        this.onSelectMethod = this.onSelectMethod.bind(this)
         this.generateRect = this.generateRect.bind(this);
         this.onMethodButtonClick = this.onMethodButtonClick.bind(this);
         this.generateHyperpartition = this.generateHyperpartition.bind(this);
@@ -135,7 +135,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         // submit configs in this view
         // switch to the new datarun.
         let methods = this.state.configsMethod;
-        //let budget = this.state.configsBudget;
         if (this.props.datarunID != null) {
             let promise: Promise<IConfigsInfo>;
             let datarunID: number = this.props.datarunID ? this.props.datarunID : 0;
@@ -147,9 +146,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
                     let submitconfigs: IUpdateDatarunConfig = {};
                     submitconfigs.configs = configs;
-                    submitconfigs.method_configs = this.state.isHyperParamRangeSelected;
-                    if (this.state.isHyperPartRangeSelected.length > 0) {
-                        submitconfigs.hyperpartitions = this.state.isHyperPartRangeSelected;
+                    submitconfigs.method_configs = this.state.hyperParamSelectedRange;
+                    if (this.state.hyperPartSelectedRange.length > 0) {
+                        submitconfigs.hyperpartitions = this.state.hyperPartSelectedRange;
                     }
                     let promise: Promise<ICommonResponse> = updateDatarunConfigs(datarunID, submitconfigs);
                     promise.then(status => {
@@ -162,7 +161,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     }).catch(error => {
                         message.error("Update Configs Failed.");
                         this.setState({ loading: false });
-
                     });
                 })
                 .catch(error => {
@@ -171,16 +169,18 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         }
     }
 
-    fetchHpId = (method: string) => {
-        let hp = this.props.hyperpartitions;
-        return hp.filter((d: any) => d.method == method).map((d: any) => d.id);
+    fetchHyperPartsIds = (method: string) => {
+        const { hyperpartitions } = this.props;
+        return hyperpartitions
+            .filter((partition: any) => partition.method == method)
+            .map((partition: any) => partition.id);
     }
 
     onMethodsCheckBoxChange = (e: any) => {
         let checked = e.target.checked;
         let value = e.target.value;
-        let {methodSelected} = this.state;
-        let hyperPartsConfig: number[] = this.state.isHyperPartRangeSelected;
+        let { methodSelected } = this.state;
+        let hyperPartsConfig: number[] = this.state.hyperPartSelectedRange;
 
         if (methodSelected[value]) {
             if (checked == false) {
@@ -195,11 +195,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodSelected[value].checked = false;
                 methodSelected[value].indeterminate = false;
                 methodSelected[value].disabled = false;
-                let hpid = this.fetchHpId(value);
+                let hpid = this.fetchHyperPartsIds(value);
                 hyperPartsConfig = hyperPartsConfig.filter((d: number) => hpid.indexOf(d) < 0);
 
                 this.setState({
-                    isHyperPartRangeSelected: hyperPartsConfig,
+                    hyperPartSelectedRange: hyperPartsConfig,
                     methodSelected: methodSelected,
                     configsMethod: configsMethod
 
@@ -211,17 +211,15 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodSelected[value].checked = true;
                 methodSelected[value].indeterminate = false;
                 methodSelected[value].disabled = false;
-                let hpid = this.fetchHpId(value);
+                let hpid = this.fetchHyperPartsIds(value);
                 hyperPartsConfig = Array.from(new Set(hyperPartsConfig.concat(hpid)));
                 this.setState({
-                    isHyperPartRangeSelected: hyperPartsConfig,
+                    hyperPartSelectedRange: hyperPartsConfig,
                     methodSelected: methodSelected,
                     configsMethod: configsMethod
-
                 });
-
-
             }
+
             let action = "selected";
             if (checked == false) {
                 action = "unselected";
@@ -239,99 +237,81 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         }
     }
 
-    onHyperpartitionCheckBoxChange = (id: number) => {
-        let checked: boolean = !(this.state.isHyperPartRangeSelected.indexOf(id) > -1);
-        let value = id;
-        if (checked == false) {
-            // un selected
-            let hyperPartsConfig: number[] = this.state.isHyperPartRangeSelected;
-            let index = hyperPartsConfig.indexOf(value);
-            if (index > -1) {
-                hyperPartsConfig.splice(index, 1);
-                let hp: any = this.props.hyperpartitions.filter((d: any) => d.id == value);
-                let method = hp[0].method;
-                let hpid = this.fetchHpId(method);
-                let judgeSet = hpid.filter((d: any) => hyperPartsConfig.indexOf(d) > -1);
-                let methodSelected = this.state.methodSelected;
-                let configsMethod: string[] = this.state.configsMethod;
+    onHyperPartCheckBoxChange = (partId: number) => {
+        let isChecked: boolean = !(this.state.hyperPartSelectedRange.indexOf(partId) > -1);
+        let configsHyperpartitions: number[] = this.state.hyperPartSelectedRange;
+        let hyperPart: any = this.props.hyperpartitions.filter((d: any) => d.id == partId);
+        let method = hyperPart[0].method;
+        let hyperPartId = this.fetchHyperPartsIds(method);
+        let methodSelected = this.state.methodSelected;
+        let configsMethod: string[] = this.state.configsMethod;
 
-                if (judgeSet.length > 0) {
-                    // Fetch method intersect hpid
-                    // method unselected
-                    methodSelected[method].checked = false;
-                    methodSelected[method].indeterminate = true;
-                } else {
-                    methodSelected[method].checked = false;
-                    methodSelected[method].indeterminate = false;
-                    let index = configsMethod.indexOf(method);
-                    if (index > -1) {
-                        configsMethod.splice(index, 1);
-                    }
-                }
-                this.setState({
-                    isHyperPartRangeSelected: hyperPartsConfig,
-                    methodSelected: methodSelected,
-                    configsMethod: configsMethod
+        const action = isChecked ? "selected" : "unselected"
+        // console.log(hp)
 
-                });
-
-            }
-        } else {
-            let hyperPartsConfig: number[] = this.state.isHyperPartRangeSelected;
-            hyperPartsConfig.push(value);
-            let hp: any = this.props.hyperpartitions.filter((d: any) => d.id == value);
-            let method = hp[0].method;
-            let hpid = this.fetchHpId(method);
-            let judgeSet = Array.from(new Set(hyperPartsConfig.concat(hpid)));
-            let methodSelected = this.state.methodSelected;
-            let configsMethod: string[] = this.state.configsMethod;
+        if (isChecked) {
+            configsHyperpartitions.push(partId);
+            let judgeSet = Array.from(new Set(configsHyperpartitions.concat(hyperPartId)));
             configsMethod = Array.from(new Set(configsMethod.concat([method])));
 
-            if (judgeSet.length == hyperPartsConfig.length) {
-                //selected
+            if (judgeSet.length == configsHyperpartitions.length) {
                 methodSelected[method].checked = true;
                 methodSelected[method].indeterminate = false;
             } else {
                 methodSelected[method].checked = false;
                 methodSelected[method].indeterminate = true;
             }
+        } else {
+            let index = configsHyperpartitions.indexOf(partId);
+            if (index > -1) {
+                configsHyperpartitions.splice(index, 1);
+                let judgeSet = hyperPartId.filter((d: any) => configsHyperpartitions.indexOf(d) > -1);
 
-            this.setState({
-                isHyperPartRangeSelected: hyperPartsConfig,
-                methodSelected: methodSelected,
-                configsMethod: configsMethod
-            });
-
-
+                if (judgeSet.length > 0) {
+                    methodSelected[method].isChecked = false;
+                    methodSelected[method].indeterminate = true;
+                } else {
+                    methodSelected[method].isChecked = false;
+                    methodSelected[method].indeterminate = false;
+                    let index = configsMethod.indexOf(method);
+                    if (index > -1) {
+                        configsMethod.splice(index, 1);
+                    }
+                }
+            }
         }
-        let action = "selected";
-        if (checked == false) {
-            action = "unselected";
-        }
+
+        this.setState({
+            hyperPartSelectedRange: configsHyperpartitions,
+            methodSelected,
+            configsMethod
+        });
+
         let eventlog: IClickEvent = {
             type: "hyperpartitioncheckbox",
             description: {
-                action: action,
-                hpid: value
+                action,
+                hyperPartId: partId
             },
             time: new Date().toString()
         }
+
         this.props.postClickEvent(eventlog);
         this.updateCurrentDataRun();
     }
 
     onBrushSelected = (methodname: string, hpaName: string, hpatype: string, range: number[]) => {
-        let { isHyperParamRangeSelected } = this.state;
+        let { hyperParamSelectedRange } = this.state;
         let update: boolean = false;
         if (hpatype == "int") {
             range[0] = Math.floor(range[0]);
             range[1] = Math.ceil(range[1]);
         }
-        if (!isHyperParamRangeSelected[methodname]) {
-            isHyperParamRangeSelected[methodname] = {};
+        if (!hyperParamSelectedRange[methodname]) {
+            hyperParamSelectedRange[methodname] = {};
         }
-        if (isHyperParamRangeSelected[methodname][hpaName] && isHyperParamRangeSelected[methodname][hpaName]["range"]) {
-            if (isHyperParamRangeSelected[methodname][hpaName]["range"][0] == range[0] && isHyperParamRangeSelected[methodname][hpaName]["range"][1] == range[1]) {
+        if (hyperParamSelectedRange[methodname][hpaName] && hyperParamSelectedRange[methodname][hpaName]["range"]) {
+            if (hyperParamSelectedRange[methodname][hpaName]["range"][0] == range[0] && hyperParamSelectedRange[methodname][hpaName]["range"][1] == range[1]) {
                 // nothing
             } else {
                 update = true;
@@ -343,9 +323,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             }
         }
         if (update) {
-            isHyperParamRangeSelected[methodname][hpaName] = { "type": hpatype, "range": range };
+            hyperParamSelectedRange[methodname][hpaName] = { "type": hpatype, "range": range };
             this.setState({
-                isHyperParamRangeSelected: isHyperParamRangeSelected
+                hyperParamSelectedRange: hyperParamSelectedRange
             });
             let action = "updated";
 
@@ -372,13 +352,13 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             let methodhistogram: any = {};
             let methodSelected: any = {};
             let mode = 1;
-            let isHyperPartRangeSelected: number[] = [];
+            let hyperPartSelectedRange: number[] = [];
             if (mode == 0) {
-                isHyperPartRangeSelected = hyperpartitions.map((d: any) => {
+                hyperPartSelectedRange = hyperpartitions.map((d: any) => {
                     return d.id;
                 });
             } else if (mode == 1) {
-                isHyperPartRangeSelected = hyperpartitions.filter((d: any) => d.status != "errored").map((d: any) => {
+                hyperPartSelectedRange = hyperpartitions.filter((d: any) => d.status != "errored").map((d: any) => {
                     return d.id;
                 });
             }
@@ -425,7 +405,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             let classifiers = nextProps.classifiers.sort((a, b) => b.cv_metric - a.cv_metric) // best performance in the front;
             this.setState({
                 methodSelected: methodSelected,
-                isHyperPartRangeSelected: isHyperPartRangeSelected,
+                hyperPartSelectedRange: hyperPartSelectedRange,
                 selectedMethod: selectedMethod,
                 classifiers
             });
@@ -602,7 +582,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let { svgHeight, headerHeight, svgWidth, textLeft, hyperPartTabLeft } = this.state.methodCoords;
         const { displaymode, selectedMethod } = this.state;
         let hpheight = svgHeight / 2;
-        let width2 = svgWidth;
 
 
         let methodHeight = this.getMethodHeight();
@@ -616,11 +595,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
         return (
             <g>
-                <g transform={`translate(${0}, ${methodHeight + headerHeight})`} width={width2} height={hpheight} onClick={this.onMethodButtonClick}>
+                <g transform={`translate(${0}, ${methodHeight + headerHeight})`} width={svgWidth} height={hpheight} onClick={this.onMethodButtonClick}>
                     {this.generateRect({
                         x: 10,
                         y: -9,
-                        width: width2 - 68,
+                        width: svgWidth - 68,
                         height: 28
                     }, 0, this.onMethodButtonClick)}
                     <text
@@ -648,11 +627,9 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         const {
             headerHeight,
             svgWidth,
-            //hpheight,
             textLeft,
             hyperPartTabLeft
         } = this.state.methodCoords
-        const width2 = svgWidth;
         const methodHeight = this.getMethodHeight();
         const hpheight = this.getHyperPartitionsHeight()
 
@@ -664,15 +641,15 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
         return (<g><defs>
             <clipPath id="mask_hyperpartitions">
-                <rect x={0} y={30} width={width2} height={hpheight - 30} />
+                <rect x={0} y={30} width={svgWidth} height={hpheight - 30} />
             </clipPath>
         </defs>
-            <g transform={`translate(${0}, ${headerHeight + methodHeight})`} width={width2} height={hpheight}>
+            <g transform={`translate(${0}, ${headerHeight + methodHeight})`} width={svgWidth} height={hpheight}>
                 <g onClick={this.onMethodButtonClick}>
                     {this.generateRect({
                         x: 10,
                         y: -9,
-                        width: width2 - 68,
+                        width: svgWidth - 68,
                         height: 28
                     }, 1, this.onMethodButtonClick)}
                     <text
@@ -696,15 +673,14 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                         selectedMethod={selectedMethod}
                         classifiers={classifiers}
                         compareK={compareK}
-                        hyperpartitionsSelected={this.state.isHyperPartRangeSelected}
-                        width={width2}
+                        hyperpartitionsSelected={this.state.hyperPartSelectedRange}
+                        width={svgWidth}
                         height={hpheight}
-                        onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
+                        onHpsCheckBoxChange={this.onHyperPartCheckBoxChange}
                         onMouseOverClassifier={this.onMouseOverClassifier}
                         mouseOverClassifier={this.state.mouseOverClassifier}
                     />
                 </g>
-
             </g>
         </g>)
     }
@@ -712,18 +688,16 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     generateHyperparameterText() {
         const { headerHeight, svgWidth, textLeft, hyperParamTabLeft } = this.state.methodCoords;
         const { selectedMethod } = this.state;
-        const width2 = svgWidth;
-        const width3 = svgWidth;
         const methodHeight = this.getMethodHeight();
         const hpheight = this.getHyperPartitionsHeight();
 
         return (
             <g>
-                <g transform={`translate(${0}, ${methodHeight + headerHeight + hpheight})`} width={width2} height={hpheight} onClick={this.onHyperpartitionButtonClick}>
+                <g transform={`translate(${0}, ${methodHeight + headerHeight + hpheight})`} width={svgWidth} height={hpheight} onClick={this.onHyperpartitionButtonClick}>
                     {this.generateRect({
                         x: 10,
                         y: -9,
-                        width: width3 - 68,
+                        width: svgWidth - 68,
                         height: 28
                     }, 0, this.onHyperpartitionButtonClick)}
                     <text
@@ -749,13 +723,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         const { selectedMethod, classifiers } = this.state;
         const { compareK } = this.props;
 
-        const width3 = svgWidth;
         const hpheight = this.getHyperPartitionsHeight();
         return (
             <g>
                 <defs>
                     <clipPath id="mask_hyperparameters">
-                        <rect x={0} y={-10} width={width3 + 200} height={hyperParamHeight + 100} />
+                        <rect x={0} y={-10} width={svgWidth + 200} height={hyperParamHeight + 100} />
                     </clipPath>
                 </defs>
                 <g transform={`translate(${0}, ${headerHeight + methodHeight + hpheight + 35})`} clipPath={"url(#mask_hyperparameters)"}>
@@ -763,7 +736,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                         {this.generateRect({
                             x: 10,
                             y: -9,
-                            width: width3 - 68,
+                            width: svgWidth - 68,
                             height: 28
                         }, 1, this.onHyperpartitionButtonClick)}
                         <text
@@ -786,11 +759,11 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                         classifiers={classifiers}
                         selectedMethod={selectedMethod}
                         compareK={compareK}
-                        alreadySelectedRange={this.state.isHyperParamRangeSelected[selectedMethod] ? this.state.isHyperParamRangeSelected[selectedMethod] : {}}
+                        alreadySelectedRange={this.state.hyperParamSelectedRange[selectedMethod] ? this.state.hyperParamSelectedRange[selectedMethod] : {}}
                         onSelectedChange={this.onBrushSelected}
                         mouseOverClassifier={this.state.mouseOverClassifier}
                         height={hyperParamHeight}
-                        width={width3}
+                        width={svgWidth}
                     />
                 </g>
             </g>
