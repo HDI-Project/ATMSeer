@@ -67,8 +67,14 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodHeight: window.innerHeight * 0.74,
                 hyheight: window.innerHeight * 0.74 /3
             }
-
         }
+        this.generateRect = this.generateRect.bind(this);
+        this.onMethodButtonClick = this.onMethodButtonClick.bind(this);
+        this.generateHyperpartition = this.generateHyperpartition.bind(this);
+        this.generateHyperpartitionText = this.generateHyperpartitionText.bind(this);
+        this.generateHyperparameter = this.generateHyperparameter.bind(this);
+        this.generateHyperparameterText = this.generateHyperparameterText.bind(this);
+        this.updateCurrentDataRun = this.updateCurrentDataRun.bind(this);
     }
 
     onSelectMethod(methodName: string) {
@@ -86,7 +92,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         if (displaymode == 0) {
             displaymode = 1;
         }
-        this.setState({ selectedMethod: methodName, displaymode: displaymode })
+        this.setState({
+            selectedMethod: methodName,
+            displaymode: displaymode
+        })
     }
 
     componentDidMount() {
@@ -142,8 +151,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                         submitconfigs.hyperpartitions = this.state.hyperpartitionsAlreadySelected;
                     }
                     let promise: Promise<ICommonResponse> = updateDatarunConfigs(datarunID, submitconfigs);
-                    console.log("update data run in methods view");
-                    console.log(configs);
                     promise.then(status => {
                         if (status.success == true) {
                             message.success("Update Configs Successfully.");
@@ -152,7 +159,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                         }
                         this.setState({ loading: false });
                     }).catch(error => {
-                        console.log(error);
                         message.error("Update Configs Failed.");
                         this.setState({ loading: false });
 
@@ -336,9 +342,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             }
         }
         if (update) {
-
             hyperparametersRangeAlreadySelected[methodname][hpaName] = { "type": hpatype, "range": range };
-            console.log(hyperparametersRangeAlreadySelected);
             this.setState({
                 hyperparametersRangeAlreadySelected: hyperparametersRangeAlreadySelected
             });
@@ -362,6 +366,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     }
 
     componentWillReceiveProps(nextProps: IProps) {
+
         if (this.state.loading == false) {
             let { hyperpartitions } = nextProps;
             let methodhistogram: any = {};
@@ -417,10 +422,12 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             });
 
             let selectedMethod = this.state.selectedMethod;
+            let classifiers = nextProps.classifiers.sort((a, b) => b.cv_metric - a.cv_metric) // best performance in the front;
             this.setState({
                 methodSelected: methodSelected,
                 hyperpartitionsAlreadySelected: hyperpartitionsAlreadySelected,
-                selectedMethod: selectedMethod
+                selectedMethod: selectedMethod,
+                classifiers
             });
 
         }
@@ -478,7 +485,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
     onHyperpartitionButtonClick = () => {
         let { displaymode } = this.state;
-        console.log('bum')
         if (displaymode == 1) {
             let eventlog: IClickEvent = {
                 type: "hyperparametersView",
@@ -573,7 +579,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 style: { cursor: "pointer" }
             },
 
-            foreigObj: {
+            foreignObj: {
                 x: box.x + 10,
                 y: box.y + 3,
                 width: 35,
@@ -586,7 +592,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         return mode === 0 || mode === 1 ?
             <g>
                 <rect {...svgProps.rect} />
-                <foreignObject {...svgProps.foreigObj}>
+                <foreignObject {...svgProps.foreignObj}>
                     <Icon type={iconDir} />
                 </foreignObject>
             </g> : <g />
@@ -635,9 +641,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     }
 
     generateHyperpartition() {
+
         let buttonMode = 0;
         const { displaymode, selectedMethod, classifiers } = this.state;
-        const { hyperpartitions, datarunID, compareK } = this.props;
+        const { hyperpartitions, datarunID, compareK} = this.props;
         const {
             headerHeight,
             svgWidth,
@@ -654,8 +661,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         }
 
         buttonMode;
-
-        console.log(hpheight)
 
         return (<g><defs>
             <clipPath id="mask_hyperpartitions">
@@ -709,17 +714,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         const { selectedMethod } = this.state;
         const width2 = svgWidth;
         const width3 = svgWidth;
-
         const methodHeight = this.getMethodHeight();
-
-        // if (displaymode == 0) {
-        //     methodHeight = svgHeight;
-        // } else if (displaymode == 1) {
-        //     methodHeight = svgHeight / 2;
-        // } else if (displaymode == 2) {
-        //     methodHeight = svgHeight * 1.3 / 3;
-        // }
-
         const hpheight = this.getHyperPartitionsHeight();
 
         return (
@@ -756,7 +751,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
 
         const width3 = svgWidth;
         const hpheight = this.getHyperPartitionsHeight();
-        // const hpheight = 400;
         return <g><defs>
             <clipPath id="mask_hyperparameters">
                 <rect x={0} y={-10} width={width3 + 200} height={hyheight + 100} />
@@ -794,7 +788,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     height={hyheight}
                     width={width3}
                 />
-
             </g></g>
     }
 
@@ -802,23 +795,22 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let {
             datarun,
             hyperpartitions,
-            compareK } = this.props;
+            compareK,
+        } = this.props;
         const {
             headerHeight,
-            // svgHeight,
             svgWidth,
             textleft,
         } = this.state.methodCoords;
 
         const {classifiers } = this.state;
+
         let {displaymode} = this.state
         let usedMethods: string[] = Object.keys(datarun);
         let unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
 
         let width1 = svgWidth;
         let methodHeight = this.getMethodHeight();
-        // let methodHeight = this.getMethodHeight();
-
 
         return (
             <div className="svgWrapper" style={{ height: `${this.props.height}%` }}>
