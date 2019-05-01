@@ -2,105 +2,130 @@ import * as React from "react";
 import Methods from './Methods';
 import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
-import { IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
+import {
+    IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
     getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
-     updateDatarunConfigs, IClickEvent,IRecommendationResult} from 'service/dataService';
+    updateDatarunConfigs, IClickEvent, IRecommendationResult
+} from 'service/dataService';
 import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
-import { message,Icon} from 'antd';
+import { message, Icon } from 'antd';
 import { getColor } from 'helper';
+import GenerateSvg from '../../Utils/GenerateSvg';
+import './ThreeLevel.css'
+
 export interface IProps {
     height: number,
     datarun: IDatarun,
     datasetID: number | null,
     datarunID: number | null,
     setDatarunID: (id: number) => void,
-    hyperpartitions : IHyperpartitionInfo[],
+    hyperpartitions: IHyperpartitionInfo[],
     classifiers: IClassifierInfo[],
     compareK: number,
-    recommendationResult:IRecommendationResult,
-    postClickEvent:(e:IClickEvent)=>void
+    recommendationResult: IRecommendationResult,
+    postClickEvent: (e: IClickEvent) => void
 }
 
 export interface IState {
-    selectedMethod:string,
+    selectedMethod: string,
     configsBudget: number,
-    configsMethod : string[],
+    configsMethod: string[],
     loading: boolean,
-    methodSelected:any,
-    hyperparametersRangeAlreadySelected:any,
-    hyperpartitionsAlreadySelected:number[],
-    mouseOverClassifier:number,
-    displaymode:number
+    methodSelected: any,
+    hyperparametersRangeAlreadySelected: any,
+    hyperpartitionsAlreadySelected: number[],
+    mouseOverClassifier: number,
+    displaymode: number,
+    methodCoords: any, 
+    classifiers: any
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
     index = 0
-    constructor(props: IProps){
+    constructor(props: IProps) {
         super(props)
         this.onSelectMethod = this.onSelectMethod.bind(this)
-        this.state={
+        this.state = {
             selectedMethod: '',
             configsBudget: 100,
             configsMethod: [],
             loading: false,
-            methodSelected:{},
-            hyperparametersRangeAlreadySelected:{},
-            hyperpartitionsAlreadySelected:[],
-            mouseOverClassifier:-1,
-            displaymode:0
+            methodSelected: {},
+            hyperparametersRangeAlreadySelected: {},
+            hyperpartitionsAlreadySelected: [],
+            mouseOverClassifier: -1,
+            displaymode: 0,
+            classifiers: [],
+            methodCoords: {
+                svgHeight: window.innerHeight * 0.74,
+                svgWidth: window.innerWidth * 5 / 6,
+                methodHeight: window.innerWidth * 5 / 6,
+                hyperPartHeight: window.innerHeight / 2,
+                hyperParamWidth: window.innerWidth * 5 / 6,
+                hyperParamHeight: window.innerHeight * 0.74 / 2,
+                hyperPartWidth: window.innerWidth * 5 / 6,
+                headerHeight: 10,
+                textLeft: 40,
+                hpTabLeft: 145,
+                hyTabLeft: 156
+
+            }
 
         }
     }
 
-    onSelectMethod(methodName:string){
+    onSelectMethod(methodName: string) {
         console.info('select method', methodName);
-        let eventlog:IClickEvent = {
-            type:"method",
-            description:{
-                action:"selected",
-                name:methodName
+        let eventlog: IClickEvent = {
+            type: "method",
+            description: {
+                action: "selected",
+                name: methodName
             },
-            time:new Date().toString()
+            time: new Date().toString()
         }
         this.props.postClickEvent(eventlog);
         let displaymode = this.state.displaymode;
-        if(displaymode==0){
-            displaymode=1;
+        if (displaymode == 0) {
+            displaymode = 1;
         }
-        this.setState({selectedMethod: methodName, displaymode:displaymode})
+        this.setState({ selectedMethod: methodName, displaymode: displaymode })
     }
 
-    componentDidMount(){
-        this.getCurrentConfigs()
+    componentDidMount() {
+        this.getCurrentConfigs();
+        this.setMethodHeight();
+        this.getClassifiers();
     }
 
-    onBudgetChange = (budget : any) =>{
-
-        this.setState({configsBudget:budget});
+    onBudgetChange = (budget: any) => {
+        this.setState({ configsBudget: budget });
     }
-    getCurrentConfigs = () =>{
-        if(this.props.datarunID!=null){
+
+    getCurrentConfigs = () => {
+        if (this.props.datarunID != null) {
             let promise: Promise<IConfigsInfo>;
-            let datarunID : number= this.props.datarunID?this.props.datarunID:0;
+            let datarunID: number = this.props.datarunID ? this.props.datarunID : 0;
             promise = getDatarunConfigs(datarunID);
-            promise.then(configs=>{
+            promise.then(configs => {
                 this.setState({
-                    configsMethod:configs.methods,
-                    configsBudget:configs.budget
+                    configsMethod: configs.methods,
+                    configsBudget: configs.budget
                 })
             })
         }
     }
+
     updateCurrentDataRun = () => {
         // get configs from server ;
         // submit configs in this view
         // switch to the new datarun.
         let methods = this.state.configsMethod;
         //let budget = this.state.configsBudget;
-        if(this.props.datarunID!=null){
+        if (this.props.datarunID != null) {
             let promise: Promise<IConfigsInfo>;
-            let datarunID : number= this.props.datarunID?this.props.datarunID:0;
+            let datarunID: number = this.props.datarunID ? this.props.datarunID : 0;
             promise = getDatarunConfigs(datarunID);
             promise
                 .then(configs => {
@@ -108,710 +133,783 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     //configs.budget = budget;
                     this.setState({ loading: true });
 
-                    let submitconfigs : IUpdateDatarunConfig = {};
+                    let submitconfigs: IUpdateDatarunConfig = {};
                     submitconfigs.configs = configs;
                     submitconfigs.method_configs = this.state.hyperparametersRangeAlreadySelected;
-                    if(this.state.hyperpartitionsAlreadySelected.length>0){
+                    if (this.state.hyperpartitionsAlreadySelected.length > 0) {
                         submitconfigs.hyperpartitions = this.state.hyperpartitionsAlreadySelected;
                     }
-                    let promise:Promise<ICommonResponse> = updateDatarunConfigs(datarunID,submitconfigs);
+                    let promise: Promise<ICommonResponse> = updateDatarunConfigs(datarunID, submitconfigs);
                     //const promise = this.props.onSubmit(this.state.configs);
                     console.log("update data run in methods view");
                     console.log(configs);
                     promise.then(status => {
-                        if(status.success == true){
+                        if (status.success == true) {
                             message.success("Update Configs Successfully.");
-                        }else{
+                        } else {
                             message.error("Update Configs Failed.");
                         }
                         this.setState({ loading: false });
-                    }).catch(error=>{
+                    }).catch(error => {
                         console.log(error);
                         message.error("Update Configs Failed.");
-                        this.setState({ loading: false});
+                        this.setState({ loading: false });
 
                     });
                 })
                 .catch(error => {
                     console.log(error);
                 });
-                }
-       }
-
-
-       
-    fetchHpId = (method:string)=>{
-        let hp = this.props.hyperpartitions;
-        return hp.filter((d:any)=>d.method==method).map((d:any)=>d.id);
+        }
     }
-    onMethodsCheckBoxChange=(e : any)=>{
+
+    fetchHpId = (method: string) => {
+        let hp = this.props.hyperpartitions;
+        return hp.filter((d: any) => d.method == method).map((d: any) => d.id);
+    }
+
+    onMethodsCheckBoxChange = (e: any) => {
         let checked = e.target.checked;
         let value = e.target.value;
         let methodSelected = this.state.methodSelected;
-        let configsHyperpartitions :number[] = this.state.hyperpartitionsAlreadySelected;
+        let configsHyperpartitions: number[] = this.state.hyperpartitionsAlreadySelected;
         console.log("onMethodsCheckBoxChange")
-        if(methodSelected[value]){
-            if(checked==false){
+        if (methodSelected[value]) {
+            if (checked == false) {
                 //un selected
-                let configsMethod : string[] = this.state.configsMethod;
+                let configsMethod: string[] = this.state.configsMethod;
                 let index = configsMethod.indexOf(value);
-                if(index>-1){
+                if (index > -1) {
                     configsMethod.splice(index, 1);
                 }
 
 
-                methodSelected[value].checked=false;
-                methodSelected[value].indeterminate=false;
-                methodSelected[value].disabled=false;
+                methodSelected[value].checked = false;
+                methodSelected[value].indeterminate = false;
+                methodSelected[value].disabled = false;
                 let hpid = this.fetchHpId(value);
-                configsHyperpartitions = configsHyperpartitions.filter((d:number)=>hpid.indexOf(d)<0);
-                
+                configsHyperpartitions = configsHyperpartitions.filter((d: number) => hpid.indexOf(d) < 0);
+
                 this.setState({
-                    hyperpartitionsAlreadySelected:configsHyperpartitions,
-                    methodSelected:methodSelected,
-                    configsMethod:configsMethod
+                    hyperpartitionsAlreadySelected: configsHyperpartitions,
+                    methodSelected: methodSelected,
+                    configsMethod: configsMethod
 
                 });
 
-            }else{
-                let configsMethod : string[] = this.state.configsMethod;
+            } else {
+                let configsMethod: string[] = this.state.configsMethod;
                 configsMethod.push(value);
-                methodSelected[value].checked=true;
-                methodSelected[value].indeterminate=false;
-                methodSelected[value].disabled=false;
+                methodSelected[value].checked = true;
+                methodSelected[value].indeterminate = false;
+                methodSelected[value].disabled = false;
                 let hpid = this.fetchHpId(value);
                 configsHyperpartitions = Array.from(new Set(configsHyperpartitions.concat(hpid)));
                 this.setState({
-                    hyperpartitionsAlreadySelected:configsHyperpartitions,
-                    methodSelected:methodSelected,
-                    configsMethod:configsMethod
+                    hyperpartitionsAlreadySelected: configsHyperpartitions,
+                    methodSelected: methodSelected,
+                    configsMethod: configsMethod
 
                 });
 
 
             }
-            let action="selected";
-            if(checked==false){
-                action="unselected";
+            let action = "selected";
+            if (checked == false) {
+                action = "unselected";
             }
-            let eventlog:IClickEvent = {
-                type:"methodcheckbox",
-                description:{
-                    action:action,
-                    methodname:value
+            let eventlog: IClickEvent = {
+                type: "methodcheckbox",
+                description: {
+                    action: action,
+                    methodname: value
                 },
-                time:new Date().toString()
+                time: new Date().toString()
             }
             this.props.postClickEvent(eventlog);
             this.updateCurrentDataRun();
         }
     }
-    onHyperpartitionCheckBoxChange=(id : number)=>{
-        let checked : boolean =!( this.state.hyperpartitionsAlreadySelected.indexOf(id)>-1);
+
+    onHyperpartitionCheckBoxChange = (id: number) => {
+        let checked: boolean = !(this.state.hyperpartitionsAlreadySelected.indexOf(id) > -1);
         let value = id;
-        if(checked==false){
+        if (checked == false) {
             // un selected
-            let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
+            let configsHyperpartitions: number[] = this.state.hyperpartitionsAlreadySelected;
             let index = configsHyperpartitions.indexOf(value);
-            if(index>-1){
+            if (index > -1) {
                 configsHyperpartitions.splice(index, 1);
-                let hp :any= this.props.hyperpartitions.filter((d:any)=>d.id==value);
+                let hp: any = this.props.hyperpartitions.filter((d: any) => d.id == value);
                 let method = hp[0].method;
                 let hpid = this.fetchHpId(method);
-                let judgeSet = hpid.filter((d:any)=>configsHyperpartitions.indexOf(d)>-1);
+                let judgeSet = hpid.filter((d: any) => configsHyperpartitions.indexOf(d) > -1);
                 let methodSelected = this.state.methodSelected;
-                let configsMethod : string[] = this.state.configsMethod;
+                let configsMethod: string[] = this.state.configsMethod;
 
-                if(judgeSet.length>0){
+                if (judgeSet.length > 0) {
                     // Fetch method intersect hpid
                     // method unselected
-                    methodSelected[method].checked=false;
-                    methodSelected[method].indeterminate=true;
-                }else{
-                    methodSelected[method].checked=false;
-                    methodSelected[method].indeterminate=false;
+                    methodSelected[method].checked = false;
+                    methodSelected[method].indeterminate = true;
+                } else {
+                    methodSelected[method].checked = false;
+                    methodSelected[method].indeterminate = false;
                     let index = configsMethod.indexOf(method);
-                    if(index>-1){
+                    if (index > -1) {
                         configsMethod.splice(index, 1);
                     }
                 }
                 this.setState({
-                    hyperpartitionsAlreadySelected:configsHyperpartitions,
-                    methodSelected:methodSelected,
-                    configsMethod:configsMethod
+                    hyperpartitionsAlreadySelected: configsHyperpartitions,
+                    methodSelected: methodSelected,
+                    configsMethod: configsMethod
 
                 });
 
             }
-        }else{
-            let configsHyperpartitions : number[] = this.state.hyperpartitionsAlreadySelected;
+        } else {
+            let configsHyperpartitions: number[] = this.state.hyperpartitionsAlreadySelected;
             configsHyperpartitions.push(value);
-            let hp :any= this.props.hyperpartitions.filter((d:any)=>d.id==value);
+            let hp: any = this.props.hyperpartitions.filter((d: any) => d.id == value);
             let method = hp[0].method;
             let hpid = this.fetchHpId(method);
             let judgeSet = Array.from(new Set(configsHyperpartitions.concat(hpid)));
             let methodSelected = this.state.methodSelected;
-            let configsMethod : string[] = this.state.configsMethod;
+            let configsMethod: string[] = this.state.configsMethod;
             configsMethod = Array.from(new Set(configsMethod.concat([method])));
 
-            if(judgeSet.length==configsHyperpartitions.length){
+            if (judgeSet.length == configsHyperpartitions.length) {
                 //selected
-                methodSelected[method].checked=true;
-                methodSelected[method].indeterminate=false;
-            }else{
-                methodSelected[method].checked=false;
-                methodSelected[method].indeterminate=true;
+                methodSelected[method].checked = true;
+                methodSelected[method].indeterminate = false;
+            } else {
+                methodSelected[method].checked = false;
+                methodSelected[method].indeterminate = true;
             }
 
             this.setState({
-                hyperpartitionsAlreadySelected:configsHyperpartitions,
-                methodSelected:methodSelected,
-                configsMethod:configsMethod
+                hyperpartitionsAlreadySelected: configsHyperpartitions,
+                methodSelected: methodSelected,
+                configsMethod: configsMethod
             });
 
 
         }
-        let action="selected";
-        if(checked==false){
-            action="unselected";
+        let action = "selected";
+        if (checked == false) {
+            action = "unselected";
         }
-        let eventlog:IClickEvent = {
-            type:"hyperpartitioncheckbox",
-            description:{
-                action:action,
-                hpid:value
+        let eventlog: IClickEvent = {
+            type: "hyperpartitioncheckbox",
+            description: {
+                action: action,
+                hpid: value
             },
-            time:new Date().toString()
+            time: new Date().toString()
         }
         this.props.postClickEvent(eventlog);
         this.updateCurrentDataRun();
     }
-    onBrushSelected = (methodname:string, hpaName: string,hpatype:string,range:number[])=>{
-        let {hyperparametersRangeAlreadySelected} = this.state;
-        let update : boolean = false;
-        if(hpatype=="int"){
-            range[0]=Math.floor(range[0]);
-            range[1]=Math.ceil(range[1]);
+
+    onBrushSelected = (methodname: string, hpaName: string, hpatype: string, range: number[]) => {
+        let { hyperparametersRangeAlreadySelected } = this.state;
+        let update: boolean = false;
+        if (hpatype == "int") {
+            range[0] = Math.floor(range[0]);
+            range[1] = Math.ceil(range[1]);
         }
-        if(!hyperparametersRangeAlreadySelected[methodname]){
-           hyperparametersRangeAlreadySelected[methodname]={};
+        if (!hyperparametersRangeAlreadySelected[methodname]) {
+            hyperparametersRangeAlreadySelected[methodname] = {};
         }
-        if(hyperparametersRangeAlreadySelected[methodname][hpaName]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"]){
-           if(hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][0]==range[0]&&hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][1]==range[1]){
-               // nothing
-           }else{
-               update = true;
-           }
-        }else{
-            if(range.length>0){
+        if (hyperparametersRangeAlreadySelected[methodname][hpaName] && hyperparametersRangeAlreadySelected[methodname][hpaName]["range"]) {
+            if (hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][0] == range[0] && hyperparametersRangeAlreadySelected[methodname][hpaName]["range"][1] == range[1]) {
+                // nothing
+            } else {
+                update = true;
+            }
+        } else {
+            if (range.length > 0) {
                 update = true;
 
-           }
+            }
         }
-        if(update){
-            
-           hyperparametersRangeAlreadySelected[methodname][hpaName]={"type":hpatype,"range":range};
-           console.log(hyperparametersRangeAlreadySelected);
-           this.setState({
-               hyperparametersRangeAlreadySelected : hyperparametersRangeAlreadySelected
-           });
-           let action="updated";
-           
-            let eventlog:IClickEvent = {
-                type:"hyperparametersRange",
-                description:{
-                    action:action,
-                    range:range,
-                    type:hpatype,
-                    hyname:hpaName,
-                    methodname:methodname
+        if (update) {
+
+            hyperparametersRangeAlreadySelected[methodname][hpaName] = { "type": hpatype, "range": range };
+            console.log(hyperparametersRangeAlreadySelected);
+            this.setState({
+                hyperparametersRangeAlreadySelected: hyperparametersRangeAlreadySelected
+            });
+            let action = "updated";
+
+            let eventlog: IClickEvent = {
+                type: "hyperparametersRange",
+                description: {
+                    action: action,
+                    range: range,
+                    type: hpatype,
+                    hyname: hpaName,
+                    methodname: methodname
                 },
-                time:new Date().toString()
+                time: new Date().toString()
             }
             this.props.postClickEvent(eventlog);
             this.updateCurrentDataRun();
         }
-        
-     }
-     componentWillReceiveProps(nextProps : IProps) {
-        if(this.state.loading==false){
-            let {hyperpartitions} = nextProps;
-            let methodhistogram:any ={};
-            let methodSelected:any={};
+
+    }
+
+    componentWillReceiveProps(nextProps: IProps) {
+        if (this.state.loading == false) {
+            let { hyperpartitions } = nextProps;
+            let methodhistogram: any = {};
+            let methodSelected: any = {};
             let mode = 1;
-            let hyperpartitionsAlreadySelected:number[] = [];
-            if(mode==0){
-                hyperpartitionsAlreadySelected = hyperpartitions.map((d:any)=>{
+            let hyperpartitionsAlreadySelected: number[] = [];
+
+            if (mode == 0) {
+                hyperpartitionsAlreadySelected = hyperpartitions.map((d: any) => {
                     return d.id;
                 });
-            }else if(mode==1){
-                hyperpartitionsAlreadySelected = hyperpartitions.filter((d:any)=>d.status!="errored").map((d:any)=>{
+            } else if (mode == 1) {
+                hyperpartitionsAlreadySelected = hyperpartitions.filter((d: any) => d.status != "errored").map((d: any) => {
                     return d.id;
                 });
             }
 
-            Object.keys(methodsDef).forEach((d:string)=>{
-                if(!methodhistogram[d]){
-                    methodhistogram[d]={total:0,enable:0};
+            Object.keys(methodsDef).forEach((d: string) => {
+                if (!methodhistogram[d]) {
+                    methodhistogram[d] = { total: 0, enable: 0 };
                 }
             });
-            hyperpartitions.forEach((d:any)=>{
-                if(!methodhistogram[d.method]){
-                    methodhistogram[d.method]={total:0,enable:0};
-                    console.log("unknown method : "+d.method);
+            hyperpartitions.forEach((d: any) => {
+                if (!methodhistogram[d.method]) {
+                    methodhistogram[d.method] = { total: 0, enable: 0 };
+                    console.log("unknown method : " + d.method);
                 }
-                if(!(d.status=="errored")){
+                if (!(d.status == "errored")) {
                     methodhistogram[d.method].total++;
                     methodhistogram[d.method].enable++;
-                }else{
+                } else {
                     methodhistogram[d.method].total++;
                 }
 
             });
-            Object.keys(methodhistogram).forEach((d:string)=>{
-                // 0 -> simple selection:
-                // 1 -> complex selection:
-                if(mode==0){
-                    if(methodhistogram[d].total==0){
-                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
-                    }else{
-                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
+            Object.keys(methodhistogram).forEach((d: string) => {
+                if (mode == 0) {
+                    if (methodhistogram[d].total == 0) {
+                        methodSelected[d] = { checked: false, disabled: true, indeterminate: false };
+                    } else {
+                        methodSelected[d] = { checked: true, disabled: false, indeterminate: false };
                     }
-                }else if(mode==1){
-                    if(methodhistogram[d].total==0){
-                        methodSelected[d] = {checked:false,disabled:true,indeterminate:false};
-                    }else if(methodhistogram[d].enable==0){
-                        methodSelected[d] = {checked:false,disabled:false,indeterminate:false};
-                    }else if(methodhistogram[d].total == methodhistogram[d].enable){
-                        methodSelected[d] = {checked:true,disabled:false,indeterminate:false};
-                    }else{
-                        methodSelected[d] = {checked:false,disabled:false,indeterminate:true};
+                } else if (mode == 1) {
+                    if (methodhistogram[d].total == 0) {
+                        methodSelected[d] = { checked: false, disabled: true, indeterminate: false };
+                    } else if (methodhistogram[d].enable == 0) {
+                        methodSelected[d] = { checked: false, disabled: false, indeterminate: false };
+                    } else if (methodhistogram[d].total == methodhistogram[d].enable) {
+                        methodSelected[d] = { checked: true, disabled: false, indeterminate: false };
+                    } else {
+                        methodSelected[d] = { checked: false, disabled: false, indeterminate: true };
                     }
                 }
             });
             let selectedMethod = this.state.selectedMethod;
-            //if(this.props.datarunID!=nextProps.datarunID){
-            //    selectedMethod = "";
-            //}
             this.setState({
-                methodSelected:methodSelected,
-                hyperpartitionsAlreadySelected:hyperpartitionsAlreadySelected,
-                selectedMethod:selectedMethod
+                methodSelected: methodSelected,
+                hyperpartitionsAlreadySelected: hyperpartitionsAlreadySelected,
+                selectedMethod: selectedMethod
             });
-            //this.getCurrentConfigs();
         }
     }
-    onMouseOverClassifier = (classifierid:number)=>{
-        if(this.state.mouseOverClassifier!=classifierid){
-            if(classifierid!=-1){
-                let action="mouseover";
-            
-                let eventlog:IClickEvent = {
-                    type:"classifier",
-                    description:{
-                        action:action,
-                        classifierid:classifierid
+
+    onMouseOverClassifier = (classifierid: number) => {
+        if (this.state.mouseOverClassifier != classifierid) {
+            if (classifierid != -1) {
+                let action = "mouseover";
+
+                let eventlog: IClickEvent = {
+                    type: "classifier",
+                    description: {
+                        action: action,
+                        classifierid: classifierid
                     },
-                    time:new Date().toString()
+                    time: new Date().toString()
                 }
+
                 this.props.postClickEvent(eventlog);
             }
+
             this.setState({
-                mouseOverClassifier:classifierid
+                mouseOverClassifier: classifierid
             })
         }
     }
-    onMethodButtonClick = () =>{
-        console.log("onMethodButtonClick");
-        let {displaymode} = this.state;
-        if(displaymode==0){
-            let eventlog:IClickEvent = {
-                type:"hyperpartitionsView",
-                description:{
-                    action:"more",
-                },
-                time:new Date().toString()
-            }
-            this.props.postClickEvent(eventlog);
-            this.setState({
-                displaymode:1
-            });
-        }else{
-            let eventlog:IClickEvent = {
-                type:"hyperpartitionsView",
-                description:{
-                    action:"hide",
-                },
-                time:new Date().toString()
-            }
-            this.props.postClickEvent(eventlog);
-            this.setState({
-                displaymode:0
-            });
-        }
-    }
-    onHyperpartitionButtonClick = () =>{
-        console.log("onHyperpartitionButtonClick");
-        let {displaymode} = this.state;
-        if(displaymode==1){
-            let eventlog:IClickEvent = {
-                type:"hyperparametersView",
-                description:{
-                    action:"more",
-                },
-                time:new Date().toString()
-            }
-            this.props.postClickEvent(eventlog);
-            this.setState({
-                displaymode:2
-            });
-        }else{
-            let eventlog:IClickEvent = {
-                type:"hyperparametersView",
-                description:{
-                    action:"hide",
-                },
-                time:new Date().toString()
-            }
-            this.props.postClickEvent(eventlog);
-            this.setState({
-                displaymode:1
-            });
-        }
-    }
-    render(){
-        let {datarun, hyperpartitions, classifiers, datarunID, compareK} = this.props
-        classifiers = classifiers.sort(
-            (a,b)=>b.cv_metric-a.cv_metric
-        ) // best performance in the front
-        let {selectedMethod,displaymode} = this.state
-        let usedMethods: string[] = Object.keys(datarun);
-        let unusedMethods = Object.keys(methodsDef)
-            .filter(
-                (name: string) => usedMethods.indexOf(name) < 0
-            )
-        let svgWidth = window.innerWidth*5/6,
-        width1 = svgWidth,
-        //gapbetween = 70,
-        width2 = svgWidth,
-       // width3 = svgWidth*1/7,
-       width3 = svgWidth,
-        headerHeight = 10
-        let svgHeight = window.innerHeight * 0.74;
-        let method_height = svgHeight;
-        if(displaymode==0){
-            method_height = svgHeight;
-        }else if(displaymode==1){
-            method_height = svgHeight/2;
-        }else if(displaymode==2){
-            method_height = svgHeight*1.3/3;
-        }
-        let hpheight = svgHeight/2;
-        if(displaymode==0){
-            hpheight = 100;
-        }
-        if(displaymode==2){
-            hpheight = svgHeight*0.7/3;
-        }
-        let hyheight = svgHeight/3;
 
-        let textleft = 40;
-        let hptableft = 145;
-        let hytableft = 156;
-        // let generateTag = (box:any,name:string)=>{
-        //     if(name!=""){
-        //         let width = box.width;
-        //         let height = box.height;
-        //         let x = box.x;
-        //         let y = box.y;
-        //         return  <foreignObject x={x} y={y} width={width} height={height}><Tag color={getColor(name)}>{name}</Tag></foreignObject>
-        //     }else{
-        //         return <g />
-        //     }
-        // }
-        let generateTag = (box:any,name:string)=>{
-                if(name!=""){
-                    let {width, height, x, y}  = box;
-                    return  <g className="tag" transform={`translate(${x},${y})`}>
-                        <rect width={width} height={height} style={{fill:getColor(name)}} rx={5} ry={5}/>
-                        <text y={height-5} x={width/2} textAnchor="middle" style={{fill: "white"}}>{name}</text>
-                    </g>
-                }else{
-                    return <g className="tag"/>
-                }
+    onMethodButtonClick = () => {
+        let { displaymode } = this.state;
+        this.setMethodHeight();
+        if (displaymode == 0) {
+            let eventlog: IClickEvent = {
+                type: "hyperpartitionsView",
+                description: {
+                    action: "more",
+                },
+                time: new Date().toString()
             }
-        let generateRect = (box:any,mode:number,eventCallback:()=>void) => {
-            // mode == 0   show me more
-            // mode == 1   hide
-            // mode any other value  nothing
-            if(mode==0){
-                return (<g>
-                    <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
-                    stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} style={{cursor:"pointer"}}/>
-                    <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
-                    <Icon type="right" />
-                    </foreignObject>
-                    </g>
-                    )
-            }else if(mode==1){
-                return (<g>
-                <rect x={box.x} y={box.y} width={box.width} height={box.height} fill={"rgb(250,250,250)"} rx={3} ry={3}
-                stroke={"rgb(217,217,217"} strokeWidth={"1.5px"} style={{cursor:"pointer"}}/>
-                <foreignObject x={box.x+10} y={box.y+3} width={35} height={35}>
-                <Icon type="down" />
-                </foreignObject>
-                </g>)
-            }else{
-                return <g />
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode: 1
+            });
+        } else {
+            let eventlog: IClickEvent = {
+                type: "hyperpartitionsView",
+                description: {
+                    action: "hide",
+                },
+                time: new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode: 0
+            });
+        }
+    }
+
+    onHyperpartitionButtonClick = () => {
+        let { displaymode } = this.state;
+        if (displaymode == 1) {
+            let eventlog: IClickEvent = {
+                type: "hyperparametersView",
+                description: {
+                    action: "more",
+                },
+                time: new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode: 2
+            });
+        } else {
+            let eventlog: IClickEvent = {
+                type: "hyperparametersView",
+                description: {
+                    action: "hide",
+                },
+                time: new Date().toString()
+            }
+            this.props.postClickEvent(eventlog);
+            this.setState({
+                displaymode: 1
+            });
+        }
+    }
+
+    setMethodHeight() {
+        let { displaymode, methodCoords } = this.state,
+            methodHeight = methodCoords.svgHeight;
+
+        switch (displaymode) {
+            case 0: {
+                return methodHeight;
+            }
+            case 1: {
+                return methodHeight = methodCoords.svgHeight / 2;
+            }
+            case 2: {
+                return methodHeight = methodCoords.svgHeight * 1.3 / 3;
+            }
+            default: {
+                return methodHeight;
             }
         }
-       /*let generateButton = (box:any,mode:number,eventCallback:()=>void) =>{
-            // mode == 0   show me more
-            // mode == 1   hide
-            // mode any other value  nothing
-            if(mode==0){
-                 return <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
-                 
-                <Button type="default" onClick={eventCallback} size="small">
-                   <Icon type="arrow-down" /> More<Icon type="arrow-down" />
-                </Button>
-                </foreignObject>
-            }else if(mode==1){
-                return  <foreignObject x={box.x} y={box.y} width={box.width} height={box.height}> 
-                <Button type="default" onClick={eventCallback} size="small">
-                   <Icon type="arrow-up" /> Hide <Icon type="arrow-up" />
-                </Button>
-                </foreignObject>
-            }else{
-               return  <g />
+    }
+
+    setHyperPartitionsHeight() {
+        let { displaymode, methodCoords } = this.state,
+            hyperPartHeight = methodCoords.svgHeight / 2;
+
+        switch (displaymode) {
+            case 0: {
+                return hyperPartHeight = 100;
             }
-        }*/
-       /*  let methodbuttonMode = 0;
-            if(displaymode==1){
-                methodbuttonMode = 1;
-            }else if(displaymode==2){
-                methodbuttonMode = -1;
-            } */
-        let generateHyperpartitionText = () =>{
-            return (
+            case 2: {
+                return hyperPartHeight = methodCoords.svgHeight * 0.7 / 3;
+            }
+            default: {
+                return hyperPartHeight;
+            }
+        }
+    }
+
+    generateTag(box: any, name: string) {
+        let { width, height, x, y } = box;
+        const groupProps = {
+            shape: {
+                className: "tag",
+                transform: `translate(${x},${y})`
+            },
+            rect: {
+                width: width,
+                height: height,
+                style: { fill: getColor(name) },
+                rx: 5,
+                ry: 5
+            },
+            textProps: {
+                y: height - 5,
+                x: width / 2,
+                textAnchor: "middle",
+                style: { fill: "white" }
+            }
+        }
+
+        return name !== '' ?
+            <g {...groupProps.shape}>
+                <rect {...groupProps.rect} />
+                <text {...groupProps.textProps}>{name}</text>
+            </g> : <g className="tag" />
+    }
+
+    generateRect(box: any, mode: number, eventCallback: () => void) {
+        const rectProps = {
+            x: box.x,
+            y: box.y,
+            width: box.width,
+            height: box.height,
+            fill: "rgb(250,250,250)",
+            rx: 3,
+            ry: 3,
+            stroke: "rgb(217,217,217",
+            strokeWidth: "1.5px",
+            style: { cursor: "pointer" }
+        }
+
+        const foreigObjProps = {
+            x: box.x + 10,
+            y: box.y + 3,
+            width: 35,
+            height: 35
+        }
+
+        const iconDir = mode === 0 ? 'right' : 'down';
+
+        return mode === 0 || mode === 1 ?
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight})`} width={width2} height={hpheight} onClick={this.onMethodButtonClick}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width2-68,
-                height:28
-            },0,this.onMethodButtonClick)}            
-            <text
-                textAnchor="start"
-                x={textleft}
-                y={10}
-                style={{ font: "bold 16px sans-serif" , display:"inline" }}
-            >HyperPartitions of </text>
-            {generateTag({
-                x:textleft + hptableft ,
-                y:-6,
-                width:40,
-                height:20
+                <rect {...rectProps} />
+                <foreignObject {...foreigObjProps}>
+                    <Icon type={iconDir} />
+                </foreignObject>
+            </g> : <g />
+    }
 
-            },selectedMethod)}
-            </g>
-            </g>)
+    generateHyperpartitionText() {
+        const methodHeight = this.setMethodHeight();
+        const hyperPartHeight = this.setHyperPartitionsHeight();
+        const { selectedMethod } = this.state;
+        const {
+            headerHeight,
+            textLeft,
+            hpTabLeft,
+            hyperPartWidth
+        } = this.state.methodCoords;
+
+        const groupProps = {
+            transform: `translate(${0}, ${methodHeight + headerHeight})`,
+            width: hyperPartWidth,
+            height: hyperPartHeight,
+            onClick: this.onMethodButtonClick
         }
-        let generateHyperpartition = () => {
-            let buttonMode = 0;
-            if(displaymode==2){
-                buttonMode = 1;
-            }
-            buttonMode;
-            return  (<g><defs>
-            <clipPath id="mask_hyperpartitions">
-            <rect x={0} y={30} width={width2} height={hpheight-30} />
-            </clipPath>
-            </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height})`}  width={width2} height={hpheight}>
-            <g onClick={this.onMethodButtonClick}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width2-68,
-                height:28
-            },1,this.onMethodButtonClick)}
-            <text
-                textAnchor="start"
-                x={textleft}
-                y={10}
-                style={{ font: "bold 16px sans-serif" , display:"inline" }}
-            >HyperPartitions of </text>
-            {generateTag({
-                x:textleft+ hptableft,
-                y:-6,
-                width:40,
-                height:20
 
-            },selectedMethod)}
-            </g>
-            <g clipPath={"url(#mask_hyperpartitions)"}>
-                <HyperPartitions
-                hyperpartitions={hyperpartitions}
-                // datarun={datarun}
-                datarunID={datarunID}
-                selectedMethod={selectedMethod}
-                classifiers={classifiers}
-                compareK={compareK}
-                hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
-                width={width2}
-                height={hpheight}
-                onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
-                onMouseOverClassifier={this.onMouseOverClassifier}
-                mouseOverClassifier={this.state.mouseOverClassifier}
-                />
+        const textProps = {
+            textAnchor: "start",
+            x: textLeft,
+            y: 10,
+            style: {
+                font: "bold 16px sans-serif",
+                display: "inline"
+            }
+        }
+
+        return (
+            <g>
+                <g {...groupProps} >
+                    {this.generateRect({
+                        x: 10,
+                        y: -9,
+                        width: hyperPartWidth - 68,
+                        height: 28
+                    }, 0, this.onMethodButtonClick)}
+                    <text {...textProps}>HyperPartitions of</text>
+                    {this.generateTag({
+                        x: textLeft + hpTabLeft,
+                        y: -6,
+                        width: 40,
+                        height: 20
+                    }, selectedMethod)}
                 </g>
-            
             </g>
-            {/*generateButton({
-                    x:width2/2-75,
-                    y:method_height+hpheight,
-                    width:150,
-                    height:35
-                },buttonMode,this.onHyperpartitionButtonClick)*/}</g>)
+        )
+    }
+
+    getClassifiers() {
+        let { classifiers } = this.props;
+        classifiers = classifiers.sort((a, b) => b.cv_metric - a.cv_metric);
+        this.setState({
+            classifiers
+        });
+    }
+
+    generateHyperpartition() {
+        const { selectedMethod, classifiers, methodCoords } = this.state;
+        const { headerHeight, textLeft, hpTabLeft, hyperPartWidth } = methodCoords;
+        const { hyperpartitions, datarunID, compareK } = this.props;
+
+        const hyperPartHeight = this.setHyperPartitionsHeight();
+        const methodHeight = this.setMethodHeight();
+
+        const rectProps = {
+            x: 0,
+            y: 30,
+            width: hyperPartWidth,
+            height: hyperPartHeight - 30
         }
-        let generateHyperparameterText = () =>{
-            return (
+
+        const groupProps = {
+            transform: `translate(${0}, ${headerHeight + methodHeight})`,
+            width: hyperPartWidth,
+            height: hyperPartHeight
+        }
+        return (
             <g>
-            <g transform={`translate(${0}, ${method_height+headerHeight+hpheight})`} width={width2} height={hpheight} onClick={this.onHyperpartitionButtonClick}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width3-68,
-                height:28
-            },0,this.onHyperpartitionButtonClick)}
-            <text
-                textAnchor="start"
-                x={textleft}
-                y={10}
-                style={{ font: "bold 16px sans-serif" }}
-            >HyperParameters of</text>
-             {generateTag({
-                x:textleft+ hytableft,
-                y:-6,
-                width:40,
-                height:20
+                <defs>
+                    <clipPath id="mask_hyperpartitions">
+                        <rect {...rectProps} />
+                    </clipPath>
+                </defs>
+                <g {...groupProps}>
+                    <g onClick={this.onMethodButtonClick}>
+                        {this.generateRect({
+                            x: 10,
+                            y: -9,
+                            width: hyperPartWidth - 68,
+                            height: 28
+                        }, 1, this.onMethodButtonClick)}
+                        <text
+                            textAnchor="start"
+                            x={textLeft}
+                            y={10}
+                            style={{ font: "bold 16px sans-serif", display: "inline" }}
+                        >HyperPartitions of </text>
+                        {this.generateTag({
+                            x: textLeft + hpTabLeft,
+                            y: -6,
+                            width: 40,
+                            height: 20
 
-            },selectedMethod)}
+                        }, selectedMethod)}
+                    </g>
+                    <g clipPath={"url(#mask_hyperpartitions)"}>
+                        <HyperPartitions
+                            hyperpartitions={hyperpartitions}
+                            datarunID={datarunID}
+                            selectedMethod={selectedMethod}
+                            classifiers={classifiers}
+                            compareK={compareK}
+                            hyperpartitionsSelected={this.state.hyperpartitionsAlreadySelected}
+                            width={hyperPartWidth}
+                            height={hyperPartHeight}
+                            onHpsCheckBoxChange={this.onHyperpartitionCheckBoxChange}
+                            onMouseOverClassifier={this.onMouseOverClassifier}
+                            mouseOverClassifier={this.state.mouseOverClassifier}
+                        />
+                    </g>
+                </g>
             </g>
-            </g>)
+        )
+    }
+
+    generateHyperparameterText() {
+        const {
+            headerHeight,
+            hyTabLeft,
+            textLeft,
+            hyperPartWidth,
+            hyperParamWidth
+        } = this.state.methodCoords;
+
+        const { selectedMethod } = this.state;
+
+        let methodHeight = this.setMethodHeight();
+        let hyperPartHeight = this.setHyperPartitionsHeight();
+
+        const shapeProps = {
+            transform: `translate(${0}, ${methodHeight + headerHeight + hyperPartHeight})`,
+            width: hyperPartWidth,
+            height: hyperPartHeight,
+            onClick: this.onHyperpartitionButtonClick
         }
-        let generateHyperparameter = () => {
-            
-            return <g><defs>
-            <clipPath id="mask_hyperparameters">
-            <rect x={0} y={-10} width={width3+200} height={hyheight+100}/>
-            </clipPath>
-            </defs>
-            <g transform={`translate(${0}, ${headerHeight+method_height+hpheight+35})`} clipPath={"url(#mask_hyperparameters)"}>
-            <g onClick={this.onHyperpartitionButtonClick}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width3-68,
-                height:28
-            },1,this.onHyperpartitionButtonClick)}
-            <text
-                textAnchor="start"
-                x={textleft}
-                y={10}
-                style={{ font: "bold 16px sans-serif" }}
-            >HyperParameters of</text>
-             {generateTag({
-                x:textleft+ hytableft,
-                y:-6,
-                width:40,
-                height:20
 
-            },selectedMethod)}
+        const textProps = {
+            textAnchor: "start",
+            x: textLeft,
+            y: 10,
+            style: { font: "bold 16px sans-serif" }
+        };
+
+        return (
+            <g>
+                <g {...shapeProps}>
+                    {this.generateRect({
+                        x: 10,
+                        y: -9,
+                        width: hyperParamWidth - 68,
+                        height: 28
+                    }, 0, this.onHyperpartitionButtonClick)}
+                    <text {...textProps}>HyperParameters of</text>
+                    {this.generateTag({
+                        x: textLeft + hyTabLeft,
+                        y: -6,
+                        width: 40,
+                        height: 20
+
+                    }, selectedMethod)}
+                </g>
             </g>
-            <HyperParameters
-                classifiers={classifiers}
-                selectedMethod={selectedMethod}
-                compareK={compareK}
-                alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod]?this.state.hyperparametersRangeAlreadySelected[selectedMethod]:{}}
-                onSelectedChange={this.onBrushSelected}
-                mouseOverClassifier={this.state.mouseOverClassifier}
-                height={hyheight}
-                width={width3}
-                />
-               
-            </g></g>
+        )
+    }
+
+    generateHyperparameter() {
+        const {
+            headerHeight,
+            textLeft,
+            hyTabLeft,
+            hyperParamWidth,
+            hyperParamHeight
+        } = this.state.methodCoords;
+
+        const {
+            selectedMethod,
+            classifiers
+        } = this.state;
+
+        const { compareK } = this.props;
+        let hyperPartHeight = this.setHyperPartitionsHeight();
+        let methodHeight = this.setMethodHeight();
+
+        const shapeProps = {
+            transform: `translate(${0}, ${headerHeight + methodHeight + hyperPartHeight + 35})`,
+            clipPath: "url(#mask_hyperparameters)",
+        }
+        const rectProps = {
+            x: 0,
+            y: -10,
+            width:hyperParamWidth + 200,
+            height:hyperParamHeight + 100
+        }
+
+        return (
+            <g>
+                <defs>
+                    <clipPath id="mask_hyperparameters">
+                        <rect {...rectProps} />
+                    </clipPath>
+                </defs>
+                <g {...shapeProps}>
+                    <g onClick={this.onHyperpartitionButtonClick}>
+                        {this.generateRect({
+                            x: 10,
+                            y: -9,
+                            width: hyperParamWidth - 68,
+                            height: 28
+                        }, 1, this.onHyperpartitionButtonClick)}
+                        <text
+                            textAnchor="start"
+                            x={textLeft}
+                            y={10}
+                            style={{ font: "bold 16px sans-serif" }}
+                        >HyperParameters of</text>
+                        {this.generateTag({
+                            x: textLeft + hyTabLeft,
+                            y: -6,
+                            width: 40,
+                            height: 20
+
+                        }, selectedMethod)}
+                    </g>
+                    <HyperParameters
+                        classifiers={classifiers}
+                        selectedMethod={selectedMethod}
+                        compareK={compareK}
+                        alreadySelectedRange={this.state.hyperparametersRangeAlreadySelected[selectedMethod] ? this.state.hyperparametersRangeAlreadySelected[selectedMethod] : {}}
+                        onSelectedChange={this.onBrushSelected}
+                        mouseOverClassifier={this.state.mouseOverClassifier}
+                        height={hyperParamHeight}
+                        width={hyperParamWidth}
+                    />
+                </g>
+            </g>
+        )
+    }
+    render() {
+        const { methodCoords } = this.state;
+        const textLeft = methodCoords.textLeft;
+
+        let {
+            datarun,
+            hyperpartitions,
+            compareK
+        } = this.props;
+
+        let { displaymode, classifiers } = this.state;
+
+        let usedMethods: string[] = Object.keys(datarun);
+        let unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0);
+        let svgWidth = methodCoords.svgWidth;
+        let methodHeight = this.setMethodHeight();
+
+        const generateRectProps = {
+            x: 10,
+            y: -9,
+            width: svgWidth - 68,
+            height: 28
         }
         
-        // console.log("three level render");
-        // console.log(this.state.hyperpartitionsAlreadySelected);
-        return <div
-            style={{
-                height: `${this.props.height}%`,
-                width: '100%',
-                borderTop: ".6px solid rgba(0,0,0, 0.4)"
-                }}
-            >
-            <svg
-            style={{ height: '100%', width: '100%' }}
-            id="svgChart"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-            <g transform={`translate(${0}, ${headerHeight})`}>
-            {generateRect({
-                x:10,
-                y:-9,
-                width:width1-68,
-                height:28
-            },1,()=>{})}
-            <text
-                textAnchor="start"
-                x={textleft}
-                y={10}
-                style={{ font: "bold 16px sans-serif" }}
-            >Algorithms</text>
-            <Methods
-                classifiers={classifiers}
-                width = {width1}
-                height = {method_height}
-                displaymode = {displaymode}
-                onSelectMethod={this.onSelectMethod}
-                selectedMethod = {this.state.selectedMethod}
-                usedMethods = {usedMethods}
-                unusedMethods = {unusedMethods}
-                hyperpartitions={hyperpartitions}
-                configsMethod = {this.state.configsMethod}
-                methodSelected = {this.state.methodSelected}
-                onMethodsCheckBoxChange = {this.onMethodsCheckBoxChange}
-                compareK={compareK}
-                recommendationResult={this.props.recommendationResult}
-            />
-            { /*<foreignObject x={width1-30} y={svgHeight/2} width={150} height={35}> 
-                <Button type="primary" onClick={this.onMethodButtonClick}>
-                    Show me more<Icon type="right" />
-                </Button>
-                </foreignObject>*/}
-             {/*generateButton({
-                    x:width1/2-75,
-                    y:method_height-35,
-                    width:150,
-                    height:35
-                },methodbuttonMode,this.onMethodButtonClick)*/}
-            </g>
-            {displaymode==1 || displaymode==2?generateHyperpartition():generateHyperpartitionText()}
-            {displaymode==2 ? generateHyperparameter():displaymode==1?generateHyperparameterText():<g />}
-           
-            
-            </svg>
+        const textProps = {
+            textAnchor:"start", 
+            x:textLeft,
+            y:10,
+            style:{ font: "bold 16px sans-serif" },
+        }
 
-
-           {/* <div style={{position: "absolute",bottom:"10px",left:"10px"}}>
-                <span>Budget</span>
-                <InputNumber min={1} value={this.state.configsBudget} style={{ width: "80px" }} onChange={this.onBudgetChange} />
-                <Button key={"_button_"+(++this.index)} loading={this.state.loading} onClick={this.updateCurrentDataRun}>Update Config</Button>
-                </div>*/}
+        return (
+            <div className="svgWrapper" style={{height: `${this.props.height}%`}}>
+                <GenerateSvg id="svgChart">
+                    <g transform={`translate(${0}, ${this.state.methodCoords.headerHeight})`}>
+                        {this.generateRect({...generateRectProps }, 1, () => { })}
+                        <text {...textProps}>Algorithms</text>
+                        <Methods
+                            classifiers={classifiers}
+                            width={svgWidth}
+                            height={methodHeight}
+                            displaymode={displaymode}
+                            onSelectMethod={this.onSelectMethod}
+                            selectedMethod={this.state.selectedMethod}
+                            usedMethods={usedMethods}
+                            unusedMethods={unusedMethods}
+                            hyperpartitions={hyperpartitions}
+                            configsMethod={this.state.configsMethod}
+                            methodSelected={this.state.methodSelected}
+                            onMethodsCheckBoxChange={this.onMethodsCheckBoxChange}
+                            compareK={compareK}
+                            recommendationResult={this.props.recommendationResult}
+                        />
+                    </g>
+                    {displaymode == 1 || displaymode == 2 ? this.generateHyperpartition() : this.generateHyperpartitionText()}
+                    {displaymode == 2 ? this.generateHyperparameter() : displaymode == 1 ? this.generateHyperparameterText() : <g />}
+                </GenerateSvg>
             </div>
+        )
     }
 }
