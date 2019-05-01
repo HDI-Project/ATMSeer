@@ -56,15 +56,15 @@ export default class HyperParameters extends React.Component<IProps, IState>{
         let exceedRow = Math.floor((this.props.height - box.margin) /  (box.height*5/4 + box.margin)) + 0;
         if(exceedRow<=0){
             exceedRow = 0;
-        }           
+        }
         return exceedRow;
     }
     onUpClick = ()=>{
         let {hiddenrow} = this.state;
         if(hiddenrow>0){
             hiddenrow = hiddenrow -1;
-            console.log("change")
-        console.log(hiddenrow);
+        //     console.log("change")
+        // console.log(hiddenrow);
             this.setState({
                 hiddenrow:hiddenrow
             })
@@ -73,8 +73,8 @@ export default class HyperParameters extends React.Component<IProps, IState>{
     onDownClick = () =>{
         let {hiddenrow} = this.state;
         hiddenrow = hiddenrow + 1;
-        console.log("change")
-        console.log(hiddenrow);
+        // console.log("change")
+        // console.log(hiddenrow);
         this.setState({
             hiddenrow:hiddenrow
         })
@@ -86,7 +86,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
         let { classifiers, selectedMethod, compareK,alreadySelectedRange } = nextProps
         let comparedCls = classifiers.slice(0, compareK)
         let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
-        
+
         if (comparedMethods.length==1){
             selectedMethod = comparedMethods[0]
         }
@@ -171,17 +171,17 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                 })
 
             }
-            
+
             // button visible checked
             let box = this.box;
             let exceedRow = Math.floor((nextProps.height - box.margin) /  (box.height*5/4 + box.margin)) + 0;
             if(exceedRow<=0){
                 exceedRow = 0;
-            }           
+            }
             let maxRow = HyperparameterList.length;
             let gap = Math.max(0,maxRow-exceedRow);
             let newhiddenrow = Math.min(gap,nextStates.hiddenrow);
-            console.log(maxRow,exceedRow,newhiddenrow);
+            // console.log(maxRow,exceedRow,newhiddenrow);
 
             let visible = nextStates.visible;
             if(gap>0){
@@ -189,7 +189,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
             }else{
                 visible=false;
             }
-            
+
             if(this.props!=nextProps || newhiddenrow!=nextStates.hiddenrow || visible!=nextStates.visible || this.state.HyperparameterList.length!=HyperparameterList.length){
                 this.setState({
                     selectedClassifier:selectedClassifier,
@@ -199,11 +199,11 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                     mode:1,
                     hiddenrow:newhiddenrow,
                     visible:visible,
-                    
+
 
                 })
             }
-            
+
         }else{
             if(this.props!=nextProps){
                 this.setState({
@@ -216,16 +216,16 @@ export default class HyperParameters extends React.Component<IProps, IState>{
     }
     shouldComponentUpdate(nextProps:IProps,nextStates:IState){
         this.prepareData(nextProps,nextStates);
-       
-        
+
+
         return true;
-        
+
     }
     render() {
             let {selectedClassifier,HyperparameterList,classifiers,selectedMethod,mode,visible} = this.state;
 
             let box = this.box;
-            
+
 
             let generateButton = () =>{
                 if(visible){
@@ -245,9 +245,9 @@ export default class HyperParameters extends React.Component<IProps, IState>{
             }
         let exceedRow = this.calculateExceedRow();
         exceedRow=exceedRow+this.state.hiddenrow;
-        if(mode==1){ 
-            console.log("render hyperparameters")
-            console.log(HyperparameterList.length)
+        if(mode==1){
+            // console.log("render hyperparameters")
+            // console.log(HyperparameterList.length)
             return <g>
                 <g className="hyperParameters">
                 {HyperparameterList.map((hp:HyperParameterInfo, i) => {
@@ -260,7 +260,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                             hp={hp}
                             idx={i-this.state.hiddenrow}
                             hiddenrow={this.state.hiddenrow}
-                            
+
                             box={box}
                             selectedMethod={selectedMethod}
                             comparedCls={selectedClassifier}
@@ -272,7 +272,7 @@ export default class HyperParameters extends React.Component<IProps, IState>{
                     }
                 })}
             </g>
-            {generateButton()} 
+            {generateButton()}
             </g>
         } else {
             return <g />
@@ -450,9 +450,9 @@ class HyperParameter extends React.Component<HyProps, {}>{
             let d0 = d3.event.selection.map(x.invert);
             let min = d0[0];
             let max = d0[1];
-            console.log("brush min max");
-            console.log(min);
-            console.log(max);
+            // console.log("brush min max");
+            // console.log(min);
+            // console.log(max);
             onSelectedChange(selectedMethod,hp.name,hp.valueType,[min,max]);
 
         }
