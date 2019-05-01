@@ -11,7 +11,7 @@ import { IDatarun } from "types";
 import * as methodsDef from "assets/methodsDef.json";
 import { message, Icon } from 'antd';
 import { getColor } from 'helper';
-import GenerateSvg from './../../Utils/GenerateSvg';
+import GenerateSvg from '../../Utils/GenerateSvg';
 import './ThreeLevel.css'
 
 export interface IProps {
@@ -219,7 +219,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     configsMethod: configsMethod
                 });
             }
-
             let action = "selected";
             if (checked == false) {
                 action = "unselected";
@@ -443,8 +442,10 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                     },
                     time: new Date().toString()
                 }
+
                 this.props.postClickEvent(eventlog);
             }
+
             this.setState({
                 mouseOverClassifier: classifierid
             })
