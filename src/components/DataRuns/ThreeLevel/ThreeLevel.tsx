@@ -238,23 +238,21 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     }
 
     onHyperPartCheckBoxChange = (partId: number) => {
+        let {configsMethod, methodSelected, hyperPartSelectedRange} = this.state;
         let isChecked: boolean = !(this.state.hyperPartSelectedRange.indexOf(partId) > -1);
-        let configsHyperpartitions: number[] = this.state.hyperPartSelectedRange;
+        let hyperPartsConfig: number[] = hyperPartSelectedRange;
         let hyperPart: any = this.props.hyperpartitions.filter((d: any) => d.id == partId);
         let method = hyperPart[0].method;
         let hyperPartId = this.fetchHyperPartsIds(method);
-        let methodSelected = this.state.methodSelected;
-        let configsMethod: string[] = this.state.configsMethod;
+        let hyperPartIndex = hyperPartsConfig.indexOf(partId);
 
         const action = isChecked ? "selected" : "unselected"
-        // console.log(hp)
+        isChecked ? hyperPartsConfig.push(partId) : hyperPartsConfig.splice(hyperPartIndex, 1);
+        const judgeSet = isChecked ? Array.from(new Set(hyperPartsConfig.concat(hyperPartId))) : hyperPartId.filter((d: any) => hyperPartsConfig.indexOf(d) > -1);
+        configsMethod = Array.from(new Set(configsMethod.concat([method])));
 
         if (isChecked) {
-            configsHyperpartitions.push(partId);
-            let judgeSet = Array.from(new Set(configsHyperpartitions.concat(hyperPartId)));
-            configsMethod = Array.from(new Set(configsMethod.concat([method])));
-
-            if (judgeSet.length == configsHyperpartitions.length) {
+            if (judgeSet.length == hyperPartsConfig.length) {
                 methodSelected[method].checked = true;
                 methodSelected[method].indeterminate = false;
             } else {
@@ -262,11 +260,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                 methodSelected[method].indeterminate = true;
             }
         } else {
-            let index = configsHyperpartitions.indexOf(partId);
-            if (index > -1) {
-                configsHyperpartitions.splice(index, 1);
-                let judgeSet = hyperPartId.filter((d: any) => configsHyperpartitions.indexOf(d) > -1);
-
+            if (hyperPartIndex > -1) {
                 if (judgeSet.length > 0) {
                     methodSelected[method].isChecked = false;
                     methodSelected[method].indeterminate = true;
@@ -282,7 +276,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         }
 
         this.setState({
-            hyperPartSelectedRange: configsHyperpartitions,
+            hyperPartSelectedRange: hyperPartsConfig,
             methodSelected,
             configsMethod
         });
