@@ -3,7 +3,8 @@ import Methods from './Methods';
 import HyperPartitions from "./HyperPartitions";
 import HyperParameters from "./HyperParameters";
 import {
-    IHyperpartitionInfo, IClassifierInfo, IConfigsInfo,
+    IHyperpartitionInfo,
+    IClassifierInfo, IConfigsInfo,
     getDatarunConfigs, IUpdateDatarunConfig, ICommonResponse,
     updateDatarunConfigs, IClickEvent, IRecommendationResult
 } from 'service/dataService';
@@ -24,14 +25,15 @@ export interface IProps {
     classifiers: IClassifierInfo[],
     compareK: number,
     recommendationResult: IRecommendationResult,
-    postClickEvent: (e: IClickEvent) => void
+    postClickEvent: (e: IClickEvent) => void,
+    newHyper: any
 }
 
 export interface IState {
     selectedMethod: string,
     configsBudget: number,
     configsMethod: string[],
-    loading: boolean,
+    isLoading: boolean,
     methodSelected: any,
     hyperParamSelectedRange: any,
     hyperPartSelectedRange: number[],
@@ -49,7 +51,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             selectedMethod: '',
             configsBudget: 100,
             configsMethod: [],
-            loading: false,
+            isLoading: false,
             methodSelected: {},
             hyperParamSelectedRange: {},
             hyperPartSelectedRange: [],
@@ -135,38 +137,40 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         // submit configs in this view
         // switch to the new datarun.
         let methods = this.state.configsMethod;
-        if (this.props.datarunID != null) {
-            let promise: Promise<IConfigsInfo>;
-            let datarunID: number = this.props.datarunID ? this.props.datarunID : 0;
-            promise = getDatarunConfigs(datarunID);
-            promise
-                .then(configs => {
-                    configs.methods = methods;
-                    this.setState({ loading: true });
+        if (this.props.datarunID === null)
+            return;
 
-                    let submitconfigs: IUpdateDatarunConfig = {};
-                    submitconfigs.configs = configs;
-                    submitconfigs.method_configs = this.state.hyperParamSelectedRange;
-                    if (this.state.hyperPartSelectedRange.length > 0) {
-                        submitconfigs.hyperpartitions = this.state.hyperPartSelectedRange;
-                    }
-                    let promise: Promise<ICommonResponse> = updateDatarunConfigs(datarunID, submitconfigs);
-                    promise.then(status => {
-                        if (status.success == true) {
-                            message.success("Update Configs Successfully.");
-                        } else {
-                            message.error("Update Configs Failed.");
-                        }
-                        this.setState({ loading: false });
-                    }).catch(error => {
+        let promise: Promise<IConfigsInfo>;
+        let datarunID: number = this.props.datarunID ? this.props.datarunID : 0;
+        promise = getDatarunConfigs(datarunID);
+        promise
+            .then(configs => {
+                configs.methods = methods;
+                this.setState({ isLoading: true });
+
+                let submitconfigs: IUpdateDatarunConfig = {};
+                submitconfigs.configs = configs;
+                submitconfigs.method_configs = this.state.hyperParamSelectedRange;
+                if (this.state.hyperPartSelectedRange.length > 0) {
+                    submitconfigs.hyperpartitions = this.state.hyperPartSelectedRange;
+                }
+                let promise: Promise<ICommonResponse> = updateDatarunConfigs(datarunID, submitconfigs);
+                promise.then(status => {
+                    if (status.success == true) {
+                        message.success("Update Configs Successfully.");
+                    } else {
                         message.error("Update Configs Failed.");
-                        this.setState({ loading: false });
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
+                    }
+                    this.setState({ isLoading: false });
+                }).catch(error => {
+                    message.error("Update Configs Failed.");
+                    this.setState({ isLoading: false });
                 });
-        }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+
     }
 
     fetchHyperPartsIds = (method: string) => {
@@ -254,24 +258,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         isChecked ? hyperPartsConfig.push(partId) : hyperPartsConfig.splice(hyperPartIndex, 1);
         configsMethod = Array.from(new Set(configsMethod.concat([method])));
 
-        // console.log(hyperPartsIds, hyperPartSelectedRange, hyperPartsConfig, judgeSet);
-
-        // if(isChecked && judgeSet.length == hyperPartsConfig.length) {
-        //     methodSelected[method].checked = true;
-        //     methodSelected[method].indeterminate = false;
-        // } else {
-        //     methodSelected[method].checked = false;
-        //     methodSelected[method].indeterminate = false;
-        //     debugger;
-        //     if(judgeSet.length  == hyperPartsConfig.length) {
-        //         methodSelected[method].checked = false;
-        //         methodSelected[method].indeterminate = false;
-
-        //     }
-        // }
-        // console.log(methodSelected[method]);
-
-
         if (isChecked) {
             if (judgeSet.length == hyperPartsConfig.length) {
                 methodSelected[method].checked = true;
@@ -282,7 +268,6 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             }
 
         } else {
-
             methodSelected[method].isChecked = false;
             if (hyperPartIndex > -1) {
                 if (judgeSet.length > 0) {
@@ -363,70 +348,24 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
     }
 
     componentWillReceiveProps(nextProps: IProps) {
-        if (this.state.loading == false) {
-            let { hyperpartitions } = nextProps;
-            let methodhistogram: any = {};
-            let methodSelected: any = {};
-            let mode = 1;
-            let hyperPartSelectedRange: number[] = [];
-            if (mode == 0) {
-                hyperPartSelectedRange = hyperpartitions.map((d: any) => {
-                    return d.id;
-                });
-            } else if (mode == 1) {
-                hyperPartSelectedRange = hyperpartitions.filter((d: any) => d.status != "errored").map((d: any) => {
-                    return d.id;
-                });
-            }
+        if (this.state.isLoading)
+            return
 
-            Object.keys(methodsDef).forEach((d: string) => {
-                if (!methodhistogram[d]) {
-                    methodhistogram[d] = { total: 0, enable: 0 };
-                }
-            });
-            hyperpartitions.forEach((d: any) => {
-                if (!methodhistogram[d.method]) {
-                    methodhistogram[d.method] = { total: 0, enable: 0 };
-                    console.log("unknown method : " + d.method);
-                }
-                if (!(d.status == "errored")) {
-                    methodhistogram[d.method].total++;
-                    methodhistogram[d.method].enable++;
-                } else {
-                    methodhistogram[d.method].total++;
-                }
+        let { classifiers } = nextProps;
+        const {
+            methodSelected,
+            hyperPartSelectedRange,
+         } = this.props.newHyper
 
-            });
-            Object.keys(methodhistogram).forEach((d: string) => {
-                if (mode == 0) {
-                    if (methodhistogram[d].total == 0) {
-                        methodSelected[d] = { checked: false, disabled: true, indeterminate: false };
-                    } else {
-                        methodSelected[d] = { checked: true, disabled: false, indeterminate: false };
-                    }
-                } else if (mode == 1) {
-                    if (methodhistogram[d].total == 0) {
-                        methodSelected[d] = { checked: false, disabled: true, indeterminate: false };
-                    } else if (methodhistogram[d].enable == 0) {
-                        methodSelected[d] = { checked: false, disabled: false, indeterminate: false };
-                    } else if (methodhistogram[d].total == methodhistogram[d].enable) {
-                        methodSelected[d] = { checked: true, disabled: false, indeterminate: false };
-                    } else {
-                        methodSelected[d] = { checked: false, disabled: false, indeterminate: true };
-                    }
-                }
-            });
+        let selectedMethod = this.state.selectedMethod;
+        classifiers = classifiers.sort((a, b) => b.cv_metric - a.cv_metric);
 
-            let selectedMethod = this.state.selectedMethod;
-            let classifiers = nextProps.classifiers.sort((a, b) => b.cv_metric - a.cv_metric) // best performance in the front;
-            this.setState({
-                methodSelected: methodSelected,
-                hyperPartSelectedRange: hyperPartSelectedRange,
-                selectedMethod: selectedMethod,
-                classifiers
-            });
-
-        }
+        this.setState({
+            methodSelected,
+            hyperPartSelectedRange,
+            selectedMethod,
+            classifiers
+        });
     }
 
     onMouseOverClassifier = (classifierid: number) => {
@@ -793,14 +732,19 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             datarun,
             hyperpartitions,
             compareK,
+            newHyper
         } = this.props;
+
         const {
             headerHeight,
             svgWidth,
             textLeft,
         } = this.state.methodCoords;
 
-        const { classifiers, displaymode } = this.state;
+        const {
+            classifiers,
+            displaymode
+        } = this.state;
 
         let usedMethods: string[] = Object.keys(datarun);
         let unusedMethods = Object.keys(methodsDef).filter((name: string) => usedMethods.indexOf(name) < 0)
@@ -839,6 +783,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                             onMethodsCheckBoxChange={this.onMethodsCheckBoxChange}
                             compareK={compareK}
                             recommendationResult={this.props.recommendationResult}
+                            newHyper={newHyper}
                         />
                     </g>
                     {displaymode == 1 || displaymode == 2 ? this.generateHyperpartition() : this.generateHyperpartitionText()}

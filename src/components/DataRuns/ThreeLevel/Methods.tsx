@@ -22,7 +22,8 @@ export interface IProps {
     onMethodsCheckBoxChange: (e:any)=>void
     compareK:number,
     methodSelected:any,
-    recommendationResult:IRecommendationResult
+    recommendationResult:IRecommendationResult,
+    newHyper: any
 }
 
 export interface IState {
@@ -106,7 +107,8 @@ export default class methods extends React.Component<IProps, IState>{
 
     }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height,displaymode} = this.props
+        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height,displaymode, newHyper} = this.props;
+        console.log(hyperpartitions, newHyper);
         //this.width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
         // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
         /*this.methodBoxAttr = {

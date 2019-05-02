@@ -1,6 +1,7 @@
 // library
 // import axios from "axios";
 import * as React from "react";
+import * as methodsDef from "assets/methodsDef.json";
 //import { Tabs, Row, Col, Progress } from 'antd';
 
 //
@@ -74,18 +75,11 @@ export default class DataRuns extends React.Component<IProps, IState>{
         }
     }
     public async getData() {
-        // const res = await axios.get('../../viz/datarun2_gp.csv')
-        // const {datarunID} = this.props
-        // const res = await axiosInstance.get(`/classifier_summary?datarun_id=${datarunID}`)
-        // const run = res.data
         const { datarunID, datasetID } = this.props
         if (datarunID !== null && datasetID !== null) {
             const runCSV = await getClassifierSummary(datarunID);
-            // const res = await axios.get('../../data/csvs/bandit/hyperpartitions.csv')
-            // const banditData = res.data
             const classifiers = await getClassifiers(datarunID);
             let hyperpartitions = await getHyperpartitions(undefined, datarunID).then(hyperpartitions => {
-                // console.log(hyperpartitions);
                 if (Array.isArray(hyperpartitions)) {
                     return hyperpartitions
                 } else {
@@ -127,7 +121,6 @@ export default class DataRuns extends React.Component<IProps, IState>{
                 askvisible: askvisible
             })
         }
-
     }
     public startOrStopUpdateCycle() {
         // this.intervalID = window.setInterval(this.getData, UPDATE_INTERVAL_MS);
@@ -138,8 +131,6 @@ export default class DataRuns extends React.Component<IProps, IState>{
         }
     }
     public componentDidMount() {
-        // this.getData()
-        // repeatedly get data
         this.getData();
         this.startOrStopUpdateCycle();
     }
@@ -158,162 +149,102 @@ export default class DataRuns extends React.Component<IProps, IState>{
         window.clearInterval(this.intervalID)
     }
     AskModalCallBack = (mode: number) => {
-        // mode = 0      continue_running
-        // mode = 1      stop_running
-
         let { run_threshold, classifiers } = this.state;
         run_threshold = classifiers.length + THRESHOLD_STEP;
-
-        if (mode == 0) {
-            /*
-            if(this.props.datarunID!=null){
-                let promise = startDatarun(this.props.datarunID);
-                promise
-                .then(datarun => {
-                    // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
-                    this.props.setDatarunStatus(datarun.status);
-
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }*/
-        }
         this.setState({
             askvisible: false,
             run_threshold: run_threshold
         })
     }
 
+    private getHyperPartitions() {
+        let hyperPartSelectedRange: number[] = [];
+        let methodSelected: any = {};
+        let mode = 1;
+        const { hyperpartitions } = this.state;
+        let methodhistogram: any = {};
+
+        hyperPartSelectedRange = mode == 0 ?
+            hyperpartitions.map((partition: any) => partition.id) :
+            hyperpartitions
+                .filter((partition: any) => partition.status != "errored")
+                .map((partition: any) =>  partition.id);
+
+        Object.keys(methodsDef).forEach((method: string) => {
+            if (!methodhistogram[method]) {
+                methodhistogram[method] = { total: 0, enable: 0 };
+            }
+        });
+
+        hyperpartitions.forEach((partition: any) => {
+            if (!methodhistogram[partition.method]) {
+                methodhistogram[partition.method] = { total: 0, enable: 0 };
+                console.log("unknown method : " + partition.method);
+            }
+            if (!(partition.status == "errored")) {
+                methodhistogram[partition.method].total++;
+                methodhistogram[partition.method].enable++;
+            } else {
+                methodhistogram[partition.method].total++;
+            }
+        });
+
+        Object.keys(methodhistogram).forEach((method: string) => {
+            const falseState = { checked: false, disabled: false, indeterminate: false }
+            if (mode == 0) {
+                if (methodhistogram[method].total == 0) {
+                    methodSelected[method] = { ...falseState, disabled: true};
+                } else {
+                    methodSelected[method] = { ...falseState, checked: true};
+                }
+
+            } else if (mode == 1) {
+                if (methodhistogram[method].total == 0) {
+                    methodSelected[method] = { ...falseState, disabled: true};
+                } else if (methodhistogram[method].enable == 0) {
+                    methodSelected[method] = { ...falseState };
+                } else if (methodhistogram[method].total == methodhistogram[method].enable) {
+                    methodSelected[method] = { ...falseState, checked: true};
+                } else {
+                    methodSelected[method] = { ...falseState, indeterminate: true };
+                }
+            }
+        });
+
+        return {methodSelected, hyperPartSelectedRange};
+    }
+
     public render() {
         let { runCSV, hyperpartitions, classifiers } = this.state
-        let { datasetID, datarunID, compareK } = this.props
-       // let bestCls = classifiers.sort((a, b) => -a.cv_metric + b.cv_metric)[0]
+        let { datasetID, datarunID, compareK } = this.props;
+        let newHyper = this.getHyperPartitions();
 
         hyperpartitions = hyperpartitions.filter(d => d.datarun_id == this.props.datarunID)
-        // const {classifiers} = this.state
         let datarun: IDatarun = parseDatarun(runCSV)
-        //console.log(runCSV);
-        //console.log(datarun);
-        /*function computeDatarunSummary(classifiers: IClassifierInfo[]): IDatarunSummary {
-            // This need to fix to support other metric?
-            classifiers = [...classifiers];
-            classifiers.sort((a, b) => -a.cv_metric + b.cv_metric);
-            let nTriedByMethod = {};
-            let triedHyperpartition = []
-            classifiers.forEach(c => {
-                const nTried = nTriedByMethod[c.method];
-                nTriedByMethod[c.method] = nTried ? nTried + 1 : 1;
-            });
-            triedHyperpartition = Array.from(new Set(classifiers.map(d => d.hyperpartition_id)))
-            return {
-                nTried: classifiers.length,
-                topClassifiers: classifiers,
-                nTriedByMethod,
-                triedHyperpartition,
-            };
-        }
-        let summary = computeDatarunSummary(classifiers);
-        let methods_num = summary ? Object.keys(summary.nTriedByMethod).length : 0
-        let hp_num = summary ? summary.triedHyperpartition.length : 0
-        const progressAlgorithm = (percent: number) => {
-            return `${methods_num}/14`
-        }
-        const progressHyperpartiton = (percent: number) => {
-            return `${hp_num}/172`
-        }*/
+        if (Object.keys(datarun).length <= 0)
+            return <div />;
 
+        return (
+            <div style={{ height: '100%' }}>
 
-
-
-        if (Object.keys(datarun).length > 0) {
-            return (
-                <div style={{ height: '100%' }}>
-
-                    <div className="runTracker" style={{ height: '12%', display: "flex" }}>
-                        {/* <Histogram datarun={datarun} width={40}/> */}
-                        <AskModal AskModalCallBack={this.AskModalCallBack} visible={this.state.askvisible} />
-                         <BarChart run={runCSV} width={100} />
-                      {/*  <Row style={{ "height": "100%", width: "100%" }}>
-                            <Col span={18} style={{ height: "100%" }}>
-                                <Tabs
-                                    defaultActiveKey="1"
-                                    style={{ width: '100%' }}
-                                    tabPosition="left"
-                                >
-                                    <TabPane tab="Trials" key="1">
-                                        <BarChart run={runCSV} width={100} />
-
-                                    </TabPane>
-                                    <TabPane tab="Performance" key="2">
-                                        <OverallHistogram datarun={datarun} width={100} />
-                                    </TabPane>
-                                </Tabs>
-                            </Col>
-                            <Col span={6} style={{ padding: "10px" }}>
-                            <div>
-                                <b>Total  classifiers</b>: {classifiers.length}
-                                <br />
-                                <b>Best classifier</b>:
-                        <span
-                            style={{
-                                backgroundColor: getColor(bestCls.method),
-                                borderRadius: '4px',
-                                padding: '2px',
-                                marginLeft: "2px",
-                                color: 'white'
-                            }}
-                        >
-                            {`${bestCls.method}-${bestCls.id}`}
-                        </span>
-                        {` ${bestCls.cv_metric.toFixed(3)}±${bestCls.cv_metric_std.toFixed(3)}`}
-                        <br />
-                                <b>Algorithm </b>:{' '}
-                                <Progress
-                                    type="circle"
-                                    percent={100 * methods_num / 14}
-                                    format={progressAlgorithm}
-                                    width={40}
-                                    strokeWidth={10}
-                                />
-                                <b>{' '} Hyperpartitions</b>:{' '}
-                                <Progress
-                                    type="circle"
-                                    percent={100 * hp_num / 172}
-                                    format={progressHyperpartiton}
-                                    width={40}
-                                    strokeWidth={10}
-                                />
-                                </div>
-                                
-                            </Col>
-                        </Row>*/}
-                    </div>
-                    {/* <div style={{height: "80%", overflowY: "scroll"}}>
-                <HyperPartitions classifiers={classifiers} />
-            </div> */}
-
-                    {/* <MethodsLineChart height={85} datarun={datarun} hyperpartitions={this.state.hyperpartitions}
-            datasetID={this.props.datasetID} setDatarunID={this.props.setDatarunID}
-            datarunID={this.props.datarunID}/> */}
-                    <ThreeLevel
-                        height={88}
-                        datarun={datarun}
-                        hyperpartitions={hyperpartitions}
-                        classifiers={classifiers}
-                        datasetID={datasetID}
-                        setDatarunID={this.props.setDatarunID}
-                        compareK={compareK}
-                        datarunID={datarunID}
-                        recommendationResult={this.state.recommendationResult}
-                        postClickEvent={this.props.postClickEvent}
-                    />
-
-                </div>)
-        } else {
-            return <div />
-        }
-
+                <div className="runTracker" style={{ height: '12%', display: "flex" }}>
+                    <AskModal AskModalCallBack={this.AskModalCallBack} visible={this.state.askvisible} />
+                    <BarChart run={runCSV} width={100} />
+                </div>
+                <ThreeLevel
+                    height={88}
+                    datarun={datarun}
+                    hyperpartitions={hyperpartitions}
+                    classifiers={classifiers}
+                    datasetID={datasetID}
+                    setDatarunID={this.props.setDatarunID}
+                    compareK={compareK}
+                    datarunID={datarunID}
+                    recommendationResult={this.state.recommendationResult}
+                    postClickEvent={this.props.postClickEvent}
+                    newHyper={newHyper}
+                />
+            </div>)
     }
 }
 
