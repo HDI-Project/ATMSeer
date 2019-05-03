@@ -4,16 +4,20 @@
   "author": "qianwen Wang",
   "private": true,
   "dependencies": {
-    "@types/echarts": "0.0.13",
-    "antd": "3.5.4",
+    "@types/echarts": "^4.1.9",
+    "antd": "^3.16.6",
     "axios": "^0.18.0",
-    "d3": "^5.6.0",
-    "echarts": "^4.1.0",
-    "echarts-for-react": "^2.0.12-beta.0",
-    "ml-pca": "^2.1.0",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
-    "react-scripts-ts": "2.16.0"
+    "d3": "^5.9.2",
+    "echarts": "^4.2.1",
+    "echarts-for-react": "^2.0.15-beta.0",
+    "ml-pca": "^3.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts-ts": "^3.1.0",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0",
+    "react-redux": "^7.0.3"
   },
   "scripts": {
     "start": "cross-env PORT=7779 react-scripts-ts start",
@@ -22,11 +26,14 @@
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
-    "@types/jest": "^22.2.3",
-    "@types/node": "^10.1.2",
-    "@types/react": "^16.3.14",
-    "@types/react-dom": "^16.0.5",
+    "@types/jest": "^24.0.12",
+    "@types/node": "^11.13.9",
+    "@types/react": "^16.8.15",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.0.8",
+    "@types/redux-logger": "^3.0.7",
     "cross-env": "^5.2.0",
-    "typescript": "^2.8.3"
+    "redux-devtools-extension": "^2.13.8",
+    "typescript": "^3.4.5"
   }
 }

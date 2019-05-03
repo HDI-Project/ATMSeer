@@ -106,9 +106,9 @@ export default class DataView extends React.Component<IProps, IState>{
     public beforeUpload(file:any){
         let reader = new FileReader();
         reader.readAsText(file);
-        reader.onload = (evt: FileReaderProgressEvent) => {
+        reader.onload = (evt: ProgressEvent) => {
             if (evt.target) {
-                let content = reader.result;
+                let content: any = reader.result;
                 this.parseData(content)
             }
         };

@@ -25,6 +25,9 @@ import { UPDATE_INTERVAL_MS } from "Const";
 import ThreeLevel from "./ThreeLevel";
 import AskModal from "./AskModal";
 import { USER_STUDY,THRESHOLD_STEP } from 'Const';
+import {getClassifiersSelector} from '../../selectors/DataRuns';
+import {connect} from 'react-redux';
+import {getClassifiersAction} from 'actions/api';
 // const axiosInstance = axios.create({
 //     baseURL: URL+'/api',
 //     // timeout: 1000,
@@ -43,6 +46,7 @@ export interface IProps {
     setDatarunID: (id: number) => void;
     postClickEvent: (e: IClickEvent) => void;
     setDatarunStatus: (e: IDatarunStatusTypes) => void;
+    getClassifiers: (id: number) => void;
 }
 export interface IState {
     runCSV: string,
@@ -58,7 +62,8 @@ export interface IDatarunSummary {
     nTriedByMethod: { [method: string]: number };
     triedHyperpartition: number[]
 }
-export default class DataRuns extends React.Component<IProps, IState>{
+
+class DataRuns extends React.Component<IProps, IState>{
     private intervalID: number
     constructor(props: IProps) {
         super(props)
@@ -87,6 +92,7 @@ export default class DataRuns extends React.Component<IProps, IState>{
                     return []
                 }
             });
+            console.log(datarunID);
             let recommendationResult = await getRecommendation(datasetID);
             let askvisible = this.state.askvisible;
             let run_threshold = this.state.run_threshold;
@@ -133,6 +139,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
     public componentDidMount() {
         this.getData();
         this.startOrStopUpdateCycle();
+        // this.props.getClassifiers(this.props.datarunID)
+        this.props.getClassifiers(1)
     }
     componentDidUpdate(prevProps: IProps) {
         if (this.state.runCSV == '') {
@@ -220,15 +228,20 @@ export default class DataRuns extends React.Component<IProps, IState>{
         let newHyper = this.getHyperPartitions();
 
         hyperpartitions = hyperpartitions.filter(d => d.datarun_id == this.props.datarunID)
-        let datarun: IDatarun = parseDatarun(runCSV)
+        let datarun: IDatarun = parseDatarun(runCSV);
+        // console.log(getClassifiersSelector);
         if (Object.keys(datarun).length <= 0)
             return <div />;
+            console.log(this.props)
 
         return (
             <div style={{ height: '100%' }}>
 
                 <div className="runTracker" style={{ height: '12%', display: "flex" }}>
-                    <AskModal AskModalCallBack={this.AskModalCallBack} visible={this.state.askvisible} />
+                    <AskModal
+                        AskModalCallBack={this.AskModalCallBack}
+                        visible={this.state.askvisible}
+                    />
                     <BarChart run={runCSV} width={100} />
                 </div>
                 <ThreeLevel
@@ -248,3 +261,8 @@ export default class DataRuns extends React.Component<IProps, IState>{
     }
 }
 
+export default connect((state: any) => ({
+    classifiers: getClassifiersSelector(state)
+}), (dispatch: any) => ({
+    getClassifiers: (id: number) => dispatch(getClassifiersAction(id))
+}))(DataRuns)
