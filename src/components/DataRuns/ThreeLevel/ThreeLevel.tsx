@@ -26,7 +26,8 @@ export interface IProps {
     compareK: number,
     recommendationResult: IRecommendationResult,
     postClickEvent: (e: IClickEvent) => void,
-    newHyper: any
+    // newHyper: any,
+    isLoading: boolean
 }
 
 export interface IState {
@@ -40,7 +41,8 @@ export interface IState {
     mouseOverClassifier: number,
     displaymode: number,
     methodCoords: any,
-    classifiers: any
+    classifiers: any,
+
 }
 
 export default class ThreeLevel extends React.Component<IProps, IState>{
@@ -352,17 +354,17 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             return
 
         let { classifiers } = nextProps;
-        const {
-            methodSelected,
-            hyperPartSelectedRange,
-         } = this.props.newHyper
+        // const {
+        //     methodSelected,
+        //     hyperPartSelectedRange,
+        //  } = this.props.newHyper
 
         let selectedMethod = this.state.selectedMethod;
         classifiers = classifiers.sort((a, b) => b.cv_metric - a.cv_metric);
 
         this.setState({
-            methodSelected,
-            hyperPartSelectedRange,
+            // methodSelected,
+            // hyperPartSelectedRange,
             selectedMethod,
             classifiers
         });
@@ -732,7 +734,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
             datarun,
             hyperpartitions,
             compareK,
-            newHyper
+            // newHyper
         } = this.props;
 
         const {
@@ -752,6 +754,8 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
         let width1 = svgWidth;
         let methodHeight = this.getMethodHeight();
 
+        console.log(this.props);
+        debugger;
         return (
             <div className="svgWrapper" style={{ height: `${this.props.height}%` }}>
                 <GenerateSvg id="svgChart">
@@ -769,7 +773,7 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                             style={{ font: "bold 16px sans-serif" }}
                         >Algorithms</text>
                         <Methods
-                            classifiers={classifiers}
+                            // classifiers={classifiers}
                             width={width1}
                             height={methodHeight}
                             displaymode={displaymode}
@@ -777,18 +781,19 @@ export default class ThreeLevel extends React.Component<IProps, IState>{
                             selectedMethod={this.state.selectedMethod}
                             usedMethods={usedMethods}
                             unusedMethods={unusedMethods}
-                            hyperpartitions={hyperpartitions}
+                            // hyperpartitions={hyperpartitions}
                             configsMethod={this.state.configsMethod}
                             methodSelected={this.state.methodSelected}
                             onMethodsCheckBoxChange={this.onMethodsCheckBoxChange}
                             compareK={compareK}
                             recommendationResult={this.props.recommendationResult}
-                            newHyper={newHyper}
+                            // newHyper={newHyper}
                         />
                     </g>
                     {displaymode == 1 || displaymode == 2 ? this.generateHyperpartition() : this.generateHyperpartitionText()}
                     {displaymode == 2 ? this.generateHyperparameter() : displaymode == 1 ? this.generateHyperparameterText() : <g />}
                 </GenerateSvg>
+
             </div>
         )
     }

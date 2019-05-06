@@ -4,12 +4,31 @@ import { getColor } from "helper";
 import * as methodsDef from "assets/methodsDef.json";
 import {IHyperpartitionInfo, IClassifierInfo,IRecommendationResult} from 'service/dataService';
 import { Checkbox,Tooltip,Progress } from 'antd';
+import {connect} from 'react-redux';
 import "./Methods.css";
 //import * as hint from "assets/small_hint.png"
+
+import {
+    getClassifiersSummarySelector,
+    getClassifiersSelector,
+    getHyperPartitionsSelector,
+    getIsLoading
+} from '../../../selectors/DataRuns';
+
+
+import {
+    getClassifiersSummaryAction,
+    getClassifiersAction,
+    getHyperPartitionsAction,
+
+} from 'actions/api';
+// import { connect } from "net";
+
+
 const d3 = require("d3");
 
 export interface IProps {
-    classifiers: IClassifierInfo[],
+    // classifiers: IClassifierInfo[],
     onSelectMethod: (methodName:string)=>void,
     usedMethods: string[],
     unusedMethods: string[],
@@ -17,13 +36,22 @@ export interface IProps {
     height:number,
     displaymode:number,
     selectedMethod: string,
-    hyperpartitions: IHyperpartitionInfo[],
+    // hyperpartitions: IHyperpartitionInfo[],
     configsMethod : string[],
     onMethodsCheckBoxChange: (e:any)=>void
     compareK:number,
     methodSelected:any,
     recommendationResult:IRecommendationResult,
-    newHyper: any
+    // newHyper: any,
+
+    getClassifiersSummary: (id?: number) => void;
+    getClassifiers: (id?: number) => void;
+    getHyperPartition: (id?: number, dataRunId?: number) => void;
+
+    classifiers: any;
+    classifiersSummary: any;
+    hyperpartitions: any;
+    isLoading: boolean
 }
 
 export interface IState {
@@ -31,7 +59,7 @@ export interface IState {
 }
 
 
-export default class methods extends React.Component<IProps, IState>{
+class Methods extends React.Component<IProps, IState>{
     public gap = 20
     width = (this.props.width - 2*this.gap)/2>20?(this.props.width - 2*this.gap)/2:20;
     // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
@@ -46,6 +74,9 @@ export default class methods extends React.Component<IProps, IState>{
         checkboxWidth: 75,
         checkboxHeight: 30,
         yextragap:20
+    }
+    componentDidMount(){
+        this.props.getHyperPartition()
     }
     public getbestperformance(list: IClassifier[]) {
         if (list.length > 0) {
@@ -90,7 +121,7 @@ export default class methods extends React.Component<IProps, IState>{
         let {classifiers, compareK } = this.props
         let comparedCls = classifiers.slice(0, compareK)
 
-        let comparedMethods = Array.from(new Set(comparedCls.map(d=>d.method)))
+        let comparedMethods = Array.from(new Set(comparedCls.map((d: any)=>d.method)))
         if(compareK>0){
             d3.selectAll('g.algorithm')
             .attr('opacity', 0.5)
@@ -107,25 +138,22 @@ export default class methods extends React.Component<IProps, IState>{
 
     }
     render() {
-        let { classifiers, usedMethods, unusedMethods, hyperpartitions,methodSelected,width,height,displaymode, newHyper} = this.props;
-        // console.log(hyperpartitions, newHyper);
-        //this.width = (this.props.width - 7*this.gap)/2>20?(this.props.width - 7*this.gap)/2:20;
-        // public height = (window.innerHeight * 0.94 * 0.9 - this.gap) / (Object.keys(methodsDef).length * 0.5) - this.gap
-        /*this.methodBoxAttr = {
-            // width : 70,
-            height: this.width * 0.6,
-            width: this.width,
-            gap: this.gap,
-            x: 2*this.gap,
-            y: 2*this.gap,
-            checkboxY: 2,
-            checkboxWidth: 100,
-            checkboxHeight: 30,
-            yextragap:20
-        }*/
-        // console.log(width);
-        // console.log(height);
-        // Calculate Layout
+        let {
+            classifiers,
+            usedMethods,
+            unusedMethods,
+            hyperpartitions,
+            methodSelected,
+            width,
+            height,
+            displaymode,
+            // newHyper
+        } = this.props;
+
+
+
+        console.log('ceva');
+
         let refwidth = 1600;
         let refheight = 714.84;
         let oneboxwidth:number = 215/refwidth*width;
@@ -209,9 +237,7 @@ export default class methods extends React.Component<IProps, IState>{
                 bestScore: Math.max(
                     ...classifiers.filter(
                             (d:any)=>d.method==name
-                        ).map(
-                            d=>d['cv_metric']
-                        )
+                        ).map((d: any)=>d['cv_metric'])
                 ),
                 name: name
             };
@@ -224,7 +250,7 @@ export default class methods extends React.Component<IProps, IState>{
         });
         let maxnum = Math.max(
             ...usedMethods.map(
-                (name:string)=>this.getmaxnum(classifiers.filter(d=>d.method==name))
+                (name:string)=>this.getmaxnum(classifiers.filter((d: any)=>d.method==name))
         ))
         // // calculate the max num
         // sortedusedMethods.forEach((name: string, i: number)=>{
@@ -243,6 +269,7 @@ export default class methods extends React.Component<IProps, IState>{
         let getYcorr = (i:number) =>{
             return this.methodBoxAttr.y + Math.floor(i / maxrow) * (this.methodBoxAttr.height + this.methodBoxAttr.gap+ this.methodBoxAttr.yextragap)
         }
+        console.log(this.props);
         return <g className="methods" >
                     {sortedusedMethods.concat(unusedMethods).map((name: string, i: number) => {
                             /*let checked = false;
@@ -293,8 +320,11 @@ export default class methods extends React.Component<IProps, IState>{
                         flower = 3-index;
                     }
                     let filterclassifier = classifiers.filter((d:any)=>d.method==name);
+
                     let filterhyperpartitions = hyperpartitions.filter((d:IHyperpartitionInfo)=>d.method==name);
-                    let usedHpID = Array.from(new Set(filterclassifier.map(d=>d.hyperpartition_id)));
+
+
+                    let usedHpID = Array.from(new Set(filterclassifier.map((d: any)=>d.hyperpartition_id)));
                     //let usedhpidlen = usedHpID.length;
                     let filterhyperpartitionslen = filterhyperpartitions.length;
                     if(filterhyperpartitionslen==0){
@@ -681,166 +711,14 @@ class LineChart extends React.Component<LineChartProps, {}>{
     }
 }
 
-// class LineChart2 extends React.Component<LineChartProps, {}>{
-//     TAG = "LineChart_";
-//     componentDidMount() {
-//         this.renderD3();
-//     }
-//     renderD3() {
-//         // Get Datasets
-//         const { methodDef, classifiers,totallen,selected } = this.props;
-//         let step = 0.1;
-//         let data:number[] = [];
 
-//         for (let i =0; i<=1/step; i++){
-//             data.push(0)
-//         }
-//         let bestperformance = 0;
-//         classifiers.forEach((classifier:IClassifier)=>{
-//             let performance = parseFloat(classifier['performance'].split(' +- ')[0]);
-//             if(performance>bestperformance){
-//                 bestperformance=performance;
-//             }
-//             let rangeIdx = Math.floor(performance/step)
-//             data[rangeIdx] = data[rangeIdx]+1
-//         });
-//         let total = 0;
-//         let bestindex = 0;
-//         // let frequentindex = 0;
-//         // let maxfrequency = 0;
-//         data.forEach((d:any,i:any)=>{
-//             if(d>0&&i>bestindex){
-//                 bestindex=i;
-//             }
-//             // if(d>maxfrequency){
-//             //     // frequentindex=i;
-//             //     maxfrequency=d;
-//             // }
-//             total+=d;
-//         });
-//         //total;
-//         let yAxisData:string[] = []
-//         for (let i =0; i<=1/step; i++){
-//             yAxisData.push(`${(i*step).toFixed(2)}`)
-//         }
-
-//         // g
-//         // Set the dimensions of the canvas / graph
-//         //let	margin = {top: 0, right: 0, bottom: 0, left: 0},
-//         let	margin = {top: 1, right: 1, bottom: 1, left: 1},
-//             width = this.props.width - margin.left - margin.right,
-//             height = this.props.height - margin.top - margin.bottom,
-//             top_margin = {top:this.props.y,left:this.props.x};
-
-//         // Set the ranges
-//         let	xScale = d3.scaleLinear().range([0, width]);
-//         let	yScale = d3.scaleLinear().range([height, 0]);
-
-
-//         xScale.domain([0, totallen]);
-//         yScale.domain([0, 1]);
-//         //Create SVG element
-//         let tooltip = d3.select("#tooltip");
-//         //let top_methods = d3.select("#methodstop");
-
-//         if(tooltip.empty()){
-//             tooltip = d3.select("body").append("div")
-//             .attr("class", "tooltip")
-//             .attr("id","tooltip")
-//             .style("opacity", 0)
-//             .style("left",  "0px")
-//               .style("top",  "0px");;
-//         }
-//         let top_svg = d3.select("#"+this.TAG+this.props.name).attr("width", width + margin.left + margin.right)
-//         .attr("height", height + margin.top + margin.bottom).attr("transform", "translate(" + top_margin.left + "," + top_margin.top + ")")
-//         // .on("click",()=>{onClick(this.props.name)})
-//         .on("mousemove", function(d:any) {
-
-//             tooltip.transition()
-//               .duration(100)
-//               .style("left", (d3.event.pageX) + "px")
-//               .style("top", (d3.event.pageY - 28) + "px");
-//               tooltip.style("opacity", 0.7).html(methodDef.fullname+"<br/>"+"best performance:"+bestperformance.toFixed(2) + "<br/>" + "trial number:"+total)
-
-//             })
-
-//           .on("mouseout", function(d:any) {
-//             tooltip
-//               .style("opacity", 0);
-//             });;
-//         top_svg.append("rect")
-//         .attr("x",0)
-//         .attr("y",0)
-//         .attr("width", width + margin.left + margin.right)
-//         .attr("height",height + margin.top + margin.bottom)
-//         .attr("fill","white")
-//         .attr("stroke-width",2)
-//         .attr("stroke",selected?"#A4A0A0":"#E0D6D4")
-//         ;
-//         let svg = top_svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-//         let line = d3.line()
-//         .x(function(d:any, i:any) { return xScale(d); }) // set the x values for the line generator
-//         .y(function(d:any,i:any) { return yScale((i)*step); }) // set the y values for the line generator
-//         .curve(d3.curveMonotoneX) // apply smoothing to the line
-
-//         let area = d3.area()
-//         .y(function(d:any) { return yScale(d) })
-//         .x0(0)
-//         .x1(function(d:any) { return xScale(d); })
-
-//         console.info(area, line)
-
-//         function generateArray(index:number){
-//             let data:any[] = [];
-//             data.push({x:0,y:index*step});
-//             data.push({x:totallen,y:index*step});
-//             return data;
-//         }
-
-//         var straightline = d3.line()
-//             .x(function(d:any, i:any) { return xScale(d.x); }) // set the x values for the line generator
-//             .y(function(d:any,i:any) { return yScale(d.y); }) // set the y values for the line generator
-//         svg.append("path")
-//             .datum(generateArray(bestindex))
-//             .attr("class", "line")
-//             .attr("fill","none")
-//             .attr("stroke","#E0D6D4")
-//             .attr("stroke-width",2)
-//             .attr("stroke-dasharray","5,5")
-//             .attr("d", straightline);
-//         // svg.append("path")
-//         //     .datum(generateArray(frequentindex))
-//         //     .attr("class", "line")
-//         //     .attr("fill","none")
-//         //     .attr("stroke","#E0D6D4")
-//         //     .attr("stroke-width",2)
-//         //     .attr("stroke-dasharray","5,5")
-//         //     .attr("d", straightline);
-//         svg.append("path")
-//             .datum(data)
-//             .attr("class", "line")
-//             .attr("fill","none")
-//             .attr("stroke",getColor(methodDef.name))
-//             .attr("stroke-width",2)
-//             .attr("d", line);
-
-//         // svg.append("path")
-//         //     .datum(data)
-//         //     .attr("class", "line")
-//         //     .attr("fill",getColor(methodDef.name))
-//         //     .attr("d", area);
-
-//         svg.append("text")
-//             .attr("class", "hp_name")
-//             .attr('x', width)
-//             .attr('y', height)
-//             .attr('text-anchor', "end")
-//             .text(this.props.name)
-//       }
-//     render() {
-//         const {name}=this.props;
-//         return <g id={this.TAG+name}/>
-//     }
-// }
+export default connect((state: any) => ({
+    classifiersSummary: getClassifiersSummarySelector(state),
+    classifiers: getClassifiersSelector(state),
+    hyperpartitions: getHyperPartitionsSelector(state),
+    isLoading: getIsLoading(state)
+}), (dispatch: any) => ({
+    getClassifiersSummary: (id?: number) => dispatch(getClassifiersSummaryAction(id)),
+    getClassifiers: (id?: number) => dispatch(getClassifiersAction(id)),
+    getHyperPartition: (id?: number, dataRunId?: number) => dispatch(getHyperPartitionsAction(id, dataRunId))
+}))(Methods)

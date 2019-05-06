@@ -13,6 +13,8 @@ const axiosInstance = axios.create({
     }
 });
 
+
+
 export interface IDatarunStatus {
     status: IDatarunStatusTypes;
 }
@@ -143,15 +145,8 @@ export async function getClassifiers(
 }
 
 export async function getHyperpartitions(hp_id?: number, datarun_id?:number): Promise<IHyperpartitionInfo[]> {
-    const url = hp_id ?
-        `/hyperpartitions/${hp_id}`
-        :
-        (
-        datarun_id?
-            `/hyperpartitions?&datarun_id=${datarun_id}`
-            :
-            `/hyperpartitions/`
-        );
+    const url = hp_id ? `/hyperpartitions/${hp_id}` :
+        (datarun_id ? `/hyperpartitions?&datarun_id=${datarun_id}` : `/hyperpartitions/`);
     const res = await axiosInstance.get(url);
     if (res.status === 200) {
         return res.data;
@@ -230,7 +225,9 @@ export async function getClassifierSummary(datarun_id: number): Promise<string> 
     const url = `/classifier_summary`;
     const params = { datarun_id };
     const res = await axiosInstance.get(url, { params });
+
     if (res.status === 200) {
+        // console.log(res.data);
         return res.data;
     }
     throw res;

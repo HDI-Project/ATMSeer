@@ -1,41 +1,34 @@
-// library
-// import axios from "axios";
 import * as React from "react";
 import * as methodsDef from "assets/methodsDef.json";
-//import { Tabs, Row, Col, Progress } from 'antd';
-
-//
 import { parseDatarun } from "helper";
 import { IDatarun } from 'types';
-// import {URL} from '../../Const';
-//import {getClassifierSummary} from 'service/dataService';
 import {
-    getClassifierSummary, getClassifiers, getHyperpartitions, IRecommendationResult,
+    getClassifierSummary, getClassifiers,
+    getHyperpartitions,
+    IRecommendationResult,
     IClassifierInfo, IHyperpartitionInfo, getRecommendation, IClickEvent, stopDatarun
 } from 'service/dataService';
-
-//components
-// import MethodsLineChart from './MethodsLineChart';
-//import MethodsSearchSpace from './MethodsSearchSpace';
 import BarChart from './BarChart';
-//import OverallHistogram from "./OverallHistogram";
-// import HyperPartitions from "./HyperPartitions";
 import { IDatarunStatusTypes } from 'types/index';
 import { UPDATE_INTERVAL_MS } from "Const";
 import ThreeLevel from "./ThreeLevel";
 import AskModal from "./AskModal";
 import { USER_STUDY,THRESHOLD_STEP } from 'Const';
-import {getClassifiersSelector} from '../../selectors/DataRuns';
 import {connect} from 'react-redux';
-import {getClassifiersAction} from 'actions/api';
-// const axiosInstance = axios.create({
-//     baseURL: URL+'/api',
-//     // timeout: 1000,
-//     headers: {
-//         'Access-Control-Allow-Origin': '*',
-// }
-//   });
-//const TabPane = Tabs.TabPane
+
+import {
+    getClassifiersSummarySelector,
+    getClassifiersSelector,
+    getHyperPartitionsSelector,
+    getIsLoading
+} from '../../selectors/DataRuns';
+
+import {
+    getClassifiersSummaryAction,
+    getClassifiersAction,
+    getHyperPartitionsAction,
+
+} from 'actions/api';
 
 
 export interface IProps {
@@ -46,7 +39,15 @@ export interface IProps {
     setDatarunID: (id: number) => void;
     postClickEvent: (e: IClickEvent) => void;
     setDatarunStatus: (e: IDatarunStatusTypes) => void;
-    getClassifiers: (id: number) => void;
+
+    getClassifiersSummary: (id?: number) => void;
+    getClassifiers: (id?: number) => void;
+    getHyperPartition: (id?: number, dataRunId?: number) => void;
+
+    classifiers: any;
+    classifiersSummary: any;
+    hyperpartitions: any;
+    isLoading: boolean
 }
 export interface IState {
     runCSV: string,
@@ -79,12 +80,13 @@ class DataRuns extends React.Component<IProps, IState>{
             askvisible: false
         }
     }
+
     public async getData() {
-        const { datarunID, datasetID } = this.props
+        const { datarunID, datasetID, classifiers, classifiersSummary, hyperpartitions } = this.props;
+
+
         if (datarunID !== null && datasetID !== null) {
-            const runCSV = await getClassifierSummary(datarunID);
-            const classifiers = await getClassifiers(datarunID);
-            let hyperpartitions = await getHyperpartitions(undefined, datarunID).then(hyperpartitions => {
+            let hyperpartitionsAsync = await getHyperpartitions(undefined, datarunID).then(hyperpartitions => {
                 if (Array.isArray(hyperpartitions)) {
                     return hyperpartitions
                 } else {
@@ -92,10 +94,12 @@ class DataRuns extends React.Component<IProps, IState>{
                     return []
                 }
             });
-            console.log(datarunID);
+
+
             let recommendationResult = await getRecommendation(datasetID);
             let askvisible = this.state.askvisible;
             let run_threshold = this.state.run_threshold;
+
             if (USER_STUDY) {
                 if (this.props.datarunStatus === IDatarunStatusTypes.RUNNING) {
                     if (classifiers.length >= run_threshold) {
@@ -104,7 +108,6 @@ class DataRuns extends React.Component<IProps, IState>{
                             let promise = stopDatarun(this.props.datarunID);
                             promise
                                 .then(datarun => {
-                                    // this.props.setDatarunID(this.props.datarunID) // pass datarun id to datarun after clicking run button
                                     this.props.setDatarunStatus(datarun.status);
                                 })
                                 .catch(error => {
@@ -118,13 +121,14 @@ class DataRuns extends React.Component<IProps, IState>{
                     }
                 }
             }
+
             this.setState({
-                runCSV: runCSV,
-                classifiers: classifiers,
-                hyperpartitions: hyperpartitions,
-                recommendationResult: recommendationResult,
-                run_threshold: run_threshold,
-                askvisible: askvisible
+                runCSV: classifiersSummary,
+                classifiers,
+                hyperpartitions,
+                recommendationResult,
+                run_threshold,
+                askvisible
             })
         }
     }
@@ -136,12 +140,25 @@ class DataRuns extends React.Component<IProps, IState>{
             clearInterval(this.intervalID);
         }
     }
-    public componentDidMount() {
-        this.getData();
-        this.startOrStopUpdateCycle();
-        // this.props.getClassifiers(this.props.datarunID)
-        this.props.getClassifiers(1)
+    private setData() {
+        const {datarunID} = this.props;
+
+        if(datarunID !== null) {
+            this.props.getClassifiersSummary(datarunID);
+            this.props.getClassifiers(datarunID);
+            this.props.getHyperPartition(undefined, datarunID);
+        }
     }
+
+    public componentDidMount() {
+        // this.getData();
+        this.startOrStopUpdateCycle();
+        this.props.getClassifiersSummary(1);
+            this.props.getClassifiers(1);
+            this.props.getHyperPartition(undefined, 1);
+        // this.setData();
+    }
+
     componentDidUpdate(prevProps: IProps) {
         if (this.state.runCSV == '') {
             this.getData();
@@ -153,6 +170,7 @@ class DataRuns extends React.Component<IProps, IState>{
             this.startOrStopUpdateCycle();
         }
     }
+
     public componentWillUnmount() {
         window.clearInterval(this.intervalID)
     }
@@ -223,16 +241,28 @@ class DataRuns extends React.Component<IProps, IState>{
     }
 
     public render() {
-        let { runCSV, hyperpartitions, classifiers } = this.state
-        let { datasetID, datarunID, compareK } = this.props;
-        let newHyper = this.getHyperPartitions();
+        let { runCSV,
+            //hyperpartitions
+        } = this.state;
 
-        hyperpartitions = hyperpartitions.filter(d => d.datarun_id == this.props.datarunID)
+        let {
+            datasetID,
+            datarunID,
+            compareK,
+            classifiers,
+            hyperpartitions,
+            classifiersSummary,
+            isLoading
+         } = this.props;
+
+         let newHyper = this.getHyperPartitions();
+
+
+        // hyperpartitions = hyperpartitions.filter((d: any) => d.datarun_id == this.props.datarunID)
         let datarun: IDatarun = parseDatarun(runCSV);
-        // console.log(getClassifiersSelector);
+        // let datarun: IDatarun = parseDatarun(classifiersSummary);
         if (Object.keys(datarun).length <= 0)
             return <div />;
-            console.log(this.props)
 
         return (
             <div style={{ height: '100%' }}>
@@ -255,14 +285,20 @@ class DataRuns extends React.Component<IProps, IState>{
                     datarunID={datarunID}
                     recommendationResult={this.state.recommendationResult}
                     postClickEvent={this.props.postClickEvent}
-                    newHyper={newHyper}
+                    // newHyper={newHyper}
+                    isLoading={isLoading}
                 />
             </div>)
     }
 }
 
 export default connect((state: any) => ({
-    classifiers: getClassifiersSelector(state)
+    classifiersSummary: getClassifiersSummarySelector(state),
+    classifiers: getClassifiersSelector(state),
+    hyperpartitions: getHyperPartitionsSelector(state),
+    isLoading: getIsLoading(state)
 }), (dispatch: any) => ({
-    getClassifiers: (id: number) => dispatch(getClassifiersAction(id))
+    getClassifiersSummary: (id?: number) => dispatch(getClassifiersSummaryAction(id)),
+    getClassifiers: (id?: number) => dispatch(getClassifiersAction(id)),
+    getHyperPartition: (id?: number, dataRunId?: number) => dispatch(getHyperPartitionsAction(id, dataRunId))
 }))(DataRuns)

@@ -16,7 +16,35 @@ export default function DataRuns(state = initialState, action: any): any {
         case 'GET_CLASSIFIERS_ERROR':
             return state
                 .set('isLoading', false)
-                .set('classifiers', Immutable.Map())
+                .set('classifiers', Immutable.Map());
+
+        case 'GET_CLASSIFIERS_SUMMARY_REQUEST':
+            return state
+                .set('isLoading', false)
+                .set('classifiersSummary', Immutable.Map());
+        case 'GET_CLASSIFIERS_SUMMARY_SUCCESS':
+            return state
+                .set('isLoading', false)
+                .set('classifiersSummary', action.classifiersSummary);
+        case 'GET_CLASSIFIERS_SUMMARY_ERROR':
+            return state
+                .set('isLoading', false)
+                .set('classifiersSummary', Immutable.Map());
+
+        case 'GET_HYPERPARTITIONS_REQUEST':
+            return state
+                .set('isLoading', true)
+                .set('hyperpartitions', Immutable.Map());
+
+        case 'GET_HYPERPARTITIONS_SUCCESS':
+            return state
+                .set('isLoading', false)
+                .set('hyperpartitions', action.hyperpartitions);
+
+        case 'GET_HYPERPARTITIONS_ERROR':
+            return state
+                .set('isLoading', false)
+                .set('hyperpartitions', Immutable.Map());
         default:
             return state
     }
