@@ -31,17 +31,17 @@ export default function DataRuns(state = initialState, action: any): any {
                 .set('isLoading', false)
                 .set('classifiersSummary', Immutable.Map());
 
-        case 'GET_HYPERPARTITIONS_REQUEST':
+        case 'SET_HYPERPARTITIONS_REQUEST':
             return state
                 .set('isLoading', true)
                 .set('hyperpartitions', Immutable.Map());
 
-        case 'GET_HYPERPARTITIONS_SUCCESS':
+        case 'SET_HYPERPARTITIONS_SUCCESS':
             return state
                 .set('isLoading', false)
                 .set('hyperpartitions', action.hyperpartitions);
 
-        case 'GET_HYPERPARTITIONS_ERROR':
+        case 'SET_HYPERPARTITIONS_ERROR':
             return state
                 .set('isLoading', false)
                 .set('hyperpartitions', Immutable.Map());

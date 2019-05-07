@@ -9,14 +9,14 @@ import { IClickEvent } from 'service/dataService';
 const TabPane = Tabs.TabPane
 
 export interface SidePanelProps {
-    datasetID: number | null;
-    datarunID: number | null;
-    datarunStatus: IDatarunStatusTypes;
-    setDatasetID: (id: number) => void;
-    setDatarunID: (id: number) => void;
-    setDatarunStatus: (status: IDatarunStatusTypes) => void;
-    setTopK: (topK:number)=>void;
-    postClickEvent:(e:IClickEvent)=>void;
+    // datasetID: number | null;
+    // datarunID: number | null;
+    // datarunStatus: IDatarunStatusTypes;
+    // setDatasetID: (id: number) => void;
+    // setDatarunID: (id: number) => void;
+    // setDatarunStatus: (status: IDatarunStatusTypes) => void;
+    // setTopK: (topK:number)=>void;
+    // postClickEvent:(e:IClickEvent)=>void;
 }
 
 export interface SidePanelState {}
@@ -31,21 +31,21 @@ export default class SidePanel extends React.Component<SidePanelProps, SidePanel
     public render() {
         return (
             <div className="side-panel" style={{overflowY:"hidden"}}>
-                <DataSelector {...this.props} />
+                <DataSelector  />
                 <Tabs
                     defaultActiveKey="2"
                 >
                     <TabPane tab="Data" key="1">
-                        <DataView datasetID={this.props.datasetID} />
+                        {/* <DataView datasetID={this.props.datasetID} /> */}
                     </TabPane>
                     <TabPane tab="Overview" key="2">
-                        <LeaderBoard
+                        {/* <LeaderBoard
                             datarunID={this.props.datarunID}
                             datarunStatus={this.props.datarunStatus}
                             setDatarunStatus={this.props.setDatarunStatus}
                             setTopK = {this.props.setTopK}
                             postClickEvent = {this.props.postClickEvent}
-                        />
+                        /> */}
                     </TabPane>
                 </Tabs>
             </div>

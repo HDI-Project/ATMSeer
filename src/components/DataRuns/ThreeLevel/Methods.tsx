@@ -19,7 +19,7 @@ import {
 import {
     getClassifiersSummaryAction,
     getClassifiersAction,
-    getHyperPartitionsAction,
+    setHyperPartitionsAction,
 
 } from 'actions/api';
 // import { connect } from "net";
@@ -720,5 +720,5 @@ export default connect((state: any) => ({
 }), (dispatch: any) => ({
     getClassifiersSummary: (id?: number) => dispatch(getClassifiersSummaryAction(id)),
     getClassifiers: (id?: number) => dispatch(getClassifiersAction(id)),
-    getHyperPartition: (id?: number, dataRunId?: number) => dispatch(getHyperPartitionsAction(id, dataRunId))
+    getHyperPartition: (id?: number, dataRunId?: number) => dispatch(setHyperPartitionsAction(id, dataRunId))
 }))(Methods)

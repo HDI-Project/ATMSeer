@@ -45,15 +45,15 @@ export function getClassifiersAction(datarun_id?: number){
 }
 
 
-export function getHyperPartitionsAction(hp_id?: number, datarun_id?:number) {
+export function setHyperPartitionsAction(hp_id?: number, datarun_id?:number) {
     const url = hp_id ? `/hyperpartitions/${hp_id}` : (datarun_id ? `/hyperpartitions?&datarun_id=${datarun_id}` : `/hyperpartitions/`);
     return function(dispatch: any) {
         dispatch({type: 'GET_HYPERPARTITIONS_REQUEST'})
         return api
             .get(url)
             .then(
-                data => dispatch({type: 'GET_HYPERPARTITIONS_SUCCESS', hyperpartitions: data}),
-                err => dispatch({type: 'GET_HYPERPARTITIONS_ERROR', err})
+                data => dispatch({type: 'SET_HYPERPARTITIONS_SUCCESS', hyperpartitions: data}),
+                err => dispatch({type: 'SET_HYPERPARTITIONS_ERROR', err})
             );
     }
 }

@@ -6,12 +6,16 @@ import { IDatarunStatusTypes } from 'types/index';
 import "./DataSelector.css";
 import SettingsModal from './SettingsModal';
 
+import {connect} from 'react-redux';
+import { getDatarunIdSelector, getDatasetIdSelector, getDatarunStatusSelector } from 'selectors/App';
+import { setDatarunIdAction, setDataSetIdAction, setDatarunStatusAction } from 'actions/app';
+
 const Option = Select.Option;
 
 
 export interface DataSelectorProps {
-    datasetID: number | null;
-    datarunID: number | null;
+    datasetID: number;
+    datarunID: number;
     datarunStatus: IDatarunStatusTypes;
     setDatasetID: (id: number) => void;
     setDatarunID: (id: number | null) => void;
@@ -25,7 +29,7 @@ export interface DataSelectorState {
     // datarunStatus: IDatarunStatusTypes;
 }
 
-export default class DataSelector extends React.Component<DataSelectorProps, DataSelectorState> {
+class DataSelector extends React.Component<DataSelectorProps, DataSelectorState> {
     constructor(props: DataSelectorProps) {
         super(props);
         this.onSelectDatarun = this.onSelectDatarun.bind(this);
@@ -33,6 +37,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         this.beforeUploadDataset = this.beforeUploadDataset.bind(this);
         this.onClickDatarun = this.onClickDatarun.bind(this);
         this.newDatarun = this.newDatarun.bind(this);
+
         this.state = {
             datasets: [],
             dataruns: [],
@@ -123,7 +128,7 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         p.then((status) => {
             if (status.success) {
                 this.getDataruns(datasetID);
-                
+
             }
         })
         return p;
@@ -175,27 +180,15 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         // upload button
         const uploadProps = {
             name: 'file',
-            // action: `${URL}/api/enter_data`,
             headers: {
                 authorization: ''
             },
-            // onChange: this.onChange,
             beforeUpload: this.beforeUploadDataset // custom control the upload event
         };
 
-        // const settingButton = <React.Fragment><Icon type='setting' /><span>Settings</span></React.Fragment>;
+        console.log(this.props);
         return (
             <div className="data-selector">
-                {/* <div>
-                    <span>Settings</span>
-                    <Row gutter={6}>
-
-                        <Col span={24} className="dataViewColContainer">
-                            <SettingsModal onSubmit={postConfigs} button={settingButton}/>
-                        </Col>
-                    </Row>
-
-                </div> */}
                 <div>
                     <span>Datasets</span>
                     <Row style={{marginBottom: '6px'}} gutter={6}>
@@ -262,3 +255,13 @@ export default class DataSelector extends React.Component<DataSelectorProps, Dat
         );
     }
 }
+
+export default connect((state) => ({
+    datasetID: getDatarunIdSelector(state),
+    datarunID: getDatasetIdSelector(state),
+    datarunStatus: getDatarunStatusSelector(state)
+}), (dispatch: any) => ({
+    setDatarunID: (datarunID: number) => dispatch(setDatarunIdAction(datarunID)),
+    setDatasetID: (dataSetID: number) => dispatch(setDataSetIdAction(dataSetID)),
+    setDatarunStatus: (datarunStatus: IDatarunStatusTypes) => dispatch(setDatarunStatusAction(datarunStatus))
+}))(DataSelector)
