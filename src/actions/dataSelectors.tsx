@@ -10,6 +10,7 @@ export function setDatarunIdAction(datarunID: any) {
 
 export function setDataSetIdAction(datasetID: any) {
     return function(dispatch: any) {
+        debugger;
         return dispatch({
             type: 'SET_DATASET_ID_SUCCESS',
             datasetID
@@ -20,7 +21,7 @@ export function setDataSetIdAction(datasetID: any) {
 export function setDatarunStatusAction(datarunStatus: any) {
     return function(dispatch: any) {
         return dispatch({
-            type: 'UPDATE_DATARUN_STATUS_SUCCESS',
+            type: 'UPDATE_DATARUN_STATUS',
             datarunStatus
         })
     }

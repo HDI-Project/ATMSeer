@@ -57,3 +57,55 @@ export function setHyperPartitionsAction(hp_id?: number, datarun_id?:number) {
             );
     }
 }
+
+export function setDatasetsAction() {
+    const url = `/datasets`;
+    return function(dispatch: any) {
+        dispatch({type: 'SET_DATASET_REQUEST'});
+        return api
+            .get(url)
+            .then(
+                data => dispatch({type: 'SET_DATASET_SUCCESS', dataSet: data}),
+                err => dispatch({type: 'SET_DATASET_ERROR', err})
+            );
+    }
+}
+
+export function getDataRunsAction(dataSetID: number) {
+    const url = `/dataruns?dataset_id=${dataSetID}`;
+    return function(dispatch: any) {
+        debugger;
+        return api
+            .get(url)
+            .then(
+                data => dispatch({type: 'GET_DATARUNS_SUCCESS', data}),
+                err => dispatch({type: 'GET_DATARUNS_ERROR', err})
+            )
+    }
+
+}
+
+//@TODO - see if datarunID can be grabbed from a selector + see if start/stop can be a single function
+export function startDatarunAction(datarunID: number){
+    const url = `/start_worker/${datarunID}`;
+    return function(dispatch: any) {
+        return api
+            .get(url)
+            .then(
+                status => dispatch({type: 'START_DATARUN_SUCCESS', datarunStatus: status }),
+                err => dispatch({type: 'START_DATARUN_ERROR'}, err)
+            )
+    }
+}
+
+export function stopDatarunAction(datarunID: number){
+    const url = `/start_worker/${datarunID}`;
+    return function(dispatch: any) {
+        return api
+            .get(url)
+            .then(
+                status => dispatch({type: 'STOP_DATARUN_SUCCESS', datarunStatus: status}),
+                err => dispatch({type: 'STOP_DATARUN_ERROR'}, err)
+            )
+    }
+}

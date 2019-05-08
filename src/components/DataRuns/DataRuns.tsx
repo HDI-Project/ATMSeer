@@ -29,9 +29,9 @@ import {
     setHyperPartitionsAction,
 
 } from 'actions/api';
-import {
-    setDatarunStatusAction
-} from "actions/app";
+// import {
+//     setDatarunStatusAction
+// } from "actions/app";
 
 
 export interface IProps {
