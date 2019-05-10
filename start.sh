@@ -1,0 +1,1 @@
+vagrant provision --provision-with vagrantstart
