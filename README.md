@@ -19,113 +19,40 @@ The paper has been published at **ACM CHI 2019**.[PDF](https://arxiv.org/abs/190
 
 =========================
 
+
+# Perequisites
+Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
+
+=========================
+
 # Download ATMSeer
 
 ```
-git clone https://github.com/HDI-Project/ATMSeer.git /path/to/atm
+git clone https://github.com/HDI-Project/ATMSeer.git
 ```
 
-# Build a virtual enviroment
-```
-cd /path/to/atm
-virtualenv venv
-. venv/bin/activate
-```
-
-# Setup ATM
-
-### Clone ATM as a submodule
-First, run the following commands to clone ATM as a submodule
+Then go to ATMSeer project from the terminal and run
 
 ```
-git submodule init
-git submodule update
+sh install.sh
 ```
 
-### Install a database
-Then, go to `lib/atm`
-
-You will need to install the libmysqlclient-dev package (for sqlalchemy)
+This will install all the necessary packages in a virtual environment.
+After the installation finishes, run
 
 ```
-sudo apt install libmysqlclient-dev
-```
-
-and at least one of the following databases.
-
-- for SQLite (simpler):
-```
-sudo apt install sqlite3
-```
-
-- for MySQL:
-```
-sudo apt install mysql-server mysql-client
-```
-
-**Note:** as the scikit_learn has been updated and the new version of it is not compatible with current version of ATM, you should run the following commands
-
-```
-pip uninstall scikit_learn
-pip install scikit_learn==0.19.2
-```
-
-### Install python dependencies for ATM.
-```
-python setup.py install
-```
-
-
-# Setup the server for ATMSeer
-After configuring the ATM, then go to `server/` and run `pip install -r requirements.txt`
-
-
-
-
-
-# Run
-Go to root directory
-Set `$PYTHONPATH` to include the local `atm_server` package:
-```bash
-export PYTHONPATH=$PYTHONPATH:`pwd`/server/
-```
-
-### Production Mode
-At root directory, start the atm server by:
-```
-python server/atm_server/server.py
-```
-
-Build the frontend
-
-```
-npm install
-npm run build
+vagrant provision --provision-with vagrantstart
 ```
 
 Then, access `http://localhost:7777/` at your web broswer to see the ATMSeer.
 
-## Development Mode
 
+Upload `blood.csv` from `public/viz/blood.csv`, add Dataruns `(+ button)` and hit Run
 
-At the root directory, start the atm server by:
-```
-python server/atm_server/server.py --debug
-```
+There are small issues at first run, you have to give it couple tries `(vagrant reload, vagrant provision --provision-with vagrantstart)` until console errors dissapear.
 
-Start the front end at developer modo:
+After that, you should be able to start the env by using
 
 ```
-npm install
-npm start
+sh start.sh
 ```
-
-You can access the `http://localhost:7779/` to see the ATMSeer.
-
-# Build
-
-## Build and Deploy with Docker
-
-Run `scripts/build_with_docker.sh` to build the docker image
-
-Run `scripts/start_docker.sh` to start the app
