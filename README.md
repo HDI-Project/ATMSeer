@@ -21,7 +21,7 @@ The paper has been published at **ACM CHI 2019**.[PDF](https://arxiv.org/abs/190
 
 
 # Perequisites
-Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
+Download and install or update [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
 
 =========================
 
@@ -44,7 +44,7 @@ After the installation finishes, run
 vagrant provision --provision-with vagrantstart
 ```
 
-Then, access `http://localhost:7777/` at your web broswer to see the ATMSeer.
+Then, access `http://localhost:7779/` at your web broswer to see the ATMSeer.
 
 
 Upload `blood.csv` from `public/viz/blood.csv`, add Dataruns `(+ button)` and hit Run
