@@ -19,113 +19,52 @@ The paper has been published at **ACM CHI 2019**.[PDF](https://arxiv.org/abs/190
 
 =========================
 
+
+# Perequisites
+Download and install or update [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
+
+=========================
+
 # Download ATMSeer
 
 ```
-git clone https://github.com/HDI-Project/ATMSeer.git /path/to/atm
+git clone https://github.com/HDI-Project/ATMSeer.git
 ```
 
-# Build a virtual enviroment
-```
-cd /path/to/atm
-virtualenv venv
-. venv/bin/activate
-```
-
-# Setup ATM
-
-### Clone ATM as a submodule
-First, run the following commands to clone ATM as a submodule
+Then go to ATMSeer project from the terminal and run
 
 ```
-git submodule init
-git submodule update
+sh install.sh
 ```
+This will install all the necessary packages in a virtual environment and start the server.
 
-### Install a database
-Then, go to `lib/atm`
-
-You will need to install the libmysqlclient-dev package (for sqlalchemy)
+After the installation process is done, you should be able to see this log in the terminal:
 
 ```
-sudo apt install libmysqlclient-dev
+....
+default:  * Serving Flask app "server" (lazy loading)
+default:  * Environment: development
+default:  * Debug mode: on
+default: [INFO] [08:07:01:werkzeug]  * Running on http://0.0.0.0:7777/ (Press CTRL+C to quit)
+default: [INFO] [08:07:01:werkzeug]  * Restarting with stat
+default: [WARNING] [08:07:17:werkzeug]  * Debugger is active!
+default: [INFO] [08:07:17:werkzeug]  * Debugger PIN: 206-317-029
+default: No valid rules have been specified for JavaScript files
+```
+Your environment is ready!
+
+At this point -  access `http://localhost:7779/` in your web browser.
+Upload `blood.csv` from `public/viz/`, add Dataruns `(+ button)` and hit Run
+
+There are small issues at first run:
+At first upload step, couple console errors will be present - ignore them.
+
+Go to terminal, stop the process by pressing `CTRL+C` and run 
+```
+vagrant reload
 ```
 
-and at least one of the following databases.
+Go to the browser, refresh the page, and from the `Dataset` dropdown select `blood` as dataset and hit the run button again.
+At this step, you should be able to see HyperPartitions and HyperParameters of selected algorithm.
 
-- for SQLite (simpler):
-```
-sudo apt install sqlite3
-```
-
-- for MySQL:
-```
-sudo apt install mysql-server mysql-client
-```
-
-**Note:** as the scikit_learn has been updated and the new version of it is not compatible with current version of ATM, you should run the following commands
-
-```
-pip uninstall scikit_learn
-pip install scikit_learn==0.19.2
-```
-
-### Install python dependencies for ATM.
-```
-python setup.py install
-```
-
-
-# Setup the server for ATMSeer
-After configuring the ATM, then go to `server/` and run `pip install -r requirements.txt`
-
-
-
-
-
-# Run
-Go to root directory
-Set `$PYTHONPATH` to include the local `atm_server` package:
-```bash
-export PYTHONPATH=$PYTHONPATH:`pwd`/server/
-```
-
-### Production Mode
-At root directory, start the atm server by:
-```
-python server/atm_server/server.py
-```
-
-Build the frontend
-
-```
-npm install
-npm run build
-```
-
-Then, access `http://localhost:7777/` at your web broswer to see the ATMSeer.
-
-## Development Mode
-
-
-At the root directory, start the atm server by:
-```
-python server/atm_server/server.py --debug
-```
-
-Start the front end at developer modo:
-
-```
-npm install
-npm start
-```
-
-You can access the `http://localhost:7779/` to see the ATMSeer.
-
-# Build
-
-## Build and Deploy with Docker
-
-Run `scripts/build_with_docker.sh` to build the docker image
-
-Run `scripts/start_docker.sh` to start the app
+If there's problems, go to terminal, stop the process (CTRL+C), run `sh cleanup.sh && vagrant reload` and repeat the upload process.

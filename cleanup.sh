@@ -1,5 +1,1 @@
-#!/bin/sh
-rm -rf atm.db
-rm -rf models/*
-rm -rf metrics/*
-rm -rf logs/*
+rm -rf models/* metrics/* logs/* atm.db
