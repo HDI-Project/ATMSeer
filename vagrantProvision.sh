@@ -5,7 +5,7 @@ sudo apt-get update -y && \
 sudo apt-get install -y libmysqlclient-dev sqlite3
 sudo pip3 install virtualenv
 
-cd /vagrant && virtualenv venv
+cd /vagrant && virtualenv venv --always-copy
 source venv/bin/activate
 
 pip3 install -r lib/atm/requirements.txt

@@ -41,18 +41,22 @@ This will install all the necessary packages in a virtual environment.
 After the installation finishes, run
 
 ```
-vagrant provision --provision-with vagrantstart
+sh start.sh
 ```
 
 Then, access `http://localhost:7779/` at your web broswer to see the ATMSeer.
 
 
-Upload `blood.csv` from `public/viz/blood.csv`, add Dataruns `(+ button)` and hit Run
+Upload `blood.csv` from `public/viz/`, add Dataruns `(+ button)` and hit Run
 
-There are small issues at first run, you have to give it couple tries `(vagrant reload, vagrant provision --provision-with vagrantstart)` until console errors dissapear.
+There are small issues at first run:
 
-After that, you should be able to start the env by using
-
+At first upload step, couple console errors will be present - ignore them
+Go to terminal and run 
 ```
-sh start.sh
+vagrant reload
 ```
+
+After VM is up and running, go to the browser, refresh the page, and from the `Dataset` dropdown select `blood` as dataset and hit the run button.
+
+At this step, you should be able to see HyperPartitions and HyperParameters of selected alghoritm
