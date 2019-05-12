@@ -36,27 +36,35 @@ Then go to ATMSeer project from the terminal and run
 ```
 sh install.sh
 ```
+This will install all the necessary packages in a virtual environment and start the server.
 
-This will install all the necessary packages in a virtual environment.
-After the installation finishes, run
+After the installation process is done, you should be able to see this log in the terminal:
 
 ```
-sh start.sh
+....
+default:  * Serving Flask app "server" (lazy loading)
+default:  * Environment: development
+default:  * Debug mode: on
+default: [INFO] [08:07:01:werkzeug]  * Running on http://0.0.0.0:7777/ (Press CTRL+C to quit)
+default: [INFO] [08:07:01:werkzeug]  * Restarting with stat
+default: [WARNING] [08:07:17:werkzeug]  * Debugger is active!
+default: [INFO] [08:07:17:werkzeug]  * Debugger PIN: 206-317-029
+default: No valid rules have been specified for JavaScript files
 ```
+Your environment is ready!
 
-Then, access `http://localhost:7779/` at your web broswer to see the ATMSeer.
-
-
+At this point -  access `http://localhost:7779/` in your web browser.
 Upload `blood.csv` from `public/viz/`, add Dataruns `(+ button)` and hit Run
 
 There are small issues at first run:
+At first upload step, couple console errors will be present - ignore them.
 
-At first upload step, couple console errors will be present - ignore them
-Go to terminal and run 
+Go to terminal, stop the process by pressing `CTRL+C` and run 
 ```
 vagrant reload
 ```
 
-After VM is up and running, go to the browser, refresh the page, and from the `Dataset` dropdown select `blood` as dataset and hit the run button.
+Go to the browser, refresh the page, and from the `Dataset` dropdown select `blood` as dataset and hit the run button again.
+At this step, you should be able to see HyperPartitions and HyperParameters of selected algorithm.
 
-At this step, you should be able to see HyperPartitions and HyperParameters of selected alghoritm
+If there's problems, go to terminal, stop the process (CTRL+C), run `sh cleanup.sh && vagrant reload` and repeat the upload process.
