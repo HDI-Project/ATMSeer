@@ -50,3 +50,4 @@ models/
 datasets/
 
 .atm_server_cache/
+.vagrant/*

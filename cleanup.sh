@@ -1,0 +1,1 @@
+rm -rf models/* metrics/* logs/* atm.db
