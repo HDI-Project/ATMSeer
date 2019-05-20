@@ -6,4 +6,3 @@ mkdir models && chmod 0777 models
 
 vagrant up --provision-with vagrantprovision
 vagrant reload
-
