@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
     s.path = "vagrantProvision.sh"
   end
 
-  config.vm.provision "vagrantstart", type: "shell", run: "always" do |s|
+  config.vm.provision "vagrantstart", type: "shell", run: "never" do |s|
     s.path = "vagrantStart.sh"
   end
 

@@ -38,25 +38,40 @@ sh install.sh
 ```
 
 This will install all the necessary packages in a virtual environment.
-After the installation finishes, run
+
+If you see these messages in terminal:
 
 ```
-sh start.sh
+...
+default: [INFO] [13:07:26:werkzeug]  * Running on http://0.0.0.0:7777/ (Press CTRL+C to quit)
+default: [INFO] [13:07:26:werkzeug]  * Restarting with stat
+default: [WARNING] [13:07:31:werkzeug]  * Debugger is active!
+default: [INFO] [13:07:31:werkzeug]  * Debugger PIN: 295-249-971
+default: No valid rules have been specified for JavaScript files
+
 ```
+then ATMSeer is up and running.
 
-Then, access `http://localhost:7779/` at your web broswer to see the ATMSeer.
-
-
+Navigate to `http://localhost:7779/` in your web broswer to see the ATMSeer (prefferably Chrome).
 Upload `blood.csv` from `public/viz/`, add Dataruns `(+ button)` and hit Run
 
 There are small issues at first run:
 
 At first upload step, couple console errors will be present - ignore them
-Go to terminal and run 
+Go to terminal and run
 ```
 vagrant reload
 ```
 
-After VM is up and running, go to the browser, refresh the page, and from the `Dataset` dropdown select `blood` as dataset and hit the run button.
+After the VM is up and running, go to the browser, refresh the page, and from the `Dataset` dropdown select `blood` as dataset and hit the run button.
 
-At this step, you should be able to see HyperPartitions and HyperParameters of selected alghoritm
+At this step, you should be able to see HyperPartitions and HyperParameters of selected alghoritm;
+
+<b>In case there's still issues:</b>
+1. Open a terminal and navigate to ATMSeer project location.
+2. Run `vagrant up` command (in case vagrant is not already running).
+3. From the same terminal run `vagrant ssh`.
+4. Run `cd /vagrant` and `sh start.sh`.
+
+Open a second terminal and navigate to ATMSeer project location.
+Run `vagrant ssh`, `cd /vagrant` and `npm start`
