@@ -19,113 +19,44 @@ The paper has been published at **ACM CHI 2019**.[PDF](https://arxiv.org/abs/190
 
 =========================
 
+
+# Perequisites
+Download and install or update [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
+
+=========================
+
 # Download ATMSeer
 
 ```
-git clone https://github.com/HDI-Project/ATMSeer.git /path/to/atm
+git clone https://github.com/HDI-Project/ATMSeer.git
 ```
 
-# Build a virtual enviroment
-```
-cd /path/to/atm
-virtualenv venv
-. venv/bin/activate
-```
-
-# Setup ATM
-
-### Clone ATM as a submodule
-First, run the following commands to clone ATM as a submodule
+Then go to ATMSeer project from the terminal and run
 
 ```
-git submodule init
-git submodule update
+sh install.sh
 ```
 
-### Install a database
-Then, go to `lib/atm`
-
-You will need to install the libmysqlclient-dev package (for sqlalchemy)
+This will install all the necessary packages in a virtual environment.
+After the installation finishes, run
 
 ```
-sudo apt install libmysqlclient-dev
+sh start.sh
 ```
 
-and at least one of the following databases.
+Then, access `http://localhost:7779/` at your web broswer to see the ATMSeer.
 
-- for SQLite (simpler):
-```
-sudo apt install sqlite3
-```
 
-- for MySQL:
-```
-sudo apt install mysql-server mysql-client
-```
+Upload `blood.csv` from `public/viz/`, add Dataruns `(+ button)` and hit Run
 
-**Note:** as the scikit_learn has been updated and the new version of it is not compatible with current version of ATM, you should run the following commands
+There are small issues at first run:
 
+At first upload step, couple console errors will be present - ignore them
+Go to terminal and run 
 ```
-pip uninstall scikit_learn
-pip install scikit_learn==0.19.2
+vagrant reload
 ```
 
-### Install python dependencies for ATM.
-```
-python setup.py install
-```
+After VM is up and running, go to the browser, refresh the page, and from the `Dataset` dropdown select `blood` as dataset and hit the run button.
 
-
-# Setup the server for ATMSeer
-After configuring the ATM, then go to `server/` and run `pip install -r requirements.txt`
-
-
-
-
-
-# Run
-Go to root directory
-Set `$PYTHONPATH` to include the local `atm_server` package:
-```bash
-export PYTHONPATH=$PYTHONPATH:`pwd`/server/
-```
-
-### Production Mode
-At root directory, start the atm server by:
-```
-python server/atm_server/server.py
-```
-
-Build the frontend
-
-```
-npm install
-npm run build
-```
-
-Then, access `http://localhost:7777/` at your web broswer to see the ATMSeer.
-
-## Development Mode
-
-
-At the root directory, start the atm server by:
-```
-python server/atm_server/server.py --debug
-```
-
-Start the front end at developer modo:
-
-```
-npm install
-npm start
-```
-
-You can access the `http://localhost:7779/` to see the ATMSeer.
-
-# Build
-
-## Build and Deploy with Docker
-
-Run `scripts/build_with_docker.sh` to build the docker image
-
-Run `scripts/start_docker.sh` to start the app
+At this step, you should be able to see HyperPartitions and HyperParameters of selected alghoritm
