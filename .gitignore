@@ -51,3 +51,4 @@ datasets/
 
 .atm_server_cache/
 .vagrant/*
+node.log
