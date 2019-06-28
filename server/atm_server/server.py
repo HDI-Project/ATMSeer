@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 import argparse
 try:
     import simplejson as json
