@@ -5,7 +5,7 @@ services:
     container_name: atmseer
     ports:
       - "5000:5000"
-    command: python3 server/atm_server/server.py --port 5000
+    command: sudo python3 server/atm_server/server.py --port 5000
     volumes:
       - ./logs:/code/logs
       - ./metrics:/code/models

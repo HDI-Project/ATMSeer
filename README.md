@@ -57,6 +57,31 @@ Run `vagrant ssh`, `cd /vagrant`, and `npm start`.
 
 If you are still experiencing issues, please [open an issue](https://github.com/HDI-Project/ATMSeer/issues/new) and include as much detail as you can on your problem.
 
+### Deploy with Docker [alternative]
+
+If you have problem using [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html) (especially in Windows), you can choose to use Docker instead.
+
+Download and Install [Docker](https://docs.docker.com/install/) and [Compose](https://docs.docker.com/compose/install/)
+
+```
+sh install-docker.sh
+```
+
+If you see the following message:
+
+```
+atmseer |  * Serving Flask app "server" (lazy loading)
+atmseer |  * Environment: production
+atmseer |    WARNING: Do not use the development server in a production environment.
+atmseer |    Use a production WSGI server instead.
+atmseer |  * Debug mode: off
+atmseer | [INFO] [13:43:13:werkzeug]  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+```
+
+You can navigate to `http://localhost:5000/` in your broswer (preferably Chrome) to see ATMSeer.
+
+
+
 ## Using ATMSeer
 
 To see ATMSeer in action, you will first upload a dataset to use with the AutoML process, create a "datarun", and then monitor and control the ongoing AutoML process.
