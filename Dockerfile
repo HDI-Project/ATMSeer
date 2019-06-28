@@ -6,6 +6,11 @@ RUN apt-get update -y && \
 
 RUN apt-get install -y libmysqlclient-dev sqlite3
 
+RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+RUN sudo apt-get install -yq nodejs \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 ADD . /code
 WORKDIR /code
 
