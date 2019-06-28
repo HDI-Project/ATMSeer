@@ -15,9 +15,11 @@ RUN pip3 install lib/atm/
 
 RUN pip3 install -r server/requirements.txt
 
+RUN npm install --quiet
+
+RUN npm run build
+
 EXPOSE 5000
 
 # ENTRYPOINT [ "python" ]
 ENV PYTHONPATH "${PYTHONPATH}:/code/server"
-
-CMD [ "python3", "server/atm_server/server.py", "--port", "5000" ]

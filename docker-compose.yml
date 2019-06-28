@@ -1,0 +1,13 @@
+version: "3"
+services:
+  web:
+    build: .
+    container_name: atmseer
+    ports:
+      - "5000:5000"
+    command: python3 server/atm_server/server.py --port 5000
+    volumes:
+      - ./atm.db:/code/atm.db
+      - ./logs:/code/logs
+      - ./metrics:/code/models
+      - ./models:/code/metrics
