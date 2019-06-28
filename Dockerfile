@@ -1,7 +1,20 @@
 FROM ubuntu:16.04
 
-RUN apt-get update -y && \
-    apt-get install -y python3 python3-pip && \
+# install utilities
+RUN apt-get update -yqq  \
+ && apt-get install -yqq \
+ unzip \
+ curl \
+ git \
+ ssh \
+ gcc \
+ make \
+ build-essential \
+ libkrb5-dev \
+ sudo \
+ apt-utils
+
+RUN apt-get install -y python3 python3-pip && \
     pip3 install --upgrade pip
 
 RUN apt-get install -y libmysqlclient-dev sqlite3
