@@ -33,6 +33,9 @@ RUN pip3 install lib/atm/
 
 RUN pip3 install -r server/requirements.txt
 
+RUN pip3 uninstall -y scikit_learn
+RUN pip3 install scikit_learn==0.19.2
+
 RUN npm install --quiet
 
 RUN npm run build
