@@ -1,44 +1,48 @@
 FROM ubuntu:16.04
 
-# install utilities
-RUN apt-get update -yqq  \
- && apt-get install -yqq \
- unzip \
- curl \
- git \
- ssh \
- gcc \
- make \
- build-essential \
- libkrb5-dev \
- sudo \
- apt-utils
+COPY ./sources.list.0 /etc/apt/sources.list
 
-RUN sudo apt-get install -y python3 python3-pip && \
-    pip3 install --upgrade pip
+RUN apt-get update \
+    && apt-get -y install \
+    curl \
+    apt-transport-https \
+    apt-utils \
+    python3 \
+    python3-pip \
+    unzip \
+    git \
+    ssh \
+    gcc \
+    make \
+    build-essential \
+    libkrb5-dev \
+    libmysqlclient-dev \
+    sqlite3 \
+    libssl-dev \
+    libcrypto++-dev
 
-RUN sudo apt-get install -y libmysqlclient-dev sqlite3
+COPY ./sources.list /etc/apt/sources.list
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-RUN sudo apt-get install -yq nodejs \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
+    && apt-get update \
+    && apt-get install -y nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD . /code
+
 WORKDIR /code
 
-RUN pip3 install -r lib/atm/requirements.txt
+RUN pip3 install --upgrade pip \
+    && pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple\
+    && pip3 install -r lib/atm/requirements.txt \
+    && pip3 install lib/atm/ \
+    && pip3 install -r server/requirements.txt \
+    && pip3 uninstall -y scikit_learn \
+    && pip3 install scikit_learn==0.19.2
 
-RUN pip3 install lib/atm/
-
-RUN pip3 install -r server/requirements.txt
-
-RUN pip3 uninstall -y scikit_learn
-RUN pip3 install scikit_learn==0.19.2
-
-RUN npm install --quiet
-
-RUN npm run build
+RUN npm install --quiet \
+    && npm run build
 
 EXPOSE 5000
 
