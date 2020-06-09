@@ -4,7 +4,7 @@ TODO: Add support for redis
 """
 
 import os
-from werkzeug.contrib.cache import SimpleCache, FileSystemCache
+from cachelib import SimpleCache, FileSystemCache
 from . import SERVER_ROOT
 
 
