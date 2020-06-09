@@ -17,7 +17,7 @@ RUN apt-get update -yqq  \
 RUN sudo apt-get install -y python3 python3-pip && \
     pip3 install --upgrade pip
 
-RUN sudo apt-get install -y libmysqlclient-dev sqlite3
+RUN sudo apt-get install -y libssl-dev libmysqlclient-dev sqlite3
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 RUN sudo apt-get install -yq nodejs \
