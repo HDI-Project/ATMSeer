@@ -13,7 +13,7 @@
     "ml-pca": "^2.1.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
-    "react-scripts-ts": "2.16.0"
+    "react-scripts-ts": "4.0.8"
   },
   "scripts": {
     "start": "cross-env PORT=7779 react-scripts-ts start",
